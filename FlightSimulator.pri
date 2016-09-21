@@ -80,9 +80,9 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/OpenGLFontMeshBuilder.cpp \
     $$PWD/OpenGLFontRenderer2D.cpp \
     $$PWD/OpenGLFontTexture.cpp \
-    $$PWD/opengltexturerenderer2d.cpp \
-    $$PWD/openglbuttontexture.cpp \
-    $$PWD/openglbuttontexturemanager.cpp
+    $$PWD/OpenGLButtonTexture.cpp \
+    $$PWD/OpenGLButtonTextureManager.cpp \
+    $$PWD/OpenGLTextureRenderer2D.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
     AeroControlSurface.h \
@@ -190,8 +190,8 @@ HEADERS  += CompositeListForceGenerator.inl \
     $$PWD/OpenGLFontMeshBuilder.h \
     $$PWD/OpenGLFontRenderer2D.h \
     $$PWD/OpenGLFontTexture.h \
-    $$PWD/opengltexturerenderer2d.h \
-    $$PWD/openglbuttontexture.h \
-    $$PWD/openglbuttontexturemanager.h
+    $$PWD/OpenGLButtonTexture.h \
+    $$PWD/OpenGLButtonTextureManager.h \
+    $$PWD/OpenGLTextureRenderer2D.h
 
 

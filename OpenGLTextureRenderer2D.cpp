@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "opengltexturerenderer2d.h"
+#include "OpenGLTextureRenderer2D.h"
 #include <OpenglTexture2d.h>
 #include <OpenGLRenderer.h>
 #include <OpenGLPipeline.h>

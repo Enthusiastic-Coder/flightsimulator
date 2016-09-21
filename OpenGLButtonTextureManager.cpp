@@ -1,6 +1,6 @@
-#include "openglbuttontexturemanager.h"
+#include "OpenGLButtonTextureManager.h"
 #include "OpenGLRenderer.h"
-#include "openglbuttontexture.h"
+#include "OpenGLButtonTexture.h"
 
 OpenGLButtonTextureManager::OpenGLButtonTextureManager(OpenGLTextureRenderer2D *r) :
     _textureRenderer(r)

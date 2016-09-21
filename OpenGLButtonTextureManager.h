@@ -2,7 +2,7 @@
 #define OPENGLBUTTONTEXTUREMANAGER_H
 
 #include <map>
-#include "opengltexturerenderer2d.h"
+#include "OpenGLTextureRenderer2D.h"
 #include <MathSupport.h>
 
 class Renderer;

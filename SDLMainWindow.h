@@ -20,9 +20,9 @@
 
 #include "OpenGLFontTexture.h"
 #include "OpenGLFontRenderer2D.h"
-#include "openglbuttontexturemanager.h"
-#include "opengltexturerenderer2d.h"
-#include "openglbuttontexture.h"
+#include "OpenGLButtonTextureManager.h"
+#include "OpenGLTextureRenderer2D.h"
+#include "OpenGLButtonTexture.h"
 
 #define Time_log(msg)
 //#define Time_log(msg) \

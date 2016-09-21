@@ -1,5 +1,5 @@
-#include "openglbuttontexture.h"
-#include "opengltexturerenderer2d.h"
+#include "OpenGLButtonTexture.h"
+#include "OpenGLTextureRenderer2D.h"
 
 bool OpenGLButtonTexture::load(std::string filename)
 {

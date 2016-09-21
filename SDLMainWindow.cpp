@@ -27,7 +27,7 @@
 
 #include "OpenGLFontTexture.h"
 #include "OpenGLFontRenderer2D.h"
-#include "opengltexturerenderer2d.h"
+#include "OpenGLTextureRenderer2D.h"
 
 #define MS_TO_KTS( value ) fabs(value*3.2808*3600/5280/1.15f)
 #define MS_TO_MPH( value ) MS_TO_KTS( value*1.15 )
