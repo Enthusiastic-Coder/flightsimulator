@@ -1,0 +1,643 @@
+//beginBody
+//cg 0.0 3.34 5.0
+//mass 42800
+//offset 0 -0.66 0
+//endBody
+
+//beginCLdata
+//name wing
+//washing true
+//filename ######.data
+//endCLdata
+
+//beginCLdata
+//name rudderOrTailWing
+//washing false
+//filename ######.data
+//endCLdata
+
+//beginGravityFG
+//name gravityFG 15
+//planet:earth
+//endGravityFG
+
+//beginSpringNormalFG
+//left_engine_under_pod 150
+//channelMass #mass# 0.5
+//minimumDistance 0.2
+//equilibriumDistance 0.4
+//length 0.6
+//endSpringNormalFG
+
+beginAeroWheelSpringFG
+front_wheel
+//name front_wheel
+//springFriction 35000
+//springMass 300
+//contactFricton 15.0
+//wheelRadius 0.518347
+addPivot
+a380_LeftFrontRim
+0 0 -31.06
+0 0 0
+
+addPivot
+a380_RightFrontRim
+0 0 -31.06
+0 0 0
+
+addPivot
+a380_LeftFrontTire
+0 0.0 -31.06
+0 0 0
+
+addPivot
+a380_RightFrontTire
+0 0.0 -31.06
+0 0 0
+
+addPivot
+a380_FrontGearLower
+0 0 -31.06 0
+0 0 0
+
+addPivot
+a380_FrontSuspension
+0 0 0
+0 0 0
+endAeroWheelSpringFG
+
+
+beginAeroWheelSpringFG
+left_front_wheel
+
+addPivot
+a380_LeftFrontSuspension
+0 0 0
+0 0 0
+
+addPivot
+a380_RightWingTire4__1_0
+-6.46 0 -2.29
+0 0 0
+
+addPivot
+a380_RightWingRim4__1_0
+-6.46 0 -2.29
+0 0 0
+
+addPivot
+a380_RightWingTire3__1_0
+-6.46 0 -2.29
+0 0 0
+
+addPivot
+a380_RightWingRim3__1_0
+-6.46 0 -2.29
+0 0 0
+
+addPivot
+a380_RightWingTire2__1_0
+-6.46 0 -3.69
+0 0 0
+
+addPivot
+a380_RightWingRim2__1_0
+-6.46 0 -3.69
+0 0 0
+
+addPivot
+a380_RightWingTire1__1_0
+-6.46 0 -3.69
+0 0 0
+
+addPivot
+a380_RightWingRim1__1_0
+-6.46 0 -3.69
+0 0 0
+
+addPivot
+a380_RightWingGearLower__1_0
+0 0 0
+0 0 0
+endAeroWheelSpringFG
+
+beginAeroWheelSpringFG
+left_back_wheel
+
+addPivot
+a380_LeftBackSuspension
+0 0 0
+0 0 0
+
+addPivot
+a380_LeftRearTire1
+0 0 4.9
+0 0 0
+ 
+addPivot
+a380_LeftRearRim1
+0 0 4.9
+0 0 0
+
+addPivot
+a380_LeftRearTire2
+0 0 4.9
+0 0 0
+
+addPivot
+a380_LeftRearRim2
+0 0 4.9
+0 0 0
+
+addPivot
+a380_LeftRearTire3
+0 0 6.30
+0 0 0
+
+addPivot
+a380_LeftRearRim3
+0 0 6.30 
+0 0 0
+
+addPivot
+a380_LeftRearTire4
+0 0 6.30
+0 0 0
+
+addPivot
+a380_LeftRearRim4
+0 0 6.30
+0 0 0
+
+addPivot
+a380_LeftRearGearLower
+0 0 0
+0 0 0
+endAeroWheelSpringFG
+
+
+beginAeroWheelSpringFG
+right_front_wheel
+
+addPivot
+a380_RightFrontSuspension
+0 0 0
+0 0 0
+
+addPivot
+a380_RightWingTire4
+-6.46 0 -2.29
+0 0 0
+
+addPivot
+a380_RightWingRim4
+-6.46 0 -2.29
+0 0 0
+
+addPivot
+a380_RightWingTire3
+-6.46 0 -2.29
+0 0 0
+
+addPivot
+a380_RightWingRim3
+-6.46 0 -2.29
+0 0 0
+
+addPivot
+a380_RightWingTire2
+-6.46 0 -3.69
+0 0 0
+
+addPivot
+a380_RightWingRim2
+-6.46 0 -3.69
+0 0 0
+
+addPivot
+a380_RightWingTire1
+-6.46 0 -3.69
+0 0 0
+
+addPivot
+a380_RightWingRim1
+-6.46 0 -3.69
+0 0 0
+
+addPivot
+a380_RightWingGearLower
+0 0 0
+0 0 0
+
+endAeroWheelSpringFG
+
+beginAeroWheelSpringFG
+right_back_wheel
+
+addPivot
+a380_RightBackSuspension
+0 0 0
+0 0 0
+
+addPivot
+a380_RightRearTire1
+0 0 4.9 
+0 0 0
+
+addPivot
+a380_RightRearRim1
+0 0 4.9
+0 0 0
+
+addPivot
+a380_RightRearTire2
+0 0 4.9
+0 0 0
+
+addPivot
+a380_RightRearRim2
+0 0 4.9
+0 0 0
+
+addPivot
+a380_RightRearTire3
+0 0 6.30
+0 0 0
+
+addPivot
+a380_RightRearRim3
+0 0 6.30 
+0 0 0
+
+addPivot
+a380_RightRearTire4
+0 0 6.30
+0 0 0
+
+addPivot
+a380_RightRearRim4
+0 0 6.30
+0 0 0
+
+addPivot
+a380_RightRearGearLower
+0 0 0
+0 0 0
+endAeroWheelSpringFG
+
+beginEngineFG
+engine_1
+320000
+
+addPivot
+a380_RightEngine2Blades__1_0
+0 0 1
+-26.42 4.4 -4.85
+
+addPivot
+a380_RightEngine2Hub__1_0
+0 0 1
+-26.42 4.4 -4.85
+
+endEngineFG
+
+beginEngineFG
+engine_2
+320000
+
+addPivot
+a380_RightEngine1Blades__1_0
+0 0 1
+-14.85 3.25 -4.85
+
+addPivot
+a380_RightEngine1Hub__1_0
+0 0 1
+-14.85 3.25 -4.85
+
+endEngineFG
+
+beginEngineFG
+engine_3
+320000
+
+addPivot
+a380_RightEngine1Blades
+0 0 1
+14.85 3.25 -4.85
+
+addPivot
+a380_RightEngine1Hub
+0 0 1
+14.85 3.25 -4.85
+
+endEngineFG
+
+beginEngineFG
+engine_4
+320000
+
+addPivot
+a380_RightEngine2Blades
+0 0 1
+26.42 4.4 -4.85
+
+addPivot
+a380_RightEngine2Hub
+0 0 1
+26.42 4.4 -4.85
+
+endEngineFG
+
+beginAeroFG
+vertical_tail:15
+
+beginSection
+//ClAoA:rudderOrTailWing 
+
+addControlSurface
+0 10.8 28.0
+0 25.0 36.78
+0 25.0 38.1
+0 10.54 31.43
+0 0
+// p1 0 5.81 18.18
+// p2 0 12.10 19.68
+// p3 0 12.08 19.05
+// p4 0 6.41 16.48
+//responseRate 80
+
+addPivot
+a380_Stabilizer1
+0 -34 90
+0.0 10.84 27.94
+1.0
+nomod:0 nomod:0 nomod:0
+
+addPivot
+a380_Stabilizer2
+0 -31 90
+0.0 13.62 29.97
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+0 10.5 31.4
+0 25.0 38.1
+0 24.95 34.27
+0 11.3 17.8
+10
+0.5 0.75
+
+endSection
+
+endAeroFG
+
+;--------------------------------------
+
+beginAeroFG
+left_wing:15
+
+beginSection
+
+// Left Aileron
+addControlSurface 
+-35.2 7.65 13.78
+-27.67 6.79 10.22
+-27.67 7.34 8.27
+-35.2 7.92 12.31
+0 0
+
+addPivot 
+a380_RightWingElevator4
+17.35 30.0 -11.85
+-31.79 7.67 10.45
+1.0
+nomod:0 nomod:0 nomod:0
+
+// Left Outer Flap
+//addControlSurface 
+//-13.39 3.62 4.08
+//-6.36 3.14 1.76
+//-6.37 3.15 1.04
+//-13.39 3.63 3.62
+//0.3 30
+
+//addPivot 
+//a3flapL2
+//1.30 19.9 -3.81
+//-13.38 3.66 3.64
+//1.0
+//nomod:0 nomod:0 nomod:0
+//nomod, offset, LINEAR, TRIG, 
+
+//LeftFlapSB01
+//addPivot 
+//LeftFlapSB01
+//0.0 0.0 2.55
+//-8.28 3.24 2.25
+//1.25
+//nomod:0 nomod:0 offset:-0.1
+
+//LeftFlapSB02
+//addPivot 
+//LeftFlapSB02
+//-0.07 -0.5 2.8
+//-12.2 3.5 3.5
+//0.9
+//nomod:0 nomod:0 offset:-0.1
+
+// Left Outer Spoiler
+//addControlSurface 
+//-13.06 3.67 3.63
+//-6.85 3.28 1.39
+//-7.08 3.4 0.78
+//-13.26 3.78 3.10
+//0 0
+
+//addPivot 
+//a3brakel02
+//11.5 21 -8
+//-13.28 3.8 3.1
+//1.0
+//nomod:0 nomod:0 nomod:0
+
+setSection
+-40.5 8.21 16.22
+-21.86 6.49 7.55
+-21.86 6.8 -2.8
+-40.14 8.5 11.6
+10
+0.5 0.75
+
+endSection
+
+beginSection
+
+setSection
+-21.86 6.49 7.55
+-12.66 4.85 3.88
+-12.66 6.53 -9.55
+-21.86 6.8 -2.8
+5
+0.5 0.75
+
+endSection
+
+beginSection
+setSection
+-12.66 4.85 3.88
+0 3.23 0.7
+-0 4.78 -20.0
+-12.66 6.53 -9.55
+5
+0.5 0.75
+
+endSection
+
+endAeroFG
+
+beginAeroFG
+right_wing:15
+
+beginSection
+
+addControlSurface 
+27.67 7.34 8.27
+35.2 7.92 12.31
+35.2 7.65 13.78
+27.67 6.79 10.22
+0 0
+
+addPivot 
+a380_RightWingElevator3
+17.35 -30.0 11.85
+31.79 7.67 10.45
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+21.86 6.49 7.55
+40.5 8.21 16.22
+40.14 8.5 11.6
+21.86 6.8 -2.8
+5
+0.5 0.75
+
+endSection
+
+beginSection
+
+setSection
+12.66 4.85 3.88
+21.86 6.49 7.55
+21.86 6.8 -2.8
+12.66 6.53 -9.55
+5
+0.5 0.75
+
+endSection
+
+beginSection
+setSection
+0 3.23 0.7
+12.66 4.85 3.88
+12.66 6.53 -9.55
+0 4.78 -20.0
+5
+0.5 0.75
+
+endSection
+endAeroFG
+
+;--------------------------------------------------------------------------
+beginAeroFG
+left_tail_wing:15
+
+addPivot
+a380_LeftRearWing_1_0
+0.92100 11.2276 -5.98682
+-1.04 4.83 17.0
+1.0
+nomod:0 nomod:0 nomod:0
+
+beginSection
+
+addControlSurface 
+-13.85 8.73 37.8
+-2.0 7.72 33.0
+-2.5 8.28 30.42
+-13.82 8.75 36.1
+0 0
+
+addPivot 
+a380_LeftRearStabilizer2__1_0
+1.15 26.5 -2.57
+-11 8.75 34.64
+1.0
+nomod:0 nomod:0 nomod:0
+
+addPivot 
+a380_LeftRearStabilizer1__1_0
+1.15 26.5 -2.57
+-5 8.42 31.73
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+-15.0 8.70 38.18
+-1.92 7.77 32.95
+-3.15 8.48 25.55
+-14.5 9.0 34.22
+6
+0.5 0.75
+
+endSection
+endAeroFG
+
+;--------------------------------------------------------------------------
+
+beginAeroFG
+right_tail_wing:15
+
+addPivot
+a380_RightRearWing
+-0.92100 -11.2276 5.98682
+1.04 4.83 17.0
+1.0
+nomod:0 nomod:0 nomod:0
+
+beginSection
+
+addControlSurface 
+2.0 7.72 33.0
+13.85 8.73 37.8
+13.82 8.75 36.1
+2.5 8.28 30.42
+0 0
+
+addPivot
+a380_LeftRearStabilizer1
+1.15 -26.5 2.57
+5 8.42 31.73
+1.0
+nomod:0 nomod:0 nomod:0
+
+addPivot
+a380_LeftRearStabilizer2
+1.15 -26.5 2.57
+11 8.75 34.64
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+1.92 7.77 32.95
+15.0 8.70 38.18
+14.5 9.0 34.22
+3.15 8.48 25.55
+6
+0.5 0.75
+
+endSection
+endAeroFG

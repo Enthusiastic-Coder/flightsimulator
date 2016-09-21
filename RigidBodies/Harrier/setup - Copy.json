@@ -1,0 +1,486 @@
+//beginBody
+//cg 0.0 3.34 5.0
+//mass 42800
+//offset 0 -0.66 0
+//endBody
+
+//beginCLdata
+//name wing
+//washing true
+//filename ######.data
+//endCLdata
+
+//beginCLdata
+//name rudderOrTailWing
+//washing false
+//filename ######.data
+//endCLdata
+
+//beginGravityFG
+//name gravityFG 15
+//planet:earth
+//endGravityFG
+
+//beginSpringNormalFG
+//left_engine_under_pod 150
+//channelMass #mass# 0.5
+//minimumDistance 0.2
+//equilibriumDistance 0.4
+//length 0.6
+//endSpringNormalFG
+
+beginAeroWheelSpringFG
+front_wheel
+//name front_wheel
+//springFriction 35000
+//springMass 300
+//contactFricton 15.0
+//wheelRadius 0.518347
+
+addPivot
+wheelF
+0.0021181 0 -12.2908
+
+addPivot
+FrontWheelSuspension
+0 0 -12.2908 0
+
+addPivot
+box__3_0
+0 0 0
+endAeroWheelSpringFG
+
+beginAeroWheelSpringFG
+left_wheel
+addPivot
+WheelL
+3.68467 0 0.45676
+addPivot
+LeftWheelSuspension
+0 0 0
+addPivot
+box__1_0
+0 0 0
+endAeroWheelSpringFG
+
+beginAeroWheelSpringFG
+right_wheel
+addPivot
+wheelR
+-3.68467 0 0.45676
+addPivot
+RightWheelSuspension
+0 0 0
+addPivot
+box__2_0
+0 0 0
+endAeroWheelSpringFG
+
+beginEngineFG
+left_engine
+120000
+//name left_engine
+//contactPt -5.82 1.71 -5.07
+//maxThrust 120000
+//direction -1 0 0
+addPivot
+LeftEngineFan
+0 0 1
+-5.84 1.75 -4.85
+endEngineFG
+
+beginEngineFG
+right_engine
+120000
+addPivot
+RightEngineFan
+0 0 1
+5.84 1.75 -4.85
+endEngineFG
+
+beginAeroFG
+vertical_tail:15
+
+beginSection
+//ClAoA:rudderOrTailWing 
+
+addControlSurface
+0 5.81 18.18
+0 12.10 19.68
+0 12.08 19.05
+0 6.41 16.48
+0 0
+// p1 0 5.81 18.18
+// p2 0 12.10 19.68
+// p3 0 12.08 19.05
+// p4 0 6.41 16.48
+//responseRate 80
+
+addPivot
+a3rudder01
+0 -23 90
+0.0 6.15917 16.5839
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+0 5.62 18.15
+0 12.10 19.68
+0 12.08 17.85
+0 5.88 12.25
+10
+0.5 0.75
+
+endSection
+
+endAeroFG
+
+;--------------------------------------
+
+beginAeroFG
+left_wing:15
+
+beginSection
+
+// Left Aileron
+addControlSurface 
+-16.49 3.84 5.09
+-13.62 3.65 4.14
+-13.76 3.77 3.43
+-16.49 3.95 4.53
+0 0
+
+addPivot 
+a3aileronL
+5.8115 21.0563 -6.2263
+-15.1478 3.82192 3.98572
+1.0
+nomod:0 nomod:0 nomod:0
+
+// Left Outer Flap
+addControlSurface 
+-13.39 3.62 4.08
+-6.36 3.14 1.76
+-6.37 3.15 1.04
+-13.39 3.63 3.62
+0.3 30
+
+addPivot 
+a3flapL2
+1.30 19.9 -3.81
+-13.38 3.66 3.64
+1.0
+nomod:0 nomod:0 nomod:0
+
+//nomod, offset, LINEAR, TRIG, 
+
+//LeftFlapSB01
+addPivot 
+LeftFlapSB01
+0.0 0.0 2.55
+-8.28 3.24 2.25
+1.25
+nomod:0 nomod:0 offset:-0.1
+
+//LeftFlapSB02
+addPivot 
+LeftFlapSB02
+-0.07 -0.5 2.8
+-12.2 3.5 3.5
+0.9
+nomod:0 nomod:0 offset:-0.1
+
+// Left Outer Spoiler
+addControlSurface 
+-13.06 3.67 3.63
+-6.85 3.28 1.39
+-7.08 3.4 0.78
+-13.26 3.78 3.10
+0 0
+
+addPivot 
+a3brakel02
+11.5 21 -8
+-13.28 3.8 3.1
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+-17.1 3.96 5.3
+-6.33 3.15 1.77
+-6.40 3.34 -1.93
+-17.16 4.06 3.79 
+15
+0.5 0.75
+
+endSection
+
+beginSection
+
+// Left Inner Flap
+addControlSurface 
+-6.33 3.13 1.76
+-2.24 2.78 1.76
+-2.24 2.82 1.21
+-6.33 3.15 1.26
+0.3 30
+
+addPivot 
+a3flapL1
+11.34 -0.71 -3.55
+-6.34 3.23 1.24
+1.0
+nomod:0 nomod:0 nomod:0
+
+//LeftInnerFlapSB01
+addPivot 
+LeftInnerFlapSB01
+0.43 -6.53 3.76 
+-4.94 3.0 1.62
+1.25
+nomod:0 offset:-0.02 nomod:0
+
+//LeftInnerFlapSB02
+addPivot 
+LeftInnerFlapSB02
+-0.41 8.08 -2.9
+-5.82 3.07 1.41
+1.0
+nomod:0 nomod:0 nomod:0
+
+// Left Inner Spoiler
+addControlSurface 
+-6.32 3.23 1.2
+-4.12 3.05 1.2
+-4.12 3.17 0.5
+-6.32 3.34 0.5
+0 0
+
+addPivot 
+a3brakel01
+9.51 -0.76 -4.54 
+-6.31 3.38 0.49
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+-6.33 3.15 1.77
+0 2.6 1.77
+0 3.0 -4.97
+-6.40 3.34 -1.93
+10
+0.5 0.75
+
+endSection
+endAeroFG
+
+beginAeroFG
+right_wing:15
+
+beginSection
+
+addControlSurface 
+13.62 3.65 4.14
+16.49 3.84 5.09
+16.49 3.95 4.53
+13.76 3.77 3.43
+0 0
+
+addPivot 
+a3aileronR
+-5.8115 -21.0563 6.2263
+15.1478 3.82192 3.98572
+1.0
+nomod:0 nomod:0 nomod:0
+
+// Right Outer Flap
+addControlSurface 
+6.36 3.14 1.76
+13.39 3.62 4.08
+13.39 3.63 3.62
+6.37 3.15 1.04
+0.3 30
+
+addPivot 
+a3flapR2
+-1.3 -19.9 3.81
+13.38 3.66 3.64
+1.0
+nomod:0 nomod:0 nomod:0
+
+//RightFlapSB01
+addPivot 
+RightFlapSB01
+0.0 0.0 2.55
+8.28 3.24 2.25
+1.25
+nomod:0 nomod:0 offset:-0.1
+
+//RightFlapSB02
+addPivot 
+RightFlapSB02
+0.07 0.5 -2.8
+12.2 3.5 3.5
+0.9
+nomod:0 nomod:0 nomod:-0.1
+
+// Right Outer Spoiler
+addControlSurface 
+6.85 3.28 1.39
+13.06 3.67 3.63
+13.26 3.78 3.10
+7.08 3.4 0.78
+0 0
+
+addPivot 
+a3braker02
+11.5 -21 8
+13.28 3.8 3.1
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+6.33 3.15 1.77
+17.1 3.96 5.3
+17.16 4.06 3.79 
+6.40 3.34 -1.93
+15
+0.5 0.75
+
+endSection
+
+beginSection
+
+// Right Inner Flap
+addControlSurface 
+2.24 2.78 1.76
+6.33 3.13 1.76
+6.33 3.15 1.26
+2.24 2.82 1.21
+0.35 30
+
+addPivot 
+a3flapR1
+11.34 0.71 3.55
+6.34 3.23 1.24
+1.0
+nomod:0 nomod:0 nomod:0
+
+//RightInnerFlapSB01
+addPivot 
+RightInnerFlapSB01
+0.43 6.53 -3.76
+4.94 3.0 1.62
+1.25
+nomod:0 offset:-0.02 nomod:0
+
+//RightInnerFlapSB02
+addPivot 
+RightInnerFlapSB02
+0.41 8.08 -2.9
+5.82 3.07 1.41
+1.0
+nomod:0 nomod:0 nomod:0
+
+// Right Inner Spoiler
+addControlSurface 
+4.12 3.05 1.2
+6.32 3.23 1.2
+6.32 3.34 0.5
+4.12 3.17 0.5
+0 0
+
+addPivot 
+a3braker01
+9.51 0.76 4.54 
+6.31 3.38 0.49
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+0 2.6 1.77
+6.33 3.15 1.77
+6.40 3.34 -1.93
+0 3 -4.97
+10
+0.5 0.75
+
+endSection
+endAeroFG
+
+;--------------------------------------------------------------------------
+beginAeroFG
+left_tail_wing:15
+
+addPivot
+LeftTailWing
+0.92100 11.2276 -5.98682
+-1.04 4.83 17.0
+1.0
+nomod:0 nomod:0 nomod:0
+
+beginSection
+
+addControlSurface 
+-6.42 5.23 20.0
+-0.74 4.67 18.76
+-0.95 4.75 17.63
+-6.42 5.23 19.53
+0 0
+
+addPivot 
+a3elevl01
+1.43108 18.1063 -4.59585
+-3.75125 5.03733 18.6363
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+-6.42 5.24 20.02
+-0.74 4.64 18.79
+-1.3 4.72 14.93
+-6.41 5.22 18.85
+6
+0.5 0.75
+
+endSection
+endAeroFG
+
+;--------------------------------------------------------------------------
+
+beginAeroFG
+right_tail_wing:15
+
+addPivot
+RightTailWing
+-0.92100 -11.2276 5.98682
+1.04 4.83 17.0
+1.0
+nomod:0 nomod:0 nomod:0
+
+beginSection
+
+addControlSurface 
+0.74 4.67 18.76
+6.42 5.23 20.0
+6.42 5.23 19.53
+0.95 4.75 17.63
+0 0
+
+addPivot
+a3elevr01
+-1.43108 -18.1063 4.59585
+3.75125 5.03733 18.6363
+1.0
+nomod:0 nomod:0 nomod:0
+
+setSection
+0.74 4.64 18.79
+6.42 5.24 20.02
+6.41 5.22 18.85
+1.3 4.72 14.93
+6
+0.5 0.75
+
+endSection
+endAeroFG
