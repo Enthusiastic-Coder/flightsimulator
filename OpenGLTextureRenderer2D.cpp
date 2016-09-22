@@ -15,7 +15,7 @@ void OpenGLTextureRenderer2D::setColorModulator(Vector4F colorModulator)
     _colorModulator = colorModulator;
 }
 
-void OpenGLTextureRenderer2D::setScreenDims(int x, int y, int width, int height)
+void OpenGLTextureRenderer2D::onSize(int x, int y, int width, int height)
 {
     _X = x;
     _Y = y;

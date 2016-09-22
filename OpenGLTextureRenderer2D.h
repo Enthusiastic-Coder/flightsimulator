@@ -11,7 +11,7 @@ class OpenGLTextureRenderer2D
 public:
     OpenGLTextureRenderer2D(Renderer* r);
     void setColorModulator(Vector4F colorModulator);
-    void setScreenDims( int x, int y, int width, int height);
+    void onSize( int x, int y, int width, int height);
 
     int width() const;
     int height() const;

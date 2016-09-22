@@ -71,7 +71,7 @@ void SDLMainWindow::onSize(int width, int height)
 {
     SDLGameLoop::onSize(width, height);
     _fontRenderer.onSize(width, height);
-    _textureRenderer.setScreenDims(0,0, width, height);
+    _textureRenderer.onSize(0,0, width, height);
 
     _oglFont.OnSize(width,height);
     for(int i=0; i < 3; ++i)
@@ -1452,7 +1452,7 @@ void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, int pos)
     _renderer->progId().sendUniform("texID", 0);
 
     OpenGLTextureRenderer2D r(_renderer);
-    r.setScreenDims(-100, -100, 200, 200);
+    r.onSize(-100, -100, 200, 200);
     r.beginRender();
     texID.bind();
     r.render(-100 + size*pos, -100, size, size);
