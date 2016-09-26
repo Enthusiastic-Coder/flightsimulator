@@ -10,6 +10,7 @@ include(sdk/qMake/qImportNonQtApp.pri)
 include(sdk/qMake/qMakeDestination.pri)
 include(sdl2_image/sdl2image.pri)
 include(sdl2/sdl2.pri)
+include(openal/openal.pri)
 
 INCLUDEPATH += sdk/include
 include(FlightSimulator.pri)

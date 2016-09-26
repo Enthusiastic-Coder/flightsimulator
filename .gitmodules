@@ -7,3 +7,6 @@
 [submodule "sdl2_image"]
 	path = sdl2_image
 	url = git@bitbucket.org:MOJ_JEB/sdl2_image.git
+[submodule "openal"]
+	path = openal
+	url = git@bitbucket.org:MOJ_JEB/openal.git
