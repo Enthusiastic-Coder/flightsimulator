@@ -1,0 +1,9 @@
+[submodule "sdk"]
+	path = sdk
+	url = git@bitbucket.org:MOJ_JEB/sdk.git
+[submodule "sdl2"]
+	path = sdl2
+	url = git@bitbucket.org:MOJ_JEB/sdl2.git
+[submodule "sdl2_image"]
+	path = sdl2_image
+	url = git@bitbucket.org:MOJ_JEB/sdl2_image.git

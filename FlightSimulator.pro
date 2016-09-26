@@ -4,20 +4,21 @@
 #
 #-------------------------------------------------
 
-#QT       += core gui
-
 TARGET = FlightSimulator
 
-PROJECT = $(SDK_PROJECT)
+include(sdk/qMake/qImportNonQtApp.pri)
+include(sdk/qMake/qMakeDestination.pri)
+include(sdl2_image/sdl2image.pri)
+include(sdl2/sdl2.pri)
 
-include($$PROJECT/qMake/qImportNonQtApp.pri)
-include($$PROJECT/qMake/qMakeDestination.pri)
-include($$PROJECT/qMake/qImportSDL2.pri)
-include($$PROJECT/qMake/qImportSDL2Image.pri)
-include($$PROJECT/qMake/qImportGlee.pri)
+INCLUDEPATH += sdk/include
 include(FlightSimulator.pri)
 
-INCLUDEPATH += $$PROJECT/include
+win32 {
+    SOURCES += sdk/include/GLee.c
+    HEADERS += sdk/include/GLee.h
+}
+
 
 CONFIG += INSTALL_TERRAIN
 CONFIG += INSTALL_MODELS
@@ -27,12 +28,12 @@ SOURCES += sdlmain.cpp \
            SDLGameLoop.cpp \
            SDLMainWindow.cpp \
            TextureLoader.cpp \
-    SDLSurfaceHelper.cpp
+            SDLSurfaceHelper.cpp
 
 HEADERS += SDLGameLoop.h \
            SDLMainWindow.h \
            TextureLoader.h \
-    SDLSurfaceHelper.h
+            SDLSurfaceHelper.h
 
 win32 {
     LIBS +=-L"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win32"
