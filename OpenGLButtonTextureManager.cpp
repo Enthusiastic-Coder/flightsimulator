@@ -30,9 +30,9 @@ void OpenGLButtonTextureManager::setButtonVisibility(OpenGLButtonTexture *button
 
 void OpenGLButtonTextureManager::handleMouseMove(MathSupport<int>::point pt)
 {
-    if(_buttonHovered !=0 && _buttonHovered != _buttonMouseDown )
+    if(_buttonHovered !=0 )
     {
-        _buttonHovered->setButtonUp();
+        _buttonHovered->setButtonHover(false);
         _buttonHovered = 0;
     }
 
@@ -41,8 +41,7 @@ void OpenGLButtonTextureManager::handleMouseMove(MathSupport<int>::point pt)
         if( it->first->isInside(pt))
         {
             _buttonHovered = it->first;
-            if(_buttonHovered != _buttonMouseDown )
-                _buttonHovered->setButtonHover();
+            _buttonHovered->setButtonHover(true);
             return;
         }
 }

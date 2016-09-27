@@ -10,10 +10,8 @@ class OpenGLButtonTexture
 public:
     enum ButtonStatus
     {
-        Button_Disabled,
-        Button_Down,
-        Button_Up,
-        Button_Hover
+        Button_Disabled = 0x1,
+        Button_Hover = 0x2
     };
 
     bool load(std::string filename);
@@ -21,12 +19,15 @@ public:
     bool isButtonDown() const;
     bool isButtonDisabled() const;
     bool isButtonHover() const;
+
     void setButtonUp();
     void setButtonDown();
-    void setButtonDisabled();
-    void setButtonHover();
+    void setButtonDisabled(bool bDisable);
+    void setButtonHover(bool bHover);
+
     void setPosition( MathSupport<int>::point position);
     void setSize( MathSupport<int>::size size);
+
     void render(OpenGLTextureRenderer2D* r);
     bool isInside(MathSupport<int>::point pt);
 
@@ -39,7 +40,8 @@ private:
     OpenGLTexture2D _texture;
     MathSupport<int>::point _position;
     MathSupport<int>::size _size;
-    ButtonStatus _buttonStatus;
+    ButtonStatus _buttonStatus = {};
+    bool _bButtonDown = false;
 };
 
 #endif // OPENGLBUTTONTEXTURE_H

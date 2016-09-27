@@ -10,42 +10,46 @@ bool OpenGLButtonTexture::load(std::string filename)
 
 bool OpenGLButtonTexture::isButtonUp() const
 {
-    return _buttonStatus == Button_Up;
+    return !_bButtonDown;
 }
 
 bool OpenGLButtonTexture::isButtonDown() const
 {
-    return _buttonStatus == Button_Down;
+    return _bButtonDown;
 }
 
 bool OpenGLButtonTexture::isButtonDisabled() const
 {
-    return _buttonStatus == Button_Disabled;
+    return _buttonStatus & Button_Disabled;
 }
 
 bool OpenGLButtonTexture::isButtonHover() const
 {
-    return _buttonStatus == Button_Hover;
+    return _buttonStatus & Button_Hover;
 }
 
 void OpenGLButtonTexture::setButtonUp()
 {
-    _buttonStatus = Button_Up;
+    _bButtonDown = false;
 }
 
 void OpenGLButtonTexture::setButtonDown()
 {
-    _buttonStatus = Button_Down;
+    _bButtonDown = true;
 }
 
-void OpenGLButtonTexture::setButtonDisabled()
+void OpenGLButtonTexture::setButtonDisabled(bool bDisable)
 {
-    _buttonStatus = Button_Disabled;
+    bDisable ?
+    (int&)_buttonStatus |= Button_Disabled:
+            (int&)_buttonStatus &= ~Button_Disabled;
 }
 
-void OpenGLButtonTexture::setButtonHover()
+void OpenGLButtonTexture::setButtonHover(bool bHover)
 {
-    _buttonStatus = Button_Hover;
+    bHover ?
+    (int&)_buttonStatus |= Button_Hover:
+            (int&)_buttonStatus &= ~Button_Hover;
 }
 
 void OpenGLButtonTexture::setPosition(MathSupport<int>::point position)
