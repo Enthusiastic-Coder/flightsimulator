@@ -47,25 +47,25 @@ deploy_images.files += ./images/*
 deploy_images.path  = $$DEPLOY_DIR/images
 INSTALLS += deploy_images
 
-#deploy_Models.files += ./Models/*
-#deploy_Models.path  = $$DEPLOY_DIR/Models
-#INSTALLS += deploy_Models
+deploy_Models.files += ./Models/*
+deploy_Models.path  = $$DEPLOY_DIR/Models
+INSTALLS += deploy_Models
 
-#deploy_RigidBodies.files += ./RigidBodies/*
-#deploy_RigidBodies.path  = $$DEPLOY_DIR/RigidBodies
-#INSTALLS += deploy_RigidBodies
+deploy_RigidBodies.files += ./RigidBodies/*
+deploy_RigidBodies.path  = $$DEPLOY_DIR/RigidBodies
+INSTALLS += deploy_RigidBodies
 
 deploy_shaders.files += ./shaders/*
 deploy_shaders.path  = $$DEPLOY_DIR/shaders
 INSTALLS += deploy_shaders
 
-#deploy_Sounds.files += ./Sounds/*
-#deploy_Sounds.path  = $$DEPLOY_DIR/Sounds
-#INSTALLS += deploy_Sounds
+deploy_Sounds.files += ./Sounds/*
+deploy_Sounds.path  = $$DEPLOY_DIR/Sounds
+INSTALLS += deploy_Sounds
 
-#deploy_Terrain.files += ./Terrain/*
-#deploy_Terrain.path  = $$DEPLOY_DIR/Terrain
-#INSTALLS += deploy_Terrain
+deploy_Terrain.files += ./Terrain/*
+deploy_Terrain.path  = $$DEPLOY_DIR/Terrain
+INSTALLS += deploy_Terrain
 
 deploy_Textures.files += ./Textures/*
 deploy_Textures.path  = $$DEPLOY_DIR/Textures
