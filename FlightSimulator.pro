@@ -37,10 +37,7 @@ HEADERS += SDLGameLoop.h \
             SDLSurfaceHelper.h
 
 win32 {
-    LIBS +=-L"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win32"
-    INCLUDEPATH += "C:/Program Files (x86)/OpenAL 1.1 SDK/include"
-
-    LIBS += -lGdi32 -lopenal32
+    LIBS += -lGdi32
 }
 
 deploy_images.files += ./images/*
