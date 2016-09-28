@@ -28,6 +28,11 @@ bool OpenGLButtonTexture::isButtonHover() const
     return _buttonStatus & Button_Hover;
 }
 
+void OpenGLButtonTexture::setColor(Vector4F color)
+{
+    _color = color;
+}
+
 void OpenGLButtonTexture::setButtonUp()
 {
     _bButtonDown = false;
@@ -69,7 +74,7 @@ void OpenGLButtonTexture::render(OpenGLTextureRenderer2D *r)
     else if( isButtonHover())
         r->setColorModulator(Vector4F(0.8f,0.8f,0.8f,1.0f));
     else
-        r->setColorModulator(Vector4F(1.0f,1.0f,1.0f,1.0f));
+        r->setColorModulator(_color);
 
     MathSupport<int>::point off = {0,0};
 

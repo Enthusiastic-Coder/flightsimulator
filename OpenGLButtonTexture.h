@@ -20,6 +20,7 @@ public:
     bool isButtonDisabled() const;
     bool isButtonHover() const;
 
+    void setColor(Vector4F color);
     void setButtonUp();
     void setButtonDown();
     void setButtonDisabled(bool bDisable);
@@ -42,6 +43,7 @@ private:
     MathSupport<int>::size _size;
     ButtonStatus _buttonStatus = {};
     bool _bButtonDown = false;
+    Vector4F _color = Vector4F(1,1,1,1);
 };
 
 #endif // OPENGLBUTTONTEXTURE_H
