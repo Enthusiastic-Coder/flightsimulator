@@ -64,9 +64,6 @@ void OpenGLButtonTexture::setSize(MathSupport<int>::size size)
 
 void OpenGLButtonTexture::render(OpenGLTextureRenderer2D *r)
 {
-    if( texture()== 0)
-        return;
-
     if( isButtonDisabled())
         r->setColorModulator(Vector4F(1.0f,1.0f,1.0f,0.45f));
     else if( isButtonHover())
@@ -79,9 +76,11 @@ void OpenGLButtonTexture::render(OpenGLTextureRenderer2D *r)
     if( isButtonDown())
         off = {5, 5};
 
-    texture()->bind();
+    _texture.bind();
+
     MathSupport<int>::point pt = position();
     MathSupport<int>::size sz = size();
+
     r->render( pt.x + off.x, pt.y + off.x, sz.width - off.x, sz.height - off.y);
 }
 
