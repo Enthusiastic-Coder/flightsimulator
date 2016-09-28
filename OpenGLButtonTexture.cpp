@@ -28,6 +28,16 @@ bool OpenGLButtonTexture::isButtonHover() const
     return _buttonStatus & Button_Hover;
 }
 
+void OpenGLButtonTexture::setHAlignment(OpenGLButtonTexture::HorizAlignment value)
+{
+    _hAlignment = value;
+}
+
+void OpenGLButtonTexture::setVAlignment(OpenGLButtonTexture::VertAlignment value)
+{
+    _vAlignment = value;
+}
+
 void OpenGLButtonTexture::setColor(Vector4F color)
 {
     _color = color;

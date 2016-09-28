@@ -14,12 +14,28 @@ public:
         Button_Hover = 0x2
     };
 
+    enum HorizAlignment
+    {
+        HAlign_Left,
+        HAlign_Middle,
+        HAlign_Right
+    };
+
+    enum VertAlignment
+    {
+        VAlign_Top,
+        VAlign_Middle,
+        VAlign_Bottom
+    };
+
     bool load(std::string filename);
     bool isButtonUp() const;
     bool isButtonDown() const;
     bool isButtonDisabled() const;
     bool isButtonHover() const;
 
+    void setHAlignment(HorizAlignment value);
+    void setVAlignment(VertAlignment value);
     void setColor(Vector4F color);
     void setButtonUp();
     void setButtonDown();
@@ -44,6 +60,8 @@ private:
     ButtonStatus _buttonStatus = {};
     bool _bButtonDown = false;
     Vector4F _color = Vector4F(1,1,1,1);
+    HorizAlignment _hAlignment = {};
+    VertAlignment _vAlignment = {};
 };
 
 #endif // OPENGLBUTTONTEXTURE_H
