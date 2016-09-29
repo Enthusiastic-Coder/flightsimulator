@@ -22,9 +22,9 @@ public:
         Orient_Vertical
     };
 
-    void setPosition( MathSupport<int>::point pos);
-    void setLength(int length);
-    void setWidth(int width);
+    void setScreenSize( MathSupport<int>::size sz);
+    void setPosition( float U, float V);
+    void setSize(float dU, float dV);
     void setOrientation(Orientation o);
     void setHAlignment(Alignment alignment);
     void setVAlignment(Alignment alignment);
@@ -37,14 +37,13 @@ protected:
     void updateLayout();
 
 private:
-    MathSupport<int>::point _position;
-    MathSupport<int>::size _size;
+    MathSupport<int>::size _screensize;
+    float _U, _V;
+    float _dU, _dV;
     Vector4F _color = Vector4F(1,1,1,1);
     Orientation _orientation = {};
     Alignment _hAlignment = {};
     Alignment _vAlignment = {};
-    int _length = 1;
-    int _width = 1;
     float _currentValue = 0;
     float _value = 0;
     float _min = 0;

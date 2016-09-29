@@ -1,21 +1,22 @@
 #include "OpenGLSliderControl.h"
 #include <OpenGLRenderer.h>
 
-void OpenGLSliderControl::setPosition(MathSupport<int>::point pos)
+void OpenGLSliderControl::setScreenSize(MathSupport<int>::size sz)
 {
-    _position = pos;
+    _screensize = sz;
+}
+
+void OpenGLSliderControl::setPosition(float U, float V)
+{
+    _U = U;
+    _V = V;
     updateLayout();
 }
 
-void OpenGLSliderControl::setLength(int length)
+void OpenGLSliderControl::setSize(float dU, float dV)
 {
-    _length = length;
-    updateLayout();
-}
-
-void OpenGLSliderControl::setWidth(int width)
-{
-    _width = width;
+    _dU = dU;
+    _dV = dV;
     updateLayout();
 }
 
