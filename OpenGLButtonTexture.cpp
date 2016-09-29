@@ -28,12 +28,12 @@ bool OpenGLButtonTexture::isButtonHover() const
     return _buttonStatus & Button_Hover;
 }
 
-void OpenGLButtonTexture::setHAlignment(OpenGLButtonTexture::HorizAlignment value)
+void OpenGLButtonTexture::setHAlignment(Alignment value)
 {
     _hAlignment = value;
 }
 
-void OpenGLButtonTexture::setVAlignment(OpenGLButtonTexture::VertAlignment value)
+void OpenGLButtonTexture::setVAlignment(Alignment value)
 {
     _vAlignment = value;
 }
@@ -95,6 +95,30 @@ void OpenGLButtonTexture::render(OpenGLTextureRenderer2D *r)
 
     MathSupport<int>::point pt = position();
     MathSupport<int>::size sz = size();
+
+    switch(_hAlignment)
+    {
+    case Align_Low:
+        break;
+    case Align_Middle:
+        pt.x -= sz.width/2;
+        break;
+    case Align_High:
+        pt.x -= sz.width;
+        break;
+    }
+
+    switch(_vAlignment)
+    {
+    case Align_Low:
+        break;
+    case Align_Middle:
+        pt.y -= sz.height/2;
+        break;
+    case Align_High:
+        pt.y -= sz.height;
+        break;
+    }
 
     r->render( pt.x + off.x, pt.y + off.x, sz.width - off.x, sz.height - off.y);
 }

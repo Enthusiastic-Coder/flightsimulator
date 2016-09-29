@@ -423,7 +423,9 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         //OnInitSound();
         _buttonTestTexture.load("images/ideal_colors.png");
         _buttonTextureManager.setButtonAnchor(&_buttonTestTexture, OpenGLButtonTextureManager::Anchor_Top);
-        _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.4f, 0.1f, 0.1f);
+        _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.5f, 0.1f, 0.1f);
+        _buttonTestTexture.setHAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonTestTexture.setVAlignment(OpenGLButtonTexture::Align_Low);
         //_buttonTextureManager.setButtonToggle(&_buttonTestTexture, true);
 
     }
