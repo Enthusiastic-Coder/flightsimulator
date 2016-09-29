@@ -424,7 +424,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _buttonTestTexture.load("images/ideal_colors.png");
         _buttonTextureManager.setButtonAnchor(&_buttonTestTexture, OpenGLButtonTextureManager::Anchor_Top);
         _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.4f, 0.1f, 0.1f);
-
+        //_buttonTextureManager.setButtonToggle(&_buttonTestTexture, true);
 
     }
     catch (std::string str)

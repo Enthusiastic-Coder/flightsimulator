@@ -22,6 +22,11 @@ void OpenGLButtonTextureManager::setButtonPos(OpenGLButtonTexture *button, float
     prepareLayout(button);
 }
 
+void OpenGLButtonTextureManager::setButtonToggle(OpenGLButtonTexture *button, bool bToggle)
+{
+    _buttonStates[button].bToggle = bToggle;
+}
+
 void OpenGLButtonTextureManager::setButtonVisibility(OpenGLButtonTexture *button, bool bShow)
 {
     _buttonStates[button].bVisible = bShow;
@@ -53,6 +58,7 @@ void OpenGLButtonTextureManager::handleMouseDown(MathSupport<int>::point pt)
         if( it->first->isInside(pt))
         {
             _buttonMouseDown = it->first;
+            _bButtonMouseWasDown = _buttonMouseDown->isButtonDown();
             _buttonMouseDown->setButtonDown();
             return;
         }
@@ -70,8 +76,15 @@ void OpenGLButtonTextureManager::handleMouseUp(MathSupport<int>::point pt)
 
     if( _buttonMouseDown != 0)
     {
-        _buttonMouseDown->setButtonUp();
-        _buttonMouseDown = 0;
+        buttonState& bs = _buttonStates[_buttonMouseDown];
+
+        if(!bs.bToggle || bs.bToggle && _bButtonMouseWasDown)
+        {
+            _buttonMouseDown->setButtonUp();
+            _buttonMouseDown = 0;
+        }
+        else
+            _buttonMouseDown->setButtonDown();
     }
 }
 
