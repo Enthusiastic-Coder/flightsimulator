@@ -430,7 +430,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         //_buttonTextureManager.setButtonToggle(&_buttonTestTexture, true);
 
         _testSliderControl.setPosition(0.8, 0.2);
-        _testSliderControl.setSize(0.05, 0.8);
+        _testSliderControl.setSize(0.01, 0.5);
         _testSliderControl.setOrientation(OpenGLSliderControl::Orient_Vertical);
 
     }
@@ -1193,7 +1193,7 @@ void SDLMainWindow::onRender()
     _renderer->progId().sendUniform("texID", 0);
     _buttonTextureManager.render();
 
-    _renderer->useProgram(_simpleShaderProgram);
+    _renderer->useProgram(_simplePrimitiveShaderProgram);
    _testSliderControl.render(_renderer);
 
    OpenGLShaderProgram::useDefault();

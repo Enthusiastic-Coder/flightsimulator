@@ -154,16 +154,24 @@ void OpenGLSliderControl::render(Renderer *r)
 
     float vertices[] = {
         _position.x, _position.y, 0.0f,
-        _position.x + _size.width, 0.0f ,0.0f,
+        _position.x + _size.width, _position.y, 0.0f,
         _position.x + _size.width, _position.y + _size.height, 0.0f,
         _position.x, _position.y + _size.height, 0.0f
     };
 
+    float colors[] = {
+        1,1,1, 1,
+        1,1,1, 1,
+        1,1,1, 1,
+        1,1,1, 1,
+    };
+
     r->setUseIndex(false);
     r->bindVertex(Renderer::Vertex, 3, vertices);
+    r->bindVertex(Renderer::Color, 4, colors);
 
     r->setVertexCountOffset(indicesCount(vertices,3));
-    r->setPrimitiveType(GL_TRIANGLE_FAN);
+    r->setPrimitiveType(GL_LINE_LOOP);
 
     r->Render();
     r->unBindBuffers();
