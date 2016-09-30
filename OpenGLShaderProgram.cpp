@@ -92,7 +92,7 @@ bool OpenGLShaderProgram::loadFiles(std::string vertexFilename, std::string frag
 		_error.append(errBuffer);
 	}
 	
-	return _error.length() == 0;
+    return link_ok;
 }
 
 void OpenGLShaderProgram::sendUniform(std::string name, int value)
