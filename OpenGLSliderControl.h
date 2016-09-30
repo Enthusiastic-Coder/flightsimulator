@@ -22,7 +22,7 @@ public:
         Orient_Vertical
     };
 
-    void onSize( MathSupport<int>::size sz);
+    void onSize( int cx, int cy);
     void setPosition( float U, float V);
     void setSize(float dU, float dV);
     void setOrientation(Orientation o);
@@ -47,7 +47,7 @@ protected:
     MathSupport<int>::point toScrn(float U, float V);
 
 private:
-    MathSupport<int>::size _screensize;
+    int _cx, _cy;
     float _U, _V;
     float _dU, _dV;
     Orientation _orientation = {};

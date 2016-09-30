@@ -72,7 +72,7 @@ void SDLMainWindow::onSize(int width, int height)
     SDLGameLoop::onSize(width, height);
     _fontRenderer.onSize(width, height);
     _textureRenderer.onSize(0,0, width, height);
-    _testSliderControl.onSize({width, height});
+    _testSliderControl.onSize(width, height);
 
     _oglFont.OnSize(width,height);
     for(int i=0; i < 3; ++i)

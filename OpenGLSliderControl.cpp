@@ -1,9 +1,13 @@
+#include "stdafx.h"
 #include "OpenGLSliderControl.h"
 #include <OpenGLRenderer.h>
+#include <OpenGLPipeline.h>
 
-void OpenGLSliderControl::onSize(MathSupport<int>::size sz)
+
+void OpenGLSliderControl::onSize(int cx, int cy)
 {
-    _screensize = sz;
+    _cx = cx;
+    _cy = cy;
 }
 
 void OpenGLSliderControl::setPosition(float U, float V)
@@ -125,7 +129,7 @@ void OpenGLSliderControl::updateLayout()
 
 MathSupport<int>::point OpenGLSliderControl::toScrn(float U, float V)
 {
-    MathSupport<float>::point fPt = {_screensize.width*U, _screensize.height * V};
+    MathSupport<float>::point fPt = {_cx * U, _cy * V};
     MathSupport<int>::point pt;
     pt.x = fPt.x;
     pt.y = fPt.y;
@@ -137,7 +141,33 @@ void OpenGLSliderControl::render(Renderer *r)
     // draw outline rectangle of slider
     // draw solid transparent _color rectangle showing current value
     // draw outline rectangle showing final value
+    OpenGLPipeline& pipeline = OpenGLPipeline::Get(r->camID);
+    pipeline.GetModel().Push();
+    pipeline.GetProjection().LoadIdentity();
+    pipeline.GetProjection().SetOrthographic(0, _cx, _cy, 0, -1, 1);
+    pipeline.GetModel().LoadIdentity();
+    pipeline.GetView().LoadIdentity();
 
+
+    pipeline.bindMatrices(r->progId());
+    r->progId().sendUniform("colorModulator", _color);
+
+    float vertices[] = {
+        _position.x, _position.y, 0.0f,
+        _position.x + _size.width, 0.0f ,0.0f,
+        _position.x + _size.width, _position.y + _size.height, 0.0f,
+        _position.x, _position.y + _size.height, 0.0f
+    };
+
+    r->setUseIndex(false);
+    r->bindVertex(Renderer::Vertex, 3, vertices);
+
+    r->setVertexCountOffset(indicesCount(vertices,3));
+    r->setPrimitiveType(GL_TRIANGLE_FAN);
+
+    r->Render();
+    r->unBindBuffers();
+    pipeline.GetModel().Pop();
 }
 
 
