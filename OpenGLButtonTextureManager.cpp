@@ -11,7 +11,7 @@ OpenGLButtonTextureManager::OpenGLButtonTextureManager(OpenGLTextureRenderer2D *
 void OpenGLButtonTextureManager::setButtonAnchor(OpenGLButtonTexture *button, OpenGLButtonTextureManager::AnchorState anchorState)
 {
     _buttonStates[button].anchorState = anchorState;
-    prepareLayout(button);
+    onSizeLayout(button);
 }
 
 void OpenGLButtonTextureManager::setButtonPos(OpenGLButtonTexture *button, float offset, float cx, float cy)
@@ -19,7 +19,7 @@ void OpenGLButtonTextureManager::setButtonPos(OpenGLButtonTexture *button, float
     _buttonStates[button].offset = offset;
     _buttonStates[button].dims.width = cx;
     _buttonStates[button].dims.height = cy;
-    prepareLayout(button);
+    onSizeLayout(button);
 }
 
 void OpenGLButtonTextureManager::setButtonToggle(OpenGLButtonTexture *button, bool bToggle)
@@ -30,7 +30,7 @@ void OpenGLButtonTextureManager::setButtonToggle(OpenGLButtonTexture *button, bo
 void OpenGLButtonTextureManager::setButtonVisibility(OpenGLButtonTexture *button, bool bShow)
 {
     _buttonStates[button].bVisible = bShow;
-    prepareLayout(button);
+    onSizeLayout(button);
 }
 
 void OpenGLButtonTextureManager::handleMouseMove(MathSupport<int>::point pt)
@@ -133,7 +133,7 @@ void OpenGLButtonTextureManager::render()
     _textureRenderer->endRender();
 }
 
-void OpenGLButtonTextureManager::prepareLayout(OpenGLButtonTexture *filteredButton)
+void OpenGLButtonTextureManager::onSizeLayout(OpenGLButtonTexture *filteredButton)
 {
     int screenWidth = _textureRenderer->width();
     int screenHeight = _textureRenderer->height();

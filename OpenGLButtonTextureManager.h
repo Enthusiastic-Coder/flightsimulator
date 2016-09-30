@@ -35,7 +35,7 @@ public:
 
     void update(float dt);
     void render();
-    void prepareLayout(OpenGLButtonTexture* filteredButton);
+    void onSizeLayout(OpenGLButtonTexture* filteredButton=0);
 
 private:
     struct buttonState
