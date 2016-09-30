@@ -47,6 +47,9 @@ public:
     MathSupport<int>::size size() const;
 
 private:
+    MathSupport<int>::point actualPosition() const;
+
+private:
     OpenGLTexture2D _texture;
     MathSupport<int>::point _position;
     MathSupport<int>::size _size;

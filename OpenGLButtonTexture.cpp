@@ -93,6 +93,44 @@ void OpenGLButtonTexture::render(OpenGLTextureRenderer2D *r)
 
     _texture.bind();
 
+    MathSupport<int>::point pt = actualPosition();
+    MathSupport<int>::size sz = size();
+
+    r->render( pt.x + off.x, pt.y + off.x, sz.width - off.x, sz.height - off.y);
+}
+
+bool OpenGLButtonTexture::isInside(MathSupport<int>::point pt)
+{
+    MathSupport<int>::point pos = actualPosition();
+    if( pt.x < pos.x )
+        return false;
+    if( pt.x > pos.x + _size.width)
+        return false;
+    if( pt.y < pos.y )
+        return false;
+    if( pt.y > pos.y + _size.height)
+        return false;
+
+    return true;
+}
+
+OpenGLTexture2D *OpenGLButtonTexture::texture()
+{
+    return &_texture;
+}
+
+MathSupport<int>::point OpenGLButtonTexture::position() const
+{
+    return _position;
+}
+
+MathSupport<int>::size OpenGLButtonTexture::size() const
+{
+    return _size;
+}
+
+MathSupport<int>::point OpenGLButtonTexture::actualPosition() const
+{
     MathSupport<int>::point pt = position();
     MathSupport<int>::size sz = size();
 
@@ -120,34 +158,5 @@ void OpenGLButtonTexture::render(OpenGLTextureRenderer2D *r)
         break;
     }
 
-    r->render( pt.x + off.x, pt.y + off.x, sz.width - off.x, sz.height - off.y);
-}
-
-bool OpenGLButtonTexture::isInside(MathSupport<int>::point pt)
-{
-    if( pt.x < _position.x )
-        return false;
-    if( pt.x > _position.x + _size.width)
-        return false;
-    if( pt.y < _position.y )
-        return false;
-    if( pt.y > _position.y + _size.height)
-        return false;
-
-    return true;
-}
-
-OpenGLTexture2D *OpenGLButtonTexture::texture()
-{
-    return &_texture;
-}
-
-MathSupport<int>::point OpenGLButtonTexture::position() const
-{
-    return _position;
-}
-
-MathSupport<int>::size OpenGLButtonTexture::size() const
-{
-    return _size;
+    return pt;
 }
