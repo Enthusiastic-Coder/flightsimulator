@@ -8,6 +8,7 @@ void OpenGLSliderControl::onSize(int cx, int cy)
 {
     _cx = cx;
     _cy = cy;
+    updateLayout();
 }
 
 void OpenGLSliderControl::setPosition(float U, float V)
