@@ -30,6 +30,10 @@ public:
     void setVAlignment(Alignment alignment);
     void setColor(Vector4F color);
 
+    void setMinValue(float value);
+    void setMaxValue(float value);
+    void setValue(float value);
+
     void update(float dt);
     void render(Renderer* r);
 
@@ -48,7 +52,7 @@ private:
     float _value = 0;
     float _min = 0;
     float _max = 10;
-    float _rateOfValue = 1.0;
+    float _rateOfValue = 1;
 };
 
 #endif

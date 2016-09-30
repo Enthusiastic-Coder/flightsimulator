@@ -43,6 +43,21 @@ void OpenGLSliderControl::setColor(Vector4F color)
     _color = color;
 }
 
+void OpenGLSliderControl::setMinValue(float value)
+{
+    _min = value;
+}
+
+void OpenGLSliderControl::setMaxValue(float value)
+{
+    _max = value;
+}
+
+void OpenGLSliderControl::setValue(float value)
+{
+    _value = value;
+}
+
 void OpenGLSliderControl::update(float dt)
 {
     // update current value to match value based on dt
@@ -51,6 +66,9 @@ void OpenGLSliderControl::update(float dt)
 
 void OpenGLSliderControl::render(Renderer *r)
 {
+    // draw outline rectangle of slider
+    // draw solid transparent _color rectangle showing current value
+    // draw outline rectangle showing final value
 
 }
 
