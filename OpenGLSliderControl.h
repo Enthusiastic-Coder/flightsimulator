@@ -34,18 +34,26 @@ public:
     void setMaxValue(float value);
     void setValue(float value);
 
+    void handleMouseDown( MathSupport<int>::point pt );
+    bool isInside(MathSupport<int>::point pt);
+
     void update(float dt);
     void render(Renderer* r);
 
+    float getValue();
+
 protected:
     void updateLayout();
+    MathSupport<int>::point toScrn(float U, float V);
 
 private:
     MathSupport<int>::size _screensize;
     float _U, _V;
     float _dU, _dV;
-    Vector4F _color = Vector4F(1,1,1,1);
     Orientation _orientation = {};
+    MathSupport<int>::point _position;
+    MathSupport<int>::size _size;
+    Vector4F _color = Vector4F(1,1,1,1);
     Alignment _hAlignment = {};
     Alignment _vAlignment = {};
     float _currentValue = 0;
