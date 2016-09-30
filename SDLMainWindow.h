@@ -23,6 +23,7 @@
 #include "OpenGLButtonTextureManager.h"
 #include "OpenGLTextureRenderer2D.h"
 #include "OpenGLButtonTexture.h"
+#include "OpenGLSliderControl.h"
 
 #define Time_log(msg)
 //#define Time_log(msg) \
@@ -170,6 +171,7 @@ private:
     OpenGLTextureRenderer2D _textureRenderer;
     OpenGLButtonTextureManager _buttonTextureManager;
     OpenGLButtonTexture _buttonTestTexture;
+    OpenGLSliderControl _testSliderControl;
 };
 
 

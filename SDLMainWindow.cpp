@@ -72,6 +72,7 @@ void SDLMainWindow::onSize(int width, int height)
     SDLGameLoop::onSize(width, height);
     _fontRenderer.onSize(width, height);
     _textureRenderer.onSize(0,0, width, height);
+    _testSliderControl.onSize({width, height});
 
     _oglFont.OnSize(width,height);
     for(int i=0; i < 3; ++i)
@@ -428,6 +429,10 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _buttonTestTexture.setVAlignment(OpenGLButtonTexture::Align_Low);
         //_buttonTextureManager.setButtonToggle(&_buttonTestTexture, true);
 
+        _testSliderControl.setPosition(0.8, 0.2);
+        _testSliderControl.setSize(0.05, 0.8);
+        _testSliderControl.setOrientation(OpenGLSliderControl::Orient_Vertical);
+
     }
     catch (std::string str)
     {
@@ -729,6 +734,7 @@ void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
 {
     _WorldSystem.rigidBodyToggleUsingMouse();
     _buttonTextureManager.handleMouseDown({e->x, e->y});
+    _testSliderControl.handleMouseDown({e->x, e->y});
 }
 
 void SDLMainWindow::onUpdate()
@@ -743,6 +749,7 @@ void SDLMainWindow::onUpdate()
 
 
     _buttonTextureManager.update(dt);
+    _testSliderControl.update(dt);
     _nUVOffset += g_WaterFlow * dt;
 
     if (GetFocus() == _hWnd)
@@ -1185,7 +1192,11 @@ void SDLMainWindow::onRender()
     _renderer->useProgram(_textureShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
     _buttonTextureManager.render();
-    OpenGLShaderProgram::useDefault();
+
+    _renderer->useProgram(_simpleShaderProgram);
+   _testSliderControl.render(_renderer);
+
+   OpenGLShaderProgram::useDefault();
     glDisable(GL_BLEND);
 }
 

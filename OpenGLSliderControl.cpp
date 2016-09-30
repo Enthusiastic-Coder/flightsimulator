@@ -1,7 +1,7 @@
 #include "OpenGLSliderControl.h"
 #include <OpenGLRenderer.h>
 
-void OpenGLSliderControl::setScreenSize(MathSupport<int>::size sz)
+void OpenGLSliderControl::onSize(MathSupport<int>::size sz)
 {
     _screensize = sz;
 }
