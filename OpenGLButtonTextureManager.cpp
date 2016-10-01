@@ -11,8 +11,7 @@ OpenGLButtonTextureManager::OpenGLButtonTextureManager(OpenGLTextureRenderer2D *
 void OpenGLButtonTextureManager::setButtonPos(OpenGLButtonTexture *button, float u, float v, float cx, float cy)
 {
     _buttonStates[button].offset = {u, v};
-    _buttonStates[button].dims.width = cx;
-    _buttonStates[button].dims.height = cy;
+    _buttonStates[button].dims = {cx, cy};
     onSizeLayout(button);
 }
 
@@ -163,9 +162,7 @@ void OpenGLButtonTextureManager::onSizeLayout(OpenGLButtonTexture *filteredButto
         if( !state.bVisible)
             continue;
 
-        state.position.x = state.offset.x * screenWidth;
-        state.position.y = state.offset.y * screenHeight;
-        state.size.width = state.dims.width * screenWidth;
-        state.size.height = state.dims.height * screenHeight;
+        state.position = { (int)(state.offset.x * screenWidth), (int)(state.offset.y * screenHeight)};
+        state.size = { (int)(state.dims.width * screenWidth), (int)(state.dims.height * screenHeight)};
     }
 }
