@@ -766,6 +766,14 @@ void SDLMainWindow::onUpdate()
         _framecount = 0;
 
     _buttonTextureManager.update(dt);
+
+    JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
+    if (focus)
+    {
+        if( focus->getState() == JSONRigidBody::STATE::PLAYBACK)
+            _powerSliderControl.setValue(100-focus->getPowerOutput(0));
+    }
+
     _powerSliderControl.update(dt);
     _nUVOffset += g_WaterFlow * dt;
 
