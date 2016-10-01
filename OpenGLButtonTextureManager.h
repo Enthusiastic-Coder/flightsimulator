@@ -11,18 +11,9 @@ class OpenGLButtonTexture;
 class OpenGLButtonTextureManager
 {
 public:
-    enum AnchorState
-    {
-        Anchor_Top,
-        Anchor_Right,
-        Anchor_Bottom,
-        Anchor_Left
-    };
-
     OpenGLButtonTextureManager(OpenGLTextureRenderer2D* r);
 
-    void setButtonAnchor(OpenGLButtonTexture* button, AnchorState anchorState);
-    void setButtonPos(OpenGLButtonTexture* button, float offset, float cx, float cy);
+    void setButtonPos(OpenGLButtonTexture* button, float u, float v, float cx, float cy);
     void setButtonToggle(OpenGLButtonTexture *button, bool bToggle);
     void setButtonVisibility( OpenGLButtonTexture* button, bool bShow);
 
@@ -44,8 +35,7 @@ private:
         MathSupport<int>::size size;
         bool bToggle = false;
         float pixelRate = 20.0f;
-        AnchorState anchorState = Anchor_Top;
-        float offset = 0.0f;
+        MathSupport<float>::point offset = {};
         MathSupport<float>::size dims = {0.1f, 0.1f};
         bool bVisible = true;
     };

@@ -171,6 +171,7 @@ private:
     OpenGLTextureRenderer2D _textureRenderer;
     OpenGLButtonTextureManager _buttonTextureManager;
     OpenGLButtonTexture _buttonTestTexture;
+    OpenGLButtonTexture _buttonJoystick;
     OpenGLSliderControl _powerSliderControl;
 };
 

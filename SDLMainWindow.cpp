@@ -80,7 +80,6 @@ void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
 
 void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
 {
-    _WorldSystem.rigidBodyToggleUsingMouse();
     _buttonTextureManager.handleMouseDown({e->x, e->y});
     if(_powerSliderControl.handleMouseDown({e->x, e->y}))
     {
@@ -456,11 +455,16 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 
         //OnInitSound();
         _buttonTestTexture.load("images/ideal_colors.png");
-        _buttonTextureManager.setButtonAnchor(&_buttonTestTexture, OpenGLButtonTextureManager::Anchor_Top);
-        _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.5f, 0.1f, 0.1f);
+        _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.5f, 0.0f, 0.1f, 0.1f);
         _buttonTestTexture.setHAlignment(OpenGLButtonTexture::Align_Middle);
         _buttonTestTexture.setVAlignment(OpenGLButtonTexture::Align_Low);
-        //_buttonTextureManager.setButtonToggle(&_buttonTestTexture, true);
+
+        _buttonJoystick.load("images/buttons/joystick.png");
+        _buttonTextureManager.setButtonToggle(&_buttonJoystick, true);
+        _buttonTextureManager.setButtonPos(&_buttonJoystick, 0.5f, 0.5f, 0.05f, 0.05f);
+        _buttonJoystick.setHAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonJoystick.setVAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonJoystick.setColor(Vector4F(1,1,1,0.25));
 
         _powerSliderControl.setRange(0, 100);
         _powerSliderControl.setTickValue(5);
@@ -800,6 +804,9 @@ void SDLMainWindow::onUpdate()
 
     if( _buttonTextureManager.buttonClicked(&_buttonTestTexture))
         _WorldSystem.nextView();
+
+    if( _buttonTextureManager.buttonClicked(&_buttonJoystick))
+        _WorldSystem.rigidBodyToggleUsingMouse();
 
     if( isRunning() )
     {
@@ -1157,15 +1164,6 @@ void SDLMainWindow::onRender()
     int dY= 0;
     float fFOV = 70.0f;
 
-    //        if(_view == Camera::CockpitForwards)
-    //        {
-    //            dY = _pfdInstrument.maxY() + 5;
-    //            cy -= dY;
-    //            fFOV = 90.0f;
-    //        }
-
-    //_camera.setView( _WorldSystem.getCameraView());
-
     pipeline.GetProjection().LoadIdentity();
     pipeline.GetProjection().SetPerspective(fFOV * cy / cx , float(cx) / cy, 0.1f, 1000000);
     glViewport(0,dY, cx, cy);
@@ -1187,7 +1185,6 @@ void SDLMainWindow::onRender()
     cy = rect.h;
     glViewport(0,0, cx, cy);
 
-    //if( _view == Camera::CockpitForwards )
     std::string desc = _WorldSystem.getCameraDescription();
     std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
     if( desc.find("cockpit") != std::string::npos)

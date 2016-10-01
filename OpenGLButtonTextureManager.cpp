@@ -8,15 +8,9 @@ OpenGLButtonTextureManager::OpenGLButtonTextureManager(OpenGLTextureRenderer2D *
 
 }
 
-void OpenGLButtonTextureManager::setButtonAnchor(OpenGLButtonTexture *button, OpenGLButtonTextureManager::AnchorState anchorState)
+void OpenGLButtonTextureManager::setButtonPos(OpenGLButtonTexture *button, float u, float v, float cx, float cy)
 {
-    _buttonStates[button].anchorState = anchorState;
-    onSizeLayout(button);
-}
-
-void OpenGLButtonTextureManager::setButtonPos(OpenGLButtonTexture *button, float offset, float cx, float cy)
-{
-    _buttonStates[button].offset = offset;
+    _buttonStates[button].offset = {u, v};
     _buttonStates[button].dims.width = cx;
     _buttonStates[button].dims.height = cy;
     onSizeLayout(button);
@@ -150,35 +144,9 @@ void OpenGLButtonTextureManager::onSizeLayout(OpenGLButtonTexture *filteredButto
         if( !state.bVisible)
             continue;
 
-        int xPos = 0;
-        int yPos = 0;
-        int width = state.dims.width * screenWidth;
-        int height = state.dims.height * screenHeight;
-
-        switch( state.anchorState)
-        {
-        case Anchor_Top:
-            xPos = state.offset * screenWidth;
-            yPos = 0;
-            break;
-        case Anchor_Right:
-            xPos = screenWidth - width;
-            yPos = state.offset * screenHeight;
-            break;
-        case Anchor_Bottom:
-            xPos = state.offset * screenWidth;
-            yPos = screenHeight - height;
-            break;
-        case Anchor_Left:
-            xPos = 0;
-            yPos = state.offset * screenHeight;
-            break;
-
-        }
-
-        state.position.x = xPos;
-        state.position.y = yPos;
-        state.size.width = width;
-        state.size.height = height;
+        state.position.x = state.offset.x * screenWidth;
+        state.position.y = state.offset.y * screenHeight;
+        state.size.width = state.dims.width * screenWidth;
+        state.size.height = state.dims.height * screenHeight;
     }
 }
