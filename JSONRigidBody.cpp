@@ -665,7 +665,12 @@ float JSONRigidBody::getPower(int engine)
 
 float JSONRigidBody::getPowerOutput(int engine)
 {
-	return 0.0f;
+    return 0.0f;
+}
+
+void JSONRigidBody::setPower(float value)
+{
+    value;
 }
 
 GPSLocation JSONRigidBody::getLastPosition()

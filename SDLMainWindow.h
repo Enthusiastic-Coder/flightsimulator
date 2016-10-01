@@ -23,6 +23,7 @@
 #include "OpenGLButtonTextureManager.h"
 #include "OpenGLTextureRenderer2D.h"
 #include "OpenGLButtonTexture.h"
+#include "OpenGLSliderControl.h"
 
 #define Time_log(msg)
 //#define Time_log(msg) \
@@ -63,7 +64,7 @@ protected:
     void RenderReflection();
     void RenderDepthTextures(int camID, OpenGLTexture2D &shadowMap, OpenGLTexture2D& colorMap, int offset, int size);
     void RenderMouseFlying(float cx, float cy);
-    void RenderDrivingPower(float cx, float cy);
+    void RenderDrivingPower();
     void RenderTransparentRectangle( int x, int y, int cx, int cy, float R, float G, float B, float A);
     void RenderFPS();
     void RenderInfo();
@@ -170,6 +171,7 @@ private:
     OpenGLTextureRenderer2D _textureRenderer;
     OpenGLButtonTextureManager _buttonTextureManager;
     OpenGLButtonTexture _buttonTestTexture;
+    OpenGLSliderControl _powerSliderControl;
 };
 
 

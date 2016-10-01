@@ -58,6 +58,38 @@ void SDLMainWindow::onKeyUp(SDL_KeyboardEvent* e)
 void SDLMainWindow::onMouseUp(SDL_MouseButtonEvent* e)
 {
     _buttonTextureManager.handleMouseUp({e->x, e->y});
+    _powerSliderControl.handleMouseUp({e->x, e->y});
+}
+
+void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
+{
+    _WorldSystem.onMouseWheel(e->y);
+    JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
+    if (focus)
+    {
+        focus->getPower(0);
+        _powerSliderControl.setValue(100-focus->getPowerOutput(0));
+    }
+}
+
+void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
+{
+    _buttonTextureManager.handleMouseMove({e->x, e->y});
+    _powerSliderControl.handleMouseMove({e->x, e->y});
+}
+
+void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
+{
+    _WorldSystem.rigidBodyToggleUsingMouse();
+    _buttonTextureManager.handleMouseDown({e->x, e->y});
+    if(_powerSliderControl.handleMouseDown({e->x, e->y}))
+    {
+        JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
+        if (focus)
+        {
+            focus->setPower(100-_powerSliderControl.getValue());
+        }
+    }
 }
 
 void SDLMainWindow::onFingerDown(SDL_TouchFingerEvent* e)
@@ -72,6 +104,8 @@ void SDLMainWindow::onSize(int width, int height)
     SDLGameLoop::onSize(width, height);
     _fontRenderer.onSize(width, height);
     _textureRenderer.onSize(0,0, width, height);
+    _powerSliderControl.onSize(width, height);
+    _buttonTextureManager.onSizeLayout();
 
     _oglFont.OnSize(width,height);
     for(int i=0; i < 3; ++i)
@@ -423,9 +457,17 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         //OnInitSound();
         _buttonTestTexture.load("images/ideal_colors.png");
         _buttonTextureManager.setButtonAnchor(&_buttonTestTexture, OpenGLButtonTextureManager::Anchor_Top);
-        _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.4f, 0.1f, 0.1f);
+        _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.5f, 0.1f, 0.1f);
+        _buttonTestTexture.setHAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonTestTexture.setVAlignment(OpenGLButtonTexture::Align_Low);
+        //_buttonTextureManager.setButtonToggle(&_buttonTestTexture, true);
 
-
+        _powerSliderControl.setRange(0, 100);
+        _powerSliderControl.setTickValue(5);
+        _powerSliderControl.setRateValue(50);
+        _powerSliderControl.setDimensions(OpenGLSliderControl::Orient_Vertical, 0.95, 0.5, 0.01, 0.8);
+        _powerSliderControl.setVAlignment(OpenGLSliderControl::Align_Middle);
+        _powerSliderControl.setHAlignment(OpenGLSliderControl::Align_High);
     }
     catch (std::string str)
     {
@@ -713,22 +755,6 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
     //		  _camera.toggleShift();
 }
 
-void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
-{
-    _WorldSystem.onMouseWheel(e->y);
-}
-
-void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
-{
-    _buttonTextureManager.handleMouseMove({e->x, e->y});
-}
-
-void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
-{
-    _WorldSystem.rigidBodyToggleUsingMouse();
-    _buttonTextureManager.handleMouseDown({e->x, e->y});
-}
-
 void SDLMainWindow::onUpdate()
 {
     float dt = frameTime();
@@ -739,8 +765,16 @@ void SDLMainWindow::onUpdate()
     if( _framecount >= FPS_RESOLUTION )
         _framecount = 0;
 
-
     _buttonTextureManager.update(dt);
+
+    JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
+    if (focus)
+    {
+        if( focus->getState() == JSONRigidBody::STATE::PLAYBACK)
+            _powerSliderControl.setValue(100-focus->getPowerOutput(0));
+    }
+
+    _powerSliderControl.update(dt);
     _nUVOffset += g_WaterFlow * dt;
 
     if (GetFocus() == _hWnd)
@@ -1162,7 +1196,7 @@ void SDLMainWindow::onRender()
     if (_WorldSystem.isUsingMouse())
         RenderMouseFlying(cx, cy);
 
-    RenderDrivingPower(cx, cy);
+    RenderDrivingPower();
 
     if (global_info)
         RenderInfo();
@@ -1178,118 +1212,21 @@ void SDLMainWindow::onRender()
     }
 
     pipeline.Pop();
+}
 
+void SDLMainWindow::RenderDrivingPower()
+{
     glEnable(GL_BLEND);
+
     _renderer->useProgram(_textureShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
     _buttonTextureManager.render();
+
+    _renderer->useProgram(_simplePrimitiveShaderProgram);
+    _powerSliderControl.render(_renderer);
+
     OpenGLShaderProgram::useDefault();
     glDisable(GL_BLEND);
-}
-
-void SDLMainWindow::RenderDrivingPower(float cx, float cy)
-{
-    glDisable(GL_DEPTH_TEST);
-
-    _renderer->dt = frameTime();
-    _renderer->camID = 0;
-    _renderer->useProgram( _simplePrimitiveShaderProgram);
-
-    OpenGLPipeline& pipeline = OpenGLPipeline::Get(_renderer->camID);
-
-    pipeline.Push();
-    pipeline.GetProjection().LoadIdentity();
-    pipeline.GetProjection().SetOrthographic(0, cx, cy, 0, -1, 1);
-    pipeline.GetModel().LoadIdentity();
-    pipeline.GetView().LoadIdentity();
-
-    pipeline.bindMatrices(_renderer->progId());
-
-    {
-        float vertices[] = {
-            cx-50, 50, 0,
-            cx-60, 50, 0,
-            cx-60, cy - 50, 0,
-            cx-60, cy - 50, 0
-        };
-
-        float colors[] = {
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-        };
-
-        _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-        _renderer->bindVertex(Renderer::Color, 4, colors);
-        _renderer->setPrimitiveType(GL_LINE_LOOP);
-        _renderer->setUseIndex(false);
-        _renderer->setVertexCountOffset(indicesCount(vertices,3));
-
-        _renderer->Render();
-
-        std::vector<Vector3F> v;
-        std::vector<Vector4F> c;
-        for( int i=0; i <= 100; i += 10)
-        {
-            float y = 50 + i / 100.0f*(cy - 100);
-            v.push_back(Vector3F(cx-60, y, 0));
-            v.push_back(Vector3F(cx-50, y, 0));
-
-            c.push_back(Vector4F(1,1,1,1));
-            c.push_back(Vector4F(1,1,1,1));
-        }
-
-        _renderer->setPrimitiveType(GL_LINES);
-        _renderer->setVertexCountOffset(v.size());
-
-        _renderer->bindVertex(Renderer::Vertex, 3, (float*) &v[0].x);
-        _renderer->bindVertex(Renderer::Color, 4,(float*) &c[0].x);
-
-        _renderer->Render();
-
-    }
-
-    {
-        float power = 0.0f;
-        float powerActual = 0.0f;
-        JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
-        if (focus)
-        {
-            focus->getPower(0);
-            powerActual = focus->getPowerOutput(0);
-        }
-        int powerY = cy-(std::max(power,powerActual) * (cy - 100)/100.0f + 50);
-
-        float vertices[] = {
-            cx - 50, powerY - 2, 0,
-            cx - 60, powerY - 2, 0,
-            cx - 60, powerY + 2, 0,
-            cx - 50, powerY + 2, 0
-        };
-
-        float colors[] = {
-            1, 1, 1, 1,
-            1, 1, 1, 1,
-            1, 1, 1, 1,
-            1, 1, 1, 1
-        };
-
-        _renderer->setPrimitiveType(GL_TRIANGLE_FAN);
-        _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-        _renderer->bindVertex(Renderer::Color, 4, colors);
-        _renderer->setVertexCountOffset(indicesCount(vertices,3));
-        _renderer->Render();
-
-    }
-
-    _renderer->unBindBuffers();
-
-    pipeline.Pop();
-
-    glEnable(GL_DEPTH_TEST);
-
-    OpenGLShaderProgram::useDefault();
 }
 
 void SDLMainWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, float R, float G, float B, float A)
@@ -1516,11 +1453,14 @@ void SDLMainWindow::RenderInfo()
 
             sprintf_s( text, _countof(text), "ModelPosition: [%.8f N, %.8f E] (%.2f)", gpsLocation._lat, gpsLocation._lng, gpsLocation._height );
         }
-        int yPos = 350;
+        int yPos = 300;
         int dY = _fontRenderer.getFont()->getMaxFontSize().height;
         _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
 
         sprintf_s( text, _countof(text), "FT->x:%d, y:%d", _myFontTexture.texture().width(), _myFontTexture.texture().height());
+        _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
+
+        sprintf_s( text, _countof(text), "Slider [%.1f, %.1f]", _powerSliderControl.getCurrentValue(), _powerSliderControl.getValue());
         _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
 
     }

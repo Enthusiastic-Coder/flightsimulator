@@ -689,6 +689,12 @@ float BAAirbus380JSONRigidBody::getPowerOutput(int engine)
 
 }
 
+void BAAirbus380JSONRigidBody::setPower(float value)
+{
+    for( size_t i=0; i < 4; ++i)
+        _engine[i]._thrust_percent = value;
+}
+
 bool BAAirbus380JSONRigidBody::onSyncKeyPress()
 {
     if( GetKeyState(VK_F5) < 0)

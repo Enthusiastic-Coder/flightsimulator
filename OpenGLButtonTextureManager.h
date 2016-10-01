@@ -23,6 +23,7 @@ public:
 
     void setButtonAnchor(OpenGLButtonTexture* button, AnchorState anchorState);
     void setButtonPos(OpenGLButtonTexture* button, float offset, float cx, float cy);
+    void setButtonToggle(OpenGLButtonTexture *button, bool bToggle);
     void setButtonVisibility( OpenGLButtonTexture* button, bool bShow);
 
     void handleMouseMove( MathSupport<int>::point pt);
@@ -34,13 +35,14 @@ public:
 
     void update(float dt);
     void render();
-    void prepareLayout(OpenGLButtonTexture* filteredButton);
+    void onSizeLayout(OpenGLButtonTexture* filteredButton=0);
 
 private:
     struct buttonState
     {
         MathSupport<int>::point position;
         MathSupport<int>::size size;
+        bool bToggle = false;
         float pixelRate = 20.0f;
         AnchorState anchorState = Anchor_Top;
         float offset = 0.0f;
@@ -50,6 +52,7 @@ private:
     OpenGLTextureRenderer2D* _textureRenderer;
     std::map<OpenGLButtonTexture*, buttonState> _buttonStates;
     OpenGLButtonTexture* _buttonMouseDown = 0;
+    bool _bButtonMouseWasDown = false;
     OpenGLButtonTexture* _buttonClicked = 0;
     OpenGLButtonTexture* _buttonHovered = 0;
 };

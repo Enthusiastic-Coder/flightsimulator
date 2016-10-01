@@ -274,6 +274,12 @@ float BAAirbus320JSONRigidBody::getPowerOutput(int engine)
     return _right_engine._actual_thrust_percent;
 }
 
+void BAAirbus320JSONRigidBody::setPower(float value)
+{
+    _left_engine._thrust_percent = value;
+    _right_engine._thrust_percent = value;
+}
+
 void BAAirbus320JSONRigidBody::applyBrakes(float dt, bool bShift)
 {
     double max_decel = 6.0f;

@@ -101,6 +101,7 @@ public:
 	virtual bool isUsingMouse();
     virtual float getPower(int engine);
     virtual float getPowerOutput(int engine);
+    virtual void setPower(float value);
 
     void setUsingMouse(bool value);
 	GPSLocation getLastPosition();

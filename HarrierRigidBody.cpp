@@ -285,7 +285,12 @@ float HarrierJSONRigidBody::getPower(int engine)
 	//	return 0.0f;
 
 	//return _engines[engine]->_thrust_percent;
-	return _engineFG._thrust_percent;
+    return _engineFG._thrust_percent;
+}
+
+void HarrierJSONRigidBody::setPower(float value)
+{
+    _engineFG._thrust_percent = value;
 }
 
 float HarrierJSONRigidBody::getPowerOutput(int engine)

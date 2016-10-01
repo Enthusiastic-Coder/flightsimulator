@@ -142,6 +142,7 @@ bool SDLGameLoop::onDispatchMessage(SDL_Event& event)
         case SDL_WINDOWEVENT_SIZE_CHANGED:
             SDL_Log("Size_Changed to [%d,%d]",
                     event.window.data1, event.window.data2);
+            onSize(event.window.data1, event.window.data2);
             break;
         case SDL_WINDOWEVENT_MOVED:
             SDL_Log("Moved to [%d,%d]",
