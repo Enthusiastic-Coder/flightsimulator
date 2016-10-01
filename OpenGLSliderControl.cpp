@@ -11,24 +11,19 @@ void OpenGLSliderControl::onSize(int cx, int cy)
     updateLayout();
 }
 
-void OpenGLSliderControl::setPosition(float U, float V)
+void OpenGLSliderControl::setDimensions(OpenGLSliderControl::Orientation o, float U, float V, float dU, float dV)
 {
+    _orientation = o;
     _U = U;
     _V = V;
-    updateLayout();
-}
-
-void OpenGLSliderControl::setSize(float dU, float dV)
-{
     _dU = dU;
     _dV = dV;
     updateLayout();
 }
 
-void OpenGLSliderControl::setOrientation(OpenGLSliderControl::Orientation o)
+void OpenGLSliderControl::setThumbThickness(float v)
 {
-    _orientation = o;
-    updateLayout();
+    _thumbThickness = v;
 }
 
 void OpenGLSliderControl::setHAlignment(OpenGLSliderControl::Alignment alignment)
@@ -61,6 +56,11 @@ void OpenGLSliderControl::setMaxValue(float value)
 void OpenGLSliderControl::setValue(float value)
 {
     _value = value;
+}
+
+void OpenGLSliderControl::handleMouseMove(MathSupport<int>::point pt)
+{
+    handleMouseDown(pt);
 }
 
 void OpenGLSliderControl::handleMouseDown(MathSupport<int>::point pt)
@@ -149,32 +149,89 @@ void OpenGLSliderControl::render(Renderer *r)
     pipeline.GetModel().LoadIdentity();
     pipeline.GetView().LoadIdentity();
 
-
     pipeline.bindMatrices(r->progId());
     r->progId().sendUniform("colorModulator", _color);
 
-    float vertices[] = {
-        _position.x, _position.y, 0.0f,
-        _position.x + _size.width, _position.y, 0.0f,
-        _position.x + _size.width, _position.y + _size.height, 0.0f,
-        _position.x, _position.y + _size.height, 0.0f
-    };
-
-    float colors[] = {
-        1,1,1, 1,
-        1,1,1, 1,
-        1,1,1, 1,
-        1,1,1, 1,
-    };
-
     r->setUseIndex(false);
-    r->bindVertex(Renderer::Vertex, 3, vertices);
-    r->bindVertex(Renderer::Color, 4, colors);
 
-    r->setVertexCountOffset(indicesCount(vertices,3));
-    r->setPrimitiveType(GL_LINE_LOOP);
+    {
+        float vertices[] = {
+            _position.x, _position.y, 0.0f,
+            _position.x + _size.width, _position.y, 0.0f,
+            _position.x + _size.width, _position.y + _size.height, 0.0f,
+            _position.x, _position.y + _size.height, 0.0f
+        };
 
-    r->Render();
+        float colors[] = {
+            1,1,1, 1,
+            1,1,1, 1,
+            1,1,1, 1,
+            1,1,1, 1,
+        };
+
+        r->bindVertex(Renderer::Vertex, 3, vertices);
+        r->bindVertex(Renderer::Color, 4, colors);
+
+        r->setVertexCountOffset(indicesCount(vertices,3));
+        r->setPrimitiveType(GL_LINE_LOOP);
+        r->Render();
+    }
+
+    {
+        int iThumbHeight;
+
+        r->setPrimitiveType(GL_TRIANGLE_FAN);
+
+        if(_orientation == Orient_Horizontal)
+        {
+            iThumbHeight = _size.width * _thumbThickness;
+            int thumbPos = float(_currentValue) / (_max - _min) * _size.width;
+
+            float vertices[] = {
+                _position.x + thumbPos - iThumbHeight, _position.y, 0.0f,
+                _position.x + thumbPos + iThumbHeight, _position.y, 0.0f,
+                _position.x + thumbPos + iThumbHeight, _position.y + _size.height, 0.0f,
+                _position.x + thumbPos - iThumbHeight, _position.y + _size.height, 0.0f
+            };
+
+            float colors[] = {
+                1,1,1,0.5,
+                1,1,1,0.5,
+                1,1,1,0.5,
+                1,1,1,0.5,
+            };
+
+            r->bindVertex(Renderer::Vertex, 3, vertices);
+            r->bindVertex(Renderer::Color, 4, colors);
+            r->setVertexCountOffset(indicesCount(vertices,3));
+            r->Render();
+        }
+        else
+        {
+            iThumbHeight = _size.height * _thumbThickness;
+            int thumbPos = float(_currentValue) / (_max - _min) * _size.height;
+
+            float vertices[] = {
+                _position.x , _position.y + thumbPos - iThumbHeight, 0.0f,
+                _position.x + _size.width, _position.y + thumbPos - iThumbHeight, 0.0f,
+                _position.x + _size.width, _position.y + thumbPos + iThumbHeight, 0.0f,
+                _position.x, _position.y + thumbPos + iThumbHeight, 0.0f
+            };
+
+            float colors[] = {
+                1,1,1,0.5,
+                1,1,1,0.5,
+                1,1,1,0.5,
+                1,1,1,0.5,
+            };
+
+            r->bindVertex(Renderer::Vertex, 3, vertices);
+            r->bindVertex(Renderer::Color, 4, colors);
+            r->setVertexCountOffset(indicesCount(vertices,3));
+            r->Render();
+        }
+    }
+
     r->unBindBuffers();
     pipeline.GetModel().Pop();
 }

@@ -430,9 +430,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _buttonTestTexture.setVAlignment(OpenGLButtonTexture::Align_Low);
         //_buttonTextureManager.setButtonToggle(&_buttonTestTexture, true);
 
-        _testSliderControl.setPosition(0.8, 0.2);
-        _testSliderControl.setSize(0.01, 0.5);
-        _testSliderControl.setOrientation(OpenGLSliderControl::Orient_Vertical);
+        _testSliderControl.setDimensions(OpenGLSliderControl::Orient_Vertical, 0.8, 0.2, 0.01, 0.5);
 
     }
     catch (std::string str)
@@ -729,6 +727,7 @@ void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
 void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
 {
     _buttonTextureManager.handleMouseMove({e->x, e->y});
+    _testSliderControl.handleMouseMove({e->x, e->y});
 }
 
 void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)

@@ -23,9 +23,9 @@ public:
     };
 
     void onSize( int cx, int cy);
-    void setPosition( float U, float V);
+    void setDimensions(OpenGLSliderControl::Orientation o, float U, float V, float dU, float dV);
     void setSize(float dU, float dV);
-    void setOrientation(Orientation o);
+    void setThumbThickness(float v);
     void setHAlignment(Alignment alignment);
     void setVAlignment(Alignment alignment);
     void setColor(Vector4F color);
@@ -34,6 +34,7 @@ public:
     void setMaxValue(float value);
     void setValue(float value);
 
+    void handleMouseMove( MathSupport<int>::point pt);
     void handleMouseDown( MathSupport<int>::point pt );
     bool isInside(MathSupport<int>::point pt);
 
@@ -48,14 +49,17 @@ protected:
 
 private:
     int _cx, _cy;
-    float _U, _V;
-    float _dU, _dV;
+    float _U = 0;
+    float _V = 0;
+    float _dU = 0;
+    float _dV = 0;
     Orientation _orientation = {};
     MathSupport<int>::point _position;
     MathSupport<int>::size _size;
     Vector4F _color = Vector4F(1,1,1,1);
     Alignment _hAlignment = {};
     Alignment _vAlignment = {};
+    float _thumbThickness = 0.05f;
     float _currentValue = 0;
     float _value = 0;
     float _min = 0;
