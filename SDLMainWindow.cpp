@@ -470,7 +470,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _powerSliderControl.setRange(0, 100);
         _powerSliderControl.setTickValue(5);
         _powerSliderControl.setRateValue(50);
-        _powerSliderControl.setDimensions(OpenGLSliderControl::Orient_Vertical, 0.95, 0.5, 0.01, 0.8);
+        _powerSliderControl.setDimensions(OpenGLSliderControl::Orient_Vertical, 0.95, 0.5, 0.02, 0.8);
         _powerSliderControl.setVAlignment(OpenGLSliderControl::Align_Middle);
         _powerSliderControl.setHAlignment(OpenGLSliderControl::Align_High);
     }

@@ -80,7 +80,15 @@ void OpenGLButtonTextureManager::handleMouseUp(MathSupport<int>::point pt)
     {
         buttonState& bs = _buttonStates[_buttonMouseDown];
 
-        if(!bs.bToggle || bs.bToggle && _bButtonMouseWasDown)
+        if(bs.bToggle && !_buttonMouseDown->isInside(pt))
+        {
+            if( !_bButtonMouseWasDown)
+            {
+                _buttonMouseDown->setButtonUp();
+                _buttonMouseDown = 0;
+            }
+        }
+        else if(!bs.bToggle || bs.bToggle && _bButtonMouseWasDown)
         {
             _buttonMouseDown->setButtonUp();
             _buttonMouseDown = 0;
