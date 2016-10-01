@@ -461,10 +461,11 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 
         _buttonJoystick.load("images/buttons/joystick.png");
         _buttonTextureManager.setButtonToggle(&_buttonJoystick, true);
-        _buttonTextureManager.setButtonPos(&_buttonJoystick, 0.5f, 0.5f, 0.05f, 0.05f);
+        _buttonTextureManager.setButtonPos(&_buttonJoystick, 0.5f, 0.5f, 0.1f, 0.1f);
+        _buttonTextureManager.setVisibleOnHover(&_buttonJoystick, true);
         _buttonJoystick.setHAlignment(OpenGLButtonTexture::Align_Middle);
         _buttonJoystick.setVAlignment(OpenGLButtonTexture::Align_Middle);
-        _buttonJoystick.setColor(Vector4F(1,1,1,0.25));
+        _buttonJoystick.setColor(Vector4F(1,1,1,0.15));
 
         _powerSliderControl.setRange(0, 100);
         _powerSliderControl.setTickValue(5);

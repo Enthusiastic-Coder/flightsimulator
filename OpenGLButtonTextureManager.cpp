@@ -27,8 +27,14 @@ void OpenGLButtonTextureManager::setButtonVisibility(OpenGLButtonTexture *button
     onSizeLayout(button);
 }
 
+void OpenGLButtonTextureManager::setVisibleOnHover(OpenGLButtonTexture *button, bool bVisibleOnHover)
+{
+    _buttonStates[button].bVisibleOnHover = bVisibleOnHover;
+}
+
 void OpenGLButtonTextureManager::handleMouseMove(MathSupport<int>::point pt)
 {
+    _cursorPos = pt;
     if(_buttonHovered !=0 )
     {
         _buttonHovered->setButtonHover(false);
@@ -47,6 +53,7 @@ void OpenGLButtonTextureManager::handleMouseMove(MathSupport<int>::point pt)
 
 void OpenGLButtonTextureManager::handleMouseDown(MathSupport<int>::point pt)
 {
+    _cursorPos = pt;
     std::map<OpenGLButtonTexture*, buttonState>::iterator it;
     for( it = _buttonStates.begin(); it != _buttonStates.end(); ++it)
         if( it->first->isInside(pt))
@@ -60,6 +67,7 @@ void OpenGLButtonTextureManager::handleMouseDown(MathSupport<int>::point pt)
 
 void OpenGLButtonTextureManager::handleMouseUp(MathSupport<int>::point pt)
 {
+    _cursorPos = pt;
     std::map<OpenGLButtonTexture*, buttonState>::iterator it;
     for( it = _buttonStates.begin(); it != _buttonStates.end(); ++it)
         if( it->first == _buttonMouseDown && it->first->isInside(pt) )
@@ -121,7 +129,10 @@ void OpenGLButtonTextureManager::render()
         OpenGLButtonTexture* texture = it->first;
         buttonState& state = it->second;
         if( state.bVisible )
-            texture->render(_textureRenderer);
+        {
+            if( !state.bVisibleOnHover || texture->isInside(_cursorPos))
+                texture->render(_textureRenderer);
+        }
     }
 
     _textureRenderer->endRender();
