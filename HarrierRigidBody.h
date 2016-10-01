@@ -69,6 +69,7 @@ public:
     void updateCameraView() override;
 
 	float getPower(int engine) override;
+    void setPower(float value) override;
 	float getPowerOutput(int engine) override;
     void onInitialise(WorldSystem*pWorldSystem) override;
 

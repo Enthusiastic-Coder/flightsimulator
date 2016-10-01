@@ -70,16 +70,18 @@ void OpenGLSliderControl::handleMouseUp(MathSupport<int>::point pt)
     _bMouseDown = false;
 }
 
-void OpenGLSliderControl::handleMouseMove(MathSupport<int>::point pt)
+bool OpenGLSliderControl::handleMouseMove(MathSupport<int>::point pt)
 {
     if(_bMouseDown)
-        handleMouseDown(pt);
+        return handleMouseDown(pt);
+    else
+        return false;
 }
 
-void OpenGLSliderControl::handleMouseDown(MathSupport<int>::point pt)
+bool OpenGLSliderControl::handleMouseDown(MathSupport<int>::point pt)
 {
     if( !isInside(pt))
-        return;
+        return false;
 
     _bMouseDown = true;
 
@@ -87,6 +89,8 @@ void OpenGLSliderControl::handleMouseDown(MathSupport<int>::point pt)
         _value = float(pt.x - _position.x) / _size.width * (_max - _min) + _min;
     else
         _value = float(pt.y - _position.y) / _size.height * (_max - _min) + _min;
+
+    return true;
 }
 
 bool OpenGLSliderControl::isInside(MathSupport<int>::point pt)

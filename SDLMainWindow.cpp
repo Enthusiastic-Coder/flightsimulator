@@ -64,6 +64,12 @@ void SDLMainWindow::onMouseUp(SDL_MouseButtonEvent* e)
 void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
 {
     _WorldSystem.onMouseWheel(e->y);
+    JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
+    if (focus)
+    {
+        focus->getPower(0);
+        _powerSliderControl.setValue(100-focus->getPowerOutput(0));
+    }
 }
 
 void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
@@ -76,7 +82,14 @@ void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
 {
     _WorldSystem.rigidBodyToggleUsingMouse();
     _buttonTextureManager.handleMouseDown({e->x, e->y});
-    _powerSliderControl.handleMouseDown({e->x, e->y});
+    if(_powerSliderControl.handleMouseDown({e->x, e->y}))
+    {
+        JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
+        if (focus)
+        {
+            focus->setPower(100-_powerSliderControl.getValue());
+        }
+    }
 }
 
 void SDLMainWindow::onFingerDown(SDL_TouchFingerEvent* e)
@@ -751,14 +764,6 @@ void SDLMainWindow::onUpdate()
 
     if( _framecount >= FPS_RESOLUTION )
         _framecount = 0;
-
-    JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
-    if (focus)
-    {
-        focus->getPower(0);
-        _powerSliderControl.setValue(100-focus->getPowerOutput(0));
-    }
-
 
     _buttonTextureManager.update(dt);
     _powerSliderControl.update(dt);

@@ -65,6 +65,7 @@ public:
 
     float getPower(int engine) override;
 	float getPowerOutput(int engine) override;
+    void setPower(float value) override;
  
 private:
 	void initSpeedAndPos();

@@ -36,8 +36,8 @@ public:
     void setRateValue(float rate);
 
     void handleMouseUp( MathSupport<int>::point pt );
-    void handleMouseMove( MathSupport<int>::point pt);
-    void handleMouseDown( MathSupport<int>::point pt );
+    bool handleMouseMove( MathSupport<int>::point pt);
+    bool handleMouseDown( MathSupport<int>::point pt );
     bool isInside(MathSupport<int>::point pt);
 
     void update(float dt);
