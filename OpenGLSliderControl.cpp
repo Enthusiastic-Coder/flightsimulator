@@ -58,15 +58,23 @@ void OpenGLSliderControl::setValue(float value)
     _value = value;
 }
 
+void OpenGLSliderControl::handleMouseUp(MathSupport<int>::point pt)
+{
+    _bMouseDown = false;
+}
+
 void OpenGLSliderControl::handleMouseMove(MathSupport<int>::point pt)
 {
-    handleMouseDown(pt);
+    if(_bMouseDown)
+        handleMouseDown(pt);
 }
 
 void OpenGLSliderControl::handleMouseDown(MathSupport<int>::point pt)
 {
     if( !isInside(pt))
         return;
+
+    _bMouseDown = true;
 
     if( _orientation == Orient_Horizontal)
         _value = float(pt.x - _position.x) / _size.width * (_max - _min) + _min;
@@ -174,7 +182,9 @@ void OpenGLSliderControl::render(Renderer *r)
 
         r->setVertexCountOffset(indicesCount(vertices,3));
         r->setPrimitiveType(GL_LINE_LOOP);
+
         r->Render();
+        r->unBindBuffers();
     }
 
     {
@@ -205,6 +215,7 @@ void OpenGLSliderControl::render(Renderer *r)
             r->bindVertex(Renderer::Color, 4, colors);
             r->setVertexCountOffset(indicesCount(vertices,3));
             r->Render();
+            r->unBindBuffers();
         }
         else
         {
@@ -229,10 +240,11 @@ void OpenGLSliderControl::render(Renderer *r)
             r->bindVertex(Renderer::Color, 4, colors);
             r->setVertexCountOffset(indicesCount(vertices,3));
             r->Render();
+            r->unBindBuffers();
         }
     }
 
-    r->unBindBuffers();
+
     pipeline.GetModel().Pop();
 }
 

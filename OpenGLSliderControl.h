@@ -34,6 +34,7 @@ public:
     void setMaxValue(float value);
     void setValue(float value);
 
+    void handleMouseUp( MathSupport<int>::point pt );
     void handleMouseMove( MathSupport<int>::point pt);
     void handleMouseDown( MathSupport<int>::point pt );
     bool isInside(MathSupport<int>::point pt);
@@ -65,6 +66,7 @@ private:
     float _min = 0;
     float _max = 10;
     float _rateOfValue = 1;
+    bool _bMouseDown = false;
 };
 
 #endif

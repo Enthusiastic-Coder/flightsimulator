@@ -58,6 +58,25 @@ void SDLMainWindow::onKeyUp(SDL_KeyboardEvent* e)
 void SDLMainWindow::onMouseUp(SDL_MouseButtonEvent* e)
 {
     _buttonTextureManager.handleMouseUp({e->x, e->y});
+    _testSliderControl.handleMouseUp({e->x, e->y});
+}
+
+void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
+{
+    _WorldSystem.onMouseWheel(e->y);
+}
+
+void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
+{
+    _buttonTextureManager.handleMouseMove({e->x, e->y});
+    _testSliderControl.handleMouseMove({e->x, e->y});
+}
+
+void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
+{
+    _WorldSystem.rigidBodyToggleUsingMouse();
+    _buttonTextureManager.handleMouseDown({e->x, e->y});
+    _testSliderControl.handleMouseDown({e->x, e->y});
 }
 
 void SDLMainWindow::onFingerDown(SDL_TouchFingerEvent* e)
@@ -717,24 +736,6 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
     //		  if( key == VK_SHIFT )
     //		  _camera.toggleShift();
-}
-
-void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
-{
-    _WorldSystem.onMouseWheel(e->y);
-}
-
-void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
-{
-    _buttonTextureManager.handleMouseMove({e->x, e->y});
-    _testSliderControl.handleMouseMove({e->x, e->y});
-}
-
-void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
-{
-    _WorldSystem.rigidBodyToggleUsingMouse();
-    _buttonTextureManager.handleMouseDown({e->x, e->y});
-    _testSliderControl.handleMouseDown({e->x, e->y});
 }
 
 void SDLMainWindow::onUpdate()
