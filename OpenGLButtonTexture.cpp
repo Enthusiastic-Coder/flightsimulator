@@ -78,11 +78,11 @@ void OpenGLButtonTexture::setSize(MathSupport<int>::size size)
 }
 
 void OpenGLButtonTexture::render(OpenGLTextureRenderer2D *r)
-{
+{       
     if( isButtonDisabled())
         r->setColorModulator(Vector4F(1.0f,1.0f,1.0f,0.45f));
     else if( isButtonHover())
-        r->setColorModulator(Vector4F(0.8f,0.8f,0.8f,1.0f));
+        r->setColorModulator(Vector4F(0.8f,0.8f,0.8f,_color.w));
     else
         r->setColorModulator(_color);
 

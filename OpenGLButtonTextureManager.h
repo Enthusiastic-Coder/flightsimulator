@@ -11,20 +11,12 @@ class OpenGLButtonTexture;
 class OpenGLButtonTextureManager
 {
 public:
-    enum AnchorState
-    {
-        Anchor_Top,
-        Anchor_Right,
-        Anchor_Bottom,
-        Anchor_Left
-    };
-
     OpenGLButtonTextureManager(OpenGLTextureRenderer2D* r);
 
-    void setButtonAnchor(OpenGLButtonTexture* button, AnchorState anchorState);
-    void setButtonPos(OpenGLButtonTexture* button, float offset, float cx, float cy);
+    void setButtonPos(OpenGLButtonTexture* button, float u, float v, float cx, float cy);
     void setButtonToggle(OpenGLButtonTexture *button, bool bToggle);
     void setButtonVisibility( OpenGLButtonTexture* button, bool bShow);
+    void setVisibleOnHover(OpenGLButtonTexture* button, bool bVisibleOnHover);
 
     void handleMouseMove( MathSupport<int>::point pt);
     void handleMouseDown( MathSupport<int>::point pt );
@@ -44,10 +36,10 @@ private:
         MathSupport<int>::size size;
         bool bToggle = false;
         float pixelRate = 20.0f;
-        AnchorState anchorState = Anchor_Top;
-        float offset = 0.0f;
+        MathSupport<float>::point offset = {};
         MathSupport<float>::size dims = {0.1f, 0.1f};
         bool bVisible = true;
+        bool bVisibleOnHover = false;
     };
     OpenGLTextureRenderer2D* _textureRenderer;
     std::map<OpenGLButtonTexture*, buttonState> _buttonStates;
@@ -55,6 +47,8 @@ private:
     bool _bButtonMouseWasDown = false;
     OpenGLButtonTexture* _buttonClicked = 0;
     OpenGLButtonTexture* _buttonHovered = 0;
+    MathSupport<int>::point _cursorPos = {};
 };
+
 
 #endif // OPENGLBUTTONTEXTUREMANAGER_H

@@ -8,17 +8,10 @@ OpenGLButtonTextureManager::OpenGLButtonTextureManager(OpenGLTextureRenderer2D *
 
 }
 
-void OpenGLButtonTextureManager::setButtonAnchor(OpenGLButtonTexture *button, OpenGLButtonTextureManager::AnchorState anchorState)
+void OpenGLButtonTextureManager::setButtonPos(OpenGLButtonTexture *button, float u, float v, float cx, float cy)
 {
-    _buttonStates[button].anchorState = anchorState;
-    onSizeLayout(button);
-}
-
-void OpenGLButtonTextureManager::setButtonPos(OpenGLButtonTexture *button, float offset, float cx, float cy)
-{
-    _buttonStates[button].offset = offset;
-    _buttonStates[button].dims.width = cx;
-    _buttonStates[button].dims.height = cy;
+    _buttonStates[button].offset = {u, v};
+    _buttonStates[button].dims = {cx, cy};
     onSizeLayout(button);
 }
 
@@ -33,8 +26,14 @@ void OpenGLButtonTextureManager::setButtonVisibility(OpenGLButtonTexture *button
     onSizeLayout(button);
 }
 
+void OpenGLButtonTextureManager::setVisibleOnHover(OpenGLButtonTexture *button, bool bVisibleOnHover)
+{
+    _buttonStates[button].bVisibleOnHover = bVisibleOnHover;
+}
+
 void OpenGLButtonTextureManager::handleMouseMove(MathSupport<int>::point pt)
 {
+    _cursorPos = pt;
     if(_buttonHovered !=0 )
     {
         _buttonHovered->setButtonHover(false);
@@ -53,6 +52,7 @@ void OpenGLButtonTextureManager::handleMouseMove(MathSupport<int>::point pt)
 
 void OpenGLButtonTextureManager::handleMouseDown(MathSupport<int>::point pt)
 {
+    _cursorPos = pt;
     std::map<OpenGLButtonTexture*, buttonState>::iterator it;
     for( it = _buttonStates.begin(); it != _buttonStates.end(); ++it)
         if( it->first->isInside(pt))
@@ -66,6 +66,7 @@ void OpenGLButtonTextureManager::handleMouseDown(MathSupport<int>::point pt)
 
 void OpenGLButtonTextureManager::handleMouseUp(MathSupport<int>::point pt)
 {
+    _cursorPos = pt;
     std::map<OpenGLButtonTexture*, buttonState>::iterator it;
     for( it = _buttonStates.begin(); it != _buttonStates.end(); ++it)
         if( it->first == _buttonMouseDown && it->first->isInside(pt) )
@@ -78,7 +79,15 @@ void OpenGLButtonTextureManager::handleMouseUp(MathSupport<int>::point pt)
     {
         buttonState& bs = _buttonStates[_buttonMouseDown];
 
-        if(!bs.bToggle || bs.bToggle && _bButtonMouseWasDown)
+        if(bs.bToggle && !_buttonMouseDown->isInside(pt))
+        {
+            if( !_bButtonMouseWasDown)
+            {
+                _buttonMouseDown->setButtonUp();
+                _buttonMouseDown = 0;
+            }
+        }
+        else if(!bs.bToggle || bs.bToggle && _bButtonMouseWasDown)
         {
             _buttonMouseDown->setButtonUp();
             _buttonMouseDown = 0;
@@ -127,7 +136,10 @@ void OpenGLButtonTextureManager::render()
         OpenGLButtonTexture* texture = it->first;
         buttonState& state = it->second;
         if( state.bVisible )
-            texture->render(_textureRenderer);
+        {
+            if( !state.bVisibleOnHover || texture->isInside(_cursorPos))
+                texture->render(_textureRenderer);
+        }
     }
 
     _textureRenderer->endRender();
@@ -150,35 +162,7 @@ void OpenGLButtonTextureManager::onSizeLayout(OpenGLButtonTexture *filteredButto
         if( !state.bVisible)
             continue;
 
-        int xPos = 0;
-        int yPos = 0;
-        int width = state.dims.width * screenWidth;
-        int height = state.dims.height * screenHeight;
-
-        switch( state.anchorState)
-        {
-        case Anchor_Top:
-            xPos = state.offset * screenWidth;
-            yPos = 0;
-            break;
-        case Anchor_Right:
-            xPos = screenWidth - width;
-            yPos = state.offset * screenHeight;
-            break;
-        case Anchor_Bottom:
-            xPos = state.offset * screenWidth;
-            yPos = screenHeight - height;
-            break;
-        case Anchor_Left:
-            xPos = 0;
-            yPos = state.offset * screenHeight;
-            break;
-
-        }
-
-        state.position.x = xPos;
-        state.position.y = yPos;
-        state.size.width = width;
-        state.size.height = height;
+        state.position = { (int)(state.offset.x * screenWidth), (int)(state.offset.y * screenHeight)};
+        state.size = { (int)(state.dims.width * screenWidth), (int)(state.dims.height * screenHeight)};
     }
 }
