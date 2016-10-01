@@ -47,6 +47,7 @@ public:
 protected:
     void updateLayout();
     MathSupport<int>::point toScrn(float U, float V);
+    void renderThumb(Renderer* r, int primitiveType, float value);
 
 private:
     int _cx, _cy;
@@ -65,7 +66,7 @@ private:
     float _value = 0;
     float _min = 0;
     float _max = 10;
-    float _rateOfValue = 1;
+    float _rateOfValue = 5.0f;
     bool _bMouseDown = false;
 };
 

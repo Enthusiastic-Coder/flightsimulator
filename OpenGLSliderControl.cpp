@@ -2,7 +2,7 @@
 #include "OpenGLSliderControl.h"
 #include <OpenGLRenderer.h>
 #include <OpenGLPipeline.h>
-
+#include <algorithm>
 
 void OpenGLSliderControl::onSize(int cx, int cy)
 {
@@ -99,8 +99,12 @@ bool OpenGLSliderControl::isInside(MathSupport<int>::point pt)
 void OpenGLSliderControl::update(float dt)
 {
     // update current value to match value based on dt
-    _currentValue = _value;
 
+    float dRateValue = _rateOfValue * dt;
+    float dValue = _value - _currentValue;
+    float dFinalRateValue = std::min(fabs(dValue), dRateValue);
+    if( dValue < 0.0f)  dFinalRateValue = -dFinalRateValue;
+    _currentValue += dFinalRateValue;
 }
 
 float OpenGLSliderControl::getValue()
@@ -145,6 +149,55 @@ MathSupport<int>::point OpenGLSliderControl::toScrn(float U, float V)
     return pt;
 }
 
+void OpenGLSliderControl::renderThumb(Renderer *r, int primitiveType, float value)
+{
+    float colors[] = {
+        1,1,1,0.5,
+        1,1,1,0.5,
+        1,1,1,0.5,
+        1,1,1,0.5,
+    };
+
+    r->setPrimitiveType(primitiveType);
+
+    if(_orientation == Orient_Horizontal)
+    {
+        float iThumbHeight = _size.width * _thumbThickness;
+        float thumbPos = float(value) / (_max - _min) * _size.width;
+
+        float vertices[] = {
+            _position.x + thumbPos - iThumbHeight, _position.y, 0.0f,
+            _position.x + thumbPos + iThumbHeight, _position.y, 0.0f,
+            _position.x + thumbPos + iThumbHeight, _position.y + _size.height, 0.0f,
+            _position.x + thumbPos - iThumbHeight, _position.y + _size.height, 0.0f
+        };
+
+        r->bindVertex(Renderer::Vertex, 3, vertices);
+        r->bindVertex(Renderer::Color, 4, colors);
+        r->setVertexCountOffset(indicesCount(vertices,3));
+        r->Render();
+        r->unBindBuffers();
+    }
+    else
+    {
+        float iThumbHeight = _size.height * _thumbThickness;
+        float thumbPos = float(value) / (_max - _min) * _size.height;
+
+        float vertices[] = {
+            _position.x , _position.y + thumbPos - iThumbHeight, 0.0f,
+            _position.x + _size.width, _position.y + thumbPos - iThumbHeight, 0.0f,
+            _position.x + _size.width, _position.y + thumbPos + iThumbHeight, 0.0f,
+            _position.x, _position.y + thumbPos + iThumbHeight, 0.0f
+        };
+
+        r->bindVertex(Renderer::Vertex, 3, vertices);
+        r->bindVertex(Renderer::Color, 4, colors);
+        r->setVertexCountOffset(indicesCount(vertices,3));
+        r->Render();
+        r->unBindBuffers();
+    }
+}
+
 void OpenGLSliderControl::render(Renderer *r)
 {
     // draw outline rectangle of slider
@@ -162,90 +215,32 @@ void OpenGLSliderControl::render(Renderer *r)
 
     r->setUseIndex(false);
 
-    {
-        float vertices[] = {
-            _position.x, _position.y, 0.0f,
-            _position.x + _size.width, _position.y, 0.0f,
-            _position.x + _size.width, _position.y + _size.height, 0.0f,
-            _position.x, _position.y + _size.height, 0.0f
-        };
+    float vertices[] = {
+        _position.x, _position.y, 0.0f,
+        _position.x + _size.width, _position.y, 0.0f,
+        _position.x + _size.width, _position.y + _size.height, 0.0f,
+        _position.x, _position.y + _size.height, 0.0f
+    };
 
-        float colors[] = {
-            1,1,1, 1,
-            1,1,1, 1,
-            1,1,1, 1,
-            1,1,1, 1,
-        };
+    float colors[] = {
+        1,1,1, 1,
+        1,1,1, 1,
+        1,1,1, 1,
+        1,1,1, 1,
+    };
 
-        r->bindVertex(Renderer::Vertex, 3, vertices);
-        r->bindVertex(Renderer::Color, 4, colors);
+    r->bindVertex(Renderer::Vertex, 3, vertices);
+    r->bindVertex(Renderer::Color, 4, colors);
 
-        r->setVertexCountOffset(indicesCount(vertices,3));
-        r->setPrimitiveType(GL_LINE_LOOP);
+    r->setVertexCountOffset(indicesCount(vertices,3));
+    r->setPrimitiveType(GL_LINE_LOOP);
 
-        r->Render();
-        r->unBindBuffers();
-    }
+    r->Render();
+    r->unBindBuffers();
 
-    {
-        int iThumbHeight;
-
-        r->setPrimitiveType(GL_TRIANGLE_FAN);
-
-        if(_orientation == Orient_Horizontal)
-        {
-            iThumbHeight = _size.width * _thumbThickness;
-            int thumbPos = float(_currentValue) / (_max - _min) * _size.width;
-
-            float vertices[] = {
-                _position.x + thumbPos - iThumbHeight, _position.y, 0.0f,
-                _position.x + thumbPos + iThumbHeight, _position.y, 0.0f,
-                _position.x + thumbPos + iThumbHeight, _position.y + _size.height, 0.0f,
-                _position.x + thumbPos - iThumbHeight, _position.y + _size.height, 0.0f
-            };
-
-            float colors[] = {
-                1,1,1,0.5,
-                1,1,1,0.5,
-                1,1,1,0.5,
-                1,1,1,0.5,
-            };
-
-            r->bindVertex(Renderer::Vertex, 3, vertices);
-            r->bindVertex(Renderer::Color, 4, colors);
-            r->setVertexCountOffset(indicesCount(vertices,3));
-            r->Render();
-            r->unBindBuffers();
-        }
-        else
-        {
-            iThumbHeight = _size.height * _thumbThickness;
-            int thumbPos = float(_currentValue) / (_max - _min) * _size.height;
-
-            float vertices[] = {
-                _position.x , _position.y + thumbPos - iThumbHeight, 0.0f,
-                _position.x + _size.width, _position.y + thumbPos - iThumbHeight, 0.0f,
-                _position.x + _size.width, _position.y + thumbPos + iThumbHeight, 0.0f,
-                _position.x, _position.y + thumbPos + iThumbHeight, 0.0f
-            };
-
-            float colors[] = {
-                1,1,1,0.5,
-                1,1,1,0.5,
-                1,1,1,0.5,
-                1,1,1,0.5,
-            };
-
-            r->bindVertex(Renderer::Vertex, 3, vertices);
-            r->bindVertex(Renderer::Color, 4, colors);
-            r->setVertexCountOffset(indicesCount(vertices,3));
-            r->Render();
-            r->unBindBuffers();
-        }
-    }
-
+    renderThumb(r, GL_TRIANGLE_FAN, _currentValue);
+    renderThumb(r, GL_LINE_LOOP, _value);
 
     pipeline.GetModel().Pop();
 }
-
 
