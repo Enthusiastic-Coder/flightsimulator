@@ -139,10 +139,10 @@ MathSupport<int>::point OpenGLButtonTexture::actualPosition() const
     case Align_Low:
         break;
     case Align_Middle:
-        pt.x -= sz.width/2;
+        pt.x -= sz.width/2+1;
         break;
     case Align_High:
-        pt.x -= sz.width;
+        pt.x -= sz.width +1;
         break;
     }
 
@@ -151,10 +151,10 @@ MathSupport<int>::point OpenGLButtonTexture::actualPosition() const
     case Align_Low:
         break;
     case Align_Middle:
-        pt.y -= sz.height/2;
+        pt.y -= sz.height/2 +1;
         break;
     case Align_High:
-        pt.y -= sz.height;
+        pt.y -= sz.height +1;
         break;
     }
 

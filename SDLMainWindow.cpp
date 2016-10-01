@@ -451,6 +451,8 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 
         _testSliderControl.setDimensions(OpenGLSliderControl::Orient_Vertical, 0.8, 0.2, 0.01, 0.5);
 
+        _testSliderControl.setDimensions(OpenGLSliderControl::Orient_Vertical, 0.8, 1.0, 0.01, 0.5);
+        _testSliderControl.setVAlignment(OpenGLSliderControl::Align_High);
     }
     catch (std::string str)
     {

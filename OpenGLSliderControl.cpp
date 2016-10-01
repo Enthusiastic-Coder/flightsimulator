@@ -116,30 +116,20 @@ void OpenGLSliderControl::updateLayout()
     _size.height = pos.y - _position.y;
 
     if(_hAlignment == Align_Middle)
-    {
-
-    }
+        _position.x -= _size.width /2;
     else if( _hAlignment == Align_High)
-    {
-
-    }
+        _position.x -= _size.width+1;
 
     if(_vAlignment == Align_Middle)
-    {
-
-    }
+        _position.y -= _size.height /2;
     else if( _vAlignment == Align_High)
-    {
-
-    }
+        _position.y -= _size.height+1;
 }
 
 MathSupport<int>::point OpenGLSliderControl::toScrn(float U, float V)
 {
     MathSupport<float>::point fPt = {_cx * U, _cy * V};
-    MathSupport<int>::point pt;
-    pt.x = fPt.x;
-    pt.y = fPt.y;
+    MathSupport<int>::point pt = { fPt.x, fPt.y};
     return pt;
 }
 
