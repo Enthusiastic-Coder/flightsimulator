@@ -1530,11 +1530,14 @@ void SDLMainWindow::RenderInfo()
 
             sprintf_s( text, _countof(text), "ModelPosition: [%.8f N, %.8f E] (%.2f)", gpsLocation._lat, gpsLocation._lng, gpsLocation._height );
         }
-        int yPos = 350;
+        int yPos = 300;
         int dY = _fontRenderer.getFont()->getMaxFontSize().height;
         _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
 
         sprintf_s( text, _countof(text), "FT->x:%d, y:%d", _myFontTexture.texture().width(), _myFontTexture.texture().height());
+        _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
+
+        sprintf_s( text, _countof(text), "Slider [%.1f, %.1f]", _testSliderControl.getCurrentValue(), _testSliderControl.getValue());
         _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
 
     }

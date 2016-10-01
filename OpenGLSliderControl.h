@@ -42,7 +42,8 @@ public:
     void update(float dt);
     void render(Renderer* r);
 
-    float getValue();
+    float getValue() const;
+    float getCurrentValue() const;
 
 protected:
     void updateLayout();
@@ -50,11 +51,12 @@ protected:
     void renderThumb(Renderer* r, int primitiveType, float value);
 
 private:
-    int _cx, _cy;
+    int _cx = 1;
+    int _cy = 1;
     float _U = 0;
     float _V = 0;
-    float _dU = 0;
-    float _dV = 0;
+    float _dU = 0.1f;
+    float _dV = 0.1f;
     Orientation _orientation = {};
     MathSupport<int>::point _position;
     MathSupport<int>::size _size;

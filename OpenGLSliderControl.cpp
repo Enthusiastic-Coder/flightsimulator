@@ -107,11 +107,6 @@ void OpenGLSliderControl::update(float dt)
     _currentValue += dFinalRateValue;
 }
 
-float OpenGLSliderControl::getValue()
-{
-    return _currentValue;
-}
-
 void OpenGLSliderControl::updateLayout()
 {
     // use all state to decide how to position control
@@ -137,7 +132,6 @@ void OpenGLSliderControl::updateLayout()
     {
 
     }
-
 }
 
 MathSupport<int>::point OpenGLSliderControl::toScrn(float U, float V)
@@ -242,5 +236,15 @@ void OpenGLSliderControl::render(Renderer *r)
     renderThumb(r, GL_LINE_LOOP, _value);
 
     pipeline.GetModel().Pop();
+}
+
+float OpenGLSliderControl::getCurrentValue() const
+{
+    return _currentValue;
+}
+
+float OpenGLSliderControl::getValue() const
+{
+    return _value;
 }
 
