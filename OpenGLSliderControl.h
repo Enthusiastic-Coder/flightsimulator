@@ -70,7 +70,7 @@ private:
     float _min = 0;
     float _max = 10;
     float _rateOfValue = 5.0f;
-    float _tickValue = 1.0f;
+    float _tickValue = 0.5f;
     bool _bMouseDown = false;
 };
 
