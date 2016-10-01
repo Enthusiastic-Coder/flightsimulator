@@ -3,6 +3,7 @@
 #include <OpenGLRenderer.h>
 #include <OpenGLPipeline.h>
 #include <algorithm>
+#include <vector>
 
 void OpenGLSliderControl::onSize(int cx, int cy)
 {
@@ -56,6 +57,11 @@ void OpenGLSliderControl::setMaxValue(float value)
 void OpenGLSliderControl::setValue(float value)
 {
     _value = value;
+}
+
+void OpenGLSliderControl::setTickValue(float value)
+{
+    _tickValue = value;
 }
 
 void OpenGLSliderControl::handleMouseUp(MathSupport<int>::point pt)
@@ -133,13 +139,13 @@ MathSupport<int>::point OpenGLSliderControl::toScrn(float U, float V)
     return pt;
 }
 
-void OpenGLSliderControl::renderThumb(Renderer *r, int primitiveType, float value)
+void OpenGLSliderControl::renderThumb(Renderer *r, int primitiveType, float value, float alpha)
 {
     float colors[] = {
-        1,1,1,0.5,
-        1,1,1,0.5,
-        1,1,1,0.5,
-        1,1,1,0.5,
+        1,1,1, alpha,
+        1,1,1, alpha,
+        1,1,1, alpha,
+        1,1,1, alpha,
     };
 
     r->setPrimitiveType(primitiveType);
@@ -193,9 +199,7 @@ void OpenGLSliderControl::render(Renderer *r)
     pipeline.GetProjection().SetOrthographic(0, _cx, _cy, 0, -1, 1);
     pipeline.GetModel().LoadIdentity();
     pipeline.GetView().LoadIdentity();
-
     pipeline.bindMatrices(r->progId());
-    r->progId().sendUniform("colorModulator", _color);
 
     r->setUseIndex(false);
 
@@ -207,23 +211,81 @@ void OpenGLSliderControl::render(Renderer *r)
     };
 
     float colors[] = {
-        1,1,1, 1,
-        1,1,1, 1,
-        1,1,1, 1,
-        1,1,1, 1,
+        1,1,1, 0.25,
+        1,1,1, 0.25,
+        1,1,1, 0.25,
+        1,1,1, 0.25,
     };
 
     r->bindVertex(Renderer::Vertex, 3, vertices);
     r->bindVertex(Renderer::Color, 4, colors);
 
     r->setVertexCountOffset(indicesCount(vertices,3));
-    r->setPrimitiveType(GL_LINE_LOOP);
+    r->setPrimitiveType(GL_TRIANGLE_FAN);
+
+    r->Render();
+
+    std::vector<Vector3F> v;
+    std::vector<Vector4F> c;
+
+    float fDiffTickDist = _tickValue/(_max- _min) * (_orientation == Orient_Horizontal?_size.width:_size.height);
+    float fFullTickDist = (_orientation == Orient_Horizontal?_size.width:_size.height);
+    int spill=5;
+
+    for( float i=0; i < fFullTickDist; i+= fDiffTickDist)
+    {
+        c.push_back(Vector4F(1,1,1,1));
+        c.push_back(Vector4F(1,1,1,1));
+
+        if( _orientation == Orient_Horizontal)
+        {
+            v.push_back(Vector3F(_position.x + i, _position.y+spill, 0));
+            v.push_back(Vector3F(_position.x + i, _position.y + _size.height-spill, 0));
+        }
+        else
+        {
+            v.push_back(Vector3F(_position.x+spill, _position.y + i, 0));
+            v.push_back(Vector3F(_position.x + _size.width-spill, _position.y + i, 0));
+        }
+    }
+
+    if( _orientation == Orient_Horizontal)
+    {
+        float thumbPos = _currentValue / (_max - _min) * _size.width;
+
+        for(int i=-1; i <= 1; ++i)
+        {
+            c.push_back(Vector4F(1,1,1,1));
+            c.push_back(Vector4F(1,1,1,1));
+
+            v.push_back(Vector3F(_position.x + thumbPos+i, _position.y-spill, 0));
+            v.push_back(Vector3F(_position.x + thumbPos+i, _position.y + _size.height+spill, 0));
+        }
+    }
+    else
+    {
+        float thumbPos = _currentValue / (_max - _min) * _size.height;
+
+        for(int i=0; i < 3; ++i)
+        {
+            c.push_back(Vector4F(1,1,1,1));
+            c.push_back(Vector4F(1,1,1,1));
+            v.push_back(Vector3F(_position.x -spill, _position.y + thumbPos+i, 0));
+            v.push_back(Vector3F(_position.x + _size.width+spill, _position.y + thumbPos+i, 0));
+        }
+    }
+
+    r->setPrimitiveType(GL_LINES);
+    r->setVertexCountOffset(v.size());
+
+    r->bindVertex(Renderer::Vertex, 3, (float*) &v[0].x);
+    r->bindVertex(Renderer::Color, 4,(float*) &c[0].x);
 
     r->Render();
     r->unBindBuffers();
 
-    renderThumb(r, GL_TRIANGLE_FAN, _currentValue);
-    renderThumb(r, GL_LINE_LOOP, _value);
+    renderThumb(r, GL_TRIANGLE_FAN, _currentValue, 0.5f);
+    renderThumb(r, GL_LINE_LOOP, _value, 0.5f);
 
     pipeline.GetModel().Pop();
 }

@@ -33,6 +33,7 @@ public:
     void setMinValue(float value);
     void setMaxValue(float value);
     void setValue(float value);
+    void setTickValue(float value);
 
     void handleMouseUp( MathSupport<int>::point pt );
     void handleMouseMove( MathSupport<int>::point pt);
@@ -48,7 +49,7 @@ public:
 protected:
     void updateLayout();
     MathSupport<int>::point toScrn(float U, float V);
-    void renderThumb(Renderer* r, int primitiveType, float value);
+    void renderThumb(Renderer* r, int primitiveType, float value, float alpha);
 
 private:
     int _cx = 1;
@@ -69,6 +70,7 @@ private:
     float _min = 0;
     float _max = 10;
     float _rateOfValue = 5.0f;
+    float _tickValue = 1.0f;
     bool _bMouseDown = false;
 };
 
