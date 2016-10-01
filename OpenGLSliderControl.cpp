@@ -44,14 +44,10 @@ void OpenGLSliderControl::setColor(Vector4F color)
     _color = color;
 }
 
-void OpenGLSliderControl::setMinValue(float value)
+void OpenGLSliderControl::setRange(float low, float high)
 {
-    _min = value;
-}
-
-void OpenGLSliderControl::setMaxValue(float value)
-{
-    _max = value;
+    _min = low;
+    _max = high;
 }
 
 void OpenGLSliderControl::setValue(float value)
@@ -62,6 +58,11 @@ void OpenGLSliderControl::setValue(float value)
 void OpenGLSliderControl::setTickValue(float value)
 {
     _tickValue = value;
+}
+
+void OpenGLSliderControl::setRateValue(float rate)
+{
+    _rateOfValue = rate;
 }
 
 void OpenGLSliderControl::handleMouseUp(MathSupport<int>::point pt)

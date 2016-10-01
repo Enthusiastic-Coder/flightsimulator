@@ -30,10 +30,10 @@ public:
     void setVAlignment(Alignment alignment);
     void setColor(Vector4F color);
 
-    void setMinValue(float value);
-    void setMaxValue(float value);
+    void setRange(float low, float high);
     void setValue(float value);
     void setTickValue(float value);
+    void setRateValue(float rate);
 
     void handleMouseUp( MathSupport<int>::point pt );
     void handleMouseMove( MathSupport<int>::point pt);
