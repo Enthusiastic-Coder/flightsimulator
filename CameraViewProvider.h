@@ -12,6 +12,8 @@ class CameraViewProvider :
 public:
     CameraViewProvider(int count);
 
+    CameraView* getCameraView(unsigned int idx);
+
 //  ICameraPositionProvider
     bool nextView() override;
     bool prevView() override;

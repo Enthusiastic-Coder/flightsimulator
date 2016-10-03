@@ -6,6 +6,11 @@ CameraViewProvider::CameraViewProvider(int count)
     _maxViewCount = count;
 }
 
+CameraView *CameraViewProvider::getCameraView(unsigned int idx)
+{
+    return CameraView::Manager::get()->getView(this, idx);
+}
+
 bool CameraViewProvider::nextView()
 {
     if( ++_viewIdx > _maxViewCount)
@@ -31,7 +36,7 @@ int CameraViewProvider::curViewIdx() const
 
 CameraView *CameraViewProvider::getCameraView()
 {
-    return CameraView::Manager::get()->getView(this, curViewIdx());
+    return getCameraView(curViewIdx());
 }
 
 std::string CameraViewProvider::getCameraDescription() const

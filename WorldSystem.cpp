@@ -199,11 +199,16 @@ void WorldSystem::updateCameraView()
             view->setOrientation( MathSupport<float>::MakeEulerFromLookAt(lookAt));
             view->setDescription("World:FreeLooking");
 
+            CameraView* otherView = _cameraProvider.getCameraView(Free);
+            otherView->setPosition(view->getPosition());
         }
         else if( pos == Free)
         {
             view->setDescription("World:Free");
             view->setShakingMode(false);
+
+            CameraView* otherView = _cameraProvider.getCameraView(FreeLooking);
+            otherView->setPosition(view->getPosition());
         }
     }
 }
