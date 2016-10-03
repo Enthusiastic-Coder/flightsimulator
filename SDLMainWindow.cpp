@@ -650,8 +650,8 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
         if( pBody )
         {
-            _camera.remoteView()->setPosition( pBody->getGPSLocation() + Vector3F(0,0,100));
-            _camera.fastForwardLocalView();
+            //_camera.remoteView()->setPosition( pBody->getGPSLocation() + Vector3F(0,0,100));
+            //_camera.fastForwardLocalView();
         }
     }
 
@@ -1078,7 +1078,7 @@ void SDLMainWindow::RenderScene()
     RenderDepthTextures(3, _shadowMap3, _shadowMapTexture3, 495, 2000);
 
     int width, height;
-    this->GetScreenDims(width, height);
+    GetScreenDims(width, height);
 
     int slot = 2;
     glActiveTexture(GL_TEXTURE0 + slot);
