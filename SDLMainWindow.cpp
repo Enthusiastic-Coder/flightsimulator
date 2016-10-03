@@ -1139,7 +1139,9 @@ void SDLMainWindow::RenderScene()
 
     _renderer->useProgram( _simplePrimitiveShaderProgram);
 
-    _WorldSystem.RenderModelForceGenerators(_renderer);
+    if (global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force ||
+        global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force_and_wind_tunnel)
+        _WorldSystem.RenderModelForceGenerators(_renderer);
 }
 
 void SDLMainWindow::onRender()

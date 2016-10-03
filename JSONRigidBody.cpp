@@ -378,10 +378,6 @@ void JSONRigidBody::renderForceGenerators(Renderer* r)
 	if (getMeshModel() == 0)
 		return;
 
-	if (global_force_lines_debug != __global_force_lines_debug::force_lines_aero_force &&
-		global_force_lines_debug != __global_force_lines_debug::force_lines_aero_force_and_wind_tunnel)
-		return;
-	
     OpenGLPipeline& mat = OpenGLPipeline::Get(0);
 	mat.Push();
     mat.GetModel().TranslateLocation(getGPSLocation());
