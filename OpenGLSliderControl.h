@@ -49,7 +49,7 @@ public:
 protected:
     void updateLayout();
     MathSupport<int>::point toScrn(float U, float V);
-    void renderThumb(Renderer* r, int primitiveType, float value, float alpha);
+    void renderThumb(Renderer* r, int primitiveType, float value, Vector4F color);
 
 private:
     int _cx = 1;

@@ -1109,8 +1109,6 @@ void SDLMainWindow::RenderScene()
 
     _renderer->fLightingFraction = _WorldSystem.getLightFraction();
 
-    _renderer->progId().sendUniform("texID", 0);
-
     _WorldSystem.RenderTerrain( _renderer, true, false, 3, _camera.localView()->getPosition());
 
     glEnable(GL_BLEND);
@@ -1119,7 +1117,6 @@ void SDLMainWindow::RenderScene()
 
     glDisable(GL_BLEND);
     _renderer->useProgram(_waterShaderProgram);
-    _renderer->progId().sendUniform( "texID", 0);
 
     sendDataToShader(_waterShaderProgram, slot, width, height);
 

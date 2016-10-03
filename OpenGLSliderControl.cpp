@@ -144,13 +144,13 @@ MathSupport<int>::point OpenGLSliderControl::toScrn(float U, float V)
     return pt;
 }
 
-void OpenGLSliderControl::renderThumb(Renderer *r, int primitiveType, float value, float alpha)
+void OpenGLSliderControl::renderThumb(Renderer *r, int primitiveType, float value, Vector4F color)
 {
     float colors[] = {
-        1,1,1, alpha,
-        1,1,1, alpha,
-        1,1,1, alpha,
-        1,1,1, alpha,
+        color.x, color.y, color.z, color.w,
+        color.x, color.y, color.z, color.w,
+        color.x, color.y, color.z, color.w,
+        color.x, color.y, color.z, color.w,
     };
 
     r->setPrimitiveType(primitiveType);
@@ -254,14 +254,16 @@ void OpenGLSliderControl::render(Renderer *r)
         }
     }
 
+    Vector4F outlineColor(0.25,0.25,0.25,1);
+
     if( _orientation == Orient_Horizontal)
     {
         float thumbPos = _currentValue / (_max - _min) * _size.width;
 
         for(int i=-1; i <= 1; ++i)
         {
-            c.push_back(Vector4F(1,1,1,1));
-            c.push_back(Vector4F(1,1,1,1));
+            c.push_back(outlineColor);
+            c.push_back(outlineColor);
 
             v.push_back(Vector3F(_position.x + thumbPos+i, _position.y-spill, 0));
             v.push_back(Vector3F(_position.x + thumbPos+i, _position.y + _size.height+spill, 0));
@@ -273,8 +275,8 @@ void OpenGLSliderControl::render(Renderer *r)
 
         for(int i=0; i < 3; ++i)
         {
-            c.push_back(Vector4F(1,1,1,1));
-            c.push_back(Vector4F(1,1,1,1));
+            c.push_back(outlineColor);
+            c.push_back(outlineColor);
             v.push_back(Vector3F(_position.x -spill, _position.y + thumbPos+i, 0));
             v.push_back(Vector3F(_position.x + _size.width+spill, _position.y + thumbPos+i, 0));
         }
@@ -289,8 +291,8 @@ void OpenGLSliderControl::render(Renderer *r)
     r->Render();
     r->unBindBuffers();
 
-    renderThumb(r, GL_TRIANGLE_FAN, _currentValue, 0.5f);
-    renderThumb(r, GL_LINE_LOOP, _value, 0.5f);
+    renderThumb(r, GL_TRIANGLE_FAN, _currentValue, Vector4F(1,1,1,0.5f));
+    renderThumb(r, GL_LINE_LOOP, _value, outlineColor);
 
     pipeline.GetModel().Pop();
 }
