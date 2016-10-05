@@ -116,8 +116,6 @@ HEADERS  += CompositeListForceGenerator.inl \
     GSForceGenerator.h \
     GSRigidBody.h \
     HarrierRigidBody.h \
-    HeathrowRadarOpengl.h \
-    HeathrowRadarRigidBody.h \
     HeathrowTower.h \
     HeightTerrainData.h \
     Hydraulics.h \
@@ -194,6 +192,7 @@ HEADERS  += CompositeListForceGenerator.inl \
     $$PWD/OpenGLButtonTexture.h \
     $$PWD/OpenGLButtonTextureManager.h \
     $$PWD/OpenGLTextureRenderer2D.h \
-    $$PWD/OpenGLSliderControl.h
+    $$PWD/OpenGLSliderControl.h \
+    $$PWD/HeathrowRadar.h
 
 

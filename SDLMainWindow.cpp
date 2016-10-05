@@ -13,8 +13,7 @@
 //#include "AudiA8RigidBody.h"
 //#include "TowTruckRigidBody.h"
 //#include "TowBarRigidBody.h"
-//#include "HeathrowRadarRigidBody.h"
-//#include "HeathrowTower.h"
+
 #include "AirProperties.h"
 #include "BA320RigidBody.h"
 #include "HeathrowTower.h"
@@ -23,6 +22,7 @@
 #include "SimpleCloud.h"
 #include "HarrierRigidBody.h"
 #include "AircraftCarrierRigidBody.h"
+#include "HeathrowRadar.h"
 #include <iostream>
 
 #include "OpenGLFontTexture.h"
@@ -298,6 +298,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 #endif
 #ifndef LOCATED_AT_GIBRALTER
         _WorldSystem.addStaticJSONBody(new HeathrowTowerRigidBody);
+        _WorldSystem.addStaticJSONBody(new HeathrowRadarRigidBody);
 #endif
         _WorldSystem.setLightFraction(0.9f);
 
@@ -383,9 +384,6 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 
     //	_trainA.setPosition( _ringRoad.getGPSLocation() + VectorD(100,0,0) );
     //	_trainA.setOrientation(0,0,0);
-
-    //	_harrierJumpJet.setPosition( _ringRoad.getGPSLocation() + VectorD(150,5,0) );
-    //	_harrierJumpJet.setOrientation(0,0,0);
 
         /*_londonTile.initialise();
         _runwaylites.initialiseSides();
