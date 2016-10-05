@@ -73,4 +73,6 @@ deploy_Fonts.path  = $$DEPLOY_DIR/Fonts
 INSTALLS += deploy_Fonts
 
 
-DISTFILES += .\shaders\*
+DISTFILES += .\shaders\* \
+    shaders/shadowShader-mobile.frag \
+    shaders/shadowShader-mobile.vert
