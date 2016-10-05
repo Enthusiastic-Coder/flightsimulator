@@ -343,11 +343,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _oglFont.SetOffSet( 0, 30);
 
         glClearColor(0.0f,0.0f,0.0f, 1.0f);
-        //glClearColor(0.25f,0.25f,0.25f,1.0f);
-        //glClearColor(0.05f, 0.05f, 0.85f, 1.0f);
-        //glClearColor(3 / 255.0f, 166 / 255.0f, 249 / 255.0f, 1.0f);
-        //glClearColor(_skyColor.x, _skyColor.y, _skyColor.z, _skyColor.w);
-        //glClearColor(1, 1, 1, 1);
+
     #if defined _DEBUG
         setFramePerSecond(30);
     #else
@@ -358,7 +354,6 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 
         SDL_SetWindowTitle(getWindow(), "OpenGL Simulation by Mo");
 
-    //	_heathrowRadar.setPosition( GPSLocation(51.473206,-0.454542) );
         /*_runwayscene.setPosition(GPSLocation(51.46158,-0.459402)+ VectorD(120,0,-325) );
         _runwaylites.setPosition(GPSLocation(51.46158,-0.459402) + GPSLocation(0.0032569999999978450, -0.014778000000000013) );
         _runwaylites.setOrientation(0,90,0);
@@ -368,8 +363,6 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _simpleCloud.setPosition(_runwayscene.getGPSLocation() +VectorD(0,100,0)  );
         _waterTile.setPosition( GPSLocation(51.46158,-0.459402) + VectorD(0,0,500 ));
     */
-    //	_aircraftCarrier.setPosition( _runwayscene.getGPSLocation() + VectorD(0,-15,600 ));
-    //	_aircraftCarrier.initSpeedAndPos();
 
     //	_audiA8.setPosition( GPSLocation(51.4648026, -0.47427592 ) );
     //	_audiA8.initSpeedAndPos();
