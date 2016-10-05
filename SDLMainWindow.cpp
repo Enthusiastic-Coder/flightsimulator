@@ -148,11 +148,19 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         return false;
     }
 
+#ifdef LOCATED_AT_LONDON
+    if (!_shadowShaderProgram.loadFiles("shaders/shadowShader-mobile.vert", "shaders/shadowShader-mobile.frag"))
+    {
+        SDL_Log("%s %s", _shadowShaderProgram.getError().c_str(), "shadowShader-mobile Failed");
+        return false;
+    }
+#else
     if (!_shadowShaderProgram.loadFiles("shaders/shadowShader.vert", "shaders/shadowShader.frag"))
     {
         SDL_Log("%s %s", _shadowShaderProgram.getError().c_str(), "shadowShader Failed");
         return false;
     }
+#endif
 
     if (!_reflectionShaderProgram.loadFiles("shaders/reflectionShader.vert", "shaders/reflectionShader.frag"))
     {
@@ -1065,11 +1073,15 @@ void SDLMainWindow::sendDataToShader(OpenGLShaderProgram& progID, int slot, int 
 
 void SDLMainWindow::RenderScene()
 {
+#ifndef LOCATED_AT_LONDON
     RenderReflection();
+#endif
 
     RenderDepthTextures(1, _shadowMap1, _shadowMapTexture1, 0, 150);
+#ifndef LOCATED_AT_LONDON
     RenderDepthTextures(2, _shadowMap2, _shadowMapTexture2, 145, 500);
     RenderDepthTextures(3, _shadowMap3, _shadowMapTexture3, 495, 2000);
+#endif
 
     int width, height;
     GetScreenDims(width, height);
@@ -1078,6 +1090,7 @@ void SDLMainWindow::RenderScene()
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, _shadowMap1);
 
+#ifndef LOCATED_AT_LONDON
     glActiveTexture(GL_TEXTURE0 + slot + 1);
     glBindTexture(GL_TEXTURE_2D, _shadowMap2);
 
@@ -1092,6 +1105,7 @@ void SDLMainWindow::RenderScene()
 
     glActiveTexture(GL_TEXTURE0 + slot + 5);
     glBindTexture(GL_TEXTURE_2D, _dUdVMap);
+#endif
 
     glActiveTexture(GL_TEXTURE0);
 
@@ -1103,13 +1117,27 @@ void SDLMainWindow::RenderScene()
 
     _renderer->fLightingFraction = _WorldSystem.getLightFraction();
 
-    _WorldSystem.RenderTerrain( _renderer, true, false, 3, _camera.localView()->getPosition());
+    _WorldSystem.RenderTerrain( _renderer, true, false,
+                            #ifndef LOCATED_AT_LONDON
+                                3,
+                            #else
+                                1,
+                            #endif
+                                _camera.localView()->getPosition());
 
     glEnable(GL_BLEND);
 
-    _WorldSystem.RenderModels( _renderer, false, 3, frameTime());
+    _WorldSystem.RenderModels( _renderer, false,
+                           #ifndef LOCATED_AT_LONDON
+                               3,
+                           #else
+                               1,
+                           #endif
+                               frameTime());
 
     glDisable(GL_BLEND);
+
+#ifndef LOCATED_AT_LONDON
     _renderer->useProgram(_waterShaderProgram);
 
     sendDataToShader(_waterShaderProgram, slot, width, height);
@@ -1123,6 +1151,7 @@ void SDLMainWindow::RenderScene()
     glDisable(GL_BLEND);
 
     _WorldSystem.RenderTerrain( _renderer, false, false, 3, _camera.localView()->getPosition());
+#endif
 
     glEnable(GL_BLEND);
     for (int i = slot+5; i >=0; --i)
