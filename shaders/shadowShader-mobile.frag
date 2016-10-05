@@ -43,7 +43,7 @@ float calcShadowValue()
                 mediump vec2 offset = vec2( dims.x*float(x), dims.y*float(y) );
                 shadowUV1 = lightVertexPosition1W.xy + offset;
 
-                if( shadowUV1.x >= 0.0 && shadowUV1.x <=1.0 && shadowUV1.y >= 0.0 && shadowUV1.y <= 1.0 )
+                //if( shadowUV1.x >= 0.0 && shadowUV1.x <=1.0 && shadowUV1.y >= 0.0 && shadowUV1.y <= 1.0 )
                 {
                     if(lightVertexPosition1.z > 1.0)
                         shadowValue++;
