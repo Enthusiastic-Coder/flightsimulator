@@ -351,17 +351,12 @@ void JSONRigidBody::Render(Renderer *r, bool bReflection, unsigned int shadowMap
 		}
 		
 		if (global_fg_debug)
-		{
-			glEnable(GL_BLEND);
-            glColor4f(r->fLightingFraction, r->fLightingFraction, r->fLightingFraction, FG_BLEND_VALUE);
-		}
+            glEnable(GL_BLEND);
 
         renderMesh(r, shadowMapCount);
 		
 		if (global_fg_debug)
-		{
-			glDisable(GL_BLEND);
-		}
+            glDisable(GL_BLEND);
 
         for (unsigned int shadowID = r->camID + 1; shadowID <= r->camID + shadowMapCount; ++shadowID)
 		{
