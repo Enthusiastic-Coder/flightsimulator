@@ -487,6 +487,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 
 void SDLMainWindow::OnInitSound()
 {
+#ifndef LOCATED_AT_LONDON
     ALenum errorNo = alGetError();
     const ALCchar *defaultDevice = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
 
@@ -551,10 +552,12 @@ void SDLMainWindow::OnInitSound()
     alSourcei(_soundEnvironmentSource, AL_LOOPING, AL_TRUE);
     alSourcei(_soundEngineSource, AL_LOOPING, AL_TRUE);
     alSourcei(_soundHeightCallOutSource, AL_LOOPING, AL_FALSE );
+#endif
 }
 
 void SDLMainWindow::OnUnitSound()
 {
+#ifndef LOCATED_AT_LONDON
     alSourceStop(_soundEnvironmentSource);
     alDeleteSources( 1, &_soundEnvironmentSource );
     alDeleteBuffers( 1, &_soundEnvironmentBuffer );
@@ -572,6 +575,7 @@ void SDLMainWindow::OnUnitSound()
     alcMakeContextCurrent(NULL);
     alcDestroyContext(_soundContext);
     alcCloseDevice(_soundDevice);
+#endif
 }
 
 const char* SDLMainWindow::persistFilename() const
