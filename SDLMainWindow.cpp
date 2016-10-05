@@ -290,12 +290,15 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _WorldSystem.onInitialise();
 
         _WorldSystem.addJSONBody(new BAAirbus320JSONRigidBody("AirbusA320:BAA320:A320_A_GIB"));
+#ifndef LOCATED_AT_LONDON
         _WorldSystem.addJSONBody(new BAAirbus320JSONRigidBody("AirbusA320:AirArabia:A320_B_GIB"));
         _WorldSystem.addJSONBody(new BAAirbus380JSONRigidBody("AirbusA380:BAA380:A380_A_GIB"));
         _WorldSystem.addJSONBody(new HarrierJSONRigidBody("Harrier:Harrier:Harrier_A_GIB"));
         _WorldSystem.addJSONBody(new AircraftCarrierJSONRigidBody("AircraftCarrier:Carrier_A_GIB"));
-
+#endif
+#ifndef LOCATED_AT_GIBRALTER
         _WorldSystem.addStaticJSONBody(new HeathrowTowerRigidBody);
+#endif
         _WorldSystem.setLightFraction(0.9f);
 
         _pfdInstrument.Initialise(hdc);
@@ -650,8 +653,8 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
         if( pBody )
         {
-            //_camera.remoteView()->setPosition( pBody->getGPSLocation() + Vector3F(0,0,100));
-            //_camera.fastForwardLocalView();
+            _camera.remoteView()->setPosition( pBody->getGPSLocation() + Vector3F(0,0,100));
+            _camera.fastForwardLocalView();
         }
     }
 

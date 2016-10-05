@@ -110,8 +110,7 @@ private:
 	Weather _weather;
 	JoystickSystem _Joy;	
 
-	std::vector<std::unique_ptr<RunwayMeshObject>> _runwayList;
-	SimplePlaneMeshModel _simplePlaneMeshModel;
+    std::vector<std::unique_ptr<RunwayMeshObject>> _runwayList;
 	GPSLocation _simplePlaneLocation;
 	SimpleCloud* _simpleCloud;
 

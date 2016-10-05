@@ -263,7 +263,36 @@ void WorldSystem::loadTerrain()
 	int width = 380;
 	int height = 3200;
 
-#if defined LOCATED_AT_GIBRALTER
+#ifdef LOCATED_AT_LONDON
+
+    if (!_TerrainCollection.LoadTile(rootCacheDir + "n51w001.data"))
+        if (_TerrainCollection.LoadSRTM30("n51w001"))
+        {
+            _TerrainCollection.BuildLastTile();
+            _TerrainCollection.SaveLastTile(rootCacheDir + "n51w001.data");
+        }
+
+    fRunwayMaxDiff = 20.0f;
+    {
+        //27R EGLL
+        std::unique_ptr<RunwayMeshObject> obj(new RunwayMeshObject);
+        obj->location = GPSLocation(51.477681, -0.433258);
+        obj->meshModel.setTextureName("runway_strip.png");
+        obj->meshModel.Build(-90, 60, 2664, fRunwayMaxDiff);
+        _runwayList.push_back(std::move(obj));
+    }
+
+    {
+        //27L
+        std::unique_ptr<RunwayMeshObject> obj(new RunwayMeshObject);
+        obj->location = GPSLocation(51.464951, -0.434115);
+        obj->meshModel.setTextureName("runway_strip.png");
+        obj->meshModel.Build(-90, 60, 2664, fRunwayMaxDiff);
+
+        _runwayList.push_back(std::move(obj));
+    }
+
+#elif LOCATED_AT_GIBRALTER
 
 	// = GPSLocation(36.151149, -5.349627) + VectorF(0, 0, 0);
 	//_simplePlaneMeshModel.Build(250, 250, 4.0f, RGB(50, 50, 0), 0);
@@ -318,6 +347,7 @@ void WorldSystem::loadTerrain()
         }
 
 #else
+
 	/*if( !_TerrainCollection.LoadTile( rootCacheDir + "n50w001.data" ) )
 	if( _TerrainCollection.LoadSRTM30( "n50w001" ) )
 	{
@@ -349,9 +379,8 @@ void WorldSystem::loadTerrain()
 		_runwayList.push_back(std::move(obj));
 	}
 #endif
-	_TerrainCollection[0]->attachModel(_simplePlaneMeshModel, _simplePlaneLocation, 0.0f);
 
-	for (auto& it : _runwayList)
+    for (auto& it : _runwayList)
 		_TerrainCollection[0]->attachModel(it->meshModel, it->location, 0.1f);
 
 	_TerrainCollection.BuildVertexBuffers();
