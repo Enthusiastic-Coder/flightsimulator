@@ -68,7 +68,7 @@ void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
     if (focus)
     {
         focus->getPower(0);
-        _powerSliderControl.setValue(100-focus->getPowerOutput(0));
+        _powerSliderControl.setValue(focus->getPowerOutput(0));
     }
 }
 
@@ -86,7 +86,7 @@ void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
         JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
         if (focus)
         {
-            focus->setPower(100-_powerSliderControl.getValue());
+            focus->setPower(_powerSliderControl.getValue());
         }
     }
 }
@@ -770,7 +770,7 @@ void SDLMainWindow::onUpdate()
     if (focus)
     {
         if( focus->getState() == JSONRigidBody::STATE::PLAYBACK)
-            _powerSliderControl.setValue(100-focus->getPowerOutput(0));
+            _powerSliderControl.setValue(focus->getPowerOutput(0));
     }
 
     _powerSliderControl.update(dt);

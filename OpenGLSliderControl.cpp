@@ -86,9 +86,9 @@ bool OpenGLSliderControl::handleMouseDown(MathSupport<int>::point pt)
     _bMouseDown = true;
 
     if( _orientation == Orient_Horizontal)
-        _value = float(pt.x - _position.x) / _size.width * (_max - _min) + _min;
+        _value = _max - float(pt.x - _position.x) / _size.width * (_max - _min) ;
     else
-        _value = float(pt.y - _position.y) / _size.height * (_max - _min) + _min;
+        _value = _max - float(pt.y - _position.y) / _size.height * (_max - _min) ;
 
     return true;
 }
@@ -158,7 +158,7 @@ void OpenGLSliderControl::renderThumb(Renderer *r, int primitiveType, float valu
     if(_orientation == Orient_Horizontal)
     {
         float iThumbHeight = _size.width * _thumbThickness;
-        float thumbPos = float(value) / (_max - _min) * _size.width;
+        float thumbPos = _size.width - float(value) / (_max - _min) * _size.width;
 
         float vertices[] = {
             _position.x + thumbPos - iThumbHeight, _position.y, 0.0f,
@@ -176,7 +176,7 @@ void OpenGLSliderControl::renderThumb(Renderer *r, int primitiveType, float valu
     else
     {
         float iThumbHeight = _size.height * _thumbThickness;
-        float thumbPos = float(value) / (_max - _min) * _size.height;
+        float thumbPos = _size.height - float(value) / (_max - _min) * _size.height;
 
         float vertices[] = {
             _position.x , _position.y + thumbPos - iThumbHeight, 0.0f,
@@ -258,7 +258,7 @@ void OpenGLSliderControl::render(Renderer *r)
 
     if( _orientation == Orient_Horizontal)
     {
-        float thumbPos = _currentValue / (_max - _min) * _size.width;
+        float thumbPos = _size.width- _currentValue / (_max - _min) * _size.width;
 
         for(int i=-1; i <= 1; ++i)
         {
@@ -271,7 +271,7 @@ void OpenGLSliderControl::render(Renderer *r)
     }
     else
     {
-        float thumbPos = _currentValue / (_max - _min) * _size.height;
+        float thumbPos = _size.height - _currentValue / (_max - _min) * _size.height;
 
         for(int i=0; i < 3; ++i)
         {
