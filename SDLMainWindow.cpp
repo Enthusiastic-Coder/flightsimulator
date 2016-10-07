@@ -198,7 +198,15 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         return false;
     }
 
-    int f[3] = { 2,2, 4 };
+    int f[3] = {
+#ifdef ANDROID
+     2, 2, 4
+#else
+     4, 2 ,4
+#endif
+    };
+
+
     if (!_shadowMap1.generate(512 * f[0], 512 * f[0], true))
     {
         SDL_Log("Failed to be created. - Depth Texure Buffer Failed");
@@ -583,17 +591,27 @@ const char* SDLMainWindow::persistFilename() const
     return "lastGPSpos.bin";
 }
 
+void SDLMainWindow::onBeforeOpenGLContext()
+{
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,8);
+}
+
 void SDLMainWindow::ensureCameraAboveGround()
 {
     HeightData data;
-    _WorldSystem.getHeightFromPosition( _camera.localView()->getPosition(), data );
+    _WorldSystem.getHeightFromPosition( _camera.remoteView()->getPosition(), data );
     float fMinHeight = 0.05f;
 
     if( data.Height() < fMinHeight )
     {
-        GPSLocation loc = _camera.localView()->getPosition();
+        GPSLocation loc = _camera.remoteView()->getPosition();
         loc._height = loc._height - data.Height() + fMinHeight;
-        _camera.localView()->setPosition(loc);
+        _camera.remoteView()->setPosition(loc);
+        _camera.fastForwardLocalView();
     }
 }
 
@@ -1031,8 +1049,8 @@ void SDLMainWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, O
         return;
     }
 
-    GLenum drawbuffers[] = { GL_COLOR_ATTACHMENT0 };
-    glDrawBuffers(1, drawbuffers);
+    //GLenum drawbuffers[] = { GL_COLOR_ATTACHMENT0 };
+    //glDrawBuffers(1, drawbuffers);
 
     glViewport(0, 0, shadowMap.width(), shadowMap.height());
     glEnable(GL_DEPTH_TEST);
@@ -1066,11 +1084,13 @@ void SDLMainWindow::sendDataToShader(OpenGLShaderProgram& progID, int slot, int 
     progID.sendUniform("texID", 0);
     progID.sendUniform("useTex", 1);
     progID.sendUniform("debug", global_fg_debug == true);
-    progID.sendUniform("dims", 1.0f / width, 1.0f / height);
     progID.sendUniform("shadowMap1", slot);
+#ifndef LOCATED_AT_LONDON
+    progID.sendUniform("dims", 1.0f / width, 1.0f / height);
     progID.sendUniform("shadowMap2", slot + 1);
     progID.sendUniform("shadowMap3", slot + 2);
     progID.sendUniform("reflectionMap", slot + 3);
+#endif
     Vector4F eyeLightDirection = _WorldSystem.getEyeLightDirection();
     progID.sendUniform("eyeLightDirection", eyeLightDirection.x, eyeLightDirection.y, eyeLightDirection.z);
 }

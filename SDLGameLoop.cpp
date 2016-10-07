@@ -2,6 +2,7 @@
 #include "SDLGameLoop.h"
 #include <include_gl.h>
 #include <string>
+#include <vector>
 #include "SDL_syswm.h"
 #include <algorithm>
 
@@ -27,6 +28,100 @@ SDLGameLoop::SDLGameLoop() :
     _sdlWindow(0)
 {
     _updateEventType = SDL_RegisterEvents(1);
+}
+
+std::vector<std::string> split(const std::string& s, char seperator)
+{
+    std::vector<std::string> output;
+
+    std::string::size_type prev_pos = 0, pos = 0;
+
+    while ((pos = s.find(seperator, pos)) != std::string::npos)
+    {
+        std::string substring(s.substr(prev_pos, pos - prev_pos));
+
+        output.push_back(substring);
+
+        prev_pos = ++pos;
+    }
+
+    output.push_back(s.substr(prev_pos, pos - prev_pos)); // Last word
+
+    return output;
+}
+
+void writeOutResult()
+{
+    char* chVen = (char*)glGetString(GL_VENDOR);
+    std::string vendor = chVen != 0 ? chVen : "";
+
+    char* chRen = (char*)glGetString(GL_RENDERER);
+    std::string renderer = chRen != 0 ? chRen : "";
+
+    char* chVer = (char*)glGetString(GL_VERSION);
+    std::string version = chVer != 0 ? chVer : "";
+
+    SDL_Log("Vendor : %s", vendor.c_str());
+    SDL_Log("Renderer : %s", renderer.c_str() );
+    SDL_Log("Version : %s", version.c_str());
+
+    int value = 0;
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &value);
+    SDL_Log("SDL_GL_CONTEXT_MAJOR_VERSION : %d", value );
+
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &value);
+    SDL_Log("SDL_GL_CONTEXT_MINOR_VERSION : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &value);
+    SDL_Log("SDL_GL_RED_SIZE : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &value);
+    SDL_Log("SDL_GL_GREEN_SIZE : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &value);
+    SDL_Log("SDL_GL_BLUE_SIZE : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &value);
+    SDL_Log("SDL_GL_ALPHA_SIZE : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &value);
+    SDL_Log("SDL_GL_BUFFER_SIZE : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
+    SDL_Log("SDL_GL_DOUBLEBUFFER : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &value);
+    SDL_Log("SDL_GL_DEPTH_SIZE : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &value);
+    SDL_Log("SDL_GL_STENCIL_SIZE : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_EGL, &value);
+    SDL_Log("SDL_GL_CONTEXT_EGL : %d", value);
+
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &value);
+    SDL_Log("SDL_GL_CONTEXT_PROFILE_MASK : %d", value);
+
+    SDL_Log( "Current Video Driver : %s",  SDL_GetCurrentVideoDriver());
+
+    SDL_Log( "SDL_GetNumVideoDisplays : %d", SDL_GetNumVideoDisplays());
+    for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i)
+        SDL_Log( "SDL_GetDisplayName [] : %s", SDL_GetDisplayName(i) );
+
+    SDL_Log("GL_ARB_ES2_compatibility : %d", SDL_GL_ExtensionSupported("GL_ARB_ES2_compatibility"));
+
+    SDL_Log("-------------");
+
+    char* chExts = (char*)glGetString(GL_EXTENSIONS);
+    std::string exts = chExts != 0 ? chExts : "";
+
+    std::vector<std::string> list = split(exts, ' ');
+    for(std::string var : list)
+    {
+        SDL_Log("%s", var.c_str());;
+    }
+
+    SDL_Log("-------------");
 }
 
 bool SDLGameLoop::run(std::string strTitle)
@@ -55,6 +150,7 @@ bool SDLGameLoop::run(std::string strTitle)
     SDL_SysWMinfo info;
     SDL_VERSION(&info.version); // initialize info structure with SDL version info
 
+    onBeforeOpenGLContext();
     _glContext = SDL_GL_CreateContext(_sdlWindow);
     _running = true;
 
@@ -68,6 +164,8 @@ bool SDLGameLoop::run(std::string strTitle)
     }
 
     SDL_Log( "Current Video Driver : %s",  SDL_GetCurrentVideoDriver());
+
+    writeOutResult();
 
     SDL_bool bScreenSaverEnabled = SDL_IsScreenSaverEnabled();
 

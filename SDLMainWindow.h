@@ -40,6 +40,7 @@ public:
     const char* persistFilename() const;
 
 protected:
+    void onBeforeOpenGLContext() override;
     bool onInitialise(HDC hdc) override;
     void onUnInitialise() override;
     void onUpdate() override;

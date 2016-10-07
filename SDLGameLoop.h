@@ -21,6 +21,7 @@ public:
     void update();
     void postQuit();
 
+    virtual void onBeforeOpenGLContext() {};
     virtual bool onInitialise(HDC) {return false;}
     virtual void onUnInitialise() {}
     virtual void onUpdate() {}
