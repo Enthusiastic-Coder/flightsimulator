@@ -12,10 +12,10 @@ class Renderer
 {
 public:
     Renderer();
-    float dt;
+    float dt = 1/30.0f;
 
-    unsigned int camID;
-    float fLightingFraction;
+    unsigned int camID  = 0;
+    float fLightingFraction = 1.0f;
 
     static OpenGLShaderProgram nullShader;
     //Shader Variables

@@ -37,7 +37,7 @@ void SkyDome::Render(Renderer *r)
     r->bindVertex(Renderer::TexCoord, 2, _meshData.texturePtr());
     r->bindIndex(_meshData.indexPtr());
 
-    for( int x=0; x <= _prop.hemisphereCount*_prop.slices; ++x)
+    for( int x=0; x < _prop.hemisphereCount*_prop.slices; ++x)
     {
         r->setVertexCountOffset( (_prop.sides +1)* 2, x * (_prop.sides+1)*2);
         r->setPrimitiveType(GL_TRIANGLE_STRIP);
@@ -45,5 +45,4 @@ void SkyDome::Render(Renderer *r)
     }
 
     r->unBindBuffers();
-
 }
