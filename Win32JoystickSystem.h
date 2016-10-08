@@ -3,7 +3,7 @@
 #include "interfaces.h"
 #include "Win32JoystickController.h"
 
-class JoystickSystem : public IJoystick
+class Win32JoystickSystem : public IJoystick
 {
 public:
 

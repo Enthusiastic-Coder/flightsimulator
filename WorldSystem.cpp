@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////
 
 
-#include "JoystickSystem.h"
+#include "Win32JoystickSystem.h"
 
 #include "SimpleCloud.h"
 

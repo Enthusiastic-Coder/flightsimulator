@@ -73,7 +73,6 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/TerrainGroupObject.cpp \
     $$PWD/PerlinNoise.cpp \
     SkyDome.cpp \
-    JoystickSystem.cpp \
     $$PWD/CameraView.cpp \
     $$PWD/CameraViewProvider.cpp \
     $$PWD/TurnDirection.cpp \
@@ -83,7 +82,8 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/OpenGLButtonTexture.cpp \
     $$PWD/OpenGLButtonTextureManager.cpp \
     $$PWD/OpenGLTextureRenderer2D.cpp \
-    $$PWD/OpenGLSliderControl.cpp
+    $$PWD/OpenGLSliderControl.cpp \
+    $$PWD/Win32JoystickSystem.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
     AeroControlSurface.h \
@@ -120,7 +120,6 @@ HEADERS  += CompositeListForceGenerator.inl \
     HeightTerrainData.h \
     Hydraulics.h \
     interfaces.h \
-    JoystickSystem.h \
     JSONRigidBody.h \
     JSONRigidBodyBuilder.h \
     JSONRigidBodyCollection.h \
@@ -193,6 +192,7 @@ HEADERS  += CompositeListForceGenerator.inl \
     $$PWD/OpenGLButtonTextureManager.h \
     $$PWD/OpenGLTextureRenderer2D.h \
     $$PWD/OpenGLSliderControl.h \
-    $$PWD/HeathrowRadar.h
+    $$PWD/HeathrowRadar.h \
+    $$PWD/Win32JoystickSystem.h
 
 
