@@ -92,7 +92,7 @@ void WorldSystem::onInitialise()
     //addStaticJSONBody(_simpleCloud=new SimpleCloud("cloud_A"));
 
     _Joy = new Win32JoystickSystem;
-    _Joy->joyInit();
+    _Joy->joyInit(0);
 }
 
 void WorldSystem::onUnintialise()

@@ -122,6 +122,11 @@ void writeOutResult()
     }
 
     SDL_Log("-------------");
+
+    SDL_Log("There are %d joysticks available\n", SDL_NumJoysticks());
+
+    for (int i = 0; i < SDL_NumJoysticks(); ++i)
+        SDL_Log( "[%d -> %s", i, SDL_JoystickNameForIndex(i));
 }
 
 bool SDLGameLoop::run(std::string strTitle)

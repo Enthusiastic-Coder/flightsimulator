@@ -3,7 +3,11 @@
 
 int main(int, char *[])
 {
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK);
+
+#ifdef ANDROID
+    chdir( SDL_AndroidGetInternalStoragePath());
+#endif
 
     IMG_Init(IMG_INIT_PNG);
     IMG_Init(IMG_INIT_JPG);

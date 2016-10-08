@@ -1,10 +1,14 @@
 #include "stdafx.h"
 #include "SDLJoystickSystem.h"
+#include <SDL_joystick.h>
+#include <SDL_log.h>
 
-
-void SDLJoystickSystem::joyInit()
+void SDLJoystickSystem::joyInit(char* id)
 {
-    //_input.init();
+    SDL_Log("There are %d joysticks available\n", SDL_NumJoysticks());
+
+    for (int i = 0; i < SDL_NumJoysticks(); ++i)
+        SDL_Log( "[%d -> %s", i, SDL_JoystickNameForIndex(i));
 }
 
 void SDLJoystickSystem::joyUpdate()
@@ -15,7 +19,7 @@ void SDLJoystickSystem::joyUpdate()
 
 bool SDLJoystickSystem::isAvailable()
 {
-    return 0;//_input.lastAvailable();
+    return false;//_input.lastAvailable();
 }
 
 float SDLJoystickSystem::joyGetX()

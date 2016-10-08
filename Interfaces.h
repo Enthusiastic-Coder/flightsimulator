@@ -39,7 +39,7 @@ struct IWeather
 struct IJoystick
 {
     virtual bool isAvailable() = 0;
-    virtual void joyInit() = 0;
+    virtual void joyInit(char* id) = 0;
     virtual void joyUpdate() = 0;
     virtual float joyGetX() = 0;
     virtual float joyGetY() = 0;

@@ -6,7 +6,7 @@
 class Win32JoystickSystem : public IJoystick
 {
 public:
-    void joyInit() override;
+    void joyInit(char *id) override;
     void joyUpdate() override;
     bool isAvailable() override;
     float joyGetX() override;

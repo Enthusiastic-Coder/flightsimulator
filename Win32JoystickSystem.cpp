@@ -2,7 +2,7 @@
 #include "Win32JoystickSystem.h"
 
 
-void Win32JoystickSystem::joyInit()
+void Win32JoystickSystem::joyInit(char* id)
 {
     _input.init();
 }
