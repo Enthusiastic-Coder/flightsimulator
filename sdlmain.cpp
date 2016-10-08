@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#include "include_gl.h"
 #include "SDLMainWindow.h"
 #include <SDL_image.h>
 

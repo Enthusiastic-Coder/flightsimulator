@@ -70,6 +70,7 @@ void MipMapTerrainMeshModelCollection::Render(Renderer *args, bool bLand, bool b
 		mat.Pop();
 	}
 
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 	mat.GetProjection().Top().m34 -= fDiff;
 	glDisable(GL_STENCIL_TEST);
 }
