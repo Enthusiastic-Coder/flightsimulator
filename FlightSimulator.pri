@@ -83,7 +83,8 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/OpenGLButtonTextureManager.cpp \
     $$PWD/OpenGLTextureRenderer2D.cpp \
     $$PWD/OpenGLSliderControl.cpp \
-    $$PWD/Win32JoystickSystem.cpp
+    $$PWD/Win32JoystickSystem.cpp \
+    $$PWD/SDLJoystickSystem.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
     AeroControlSurface.h \
@@ -193,6 +194,7 @@ HEADERS  += CompositeListForceGenerator.inl \
     $$PWD/OpenGLTextureRenderer2D.h \
     $$PWD/OpenGLSliderControl.h \
     $$PWD/HeathrowRadar.h \
-    $$PWD/Win32JoystickSystem.h
+    $$PWD/Win32JoystickSystem.h \
+    $$PWD/SDLJoystickSystem.h
 
 
