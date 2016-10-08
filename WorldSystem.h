@@ -2,7 +2,7 @@
 
 #include "SceneryManager.h"
 #include "JSONRigidBodyCollection.h"
-#include "Win32JoystickSystem.h"
+#include "Interfaces.h"
 #include "Camera.h"
 #include "Weather.h"
 #include "CPPSourceCodeMeshModel.h"
@@ -108,7 +108,7 @@ private:
 	SceneryManager _sceneryManager;
 	JSONRigidBodyCollection _rigidBodyCollection;
 	Weather _weather;
-	Win32JoystickSystem _Joy;	
+    IJoystick* _Joy;
 
     std::vector<std::unique_ptr<RunwayMeshObject>> _runwayList;
 	GPSLocation _simplePlaneLocation;

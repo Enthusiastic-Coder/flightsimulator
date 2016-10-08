@@ -6,19 +6,18 @@
 class Win32JoystickSystem : public IJoystick
 {
 public:
-
-    void joyInit();
-    void joyUpdate();
-    bool isAvailable();
-    float joyGetX();
-    float joyGetY();
-    float joyGetZ();
-    float joyGetR();
-    float joyGetU();
-    float joyGetV();
-    int getPOV();
-    int numberofButtonsPressed();
-    int buttonFlagPressed();
+    void joyInit() override;
+    void joyUpdate() override;
+    bool isAvailable() override;
+    float joyGetX() override;
+    float joyGetY() override;
+    float joyGetZ() override;
+    float joyGetR() override;
+    float joyGetU() override;
+    float joyGetV() override;
+    int getPOV() override;
+    int numberofButtonsPressed() override;
+    int buttonFlagPressed() override;
 
 private:
     Win32JoystickController _input;

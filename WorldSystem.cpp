@@ -39,6 +39,7 @@ WorldSystem::WorldSystem() :
     _fLightingFraction(0.85f),
     _sceneryManager(this),
     _simpleCloud(0),
+    _Joy(0),
     _fLightYTanAngle(0.0f),
     _cameraProvider(ViewPosition::ViewPositionEnd-1)
 {
@@ -52,7 +53,7 @@ void WorldSystem::update( double dt )
     if( fabs(dt) <= FLT_EPSILON)
         return;
 
-    _Joy.joyUpdate();
+    _Joy->joyUpdate();
     _rigidBodyCollection.update( dt );
 
     GPSLocation loc = _cameraProvider.getCameraView()->getPosition();
@@ -90,7 +91,8 @@ void WorldSystem::onInitialise()
 
     //addStaticJSONBody(_simpleCloud=new SimpleCloud("cloud_A"));
 
-    _Joy.joyInit();
+    _Joy = new Win32JoystickSystem;
+    _Joy->joyInit();
 }
 
 void WorldSystem::onUnintialise()
@@ -519,5 +521,5 @@ IWeather *  WorldSystem::getWeather()
 
 IJoystick *  WorldSystem::getJoystick()
 {
-	return &_Joy;
+    return _Joy;
 }
