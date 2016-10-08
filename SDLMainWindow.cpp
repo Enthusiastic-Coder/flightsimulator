@@ -160,7 +160,6 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         SDL_Log("%s %s", _shadowShaderProgram.getError().c_str(), "shadowShader Failed");
         return false;
     }
-#endif
 
     if (!_reflectionShaderProgram.loadFiles("shaders/reflectionShader.vert", "shaders/reflectionShader.frag"))
     {
@@ -173,6 +172,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         SDL_Log("%s %s", _waterShaderProgram.getError().c_str(), "waterShader Failed");
         return false;
     }
+#endif
 
     if( !_simplePrimitiveShaderProgram.loadFiles("shaders/simplePrimitiveShader.vert", "shaders/simplePrimitiveShader.frag"))
     {
@@ -213,6 +213,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         return false;
     }
 
+#ifndef LOCATED_AT_LONDON
     if (!_shadowMap2.generate(512 * f[1], 512 * f[1], true))
     {
         SDL_Log("Failed to be created. - Depth Texure 2 Buffer Failed");
@@ -224,6 +225,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         SDL_Log("Failed to be created. - Depth Texure 3 Buffer Failed");
         return false;
     }
+#endif
 
     if (!_shadowMapTexture1.generate(512 * f[0], 512 * f[0], false))
     {
@@ -231,6 +233,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         return false;
     }
 
+#ifndef LOCATED_AT_LONDON
     if (!_shadowMapTexture2.generate(512 * f[1], 512 * f[1], false))
     {
         SDL_Log("Failed to be created. - Depth Color Texure 2 Buffer Failed");
@@ -242,6 +245,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         SDL_Log( "Failed to be created. - Depth Color Texure 3 Buffer Failed");
         return false;
     }
+#endif
 
     _openGLFrameBuffer.bind();
     _openGLFrameBuffer.attachColorTexture2D(0, _shadowMapTexture1);
@@ -589,15 +593,6 @@ void SDLMainWindow::OnUnitSound()
 const char* SDLMainWindow::persistFilename() const
 {
     return "lastGPSpos.bin";
-}
-
-void SDLMainWindow::onBeforeOpenGLContext()
-{
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,8);
 }
 
 void SDLMainWindow::ensureCameraAboveGround()
@@ -1178,7 +1173,12 @@ void SDLMainWindow::RenderScene()
 #endif
 
     glEnable(GL_BLEND);
+
+#ifndef LOCATED_AT_LONDON
     for (int i = slot+5; i >=0; --i)
+#else
+    for (int i = slot+2; i >=0; --i)
+#endif
     {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -1251,8 +1251,10 @@ void SDLMainWindow::onRender()
     {
         //RenderTexture(_reflectionTexture, 0);
         RenderTexture(_shadowMapTexture1, 0);
+#ifndef LOCATED_AT_LONDON
         RenderTexture(_shadowMapTexture2, 1);
         RenderTexture(_shadowMapTexture3, 2);
+#endif
     }
 
     pipeline.Pop();

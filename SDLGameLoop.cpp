@@ -150,7 +150,6 @@ bool SDLGameLoop::run(std::string strTitle)
     SDL_SysWMinfo info;
     SDL_VERSION(&info.version); // initialize info structure with SDL version info
 
-    onBeforeOpenGLContext();
     _glContext = SDL_GL_CreateContext(_sdlWindow);
     _running = true;
 
