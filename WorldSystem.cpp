@@ -73,24 +73,7 @@ bool WorldSystem::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 void WorldSystem::onInitialise()
 {
     loadTerrain();
-
     _rigidBodyCollection.onInitialise();
-    //#if defined LOCATED_AT_GIBRALTER
-    //	_rigidBodyCollection.addJSONBody(new BAAirbus320JSONRigidBody("AirbusA320:BAA320:A320_A_GIB", &_rigidBodyCollection));
-//	_rigidBodyCollection.addJSONBody(new BAAirbus320JSONRigidBody("AirbusA320:AirArabia:A320_B_GIB", &_rigidBodyCollection));
-//	_rigidBodyCollection.addJSONBody(new BAAirbus380JSONRigidBody("AirbusA380:BAA380:A380_A_GIB", &_rigidBodyCollection));
-//	_rigidBodyCollection.addJSONBody(new HarrierJSONRigidBody("Harrier:Harrier:Harrier_A_GIB", &_rigidBodyCollection));
-//	_rigidBodyCollection.addJSONBody(new AircraftCarrierJSONRigidBody("AircraftCarrier:Carrier_A_GIB", &_rigidBodyCollection));
-//#else
-//	_rigidBodyCollection.addJSONBody(new BAAirbus320JSONRigidBody("AirbusA320:BAA320:A320_A", &_rigidBodyCollection ) );
-//	_rigidBodyCollection.addJSONBody(new BAAirbus320JSONRigidBody("AirbusA320:BAA320:A320_B", &_rigidBodyCollection));
-//	_rigidBodyCollection.addJSONBody(new BAAirbus380JSONRigidBody("AirbusA380:BAA380:BA380_A", &_rigidBodyCollection));
-//#endif
-//	//_rigidBodyCollection.addJSONBody(new BAAirbus380JSONRigidBody("BAA380:BA380_B", &_rigidBodyCollection));
-//	_rigidBodyCollection.addStaticJSONBody(new HeathrowTowerRigidBody(&_rigidBodyCollection));
-
-    //addStaticJSONBody(_simpleCloud=new SimpleCloud("cloud_A"));
-
     _Joy = new Win32JoystickSystem;
     _Joy->joyInit(0);
 }

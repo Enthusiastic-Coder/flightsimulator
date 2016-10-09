@@ -202,12 +202,12 @@ bool SDLMainWindow::createFrameBufferAndShaders()
 #ifdef ANDROID
      2, 2, 4
 #else
-     4, 2 ,4
+     8, 2 ,4
 #endif
     };
 
 
-    if (!_shadowMap1.generate(512 * f[0], 512 * f[0], true))
+    if (!_shadowDepthMap1.generate(512 * f[0], 512 * f[0], true))
     {
         SDL_Log("Failed to be created. - Depth Texure Buffer Failed");
         return false;
@@ -227,7 +227,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     }
 #endif
 
-    if (!_shadowMapTexture1.generate(512 * f[0], 512 * f[0], false))
+    if (!_shadowTextureMap1.generate(512 * f[0], 512 * f[0], false))
     {
         SDL_Log( "Failed to be created. - Depth Color Texure Buffer Failed");
         return false;
@@ -247,17 +247,18 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     }
 #endif
 
-    _openGLFrameBuffer.bind();
-    _openGLFrameBuffer.attachColorTexture2D(0, _shadowMapTexture1);
+//    _openGLFrameBuffer.bind();
+//    _openGLFrameBuffer.attachColorTexture2D(0, _shadowTextureMap1);
 
-    if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
-    {
-        SDL_Log("FrameBuffer not complete. - FrameBuffer Failed");
-        return false;
-    }
+//    if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
+//    {
+//        SDL_Log("FrameBuffer not complete. - FrameBuffer Failed");
+//        return false;
+//    }
 
-    _openGLFrameBuffer.unbind();
+//    _openGLFrameBuffer.unbind();
 
+#ifndef LOCATED_AT_LONDON
     int width, height;
     GetScreenDims(width, height);
 
@@ -267,7 +268,6 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         return false;
     }
 
-#ifndef LOCATED_AT_LONDON
     if (!_reflectionTexture.generate(width, height, false))
     {
         SDL_Log( "Failed to be created. - Reflection Texure");
@@ -1103,7 +1103,7 @@ void SDLMainWindow::RenderScene()
     RenderReflection();
 #endif
 
-    RenderDepthTextures(1, _shadowMap1, _shadowMapTexture1, 0, 150);
+    RenderDepthTextures(1, _shadowDepthMap1, _shadowTextureMap1, 0, 150*4);
 #ifndef LOCATED_AT_LONDON
     RenderDepthTextures(2, _shadowMap2, _shadowMapTexture2, 145, 500);
     RenderDepthTextures(3, _shadowMap3, _shadowMapTexture3, 495, 2000);
@@ -1114,7 +1114,7 @@ void SDLMainWindow::RenderScene()
 
     int slot = 2;
     glActiveTexture(GL_TEXTURE0 + slot);
-    glBindTexture(GL_TEXTURE_2D, _shadowMap1);
+    glBindTexture(GL_TEXTURE_2D, _shadowDepthMap1);
 
 #ifndef LOCATED_AT_LONDON
     glActiveTexture(GL_TEXTURE0 + slot + 1);
@@ -1257,7 +1257,7 @@ void SDLMainWindow::onRender()
     if( global_fg_debug )
     {
         //RenderTexture(_reflectionTexture, 0);
-        RenderTexture(_shadowMapTexture1, 0);
+        RenderTexture(_shadowTextureMap1, 0);
 #ifndef LOCATED_AT_LONDON
         RenderTexture(_shadowMapTexture2, 1);
         RenderTexture(_shadowMapTexture3, 2);
