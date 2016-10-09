@@ -599,7 +599,15 @@ std::string JSONRigidBody::getID()
 
 std::string JSONRigidBody::getName()
 {
-	return _sName;
+    return _sName;
+}
+
+std::string JSONRigidBody::getPath()
+{
+    std::string path = "Models/";
+    path.append(getName());
+    path.append("/");
+    return path;
 }
 
 Hydraulics& JSONRigidBody::hydraulics()

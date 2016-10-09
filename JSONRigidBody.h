@@ -49,6 +49,7 @@ public:
 	bool typeMask(Type t);
 	std::string getID();
 	std::string getName();
+    std::string getPath();
 
 	MeshModel* getMeshModel();
 	const MassChannel& getMassChannel() const;

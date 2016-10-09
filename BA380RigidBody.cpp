@@ -756,9 +756,7 @@ void BAAirbus380JSONRigidBody::initSpeedAndPos()
 
 void BAAirbus380JSONRigidBody::addForceGenerators()
 {
-    std::string path = "Models/";
-    path.append(getName());
-	path.append("/");
+    std::string path = getPath();
 
 	if( !_wingAoaData.load( path + "a380.afl" ) )
         std::cout << "Failed to load WingData  :  a380.afl";

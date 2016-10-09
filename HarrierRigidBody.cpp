@@ -726,9 +726,7 @@ void HarrierJSONRigidBody::initSpeedAndPos()
 
 void HarrierJSONRigidBody::addForceGenerators()
 {
-    std::string path = "Models/";
-    path.append(getName());
-	path.append("/");
+    std::string path = getPath();
 
 	if( !_wingAoaData.load( path + "main root.afl" ) )
         std::cout << "Failed to load WingData : Aerofoil Loading";
