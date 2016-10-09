@@ -47,7 +47,6 @@ public:
 	JSONRigidBody(std::string sName, JSONRigidBody::Type typeFlags = JSONRigidBody::Type::NORMAL );
 
 	bool typeMask(Type t);
-	std::string getRigidBodyID();
 	std::string getID();
 	std::string getName();
 
@@ -152,7 +151,6 @@ protected:
 private:
     MeshModel* _pMeshModel;
 	MassChannel _massChannel;
-	std::string _sRigidBodyID;
 	std::string _sName;
 	std::string _sID;
 	Hydraulics _hydraulics;

@@ -801,8 +801,8 @@ void BAAirbus320JSONRigidBody::initSpeedAndPos()
 
 void BAAirbus320JSONRigidBody::addForceGenerators()
 {
-    std::string path = "RigidBodies/";
-    path.append(getRigidBodyID());
+    std::string path = "Models/";
+    path.append(getName());
     path.append("/");
 
     if( !_wingAoaData.load( path + "a320.afl" ) )

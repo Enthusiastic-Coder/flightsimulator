@@ -18,26 +18,14 @@ JSONRigidBody::JSONRigidBody(std::string sName, JSONRigidBody::Type typeFlags) :
     _chaseHeight(0.0f),
     _chaseDistance(30.0f)
 {
-	std::string::size_type pos = sName.find(':');
-	if (pos != std::string::npos)
-	{
-		std::string::size_type pos2 = sName.find(':', pos + 1);
-		
-		if (pos2 != std::string::npos)
-		{
-			_sRigidBodyID = sName.substr(0, pos);
-			_sName = sName.substr(pos + 1, pos2 - pos - 1);
-			_sID = sName.substr(pos2 + 1);
-		}
-		else
-		{
-			_sName = sName.substr(0, pos);
-			_sRigidBodyID = _sName;
-			_sID = sName.substr(pos + 1);
-		}
-	}
-	else
-		_sName = sName;
+    std::string::size_type pos = sName.find(':');
+    if (pos != std::string::npos)
+    {
+        _sName = sName.substr(0, pos);
+        _sID = sName.substr(pos + 1);
+    }
+    else
+        _sName = sName;
 }
 
 MeshModel* JSONRigidBody::getMeshModel()
@@ -599,11 +587,6 @@ void JSONRigidBody::persistWriteState(FILE* fPersistFile)
 bool JSONRigidBody::typeMask(Type t)
 {
 	return ((int)typeFlags() & (int)t) != 0;
-}
-
-std::string JSONRigidBody::getRigidBodyID()
-{
-	return _sRigidBodyID;
 }
 
 std::string JSONRigidBody::getID()
