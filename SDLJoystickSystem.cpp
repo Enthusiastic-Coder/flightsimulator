@@ -1,7 +1,13 @@
 #include "stdafx.h"
 #include "SDLJoystickSystem.h"
-#include <SDL_joystick.h>
 #include <SDL_log.h>
+
+#define SINT16_MAX ((float)(0x7FFF))
+
+SDLJoystickSystem::~SDLJoystickSystem()
+{
+    SDL_JoystickClose(_accelerometer);
+}
 
 void SDLJoystickSystem::joyInit(char* id)
 {
@@ -9,47 +15,57 @@ void SDLJoystickSystem::joyInit(char* id)
 
     for (int i = 0; i < SDL_NumJoysticks(); ++i)
         SDL_Log( "[%d -> %s", i, SDL_JoystickNameForIndex(i));
+
+    _accelerometer = SDL_JoystickOpen(0);
 }
 
 void SDLJoystickSystem::joyUpdate()
 {
-//    if( isAvailable() )
-//        _input.update();
+    SDL_JoystickUpdate();
+    _numberOfButtonsPressed = 0;
+    _buttonFlag = 0;
+    int count = SDL_JoystickNumButtons(_accelerometer);
+    for( int i=0; i < count; ++i)
+    {
+        int pressed = SDL_JoystickGetButton(_accelerometer, i);
+        _numberOfButtonsPressed += pressed;
+        if(pressed)  _buttonFlag |= i;
+    }
 }
 
 bool SDLJoystickSystem::isAvailable()
 {
-    return false;//_input.lastAvailable();
+    return _accelerometer != 0;
 }
 
 float SDLJoystickSystem::joyGetX()
 {
-    return 0;//_input.xPosNorm();
+    return float(SDL_JoystickGetAxis(_accelerometer, 0))/SINT16_MAX;
 }
 
 float SDLJoystickSystem::joyGetY()
 {
-    return 0;//_input.yPosNorm();
+    return float(SDL_JoystickGetAxis(_accelerometer, 1))/SINT16_MAX;
 }
 
 float SDLJoystickSystem::joyGetZ()
 {
-    return 0;//_input.zPosNorm();
+    return float(SDL_JoystickGetAxis(_accelerometer, 2))/SINT16_MAX;
 }
 
 float SDLJoystickSystem::joyGetR()
 {
-    return 0;//_input.rPosNorm();
+    return float(SDL_JoystickGetAxis(_accelerometer, 3))/SINT16_MAX;
 }
 
 float SDLJoystickSystem::joyGetU()
 {
-    return 0;//_input.uPosNorm();
+    return float(SDL_JoystickGetAxis(_accelerometer, 4))/SINT16_MAX;
 }
 
 float SDLJoystickSystem::joyGetV()
 {
-    return 0;//_input.vPosNorm();
+    return float(SDL_JoystickGetAxis(_accelerometer, 5))/SINT16_MAX;
 }
 
 int SDLJoystickSystem::getPOV()
@@ -59,10 +75,10 @@ int SDLJoystickSystem::getPOV()
 
 int SDLJoystickSystem::numberofButtonsPressed()
 {
-    return 0;//_input.numberofButtonsPressed();
+    return _numberOfButtonsPressed;
 }
 
 int SDLJoystickSystem::buttonFlagPressed()
 {
-    return 0;// _input.buttonFlagPressed();
+    return _buttonFlag;
 }
