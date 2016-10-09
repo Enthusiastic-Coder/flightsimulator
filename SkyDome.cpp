@@ -25,7 +25,7 @@ SkyDome::SkyDome(float radius, int sides, int slices, bool bFullSphere)
             _meshData.addVertex(v * radius);
             _meshData.addTexture(float(x)/sides, float(y)/slices/_prop.hemisphereCount);
             _meshData.addIndex(y * (sides+1) + x);
-            _meshData.addIndex((y-1) * (sides+1) + x);
+            _meshData.addIndex((y+1) * (sides+1) + x);
         }
     }
 }
