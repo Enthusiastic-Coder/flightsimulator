@@ -1,6 +1,8 @@
 #pragma once
 
 #include "JSONRigidBody.h"
+#include "JSONRigidBodyBuilder.h"
+#include <iostream>
 
 class HeathrowRadarRigidBody : public JSONRigidBody
 {
@@ -15,6 +17,17 @@ public:
         setCG(Vector3D());
         setEuler(0, 0, 0);
         setPosition(GPSLocation(51.473206,-0.454542));
+
+        JSONRigidBodyBuilder body(this);
+
+        try
+        {
+            body.build(getPath() + "HeathrowTower.body");
+        }
+        catch( const std::string& str )
+        {
+            std::cout << str << " : JSON config parse failed";
+        }
     }
 
 	void update(double dt)

@@ -25,7 +25,10 @@ JSONRigidBody::JSONRigidBody(std::string sName, JSONRigidBody::Type typeFlags) :
         _sID = sName.substr(pos + 1);
     }
     else
+    {
         _sName = sName;
+        _sID = sName;
+    }
 }
 
 MeshModel* JSONRigidBody::getMeshModel()
