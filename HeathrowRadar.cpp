@@ -1,11 +1,5 @@
 #include "HeathrowRadar.h"
 
-void HeathrowRadarForceGenerator::onApplyForce(Particle *p, double dt)
-{
-    HeathrowRadarRigidBody& body = *reinterpret_cast<HeathrowRadarRigidBody*>(p);
-    body.update(dt);
-}
-
 HeathrowRadarRigidBody::HeathrowRadarRigidBody()
     : JSONRigidBody("HeathrowRadar")
 {
@@ -17,7 +11,6 @@ HeathrowRadarRigidBody::HeathrowRadarRigidBody()
     setEuler(0, 0, 0);
     setPosition(GPSLocation(51.473206,-0.454542));
 
-    addForceGenerator( "custom_fg", &_custom_fg );
     addForceGenerator( "RadarPivot", &_RadarPivot, 15 );
     JSONRigidBodyBuilder body(this);
 
@@ -33,9 +26,12 @@ HeathrowRadarRigidBody::HeathrowRadarRigidBody()
 
 void HeathrowRadarRigidBody::update(double dt)
 {
-    _rotation -= 360 * dt/ 4.0f;
-    // Empty Implementation as this is static body.
+    _rotation -= 360/ 4.0f * dt;
     _RadarPivot.setAngle(_rotation);
+}
+
+void HeathrowRadarRigidBody::drawWindTunnel(double dt)
+{
 }
 
 void HeathrowRadarRigidBody::setRecorderHook(FlightRecorder &a)
