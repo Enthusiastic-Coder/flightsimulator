@@ -84,7 +84,8 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/OpenGLTextureRenderer2D.cpp \
     $$PWD/OpenGLSliderControl.cpp \
     $$PWD/Win32JoystickSystem.cpp \
-    $$PWD/SDLJoystickSystem.cpp
+    $$PWD/SDLJoystickSystem.cpp \
+    $$PWD/HeathrowRadar.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
     AeroControlSurface.h \

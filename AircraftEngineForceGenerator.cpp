@@ -38,7 +38,12 @@ void AircraftEngineForceGenerator::setMaxThrust(float value)
 
 void AircraftEngineForceGenerator::setEngineDir(Vector3F value)
 {
-	_engine_direction = value;
+    _engine_direction = value;
+}
+
+void AircraftEngineForceGenerator::setAngle(float value)
+{
+    _angle_position = value;
 }
 
 Vector3F AircraftEngineForceGenerator::getEngineDir()

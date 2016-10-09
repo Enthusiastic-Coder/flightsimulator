@@ -24,6 +24,7 @@ public:
 	void setMaxSpd(float maxMach);
 	void incrDrag(float cd, float area, float n1=0.92f);
 	void setEngineDir(Vector3F value);
+    void setAngle(float value);
 	Vector3F getEngineDir();
 
 	float _angle_position;

@@ -1,0 +1,44 @@
+#include "HeathrowRadar.h"
+
+void HeathrowRadarForceGenerator::onApplyForce(Particle *p, double dt)
+{
+    HeathrowRadarRigidBody& body = *reinterpret_cast<HeathrowRadarRigidBody*>(p);
+    body.update(dt);
+}
+
+HeathrowRadarRigidBody::HeathrowRadarRigidBody()
+    : JSONRigidBody("HeathrowRadar")
+{
+    setMass(100);
+    Matrix3x3D m;
+    m.LoadIdentity();
+    setInertiaMatrix(m);
+    setCG(Vector3D());
+    setEuler(0, 0, 0);
+    setPosition(GPSLocation(51.473206,-0.454542));
+
+    addForceGenerator( "custom_fg", &_custom_fg );
+    addForceGenerator( "RadarPivot", &_RadarPivot, 15 );
+    JSONRigidBodyBuilder body(this);
+
+    try
+    {
+        body.build(getPath() + "HeathrowRadar.body");
+    }
+    catch( const std::string& str )
+    {
+        std::cout << str << " : JSON config parse failed";
+    }
+}
+
+void HeathrowRadarRigidBody::update(double dt)
+{
+    _rotation -= 360 * dt/ 4.0f;
+    // Empty Implementation as this is static body.
+    _RadarPivot.setAngle(_rotation);
+}
+
+void HeathrowRadarRigidBody::setRecorderHook(FlightRecorder &a)
+{
+    a.addDataRef( _rotation );
+}
