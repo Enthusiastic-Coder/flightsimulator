@@ -129,20 +129,26 @@ private:
     std::map<int,ALuint> _soundHeightCallOutBuffers;
 ///////////////////////////////////////////
 
-    OpenGLShaderProgram _simpleShaderProgram;
-    OpenGLShaderProgram _shadowShaderProgram;
+#ifndef LOCATED_AT_LONDON
     OpenGLShaderProgram _reflectionShaderProgram;
     OpenGLShaderProgram _waterShaderProgram;
+#endif
+
+    OpenGLShaderProgram _simpleShaderProgram;
+    OpenGLShaderProgram _shadowShaderProgram;
     OpenGLShaderProgram _simplePrimitiveShaderProgram;
     OpenGLShaderProgram _fontShaderProgram;
     OpenGLShaderProgram _textureShaderProgram;
     OpenGLFrameBuffer _openGLFrameBuffer;
 
     OpenGLTexture2D _shadowMap1;
+#ifndef LOCATED_AT_LONDON
     OpenGLTexture2D _shadowMap2;
     OpenGLTexture2D _shadowMap3;
+#endif
 
     OpenGLTexture2D _shadowMapTexture1;
+#ifndef LOCATED_AT_LONDON
     OpenGLTexture2D _shadowMapTexture2;
     OpenGLTexture2D _shadowMapTexture3;
 
@@ -152,6 +158,8 @@ private:
     float g_WaterFlow = 0.02f;
 
     OpenGLTexture2D _reflectionTexture;
+#endif
+
     OpenGLRenderBuffer _depthRenderBuffer;
     Vector4F _skyColor = Vector4F(3 / 255.0f, 100 / 255.0f, 180 / 255.0f, 1.0f);
     Vector2F _lightDir = Vector2F(-45, 180);

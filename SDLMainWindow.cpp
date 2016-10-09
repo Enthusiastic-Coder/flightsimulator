@@ -267,6 +267,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         return false;
     }
 
+#ifndef LOCATED_AT_LONDON
     if (!_reflectionTexture.generate(width, height, false))
     {
         SDL_Log( "Failed to be created. - Reflection Texure");
@@ -290,6 +291,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         SDL_Log("Failed to be load.  - Normal Texure");
         return false;
     }
+#endif
 
     return true;
 }
@@ -799,7 +801,10 @@ void SDLMainWindow::onUpdate()
     }
 
     _powerSliderControl.update(dt);
+
+#ifndef LOCATED_AT_LONDON
     _nUVOffset += g_WaterFlow * dt;
+#endif
 
     if (GetFocus() == _hWnd)
         _camera.processKey(2);
@@ -950,6 +955,7 @@ void SDLMainWindow::onUpdate()
     //_WorldSystem.updateCameraView(_camera.getView());
 }
 
+#ifndef LOCATED_AT_LONDON
 void SDLMainWindow::RenderReflection()
 {
     GLint viewport[4];
@@ -1002,6 +1008,7 @@ void SDLMainWindow::RenderReflection()
 
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 }
+#endif
 
 void SDLMainWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, OpenGLTexture2D& colorMap, int offset, int size)
 {
