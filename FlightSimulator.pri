@@ -83,7 +83,6 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/OpenGLButtonTextureManager.cpp \
     $$PWD/OpenGLTextureRenderer2D.cpp \
     $$PWD/OpenGLSliderControl.cpp \
-    $$PWD/Win32JoystickSystem.cpp \
     $$PWD/SDLJoystickSystem.cpp \
     $$PWD/HeathrowRadar.cpp
 

@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////
 
 
-#include "Win32JoystickSystem.h"
+#include "SDLJoystickSystem.h"
 
 #include "SimpleCloud.h"
 
@@ -74,7 +74,7 @@ void WorldSystem::onInitialise()
 {
     loadTerrain();
     _rigidBodyCollection.onInitialise();
-    _Joy = new Win32JoystickSystem;
+    _Joy = new SDLJoystickSystem;
     _Joy->joyInit(0);
 }
 

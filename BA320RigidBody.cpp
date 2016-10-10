@@ -337,10 +337,10 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         float fYaw(0.0f);
         float fThrust(0.0f);
 
-        fAileron = joy->joyGetZ();
-        fPitch = joy->joyGetR();
-        fYaw = joy->joyGetX();
-        fThrust = std::fabs(joy->joyGetY()) > 0.2f ? joy->joyGetY() : 0.0f;
+        fAileron = joy->joyGetX();
+        fPitch = joy->joyGetY();
+        fYaw = joy->joyGetZ();
+        fThrust = std::fabs(joy->joyGetV()) > 0.2f ? joy->joyGetV() : 0.0f;
         _right_engine._thrust_percent -= fThrust;
 
         fThrust = _right_engine._thrust_percent;
