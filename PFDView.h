@@ -46,6 +46,6 @@ public:
 	void DrawSpd();
 	void DrawFlightModes();
 	
-    void OnPaint(int cx, int cy);
+    void render(int cx, int cy);
 };
 

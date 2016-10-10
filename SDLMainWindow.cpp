@@ -1244,7 +1244,7 @@ void SDLMainWindow::onRender()
     std::string desc = _WorldSystem.getCameraDescription();
     std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
     if( desc.find("cockpit") != std::string::npos)
-        _pfdInstrument.OnPaint(cx, cy);
+        _pfdInstrument.render(cx, cy);
 
     if (_WorldSystem.isUsingMouse())
         RenderMouseFlying(cx, cy);

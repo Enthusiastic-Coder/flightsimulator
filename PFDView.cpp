@@ -59,7 +59,7 @@ int PFDView::maxY()
 /////////////////////////////////////////////////////////////////////////////
 // PFDView drawing
 
-void PFDView::OnPaint(int cx, int cy)
+void PFDView::render(int cx, int cy)
 {
 	glClear(GL_STENCIL_BUFFER_BIT);
 
@@ -80,11 +80,7 @@ void PFDView::OnPaint(int cx, int cy)
 	glLoadIdentity();
 	
 	glTranslatef( _CEN_X, _CEN_Y, 0 );
-//#if defined FRAPS
-//	glScalef(1.8f,1.40f, 1.0f);
-//#else
     glScalef(float(cx)/cy*0+1.3f,1.0f, 1.0f);
-//#endif
 
 	glDisable(GL_TEXTURE_2D );
 	glDisable(GL_DEPTH_TEST);
