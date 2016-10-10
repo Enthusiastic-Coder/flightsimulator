@@ -796,8 +796,10 @@ void SDLMainWindow::onUpdate()
     JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
     if (focus)
     {
-        //if( focus->getState() == JSONRigidBody::STATE::PLAYBACK)
+        if( focus->getState() == JSONRigidBody::STATE::PLAYBACK)
             _powerSliderControl.setValue(focus->getPowerOutput(0));
+        else
+            _powerSliderControl.setValue(focus->getPower(0));
     }
 
     _powerSliderControl.update(dt);
