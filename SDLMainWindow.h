@@ -161,6 +161,9 @@ private:
     OpenGLRenderBuffer _depthRenderBuffer;
 #endif
 
+    OpenGLTexture2D _pfdColorTexture;
+    OpenGLRenderBuffer _pfdStencilBuffer;
+
     Vector4F _skyColor = Vector4F(3 / 255.0f, 100 / 255.0f, 180 / 255.0f, 1.0f);
     Vector2F _lightDir = Vector2F(-45, 180);
     //Vector2F _lightDir = Vector2F(-45, 90);

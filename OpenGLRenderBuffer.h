@@ -12,7 +12,9 @@ public:
     OpenGLRenderBuffer& operator=(const OpenGLRenderBuffer& rhs) = delete;
 
     operator GLuint();
-    bool generate(int width, int height, GLenum target = GL_RENDERBUFFER);
+    bool generateDepth(int width, int height, GLenum target = GL_RENDERBUFFER);
+    bool generateStencil(int width, int height, GLenum target = GL_RENDERBUFFER);
+    bool generateDepthStencil(int width, int height, GLenum target = GL_RENDERBUFFER);
 	
 	void bind();
     static void unbind(GLenum target = GL_RENDERBUFFER);

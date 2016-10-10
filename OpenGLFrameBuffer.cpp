@@ -53,6 +53,11 @@ void OpenGLFrameBuffer::attachDepthRenderBuffer(GLuint buffer)
     glFramebufferRenderbuffer(_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, buffer);
 }
 
+void OpenGLFrameBuffer::attachStencilRenderBuffer(GLuint buffer)
+{
+    glFramebufferRenderbuffer(_target, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffer);
+}
+
 GLenum OpenGLFrameBuffer::checkFrameBufferStatusComplete()
 {
     return glCheckFramebufferStatus(_target);

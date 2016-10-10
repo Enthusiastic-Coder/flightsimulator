@@ -19,6 +19,7 @@ public:
 	void attachColorTexture2D(int index, GLuint texture );
 	void attachDepthTexture2D(GLuint texture);
 	void attachDepthRenderBuffer(GLuint buffer);
+    void attachStencilRenderBuffer(GLuint buffer);
 	
 	GLenum checkFrameBufferStatusComplete();
 

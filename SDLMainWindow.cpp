@@ -247,6 +247,18 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     }
 #endif
 
+    if( !_pfdColorTexture.generate(256, 256, false))
+    {
+        SDL_Log("Failed to create texture - PFD color Texture");
+        return false;
+    }
+
+    if( !_pfdStencilBuffer.generateStencil(256, 256))
+    {
+        SDL_Log("Failed to create stencil - PFD stencil buffer");
+        return false;
+    }
+
 //    _openGLFrameBuffer.bind();
 //    _openGLFrameBuffer.attachColorTexture2D(0, _shadowTextureMap1);
 
@@ -1244,7 +1256,30 @@ void SDLMainWindow::onRender()
     std::string desc = _WorldSystem.getCameraDescription();
     std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
     if( desc.find("cockpit") != std::string::npos)
-        _pfdInstrument.render(cx, cy);
+    {
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+
+        _openGLFrameBuffer.bind();
+        _openGLFrameBuffer.attachColorTexture2D(0, _pfdColorTexture);
+        _openGLFrameBuffer.attachStencilRenderBuffer(_pfdStencilBuffer);
+
+        if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
+        {
+            std::cout << "checkFrameBufferStatusComplete failed : RenderDepthTextures" << std::endl;
+            postQuit();
+            return;
+        }
+
+        glViewport(0, 0, _pfdColorTexture.width(), _pfdColorTexture.height());
+        _pfdInstrument.render(_pfdColorTexture.width(), _pfdColorTexture.height());
+
+        _openGLFrameBuffer.attachColorTexture2D(0, 0);
+        _openGLFrameBuffer.attachStencilRenderBuffer(0);
+        _openGLFrameBuffer.unbind();
+
+        glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+    }
 
     if (_WorldSystem.isUsingMouse())
         RenderMouseFlying(cx, cy);
@@ -1255,11 +1290,12 @@ void SDLMainWindow::onRender()
         RenderInfo();
     else
         RenderFPS();
-
+RenderTexture(_pfdColorTexture, 1);
     if( global_fg_debug )
     {
         //RenderTexture(_reflectionTexture, 0);
         RenderTexture(_shadowTextureMap1, 0);
+
 #ifndef LOCATED_AT_LONDON
         RenderTexture(_shadowMapTexture2, 1);
         RenderTexture(_shadowMapTexture3, 2);
@@ -1447,10 +1483,10 @@ void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, int pos)
     r.onSize(-100, -100, 200, 200);
     r.beginRender();
     texID.bind();
-    r.render(-100 + size*pos, -100, size, size);
+    r.render(-100 + size*pos, 100-size, size, size);
 
     _renderer->useProgram(_simplePrimitiveShaderProgram);
-    r.renderLineBorder(-100 + size*pos, -100, size, size);
+    r.renderLineBorder(-100 + size*pos, 100-size, size, size);
 
     r.endRender();
 
