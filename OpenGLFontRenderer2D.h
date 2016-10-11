@@ -15,7 +15,7 @@ public:
     OpenGLFontTexture* getFont();
     void onSize( int cx, int cy);
     void setFontColor(const Vector4F& color);
-    void beginRender();
+    void beginRender(float offSetX=0.0f, float offSetY=0.0f);
     void renderText(int x, int y, std::string str);
     void endRender();
 

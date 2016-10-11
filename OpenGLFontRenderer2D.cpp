@@ -29,7 +29,7 @@ void OpenGLFontRenderer2D::setFontColor(const Vector4F &color)
     _fontColor = color;
 }
 
-void OpenGLFontRenderer2D::beginRender()
+void OpenGLFontRenderer2D::beginRender(float offSetX, float offSetY)
 {
     if( _renderer == 0)
         return;
@@ -40,6 +40,7 @@ void OpenGLFontRenderer2D::beginRender()
     pipeline.GetProjection().LoadIdentity();
     pipeline.GetProjection().SetOrthographic(0, _screenSize.width, 0, _screenSize.height, -1, 1);
     pipeline.GetModel().LoadIdentity();
+    pipeline.GetModel().Translate(offSetX, -offSetY,0);
     pipeline.GetView().LoadIdentity();
 
     pipeline.bindMatrices(_renderer->progId());

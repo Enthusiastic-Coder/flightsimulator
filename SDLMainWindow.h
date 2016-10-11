@@ -16,7 +16,6 @@
 #include "PFDView.h"
 #include "SkyDome.h"
 #include "OpenGLRenderer.h"
-#include "OGLFont.h"
 
 #include "OpenGLFontTexture.h"
 #include "OpenGLFontRenderer2D.h"
@@ -84,7 +83,6 @@ private:
     bool _bUserPolygonLineView;
     double _framerate[FPS_RESOLUTION];
     int _framecount;
-    OGLFont _oglFont;
 
     PFDView _pfdInstrument;
     WorldSystem _WorldSystem;

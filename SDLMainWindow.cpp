@@ -106,7 +106,6 @@ void SDLMainWindow::onSize(int width, int height)
     _powerSliderControl.onSize(width, height);
     _buttonTextureManager.onSizeLayout();
 
-    _oglFont.OnSize(width,height);
     for(int i=0; i < 3; ++i)
     {
         OpenGLMatrixStack & mat = OpenGLPipeline::Get(i).GetProjection();
@@ -314,9 +313,6 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         //_myFontTexture.loadfile("fonts/MS Shell Dlg 2-28.png");
         //_myFontTexture.loadfile("fonts/Verdana-11-Bold.png");
         _myFontTexture.loadfile("fonts/Verdana-10.png");
-
-        _oglFont.CreateBitmapFont( hdc, "Verdana", 16, FW_BOLD*0+FW_NORMAL*1 );
-        _oglFont.SetOffSet( 0, 30);
 
         _fontRenderer.selectRenderer(_renderer);
 
@@ -1488,14 +1484,26 @@ void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, int pos)
 
 void SDLMainWindow::RenderFPS()
 {
-    OGLFontContainer _renderFont( _oglFont );
+    glEnable(GL_BLEND);
+    _renderer->dt = frameTime();
+    _renderer->camID = 0;
+    _renderer->useProgram( _fontShaderProgram);
+
+    _fontRenderer.selectFont(&_myFontTexture);
+    _fontRenderer.setFontColor(Vector4F(1,1,1,1));
+    _fontRenderer.beginRender(0,30);
+
     float fps = 0.0f;
     for( int i=0; i < FPS_RESOLUTION; i++ )
         fps += _framerate[i];
 
     char text[256]="";
     sprintf_s( text, _countof(text), "%.0f", fps / FPS_RESOLUTION);
-    _oglFont.RenderFont( 15, 5, text );
+    _fontRenderer.renderText( 15, 5, text );
+
+    _fontRenderer.endRender();
+    OpenGLShaderProgram::useDefault();
+    glDisable(GL_BLEND);
 }
 
 void SDLMainWindow::RenderInfo()
@@ -1518,45 +1526,10 @@ void SDLMainWindow::RenderInfo()
 
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
-    _fontRenderer.beginRender();
+    _fontRenderer.beginRender(0, 30);
 
-    {
-        char text[1024]= {};
-        JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
-        if( pRigidBody )
-        {
-            Vector3D pos = pRigidBody->position();
-            Vector3D vel = pRigidBody->velocity();
-
-            Vector3D e = pRigidBody->getEuler();
-            Vector3D vb = pRigidBody->velocityBody();
-
-            GPSLocation gpsLocation(pRigidBody->position());
-
-            sprintf_s( text, _countof(text), "ModelPosition: [%.8f N, %.8f E] (%.2f)", gpsLocation._lat, gpsLocation._lng, gpsLocation._height );
-        }
-        int yPos = 300;
-        int dY = _fontRenderer.getFont()->getMaxFontSize().height;
-        _fontRenderer.renderText( 0, yPos += dY, text);
-
-        sprintf_s( text, _countof(text), "FT->x:%d, y:%d", _myFontTexture.texture().width(), _myFontTexture.texture().height());
-        _fontRenderer.renderText( 0, yPos += dY, text);
-
-        sprintf_s( text, _countof(text), "Slider [%.1f, %.1f]", _powerSliderControl.getCurrentValue(), _powerSliderControl.getValue());
-        _fontRenderer.renderText( 0, yPos += dY, text);
-
-    }
-
-    _fontRenderer.endRender();
-    OpenGLShaderProgram::useDefault();
-    glDisable(GL_BLEND);
-
-
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    OGLFontContainer _renderFont( _oglFont );
-
-    _oglFont.RenderFont( 15, 15, "3D Virtual World by Mo" );
-    _oglFont.RenderFont( 15, 30, "------------------------------------------" );
+    _fontRenderer.renderText( 15, 15, "3D Virtual World by Mo" );
+    _fontRenderer.renderText( 15, 30, "------------------------------------------" );
 
     static char *Version = (char*)glGetString(GL_VERSION);
     static char *Extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -1569,7 +1542,7 @@ void SDLMainWindow::RenderInfo()
     JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
 
     sprintf_s( text, _countof(text), "OpenGL [%s], Vendor [%s], Renderer[%s]", Version, Vendor, Renderer );
-    _oglFont.RenderFont( 15, 45, text );
+    _fontRenderer.renderText( 15, 45, text );
 
     std::string strFocus;
     if (pRigidBody)
@@ -1578,7 +1551,7 @@ void SDLMainWindow::RenderInfo()
         strFocus = "##NONE##";
 
     sprintf_s( text, _countof(text), "Object [%s], Running [%d]", strFocus.c_str(), isRunning() );
-    _oglFont.RenderFont( 15, 60, text );
+    _fontRenderer.renderText( 15, 60, text );
 
     GPSLocation cameraGPS(_camera.localView()->getPosition());
     Vector3F orientation = _camera.localView()->getOrientation();
@@ -1588,10 +1561,10 @@ void SDLMainWindow::RenderInfo()
                         orientation.x,
                         orientation.y,
                         orientation.z);
-    _oglFont.RenderFont( 15, 75, text );
+    _fontRenderer.renderText( 15, 75, text );
 
     sprintf_s( text, _countof(text), "CameraPosition: [%.8f N, %.8f E] (%.2f)", cameraGPS._lat, cameraGPS._lng, cameraGPS._height );
-    _oglFont.RenderFont( 15, 90, text );
+    _fontRenderer.renderText( 15, 90, text );
 
     if( pRigidBody )
     {
@@ -1605,12 +1578,12 @@ void SDLMainWindow::RenderInfo()
 
         sprintf_s( text, _countof(text), "ModelPosition: [%.8f N, %.8f E] (%.2f)", gpsLocation._lat, gpsLocation._lng, gpsLocation._height );
 
-        _oglFont.RenderFont( 15, 105, text );
+        _fontRenderer.renderText( 15, 105, text );
 
         double velMag = vel.Magnitude();
 
         sprintf_s( text, _countof(text), "Vel: [%.2f,%.2f,%.2f] (Kts:%.2f)(Mph:%.2f)", vel.x, vel.y, vel.z, MS_TO_KTS(velMag), MS_TO_MPH(velMag) );
-        _oglFont.RenderFont( 15, 120, text );
+        _fontRenderer.renderText( 15, 120, text );
 
         //MOJ_JEB
         /*if( _audiA8.hasFocus() )
@@ -1645,7 +1618,7 @@ void SDLMainWindow::RenderInfo()
         const Vector3D& cg = pRigidBody->cg();
 
         sprintf_s( text, _countof(text), "Ang V[%.2f,%.2f,%.2f] CG[%.2f,%.2f,%.2f]", angVel.x, angVel.y, angVel.z, cg.x, cg.y, cg.z );
-        _oglFont.RenderFont( 15, 135, text );
+        _fontRenderer.renderText( 15, 135, text );
 
 
         double dHeightOfGround(0.0);
@@ -1660,10 +1633,10 @@ void SDLMainWindow::RenderInfo()
         else
             sprintf_s( text, _countof(text), "HeightAbovePlane :[NOT AVAILABLE]");
 
-        _oglFont.RenderFont( 15, 150, text );
+        _fontRenderer.renderText( 15, 150, text );
 
         sprintf_s(text, _countof(text), "View [%d]:%s: Zoom :%.2f:", _WorldSystem.curViewIdx(), _WorldSystem.getCameraDescription().c_str(), _camera.localView()->getZoom());
-        _oglFont.RenderFont( 15, 165, text );
+        _fontRenderer.renderText( 15, 165, text );
 
         Vector3D acceleration = pRigidBody->getForce() / pRigidBody->getMass();
         double gForce = 1+acceleration.y / pRigidBody->gravity().y;
@@ -1673,10 +1646,10 @@ void SDLMainWindow::RenderInfo()
 
         sprintf_s(text, _countof(text), "G :[%.2f], FlightRec [%s]", gForce,
             state ==JSONRigidBody::STATE::NORMAL ? "Normal": (state ==JSONRigidBody::STATE::RECORDING ? "Recording": "Playback" ) );
-        _oglFont.RenderFont( 15, 180, text );
+        _fontRenderer.renderText( 15, 180, text );
 
         sprintf_s( text, _countof(text), "Camera-Object distance :%.2f: miles", _WorldSystem.focusedRigidBody()->getGPSLocation().distanceTo( _camera.localView()->getPosition() )*3.2808/5280 );
-        _oglFont.RenderFont( 15, 195, text );
+        _fontRenderer.renderText( 15, 195, text );
 
         if (state == JSONRigidBody::STATE::PLAYBACK)
         {
@@ -1684,7 +1657,7 @@ void SDLMainWindow::RenderInfo()
                                         pRigidBody->getFlightRecorder().timeSoFar(),
                                         pRigidBody->getFlightRecorder().totalTime()
                                             );
-            _oglFont.RenderFont(15, 210, text);
+            _fontRenderer.renderText(15, 210, text);
         }
 
         /*auto *rigidBody = _WorldSystem.focusedRigidBody();
@@ -1700,6 +1673,10 @@ void SDLMainWindow::RenderInfo()
             _oglFont.RenderFont( 15, 195, text );
         }*/
     }
+
+    _fontRenderer.endRender();
+    OpenGLShaderProgram::useDefault();
+    glDisable(GL_BLEND);
 }
 
 void SDLMainWindow::setupCameraOrientation()
