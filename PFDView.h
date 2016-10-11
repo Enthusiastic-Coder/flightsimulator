@@ -34,8 +34,6 @@ public:
 	float _CX;
 	float _CY;
 
-    int maxY();
-
 	void DrawHorizon();
 	void BuildAltTape(char buffer[][32], int line_count, int centralAlt, bool bIncreasing);
 	void DrawAlt();

@@ -49,12 +49,6 @@ void PFDView::Initialise(HDC hdc)
     m_RadarAltBold.SetOffset(0, 10 );
 }
 
-int PFDView::maxY()
-{
-    return fabs(_CY*1.4 )+  fabs(_CY*1.3);
-}
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // PFDView drawing
