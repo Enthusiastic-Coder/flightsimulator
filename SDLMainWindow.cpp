@@ -126,8 +126,10 @@ SDLMainWindow::SDLMainWindow() :
     _showCursor(true),
     //_paused(false),
     _framecount(0),
+#ifndef LOCATED_AT_LONDON
     _soundDevice(0),
     _soundContext(0),
+#endif
     _textureRenderer(_renderer),
     _buttonTextureManager(&_textureRenderer)
 
@@ -357,8 +359,6 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 
         glEnable(GL_DEPTH_TEST);
 
-        glEnable(GL_COLOR_MATERIAL);
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE );
 
@@ -1552,7 +1552,6 @@ void SDLMainWindow::RenderInfo()
 
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     OGLFontContainer _renderFont( _oglFont );
-
 
     _oglFont.RenderFont( 15, 15, "3D Virtual World by Mo" );
     _oglFont.RenderFont( 15, 30, "------------------------------------------" );

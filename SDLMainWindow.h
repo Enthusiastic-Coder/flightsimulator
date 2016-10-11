@@ -111,6 +111,7 @@ private:
     Camera _camera;
     //////////////////////////////////
 
+#ifndef LOCATED_AT_LONDON
     ALCdevice* _soundDevice;
     ALCcontext* _soundContext;
 
@@ -129,7 +130,7 @@ private:
     std::map<int,ALuint> _soundHeightCallOutBuffers;
 ///////////////////////////////////////////
 
-#ifndef LOCATED_AT_LONDON
+
     OpenGLShaderProgram _reflectionShaderProgram;
     OpenGLShaderProgram _waterShaderProgram;
 #endif

@@ -61,6 +61,9 @@ int PFDView::maxY()
 
 void PFDView::render(int cx, int cy)
 {
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
 	glClear(GL_STENCIL_BUFFER_BIT);
 
 	glMatrixMode( GL_PROJECTION  );
