@@ -34,8 +34,7 @@ void SimpleCloud::renderMesh(Renderer* r, unsigned int shadowMapCount)
 			initialiseCloud();
 
         glColor3f(r->fLightingFraction, r->fLightingFraction, r->fLightingFraction);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(GL_FALSE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glBindTexture(GL_TEXTURE_2D, _CLOUD_ID);
@@ -43,7 +42,6 @@ void SimpleCloud::renderMesh(Renderer* r, unsigned int shadowMapCount)
         drawCloud(5000);
 		//drawCloud(1000);
 		//drawCloud();
-		glDisable(GL_BLEND);
 
         glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
