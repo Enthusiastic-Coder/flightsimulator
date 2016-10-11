@@ -77,6 +77,7 @@ void SimpleCloud::initialiseCloud()
             texture[y][x][3] = n.turbulence(x, y, 128) / 255.0 * 255;
 
             texture[y][x][3] = n.turbulence(x, y, 100);
+            texture[y][x][3] = n.turbulence(x, y, 40);
             //texture[y][x][3] = perlinNoise.Noise(x, y, 128) /255.0 * 255;
 		}
 

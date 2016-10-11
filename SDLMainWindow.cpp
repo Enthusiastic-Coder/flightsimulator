@@ -1711,6 +1711,7 @@ void SDLMainWindow::OnInitPolyMode()
 
 void SDLMainWindow::OnRenderSkyBox()
 {
+    return;
     _renderer->camID = 0;
     _renderer->useProgram(_fontShaderProgram);
     _fontShaderProgram.sendUniform("textColor", 1,1,1,1);

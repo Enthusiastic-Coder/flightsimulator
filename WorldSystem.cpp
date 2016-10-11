@@ -76,6 +76,9 @@ void WorldSystem::onInitialise()
     _rigidBodyCollection.onInitialise();
     _Joy = new SDLJoystickSystem;
     _Joy->joyInit(0);
+
+    addStaticJSONBody(_simpleCloud=new SimpleCloud("cloud_A"));
+
 }
 
 void WorldSystem::onUnintialise()
