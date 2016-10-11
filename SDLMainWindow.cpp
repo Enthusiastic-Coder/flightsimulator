@@ -1266,6 +1266,7 @@ void SDLMainWindow::onRender()
         _openGLFrameBuffer.unbind();
 
         glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+        RenderTexture(_pfdColorTexture, 1.0f);
     }
 
     if (_WorldSystem.isUsingMouse())
@@ -1277,7 +1278,6 @@ void SDLMainWindow::onRender()
         RenderInfo();
     else
         RenderFPS();
-RenderTexture(_pfdColorTexture, 1);
     if( global_fg_debug )
     {
         //RenderTexture(_reflectionTexture, 0);
@@ -1458,22 +1458,22 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
     glEnable(GL_DEPTH_TEST);
 }
 
-void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, int pos)
+void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float pos)
 {
-    int size = 30*2;
+    int size = 100;
     glEnable(GL_BLEND);
 
     _renderer->useProgram(_fontShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
 
     OpenGLTextureRenderer2D r(_renderer);
-    r.onSize(-100, -100, 200, 200);
+    r.onSize(0, 0, 300, 300);
     r.beginRender();
     texID.bind();
-    r.render(-100 + size*pos, 100-size, size, size);
+    r.render(size*pos, 300-size, size, size);
 
     _renderer->useProgram(_simplePrimitiveShaderProgram);
-    r.renderLineBorder(-100 + size*pos, 100-size, size, size);
+    r.renderLineBorder( size*pos, 300-size, size, size);
 
     r.endRender();
 
