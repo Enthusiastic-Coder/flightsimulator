@@ -1266,7 +1266,7 @@ void SDLMainWindow::onRender()
         _openGLFrameBuffer.unbind();
 
         glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-        RenderTexture(_pfdColorTexture, 1.0f);
+        RenderTexture(_pfdColorTexture, 0.5f);
     }
 
     if (_WorldSystem.isUsingMouse())
@@ -1460,20 +1460,22 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
 
 void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float pos)
 {
-    int size = 100;
+    int width = 150;
+    int height = 150;
     glEnable(GL_BLEND);
 
     _renderer->useProgram(_fontShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
+    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.25);
 
     OpenGLTextureRenderer2D r(_renderer);
-    r.onSize(0, 0, 300, 300);
+    r.onSize(0, 0, 200, 200);
     r.beginRender();
     texID.bind();
-    r.render(size*pos, 300-size, size, size);
+    r.render(200*pos-width/2, 200-height, width, height);
 
-    _renderer->useProgram(_simplePrimitiveShaderProgram);
-    r.renderLineBorder( size*pos, 300-size, size, size);
+//    _renderer->useProgram(_simplePrimitiveShaderProgram);
+//    r.renderLineBorder( size*pos, 200-size, size, size);
 
     r.endRender();
 
@@ -1711,7 +1713,6 @@ void SDLMainWindow::OnInitPolyMode()
 
 void SDLMainWindow::OnRenderSkyBox()
 {
-    return;
     _renderer->camID = 0;
     _renderer->useProgram(_fontShaderProgram);
     _fontShaderProgram.sendUniform("textColor", 1,1,1,1);
