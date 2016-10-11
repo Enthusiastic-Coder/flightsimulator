@@ -1266,7 +1266,7 @@ void SDLMainWindow::onRender()
         _openGLFrameBuffer.unbind();
 
         glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-        RenderTexture(_pfdColorTexture, 0.5f);
+        RenderTexture(_pfdColorTexture, 0.5f, 0.5f);
     }
 
     if (_WorldSystem.isUsingMouse())
@@ -1281,7 +1281,7 @@ void SDLMainWindow::onRender()
     if( global_fg_debug )
     {
         //RenderTexture(_reflectionTexture, 0);
-        RenderTexture(_shadowTextureMap1, 0);
+        RenderTexture(_shadowTextureMap1, 0, 1);
 
 #ifndef LOCATED_AT_LONDON
         RenderTexture(_shadowMapTexture2, 1);
@@ -1458,7 +1458,7 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
     glEnable(GL_DEPTH_TEST);
 }
 
-void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float pos)
+void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V)
 {
     int width = 150;
     int height = 150;
@@ -1466,13 +1466,13 @@ void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float pos)
 
     _renderer->useProgram(_fontShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
-    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.25);
+    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.33);
 
     OpenGLTextureRenderer2D r(_renderer);
     r.onSize(0, 0, 200, 200);
     r.beginRender();
     texID.bind();
-    r.render(200*pos-width/2, 200-height, width, height);
+    r.render(200*U-width/2, 200*V-height/2, width, height);
 
 //    _renderer->useProgram(_simplePrimitiveShaderProgram);
 //    r.renderLineBorder( size*pos, 200-size, size, size);

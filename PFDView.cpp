@@ -84,7 +84,7 @@ void PFDView::render(int cx, int cy)
 	glEnable(GL_STENCIL_TEST);
 
     glBegin(GL_QUADS);
-		glColor3f(0,0,0);
+        glColor3f(0,0,0);
         glVertex2f( -_CX*1.2, _CY*1.4 );
         glVertex2f( _CX*1.5, _CY*1.4 );
         glVertex2f( _CX*1.5, -_CY*1.3 );

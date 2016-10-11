@@ -330,7 +330,11 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 #endif
     //////////////////////////////////////
 
-    if( joy && joy->isAvailable() )
+    if(
+        #ifdef ANDROID
+            isUsingMouse() &&
+        #endif
+            joy && joy->isAvailable() )
     {
         float fAileron(0.0f);
         float fPitch(0.0f);
@@ -364,7 +368,6 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 
         _left_tail_wing.controlSurface0()->setDeflection(deflection_l);
         _right_tail_wing.controlSurface0()->setDeflection(deflection_l);
-
 
         if( _right_engine._thrust_percent > 100 ) _right_engine._thrust_percent  = 100;
         if( _right_engine._thrust_percent < 0 ) _right_engine._thrust_percent = 0;
@@ -544,17 +547,10 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         _right_engine._thrust_percent += dt*20;
     }
 
-    if( _front_wheel.spring().getSteeringAngle() < -75 )	_front_wheel.spring().setSteeringAngle( -75);
-    if( _front_wheel.spring().getSteeringAngle() > 75 )	_front_wheel.spring().setSteeringAngle(75);
-
     if( GetAsyncKeyState( 'B' ) < 0 )
         applyBrakes(dt, GetAsyncKeyState( VK_SHIFT ) < 0);
 
-    if( _left_engine._thrust_percent <0 )		_left_engine._thrust_percent = 0.0f;
-    if( _right_engine._thrust_percent <0 )		_right_engine._thrust_percent = 0.0f;
-    if( _left_engine._thrust_percent >100 )		_left_engine._thrust_percent = 100.0f;
-    if( _right_engine._thrust_percent >100 )		_right_engine._thrust_percent = 100.0f;
-
+#ifdef WIN32
     if( isUsingMouse() )
     {
         //IMouse* mouse = InputHandler::getMouse();
@@ -625,6 +621,17 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 
         hydraulics().setDeflection( _vertical_tail.element(0)->controlSurfaceN(0), dx );
     }
+#endif
+
+
+    if( _front_wheel.spring().getSteeringAngle() < -75 )	_front_wheel.spring().setSteeringAngle( -75);
+    if( _front_wheel.spring().getSteeringAngle() > 75 )	_front_wheel.spring().setSteeringAngle(75);
+
+    if( _left_engine._thrust_percent <0 )		_left_engine._thrust_percent = 0.0f;
+    if( _right_engine._thrust_percent <0 )		_right_engine._thrust_percent = 0.0f;
+    if( _left_engine._thrust_percent >100 )		_left_engine._thrust_percent = 100.0f;
+    if( _right_engine._thrust_percent >100 )		_right_engine._thrust_percent = 100.0f;
+
 
     return true;
 }
@@ -632,13 +639,21 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 void BAAirbus320JSONRigidBody::updateCameraView()
 {
     JSONRigidBody::updateCameraView();
+    CameraView* view = getCameraProvider()->getCameraView();
 
     switch((ViewPosition)getCameraProvider()->curViewIdx())
     {
     case CockpitForwards :
-        getCameraProvider()->getCameraView()->setPosition(toNonLocalTranslateFrame(Vector3D(-0.45, 4.80, -14.5)));
+        view->setPosition(toNonLocalTranslateFrame(Vector3D(-0.45, 4.80, -14.5)));
         break;
     case PassengerLeftMiddle :
+    {
+        Vector3D e = getEuler();
+        e.y += 90;
+        view->setPosition(toNonLocalTranslateFrame(Vector3D(1.7, 4.5, 3.4)));
+        view->setOrientation(e.toFloat());
+        view->setDescription("LeftSeat");
+    }
         break;
     case RightGearWheel :
         break;
