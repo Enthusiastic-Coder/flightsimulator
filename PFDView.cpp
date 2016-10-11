@@ -67,11 +67,11 @@ void PFDView::render(int cx, int cy)
 	glPushMatrix();
     glLoadIdentity();
 
-	_CX = 100;
+    _CX = 100;
     _CY = 100;
 
 	_CEN_X = cx/2;
-    _CEN_Y = cy - maxY()/2;
+    _CEN_Y = cy/2;// - maxY()/2;
 
     glOrtho(0, cx, cy, 0,-1, 1);
 
@@ -80,7 +80,7 @@ void PFDView::render(int cx, int cy)
 	glLoadIdentity();
 	
 	glTranslatef( _CEN_X, _CEN_Y, 0 );
-    glScalef(float(cx)/cy*0+1.3f,1.0f, 1.0f);
+    ///glScalef(float(cx)/cy*0+1.3f,1.0f, 1.0f);
 
 	glDisable(GL_TEXTURE_2D );
 	glDisable(GL_DEPTH_TEST);

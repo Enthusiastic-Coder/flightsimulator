@@ -247,28 +247,20 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     }
 #endif
 
-    if( !_pfdColorTexture.generate(256, 256, false))
+    int pfdWidth = 350;
+    int pfdHeight = 350;
+
+    if( !_pfdColorTexture.generate(pfdWidth, pfdHeight, false))
     {
         SDL_Log("Failed to create texture - PFD color Texture");
         return false;
     }
 
-    if( !_pfdStencilBuffer.generateStencil(256, 256))
+    if( !_pfdStencilBuffer.generateStencil(pfdWidth, pfdHeight))
     {
         SDL_Log("Failed to create stencil - PFD stencil buffer");
         return false;
     }
-
-//    _openGLFrameBuffer.bind();
-//    _openGLFrameBuffer.attachColorTexture2D(0, _shadowTextureMap1);
-
-//    if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
-//    {
-//        SDL_Log("FrameBuffer not complete. - FrameBuffer Failed");
-//        return false;
-//    }
-
-//    _openGLFrameBuffer.unbind();
 
 #ifndef LOCATED_AT_LONDON
     int width, height;
@@ -361,8 +353,6 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _camera.setRemoteViewPtr( _WorldSystem.getCameraView());
         _camera.fastForwardLocalView();
 
-        //_WorldSystem.updateCameraView(_camera.getView());
-
         OnInitPolyMode();
 
         glEnable(GL_DEPTH_TEST);
@@ -372,7 +362,6 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE );
 
-        //_oglFont.CreateBitmapFont( hdc, "Tahoma", 16, FW_BOLD*0+FW_NORMAL*1 );
         _oglFont.CreateBitmapFont( hdc, "Verdana", 16, FW_BOLD*0+FW_NORMAL*1 );
         _oglFont.SetOffSet( 0, 30);
 
