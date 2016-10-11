@@ -3,6 +3,11 @@
 #include <OpenGLPipeline.h>
 #include "OpenGLRenderer.h"
 
+void OpenGLFontRenderer2D::selectRenderer(Renderer *r)
+{
+    _renderer = r;
+}
+
 void OpenGLFontRenderer2D::selectFont(OpenGLFontTexture *texture)
 {
     _fontMesh.selectFont(texture);
@@ -24,9 +29,12 @@ void OpenGLFontRenderer2D::setFontColor(const Vector4F &color)
     _fontColor = color;
 }
 
-void OpenGLFontRenderer2D::beginRender(Renderer *r)
+void OpenGLFontRenderer2D::beginRender()
 {
-    OpenGLPipeline& pipeline = OpenGLPipeline::Get(r->camID);
+    if( _renderer == 0)
+        return;
+
+    OpenGLPipeline& pipeline = OpenGLPipeline::Get(_renderer->camID);
 
     pipeline.Push();
     pipeline.GetProjection().LoadIdentity();
@@ -34,22 +42,28 @@ void OpenGLFontRenderer2D::beginRender(Renderer *r)
     pipeline.GetModel().LoadIdentity();
     pipeline.GetView().LoadIdentity();
 
-    pipeline.bindMatrices(r->progId());
-    r->progId().sendUniform("textColor", _fontColor);
-    _fontMesh.beginRender(r);
+    pipeline.bindMatrices(_renderer->progId());
+    _renderer->progId().sendUniform("textColor", _fontColor);
+    _fontMesh.beginRender(_renderer);
 }
 
-void OpenGLFontRenderer2D::renderText(Renderer *r, int x, int y, std::string str)
+void OpenGLFontRenderer2D::renderText( int x, int y, std::string str)
 {
+    if( _renderer ==0)
+        return;
+
     _fontMesh.clear();
     _fontMesh.add( x, _screenSize.height - y, str);
-    _fontMesh.render(r);
+    _fontMesh.render(_renderer);
 }
 
-void OpenGLFontRenderer2D::endRender(Renderer *r)
+void OpenGLFontRenderer2D::endRender()
 {
-    OpenGLPipeline& pipeline = OpenGLPipeline::Get(r->camID);
+    if( _renderer ==0)
+        return;
 
-    _fontMesh.endRender(r);
+    OpenGLPipeline& pipeline = OpenGLPipeline::Get(_renderer->camID);
+
+    _fontMesh.endRender(_renderer);
     pipeline.Pop();
 }

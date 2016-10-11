@@ -315,6 +315,11 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         //_myFontTexture.loadfile("fonts/Verdana-11-Bold.png");
         _myFontTexture.loadfile("fonts/Verdana-10.png");
 
+        _oglFont.CreateBitmapFont( hdc, "Verdana", 16, FW_BOLD*0+FW_NORMAL*1 );
+        _oglFont.SetOffSet( 0, 30);
+
+        _fontRenderer.selectRenderer(_renderer);
+
         _WorldSystem.onInitialise();
 
         _WorldSystem.addJSONBody(new BAAirbus320JSONRigidBody("BAA320:A320_A_GIB"));
@@ -361,9 +366,6 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE );
-
-        _oglFont.CreateBitmapFont( hdc, "Verdana", 16, FW_BOLD*0+FW_NORMAL*1 );
-        _oglFont.SetOffSet( 0, 30);
 
         glClearColor(0.0f,0.0f,0.0f, 1.0f);
 
@@ -1516,7 +1518,7 @@ void SDLMainWindow::RenderInfo()
 
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
-    _fontRenderer.beginRender( _renderer);
+    _fontRenderer.beginRender();
 
     {
         char text[1024]= {};
@@ -1535,17 +1537,17 @@ void SDLMainWindow::RenderInfo()
         }
         int yPos = 300;
         int dY = _fontRenderer.getFont()->getMaxFontSize().height;
-        _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
+        _fontRenderer.renderText( 0, yPos += dY, text);
 
         sprintf_s( text, _countof(text), "FT->x:%d, y:%d", _myFontTexture.texture().width(), _myFontTexture.texture().height());
-        _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
+        _fontRenderer.renderText( 0, yPos += dY, text);
 
         sprintf_s( text, _countof(text), "Slider [%.1f, %.1f]", _powerSliderControl.getCurrentValue(), _powerSliderControl.getValue());
-        _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
+        _fontRenderer.renderText( 0, yPos += dY, text);
 
     }
 
-    _fontRenderer.endRender( _renderer);
+    _fontRenderer.endRender();
     OpenGLShaderProgram::useDefault();
     glDisable(GL_BLEND);
 
