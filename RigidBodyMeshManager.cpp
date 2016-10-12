@@ -40,6 +40,7 @@ MeshModel* RigidBodyMeshManager::loadModel(std::string sMeshName, MassChannel &m
 	mc.setCGOffset(model->getCentroidPt());
 	model->calcMomentOfInertia(mc);
 	model->BuildVertexBuffers();
+    mc.setMOIFactor(3.0f);
     Matrix3x3F moi = mc.MOI();
 
     SDL_Log("Mesh :%s", sMeshName.c_str());
