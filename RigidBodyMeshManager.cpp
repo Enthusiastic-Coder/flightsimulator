@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "RigidBodyMeshManager.h"
 #include "CPPSourceCodeMeshModel.h"
+#include <SDL_log.h>
 
 RigidBodyMeshManager::RigidBodyMeshManager()
 {
@@ -39,6 +40,16 @@ MeshModel* RigidBodyMeshManager::loadModel(std::string sMeshName, MassChannel &m
 	mc.setCGOffset(model->getCentroidPt());
 	model->calcMomentOfInertia(mc);
 	model->BuildVertexBuffers();
+    Matrix3x3F moi = mc.MOI();
+
+    SDL_Log("Mesh :%s", sMeshName.c_str());
+    SDL_Log("MOI :\n [%.2f, %.2f, %.2f\n "
+                "[%.2f, %.2f, %.2f]\n "
+                "[%.2f, %.2f, %.2f]]",
+                moi.e11, moi.e12, moi.e13,
+                moi.e21, moi.e22, moi.e23,
+                moi.e31, moi.e32, moi.e33
+            );
 	
 	_massChannelMap[sMeshName] = mc;
 	_meshModelMap[sMeshName] = model;
