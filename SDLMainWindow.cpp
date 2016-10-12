@@ -937,19 +937,19 @@ void SDLMainWindow::onUpdate()
             const Vector3D& pos = pRigidBody->position();
             const Vector3D& vel = pRigidBody->velocity();
 
-            _pfdInstrument.m_fPitch = -euler.x;
-            _pfdInstrument.m_fBank = euler.z;
-            _pfdInstrument.m_fHdg = euler.y;
+            _pfdInstrument._fPitch = -euler.x;
+            _pfdInstrument._fBank = euler.z;
+            _pfdInstrument._fHdg = euler.y;
 
             HeightData data;
-            _pfdInstrument.m_fAlt = pRigidBody->Height() * 3.2808 - 2;
+            _pfdInstrument._fAlt = pRigidBody->Height() * 3.2808 - 2;
 
-            if (_pfdInstrument.m_fAlt < 762.0f && _WorldSystem.getHeightFromPosition(pRigidBody->getGPSLocation(), data))
-                _pfdInstrument.m_fAlt = data.Height() * 3.2808 - 2;
+            if (_pfdInstrument._fAlt < 762.0f && _WorldSystem.getHeightFromPosition(pRigidBody->getGPSLocation(), data))
+                _pfdInstrument._fAlt = data.Height() * 3.2808 - 2;
 
             Vector3D vWind = _WorldSystem.getWeather()->getWindFromPosition(Vector3D());
-            _pfdInstrument.m_fAirSpd = AirProperties::Airspeed((vel-vWind).Magnitude() * 3600.0/1000.0/1.60934/1.15, pRigidBody->Height(), 0 );
-            _pfdInstrument.m_fVSI = vel * pos.Unit() * 3.2808 * 60.0;
+            _pfdInstrument._fAirSpd = AirProperties::Airspeed((vel-vWind).Magnitude() * 3600.0/1000.0/1.60934/1.15, pRigidBody->Height(), 0 );
+            _pfdInstrument._fVSI = vel * pos.Unit() * 3.2808 * 60.0;
         }
     }
 

@@ -14,7 +14,7 @@ public:
 
 	void Initialise(HDC hdc);
 
-	GLuint m_iTexture;
+    GLuint _iTexture;
 
 	OGLPFDFont m_PfdHorizFreeFont;
 	OGLPFDFont m_PfdAirSpdFreeFont;
@@ -22,12 +22,12 @@ public:
 	OGLPFDFont m_AltSmallFreeFont;
 	OGLPFDFont m_RadarAltBold;
 
-	float m_fPitch;
-	float m_fBank;
-	float m_fAirSpd;
-	float m_fAlt;
-	float m_fVSI;
-	float m_fHdg;
+    float _fPitch;
+    float _fBank;
+    float _fAirSpd;
+    float _fAlt;
+    float _fVSI;
+    float _fHdg;
 
 	float _CEN_X;
 	float _CEN_Y;

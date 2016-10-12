@@ -19,12 +19,12 @@ template<class T> std::string format(std::string str, T val)
 
 PFDView::PFDView()
 {
-	m_fPitch = 0.0f;
-	m_fBank = 0.0f;
-	m_fAirSpd = 0.0f;
-	m_fAlt = -1.0f;
-	m_fVSI = 0.0f;
-	m_fHdg = 360.0f;
+    _fPitch = 0.0f;
+    _fBank = 0.0f;
+    _fAirSpd = 0.0f;
+    _fAlt = -1.0f;
+    _fVSI = 0.0f;
+    _fHdg = 360.0f;
 	_CEN_X = 0.0f;
 	_CEN_Y = 0.0f;
 	_CX = 100.0f;
@@ -139,21 +139,21 @@ void PFDView::DrawHorizon()
 
 	{//Horizon
 		glPushMatrix();
-		glRotatef( -m_fBank, 0, 0, 1 );
+        glRotatef( -_fBank, 0, 0, 1 );
 		
 		float dY;
 		{
-			if( m_fPitch > 20 )
+            if( _fPitch > 20 )
 			{
-				dY = 20 * PIXEL_PER_PITCH + (m_fPitch-20)*PIXEL_PER_PITCH2;			
+                dY = 20 * PIXEL_PER_PITCH + (_fPitch-20)*PIXEL_PER_PITCH2;
 			}
-			else if( m_fPitch  > -10 )
+            else if( _fPitch  > -10 )
 			{
-				dY = m_fPitch * PIXEL_PER_PITCH;
+                dY = _fPitch * PIXEL_PER_PITCH;
 			}
 			else
 			{
-				dY = -10 * PIXEL_PER_PITCH + (m_fPitch+10) * PIXEL_PER_PITCH3;
+                dY = -10 * PIXEL_PER_PITCH + (_fPitch+10) * PIXEL_PER_PITCH3;
 			}
 		}
 
@@ -179,15 +179,15 @@ void PFDView::DrawHorizon()
 
 			glColor3f(1.0f,1.0f,1.0f);
 			glBegin(GL_QUADS);
-				int dH = (int)m_fHdg % 10;
-				int minHdg = (m_fHdg - dH - 40);
+                int dH = (int)_fHdg % 10;
+                int minHdg = (_fHdg - dH - 40);
 				int maxHdg = minHdg + 80;
 				int x;
 
 				{
 					for( int h = minHdg; h <= maxHdg; h+= 10 )
 					{
-						x = (h - m_fHdg) * PIXEL_PER_HDG;
+                        x = (h - _fHdg) * PIXEL_PER_HDG;
 
 						glVertex2f( x-1, 0 );
 						glVertex2f( x, 0 );
@@ -444,11 +444,11 @@ void PFDView::DrawHorizon()
 
 	{ //Draw surrounding horizon bits
 		glPushMatrix();
-			glRotatef( -m_fBank, 0, 0, 1 );
+            glRotatef( -_fBank, 0, 0, 1 );
 
 			float fy;
-            fy = std::max( m_fPitch * PIXEL_PER_PITCH,
-						PIXEL_PER_PITCH *( m_fAlt / 80.0f * 10 + m_fPitch) );
+            fy = std::max( _fPitch * PIXEL_PER_PITCH,
+                        PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
 			//fy = min( _CEN_Y-105, fy );
 			//fy = max( -_CEN_Y+100, fy );
             fy = std::min( 60.0f, fy );
@@ -482,27 +482,27 @@ void PFDView::DrawHorizon()
 				glVertex2f( 100, fy  );
 			glEnd();
 
-			if( m_fAlt < 3.0f)
+            if( _fAlt < 3.0f)
 			{
-				float dy = m_fPitch * PIXEL_PER_PITCH;
+                float dy = _fPitch * PIXEL_PER_PITCH;
 				//if( dy +4 < _CEN_Y-100 && dy > -_CEN_Y+100 )
 				if( dy +4 < 60 && dy > -60 )
 				{
 					glPushMatrix();
-						glTranslatef( 0, m_fPitch * PIXEL_PER_PITCH, 0 );
+                        glTranslatef( 0, _fPitch * PIXEL_PER_PITCH, 0 );
 						{//Hdg Lines
 							#define PIXEL_PER_HDG  2.6f
 
 							glColor3f(1.0f,1.0f,1.0f);
 							glBegin(GL_QUADS);
-								int dH = (int)m_fHdg % 10;
-								int minHdg = (m_fHdg - dH - 40);
+                                int dH = (int)_fHdg % 10;
+                                int minHdg = (_fHdg - dH - 40);
 								int maxHdg = minHdg + 80;
 								int x;
 
 								for( int h = minHdg; h <= maxHdg; h+= 10 )
 								{
-									x = (h - m_fHdg) * PIXEL_PER_HDG;
+                                    x = (h - _fHdg) * PIXEL_PER_HDG;
 
 									glVertex2f( x-1, 0 );
 									glVertex2f( x, 0 );
@@ -533,7 +533,7 @@ void PFDView::DrawHorizon()
 
 			
 			// When on ground show surrounding square and joystick position and ground tracking if ILS available
-			if( m_fAlt < 3.0f )
+            if( _fAlt < 3.0f )
 			{ 
 				glColor3f(1.0f, 1.0f, 1.0f);
 				glBegin(GL_LINES);
@@ -554,44 +554,44 @@ void PFDView::DrawHorizon()
 
 			glPopMatrix();
 
-			if( m_fAlt < 2500 )
+            if( _fAlt < 2500 )
 			{
 				std::string sAlt;
-				if( m_fAlt <= -5 )
+                if( _fAlt <= -5 )
 				{
-					sAlt = format( "%d", (int)m_fAlt - (int)m_fAlt % 5  );
+                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
 				}
-				else if( m_fAlt <= 5 )
+                else if( _fAlt <= 5 )
 				{
-					sAlt = format( "%d", (int)m_fAlt );
+                    sAlt = format( "%d", (int)_fAlt );
 				}
-				else if( m_fAlt <= 50 )
+                else if( _fAlt <= 50 )
 				{
-					sAlt = format( "%d", (int)m_fAlt - (int)m_fAlt % 5  );
+                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
 				}
 				else
 				{
-					sAlt = format( "%d", (int)m_fAlt - (int)m_fAlt % 10  );
+                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 10  );
 				}
 
-				if( m_fAlt <= 400 )
+                if( _fAlt <= 400 )
 					glColor3f( 0.9f, 0.9f, 0.2f );
 				else
 					glColor3f( 0.2f, 0.9f, 0.2f );
 
 				int yPos = 70;
 
-				if( m_fAlt < -99 )
+                if( _fAlt < -99 )
 					m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
-				else if( m_fAlt < -9 )
+                else if( _fAlt < -9 )
 					m_RadarAltBold.RenderFontNT( -10, yPos, sAlt );
-				else if( m_fAlt < 0 )
+                else if( _fAlt < 0 )
 					m_RadarAltBold.RenderFontNT( -5, yPos, sAlt );
-				else if( m_fAlt < 10 )
+                else if( _fAlt < 10 )
 					m_RadarAltBold.RenderFontNT( -2, yPos, sAlt );
-				else if( m_fAlt < 100 )
+                else if( _fAlt < 100 )
 					m_RadarAltBold.RenderFontNT( -5, yPos, sAlt );
-				else if( m_fAlt < 1000 )
+                else if( _fAlt < 1000 )
 					m_RadarAltBold.RenderFontNT( -9, yPos, sAlt );
 				else
 					m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
@@ -814,8 +814,8 @@ void PFDView::DrawAlt()
 	{
 #define ALT_RANGE 1000
 #define PIXEL_PER_ALT_FEET 0.13333f
-		int dA = (int)m_fAlt % 500;
-		float minAlt = m_fAlt - dA - ALT_RANGE;
+        int dA = (int)_fAlt % 500;
+        float minAlt = _fAlt - dA - ALT_RANGE;
 		float maxAlt = minAlt + 2 * ALT_RANGE;
 		float ymax = (dA + ALT_RANGE) * PIXEL_PER_ALT_FEET;
 		float y;
@@ -956,13 +956,13 @@ void PFDView::DrawScrollAlt()
 	glStencilFunc( GL_EQUAL, 4, 0xFFFFFFFF );
 	glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
-	if( m_fAlt <= 400 )
+    if( _fAlt <= 400 )
 		glColor3f( 0.9f, 0.9f, 0.2f );
 	else
 		glColor3f( 0.2f, 0.9f, 0.2f );
 
-	int dA = (int)m_fAlt % 20;
-	int centralAlt = (int)m_fAlt - dA;
+    int dA = (int)_fAlt % 20;
+    int centralAlt = (int)_fAlt - dA;
 
 	char rotaryAltBuf1[NUMBER_OF_ALT_LINES][32];
 	char rotaryAltBuf2[NUMBER_OF_ALT_LINES][32];
@@ -992,8 +992,7 @@ void PFDView::DrawScrollAlt()
 		yPosNoChange[2]++;
 	}
 
-	bool bDrawn[5];
-	memset( bDrawn, false, sizeof(bDrawn));
+    bool bDrawn[5] = {false};
 
 	if( rotaryAltBuf1[0][3] == '8' )
 	{
@@ -1074,13 +1073,13 @@ void PFDView::DrawVSI()
 
 	glBegin(GL_QUADS);
 
-		float fVsi = fabs(m_fVSI);
+        float fVsi = fabs(_fVSI);
 		float dy = 0.0f;
 		glColor3f( 0.1f, 1.0f, 0.1f );
 
 		if( fVsi < 1050 )
 		{
-			dy = -PIXEL_PER_VSI_1000 * m_fVSI;
+            dy = -PIXEL_PER_VSI_1000 * _fVSI;
 
 			glVertex2f( 140, -2 );
 			glVertex2f( 140, 2 );
@@ -1100,7 +1099,7 @@ void PFDView::DrawVSI()
 			glVertex2f( 140, 2 );
 			dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
 
-			if( m_fVSI > 0 )
+            if( _fVSI > 0 )
 			{
 				dy = -dy;
 			}
@@ -1123,7 +1122,7 @@ void PFDView::DrawVSI()
 		float end_x = 142;
 		glBegin(GL_QUADS);
 		glColor3f(0.0f,0.0f,0.0f );
-			if( m_fVSI < 0 )
+            if( _fVSI < 0 )
 			{
 				dy += 5;
 				dy_vsi = 12;
@@ -1151,7 +1150,7 @@ void PFDView::DrawVSI()
 		sprintf(buf, "%2.0f", fVsi / 100.0f);
 		//strVSI.Format( "%2.0f", fVsi /100.0f );
 		strVSI = buf;
-		if( m_fVSI < 0 )
+        if( _fVSI < 0 )
 			m_AltSmallFreeFont.RenderFontNT( 130, dy-1, strVSI );
 		else
 			m_AltSmallFreeFont.RenderFontNT( 130, dy + dy_vsi-1, strVSI );
@@ -1247,8 +1246,8 @@ void PFDView::DrawSpd()
 		glVertex2f( -110,0);
 	glEnd();
 
-	float fAirSpd = m_fAirSpd;
-	if( m_fAirSpd < 30 ) fAirSpd = 30;
+    float fAirSpd = _fAirSpd;
+    if( _fAirSpd < 30 ) fAirSpd = 30;
 
 #define PIXEL_PER_KNOT (17/9.0)
 
@@ -1337,15 +1336,15 @@ void PFDView::DrawHdg()
 		glVertex2f( 65, 135);
 		glVertex2f( 64, 135);
 
-		int dH = ((int)m_fHdg) % 10;
-		int minHdg = (int(m_fHdg) - dH - 40);
+        int dH = ((int)_fHdg) % 10;
+        int minHdg = (int(_fHdg) - dH - 40);
 		int maxHdg = minHdg + 80;
 		int x;
 
 		{
 			for( int h = minHdg; h <= maxHdg; h+= 5 )
 			{
-				x = (h - m_fHdg) * PIXEL_PER_HDG;
+                x = (h - _fHdg) * PIXEL_PER_HDG;
 
 				if( h % 10 == 0 )
 				{
@@ -1369,7 +1368,7 @@ void PFDView::DrawHdg()
 	std::string strHdg;
 	for( int h = minHdg; h <= maxHdg; h+= 10 )
 	{
-		x = (h - m_fHdg) * PIXEL_PER_HDG;
+        x = (h - _fHdg) * PIXEL_PER_HDG;
 		if( h <= 0 )
 		{
 			strHdg = format( "%02.0f", (h+360)/10.0 );

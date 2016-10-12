@@ -284,7 +284,7 @@ void BAAirbus320JSONRigidBody::applyBrakes(float dt, bool bShift)
 {
     double max_decel = 6.0f;
     double max_accel = 6.0f;
-    max_decel = 12.0f;
+   // max_decel = 12.0f;
 
     if( bShift )
     {
