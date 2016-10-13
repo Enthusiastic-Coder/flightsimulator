@@ -2,6 +2,12 @@
 #include "OpenGLFontTexture.h"
 #include <OpenGLPipeline.h>
 #include "OpenGLRenderer.h"
+#include "OpenGLShaderProgram.h"
+
+void OpenGLFontRenderer2D::selectShader(OpenGLShaderProgram *p)
+{
+    _shader = p;
+}
 
 void OpenGLFontRenderer2D::selectRenderer(Renderer *r)
 {
@@ -33,6 +39,10 @@ void OpenGLFontRenderer2D::beginRender(float offSetX, float offSetY)
 {
     if( _renderer == 0)
         return;
+    if( _shader == 0)
+        return;
+
+    _renderer->useProgram(*_shader);
 
     OpenGLPipeline& pipeline = OpenGLPipeline::Get(_renderer->camID);
 
@@ -66,5 +76,6 @@ void OpenGLFontRenderer2D::endRender()
     OpenGLPipeline& pipeline = OpenGLPipeline::Get(_renderer->camID);
 
     _fontMesh.endRender(_renderer);
+    OpenGLShaderProgram::useDefault();
     pipeline.Pop();
 }

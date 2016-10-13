@@ -314,6 +314,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         //_myFontTexture.loadfile("fonts/Verdana-11-Bold.png");
         _myFontTexture.loadfile("fonts/Verdana-10.png");
 
+        _fontRenderer.selectShader(&_fontShaderProgram);
         _fontRenderer.selectRenderer(_renderer);
 
         _WorldSystem.onInitialise();
@@ -1493,8 +1494,8 @@ void SDLMainWindow::RenderFPS()
     glEnable(GL_BLEND);
     _renderer->dt = frameTime();
     _renderer->camID = 0;
-    _renderer->useProgram( _fontShaderProgram);
 
+    _fontRenderer.selectShader(&_fontShaderProgram);
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
     _fontRenderer.beginRender(0,30);
@@ -1528,8 +1529,8 @@ void SDLMainWindow::RenderInfo()
     glEnable(GL_BLEND);
     _renderer->dt = frameTime();
     _renderer->camID = 0;
-    _renderer->useProgram( _fontShaderProgram);
 
+    _fontRenderer.selectShader(&_fontShaderProgram);
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
     _fontRenderer.beginRender(0, 30);

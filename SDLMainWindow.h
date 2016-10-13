@@ -81,7 +81,7 @@ private:
     bool _showCursor;
     //bool _paused;
     bool _bUserPolygonLineView;
-    double _framerate[FPS_RESOLUTION];
+    float _framerate[FPS_RESOLUTION];
     int _framecount;
 
     PFDView _pfdInstrument;

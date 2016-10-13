@@ -2,6 +2,7 @@
 
 class OpenGLFontTexture;
 class Renderer;
+class OpenGLShaderProgram;
 
 #include "MathSupport.h"
 #include <string>
@@ -10,6 +11,7 @@ class Renderer;
 class OpenGLFontRenderer2D
 {
 public:
+    void selectShader(OpenGLShaderProgram* p);
     void selectRenderer(Renderer* r);
     void selectFont(OpenGLFontTexture* texture);
     OpenGLFontTexture* getFont();
@@ -24,4 +26,5 @@ private:
     MathSupport<int>::size _screenSize;
     Vector4F _fontColor = {1,1,1,1};
     Renderer* _renderer = 0;
+    OpenGLShaderProgram* _shader = 0;
 };
