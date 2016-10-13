@@ -790,6 +790,7 @@ void SDLMainWindow::onUpdate()
     if( _framecount >= FPS_RESOLUTION )
         _framecount = 0;
 
+    _buttonJoystick.setButtonVisible(!_buttonJoystick.isButtonDown());
     _buttonTextureManager.update(dt);
 
     JSONRigidBody *focus = _WorldSystem.focusedRigidBody();

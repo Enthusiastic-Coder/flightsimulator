@@ -28,6 +28,11 @@ bool OpenGLButtonTexture::isButtonHover() const
     return _buttonStatus & Button_Hover;
 }
 
+bool OpenGLButtonTexture::isButtonVisible() const
+{
+    return (_buttonStatus & Button_Invisible) ==0;
+}
+
 void OpenGLButtonTexture::setHAlignment(Alignment value)
 {
     _hAlignment = value;
@@ -67,6 +72,13 @@ void OpenGLButtonTexture::setButtonHover(bool bHover)
             (int&)_buttonStatus &= ~Button_Hover;
 }
 
+void OpenGLButtonTexture::setButtonVisible(bool bVisible)
+{
+    bVisible ?
+        (int&)_buttonStatus &= ~Button_Invisible:
+            (int&) _buttonStatus |= Button_Invisible;
+}
+
 void OpenGLButtonTexture::setPosition(MathSupport<int>::point position)
 {
     _position = position;
@@ -79,6 +91,9 @@ void OpenGLButtonTexture::setSize(MathSupport<int>::size size)
 
 void OpenGLButtonTexture::render(OpenGLTextureRenderer2D *r)
 {       
+    if( !isButtonVisible())
+        return;
+
     if( isButtonDisabled())
         r->setColorModulator(Vector4F(1.0f,1.0f,1.0f,0.45f));
     else if( isButtonHover())

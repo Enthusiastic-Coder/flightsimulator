@@ -11,7 +11,8 @@ public:
     enum ButtonStatus
     {
         Button_Disabled = 0x1,
-        Button_Hover = 0x2
+        Button_Hover = 0x2,
+        Button_Invisible = 0x4
     };
 
     enum Alignment
@@ -26,6 +27,7 @@ public:
     bool isButtonDown() const;
     bool isButtonDisabled() const;
     bool isButtonHover() const;
+    bool isButtonVisible() const;
 
     void setHAlignment(Alignment value);
     void setVAlignment(Alignment value);
@@ -34,6 +36,7 @@ public:
     void setButtonDown();
     void setButtonDisabled(bool bDisable);
     void setButtonHover(bool bHover);
+    void setButtonVisible(bool bVisible);
 
     void setPosition( MathSupport<int>::point position);
     void setSize( MathSupport<int>::size size);
