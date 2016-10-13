@@ -2,10 +2,9 @@
 #define __PFD__VIEW__H__
 
 #include "OGLPFDFont.h"
-
 #include "OpenGLFontTexture.h"
 
-class Renderer;
+class OpenGLPainter;
 
 template<class T> std::string format(std::string, T val);
 
@@ -17,7 +16,7 @@ public:
 
 	void Initialise(HDC hdc);
 	
-    void render(Renderer* r, int cx, int cy);
+    void render(OpenGLPainter* r, int cx, int cy);
 
     float _fPitch;
     float _fBank;
@@ -29,7 +28,11 @@ public:
 private:
     GLuint _iTexture;
 
-    OpenGLFontTexture _pfdHorizFreeFont;
+    OpenGLFontTexture _PfdHorizFreeFont;
+    OpenGLFontTexture _PfdAirSpdFreeFont;
+    OpenGLFontTexture _AltLargeFreeFont;
+    OpenGLFontTexture _AltSmallFreeFont;
+    OpenGLFontTexture _RadarAltBold;
 
     OGLPFDFont m_PfdHorizFreeFont;
     OGLPFDFont m_PfdAirSpdFreeFont;
@@ -51,9 +54,6 @@ private:
     void DrawHdg();
     void DrawSpd();
     void DrawFlightModes();
-
-private:
-    Renderer* _renderer = 0;
 };
 
 #endif //__PFD__VIEW__H__

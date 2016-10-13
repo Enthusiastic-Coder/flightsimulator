@@ -28,6 +28,7 @@
 #include "OpenGLFontTexture.h"
 #include "OpenGLFontRenderer2D.h"
 #include "OpenGLTextureRenderer2D.h"
+#include "OpenGLPainter.h"
 
 #define MS_TO_KTS( value ) fabs(value*3.2808*3600/5280/1.15f)
 #define MS_TO_MPH( value ) MS_TO_KTS( value*1.15 )
@@ -1261,7 +1262,12 @@ void SDLMainWindow::onRender()
         }
 
         glViewport(0, 0, _pfdColorTexture.width(), _pfdColorTexture.height());
-        _pfdInstrument.render(_renderer, _pfdColorTexture.width(), _pfdColorTexture.height());
+
+        OpenGLPainter painter;
+        painter.selectFontRenderer(&_fontRenderer);
+        painter.selectPrimitiveShader(&_simplePrimitiveShaderProgram);
+
+        _pfdInstrument.render(&painter, _pfdColorTexture.width(), _pfdColorTexture.height());
 
         _openGLFrameBuffer.attachColorTexture2D(0, 0);
         _openGLFrameBuffer.attachStencilRenderBuffer(0);
