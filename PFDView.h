@@ -1,8 +1,11 @@
-
-#pragma once
+#ifndef __PFD__VIEW__H__
+#define __PFD__VIEW__H__
 
 #include "OGLPFDFont.h"
-// PFDView window
+
+#include "OpenGLFontTexture.h"
+
+class Renderer;
 
 template<class T> std::string format(std::string, T val);
 
@@ -13,14 +16,8 @@ public:
 	PFDView();
 
 	void Initialise(HDC hdc);
-
-    GLuint _iTexture;
-
-	OGLPFDFont m_PfdHorizFreeFont;
-	OGLPFDFont m_PfdAirSpdFreeFont;
-	OGLPFDFont m_AltLargeFreeFont;
-	OGLPFDFont m_AltSmallFreeFont;
-	OGLPFDFont m_RadarAltBold;
+	
+    void render(Renderer* r, int cx, int cy);
 
     float _fPitch;
     float _fBank;
@@ -29,21 +26,34 @@ public:
     float _fVSI;
     float _fHdg;
 
-	float _CEN_X;
-	float _CEN_Y;
-	float _CX;
-	float _CY;
+private:
+    GLuint _iTexture;
 
-	void DrawHorizon();
-	void BuildAltTape(char buffer[][32], int line_count, int centralAlt, bool bIncreasing);
-	void DrawAlt();
-	void DrawScrollAlt();
+    OpenGLFontTexture _pfdHorizFreeFont;
 
-	void DrawVSI();
-	void DrawHdg();
-	void DrawSpd();
-	void DrawFlightModes();
-	
-    void render(int cx, int cy);
+    OGLPFDFont m_PfdHorizFreeFont;
+    OGLPFDFont m_PfdAirSpdFreeFont;
+    OGLPFDFont m_AltLargeFreeFont;
+    OGLPFDFont m_AltSmallFreeFont;
+    OGLPFDFont m_RadarAltBold;
+
+    float _CEN_X;
+    float _CEN_Y;
+    float _CX;
+    float _CY;
+
+    void DrawHorizon();
+    void BuildAltTape(char buffer[][32], int line_count, int centralAlt, bool bIncreasing);
+    void DrawAlt();
+    void DrawScrollAlt();
+
+    void DrawVSI();
+    void DrawHdg();
+    void DrawSpd();
+    void DrawFlightModes();
+
+private:
+    Renderer* _renderer = 0;
 };
 
+#endif //__PFD__VIEW__H__

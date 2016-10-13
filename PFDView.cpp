@@ -6,6 +6,7 @@
 #include "PFDView.h"
 #include <iomanip>
 #include <algorithm>
+#include "OpenGLRenderer.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -53,7 +54,7 @@ void PFDView::Initialise(HDC hdc)
 /////////////////////////////////////////////////////////////////////////////
 // PFDView drawing
 
-void PFDView::render(int cx, int cy)
+void PFDView::render(Renderer *r, int cx, int cy)
 {
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);

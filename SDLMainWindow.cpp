@@ -1261,7 +1261,7 @@ void SDLMainWindow::onRender()
         }
 
         glViewport(0, 0, _pfdColorTexture.width(), _pfdColorTexture.height());
-        _pfdInstrument.render(_pfdColorTexture.width(), _pfdColorTexture.height());
+        _pfdInstrument.render(_renderer, _pfdColorTexture.width(), _pfdColorTexture.height());
 
         _openGLFrameBuffer.attachColorTexture2D(0, 0);
         _openGLFrameBuffer.attachStencilRenderBuffer(0);
