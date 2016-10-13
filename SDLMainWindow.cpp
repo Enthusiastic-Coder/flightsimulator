@@ -1501,7 +1501,6 @@ void SDLMainWindow::RenderFPS()
     _renderer->dt = frameTime();
     _renderer->camID = 0;
 
-    _fontRenderer.selectShader(&_fontShaderProgram);
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
     _fontRenderer.beginRender(0,30);
@@ -1536,7 +1535,6 @@ void SDLMainWindow::RenderInfo()
     _renderer->dt = frameTime();
     _renderer->camID = 0;
 
-    _fontRenderer.selectShader(&_fontShaderProgram);
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
     _fontRenderer.beginRender(0, 30);
