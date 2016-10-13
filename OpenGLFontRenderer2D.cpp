@@ -79,3 +79,13 @@ void OpenGLFontRenderer2D::endRender()
     OpenGLShaderProgram::useDefault();
     pipeline.Pop();
 }
+
+Renderer *OpenGLFontRenderer2D::renderer()
+{
+    return _renderer;
+}
+
+OpenGLShaderProgram *OpenGLFontRenderer2D::shader()
+{
+    return _shader;
+}

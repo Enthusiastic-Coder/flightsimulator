@@ -3,6 +3,9 @@
 
 class OpenGLFontRenderer2D;
 class OpenGLShaderProgram;
+class OpenGLFontTexture;
+
+#include "vector4.h"
 
 class OpenGLPainter
 {
@@ -10,10 +13,16 @@ public:
     void selectFontRenderer(OpenGLFontRenderer2D *f);
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
-    void begin();
+    void beginFont(OpenGLFontTexture* font, Vector4F color);
+    OpenGLFontRenderer2D* fontRenderer();
+    void endFont();
+
+    void beginPrimitive();
+    void endPrimitive();
 
 private:
-    OpenGLFontRenderer2D* fontRenderer = 0 ;
+    OpenGLFontRenderer2D* _fontRenderer = 0 ;
+    OpenGLShaderProgram* _fontShader = 0;
     OpenGLShaderProgram* _primitiveShader = 0;
 
 };

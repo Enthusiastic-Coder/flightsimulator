@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <algorithm>
 #include "OpenGLPainter.h"
+#include "OpenGLFontRenderer2D.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -48,6 +49,9 @@ void PFDView::Initialise(HDC hdc)
 	m_AltLargeFreeFont.SetOffset(0,10);
 
     m_RadarAltBold.SetOffset(0, 10 );
+
+    _PfdHorizFreeFont.loadfile("fonts/Verdana-10.png");
+
 }
 
 
@@ -101,6 +105,12 @@ void PFDView::render(OpenGLPainter *r, int cx, int cy)
 
     glDisable(GL_STENCIL_TEST);
 	glColor3f(1,1,1);
+
+    r->beginFont(&_PfdHorizFreeFont, Vector4F(1,0,0,1));
+    r->fontRenderer()->renderText(5,5, "Hello World");
+    r->endFont();
+
+
 	glMatrixMode( GL_PROJECTION  );
 	glPopMatrix();
 	glMatrixMode( GL_MODELVIEW  );

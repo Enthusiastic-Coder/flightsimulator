@@ -21,6 +21,9 @@ public:
     void renderText(int x, int y, std::string str);
     void endRender();
 
+    Renderer* renderer();
+    OpenGLShaderProgram* shader();
+
 private:
     OpenGLFontMeshBuilder _fontMesh;
     MathSupport<int>::size _screenSize;
