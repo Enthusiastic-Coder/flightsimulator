@@ -106,17 +106,27 @@ void PFDView::render(OpenGLPainter *r, int cx, int cy)
     glDisable(GL_STENCIL_TEST);
 	glColor3f(1,1,1);
 
-    r->beginFont(&_PfdHorizFreeFont, Vector4F(1,0,0,1));
-    r->fontRenderer()->renderText(5,5, "Hello World");
-    r->endFont();
-
-
 	glMatrixMode( GL_PROJECTION  );
 	glPopMatrix();
 	glMatrixMode( GL_MODELVIEW  );
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
-	
+
+    OpenGLFontRenderer2D fr;
+    fr.onSize(cx, cy);
+    fr.selectRenderer(r->fontRenderer()->renderer());
+    fr.selectShader(r->fontRenderer()->shader());
+    fr.selectFont(&_PfdHorizFreeFont);
+    fr.setFontColor(Vector4F(1,1,1,1));
+
+    fr.beginRender();
+    fr.renderText(0,_PfdHorizFreeFont.getMaxFontSize().height,"HELLO WORLD");
+    fr.endRender();
+
+//    r->beginFont(&_PfdHorizFreeFont, Vector4F(1,0,0,1));
+//    r->fontRenderer()->renderText(5,5, "Hello World");
+//    r->endFont();
+
 }
 
 void PFDView::DrawHorizon()

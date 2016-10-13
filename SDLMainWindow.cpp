@@ -1514,7 +1514,6 @@ void SDLMainWindow::RenderFPS()
     _fontRenderer.renderText( 15, 5, text );
 
     _fontRenderer.endRender();
-    OpenGLShaderProgram::useDefault();
     glDisable(GL_BLEND);
 }
 
