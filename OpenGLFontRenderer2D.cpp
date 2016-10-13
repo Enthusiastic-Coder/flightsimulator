@@ -30,6 +30,11 @@ void OpenGLFontRenderer2D::onSize(int cx, int cy)
     _screenSize.height = cy;
 }
 
+MathSupport<int>::size OpenGLFontRenderer2D::getSize() const
+{
+    return _screenSize;
+}
+
 void OpenGLFontRenderer2D::setFontColor(const Vector4F &color)
 {
     _fontColor = color;
