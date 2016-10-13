@@ -1460,13 +1460,16 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
 
 void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V)
 {
-    int width = 150;
+    int sw, sh;
+    GetScreenDims(sw, sh);
+
+    int width = 150 * float(sh)/sw;
     int height = 150;
     glEnable(GL_BLEND);
 
     _renderer->useProgram(_fontShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
-    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.33);
+    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.25);
 
     OpenGLTextureRenderer2D r(_renderer);
     r.onSize(0, 0, 200, 200);
