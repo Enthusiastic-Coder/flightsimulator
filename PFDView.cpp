@@ -58,7 +58,7 @@ void PFDView::Initialise(HDC hdc)
 /////////////////////////////////////////////////////////////////////////////
 // PFDView drawing
 
-void PFDView::render(OpenGLPainter *r, int cx, int cy)
+void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 {
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -112,12 +112,12 @@ void PFDView::render(OpenGLPainter *r, int cx, int cy)
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
 
-    MathSupport<int>::size sz = r->fontRenderer()->getSize();
-    r->fontRenderer()->onSize(cx, cy);
-    r->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1));
-    r->fontRenderer()->renderText(5,_PfdHorizFreeFont.getMaxFontSize().height, "----Hello World");
-    r->endFont();
-    r->fontRenderer()->onSize(sz.width, sz.height);
+    MathSupport<int>::size sz = painter->fontRenderer()->getSize();
+    painter->fontRenderer()->onSize(cx, cy);
+    painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1));
+    painter->fontRenderer()->renderText(5,_PfdHorizFreeFont.getMaxFontSize().height, "----Hello World");
+    painter->endFont();
+    painter->fontRenderer()->onSize(sz.width, sz.height);
 
 }
 

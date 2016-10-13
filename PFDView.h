@@ -16,7 +16,7 @@ public:
 
 	void Initialise(HDC hdc);
 	
-    void render(OpenGLPainter* r, int cx, int cy);
+    void render(OpenGLPainter* painter, int cx, int cy);
 
     float _fPitch;
     float _fBank;
