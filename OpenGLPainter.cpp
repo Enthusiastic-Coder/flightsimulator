@@ -31,7 +31,6 @@ OpenGLFontRenderer2D *OpenGLPainter::fontRenderer()
 void OpenGLPainter::endFont()
 {
     _fontRenderer->endRender();
-    OpenGLShaderProgram::useDefault();
 }
 
 void OpenGLPainter::beginPrimitive()

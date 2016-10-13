@@ -50,7 +50,7 @@ void PFDView::Initialise(HDC hdc)
 
     m_RadarAltBold.SetOffset(0, 10 );
 
-    _PfdHorizFreeFont.loadfile("fonts/Verdana-10.png");
+    _PfdHorizFreeFont.loadfile("fonts/Verdana-20.png");
 
 }
 
