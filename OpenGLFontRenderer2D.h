@@ -18,7 +18,7 @@ public:
     void onSize( int cx, int cy);
     MathSupport<int>::size getSize() const;
     void setFontColor(const Vector4F& color);
-    void beginRender(float offSetX=0.0f, float offSetY=0.0f);
+    void beginRender();
     void renderText(int x, int y, std::string str);
     void endRender();
 

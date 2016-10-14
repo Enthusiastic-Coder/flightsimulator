@@ -1503,7 +1503,18 @@ void SDLMainWindow::RenderFPS()
 
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
-    _fontRenderer.beginRender(0,30);
+
+    int w, h;
+    GetScreenDims(w, h);
+
+    OpenGLPipeline& p = OpenGLPipeline::Get(_renderer->camID);
+    p.Push();
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, w, h);
+    p.GetModel().Translate(0, -30,0);
+
+    _fontRenderer.beginRender();
+
+    p.bindMatrices(_renderer->progId());
 
     float fps = 0.0f;
     for( int i=0; i < FPS_RESOLUTION; i++ )
@@ -1514,6 +1525,7 @@ void SDLMainWindow::RenderFPS()
     _fontRenderer.renderText( 15, 5, text );
 
     _fontRenderer.endRender();
+    p.Pop();
     glDisable(GL_BLEND);
 }
 
@@ -1534,9 +1546,16 @@ void SDLMainWindow::RenderInfo()
     _renderer->dt = frameTime();
     _renderer->camID = 0;
 
+    OpenGLPipeline& p = OpenGLPipeline::Get(_renderer->camID);
+    p.Push();
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, w, h);
+    p.GetModel().Translate(0, -30,0);
+
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
-    _fontRenderer.beginRender(0, 30);
+    _fontRenderer.beginRender();
+
+    p.bindMatrices(_renderer->progId());
 
     _fontRenderer.renderText( 15, 15, "3D Virtual World by Mo" );
     _fontRenderer.renderText( 15, 30, "------------------------------------------" );
@@ -1687,6 +1706,7 @@ void SDLMainWindow::RenderInfo()
     _fontRenderer.endRender();
     OpenGLShaderProgram::useDefault();
     glDisable(GL_BLEND);
+    p.Pop();
 }
 
 void SDLMainWindow::setupCameraOrientation()

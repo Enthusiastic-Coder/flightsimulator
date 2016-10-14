@@ -53,6 +53,7 @@ class OpenGLPipeline
 public:
     OpenGLPipeline();
 
+    static void applyScreenProjection(OpenGLPipeline &p, int x, int y, int cx, int cy);
     static OpenGLPipeline& Get(unsigned int camID);
     void Push();
     static void ApplyMaterialToShader(OpenGLShaderProgram &progID,

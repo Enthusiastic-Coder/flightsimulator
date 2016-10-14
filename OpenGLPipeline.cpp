@@ -112,6 +112,14 @@ OpenGLPipeline::OpenGLPipeline() :
     _zoom.LoadIdentity();
 }
 
+void OpenGLPipeline::applyScreenProjection(OpenGLPipeline& p, int x, int y, int cx, int cy)
+{
+    p.GetProjection().LoadIdentity();
+    p.GetProjection().SetOrthographic(x, x+cx, y, y+cy, -1, 1);
+    p.GetModel().LoadIdentity();
+    p.GetView().LoadIdentity();
+}
+
 OpenGLPipeline& OpenGLPipeline::Get(unsigned int camID)
 {
     static std::map<unsigned int, OpenGLPipeline> cameras;

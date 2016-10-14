@@ -8,6 +8,8 @@
 #include <algorithm>
 #include "OpenGLPainter.h"
 #include "OpenGLFontRenderer2D.h"
+#include "OpenGLPipeline.h"
+#include "OpenGLRenderer.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -36,9 +38,13 @@ PFDView::PFDView()
 void PFDView::Initialise(HDC hdc)
 {
 	m_PfdHorizFreeFont.CreateBitmapFont( hdc, "Tahoma", 14, FW_NORMAL );
+    //_PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
+
 	m_PfdAirSpdFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
+    //_PfdHorizFreeFont.loadfile("fonts/Arial-10.png");
 	
 	m_RadarAltBold.CreateBitmapFont( hdc, "Tahoma", 18, FW_NORMAL);
+    //_PfdHorizFreeFont.loadfile("fonts/Tahoma-11.png");
 
 	m_AltLargeFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
 	m_AltSmallFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
@@ -50,7 +56,7 @@ void PFDView::Initialise(HDC hdc)
 
     m_RadarAltBold.SetOffset(0, 10 );
 
-    _PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
+    _PfdHorizFreeFont.loadfile("fonts/Tahoma-11.png");
 
 }
 
@@ -105,7 +111,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 
     std::string strTestText = "----Hello World";
 
-     m_PfdHorizFreeFont.RenderFontNT(0, 0, strTestText);
+     m_RadarAltBold.RenderFontNT(0, 0, strTestText);
 
     glDisable(GL_STENCIL_TEST);
 	glColor3f(1,1,1);
@@ -116,14 +122,20 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
 
+    OpenGLPipeline& p = OpenGLPipeline::Get(painter->fontRenderer()->renderer()->camID);
+    p.Push();
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
+    p.GetModel().Translate(_CEN_X, -_CEN_Y,0);
 
     MathSupport<int>::size sz = painter->fontRenderer()->getSize();
     painter->fontRenderer()->onSize(cx, cy);
-    painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1), _CEN_X, _CEN_Y );
+    painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1));//, _CEN_X, _CEN_Y );
+    p.bindMatrices(*painter->fontRenderer()->shader());
     painter->fontRenderer()->renderText(0,20, strTestText);
     painter->endFont();
     painter->fontRenderer()->onSize(sz.width, sz.height);
 
+    p.Pop();
 
 }
 
