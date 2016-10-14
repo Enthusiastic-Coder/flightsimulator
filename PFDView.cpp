@@ -50,7 +50,7 @@ void PFDView::Initialise(HDC hdc)
 
     m_RadarAltBold.SetOffset(0, 10 );
 
-    _PfdHorizFreeFont.loadfile("fonts/Verdana-20.png");
+    _PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
 
 }
 
@@ -103,6 +103,10 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     DrawVSI();
     DrawHdg();
 
+    std::string strTestText = "----Hello World";
+
+     m_PfdHorizFreeFont.RenderFontNT(0, 0, strTestText);
+
     glDisable(GL_STENCIL_TEST);
 	glColor3f(1,1,1);
 
@@ -112,12 +116,14 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
 
+
     MathSupport<int>::size sz = painter->fontRenderer()->getSize();
     painter->fontRenderer()->onSize(cx, cy);
-    painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1));
-    painter->fontRenderer()->renderText(5,_PfdHorizFreeFont.getMaxFontSize().height, "----Hello World");
+    painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1), _CEN_X, _CEN_Y );
+    painter->fontRenderer()->renderText(0,20, strTestText);
     painter->endFont();
     painter->fontRenderer()->onSize(sz.width, sz.height);
+
 
 }
 

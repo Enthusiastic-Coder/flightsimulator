@@ -14,11 +14,11 @@ void OpenGLPainter::selectPrimitiveShader(OpenGLShaderProgram *shader)
     _primitiveShader = shader;
 }
 
-void OpenGLPainter::beginFont(OpenGLFontTexture *font, Vector4F color)
+void OpenGLPainter::beginFont(OpenGLFontTexture *font, Vector4F color, float offSetX, float offSetY)
 {
     _fontRenderer->selectFont(font);
     _fontRenderer->setFontColor(color);
-    _fontRenderer->beginRender();
+    _fontRenderer->beginRender(offSetX, offSetY);
 }
 
 OpenGLFontRenderer2D *OpenGLPainter::fontRenderer()

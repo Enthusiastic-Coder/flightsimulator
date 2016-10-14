@@ -13,7 +13,7 @@ public:
     void selectFontRenderer(OpenGLFontRenderer2D *f);
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
-    void beginFont(OpenGLFontTexture* font, Vector4F color);
+    void beginFont(OpenGLFontTexture* font, Vector4F color, float offSetX=0.0f, float offSetY=0.0f);
     OpenGLFontRenderer2D* fontRenderer();
     void endFont();
 
