@@ -38,24 +38,24 @@ void OpenGLFontMeshBuilder::add(int x, int y, int dx, int dy, char ch)
     //add **TWO** triangles to make QUAD
 
     //Triangle A
-    _meshData.addVertex(Vector3F(x,y,0));
+    _meshData.addVertex(Vector3F(x,-y,0));
     _meshData.addTexture(uvs[0].first, uvs[0].second);
 
-    _meshData.addVertex(Vector3F(x+dx,y,0));
+    _meshData.addVertex(Vector3F(x+dx,-y,0));
     _meshData.addTexture(uvs[1].first, uvs[1].second);
 
-    _meshData.addVertex(Vector3F(x,y+dy,0));
+    _meshData.addVertex(Vector3F(x,-y+dy,0));
     _meshData.addTexture(uvs[3].first, uvs[3].second);
 
     //Triangle B
 
-    _meshData.addVertex(Vector3F(x+dx,y,0));
+    _meshData.addVertex(Vector3F(x+dx,-y,0));
     _meshData.addTexture(uvs[1].first, uvs[1].second);
 
-    _meshData.addVertex(Vector3F(x+dx,y+dy,0));
+    _meshData.addVertex(Vector3F(x+dx,-y+dy,0));
     _meshData.addTexture(uvs[2].first, uvs[2].second);
 
-    _meshData.addVertex(Vector3F(x,y+dy,0));
+    _meshData.addVertex(Vector3F(x,-y+dy,0));
     _meshData.addTexture(uvs[3].first, uvs[3].second);
 }
 

@@ -111,7 +111,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 
     std::string strTestText = "----Hello World";
 
-     m_RadarAltBold.RenderFontNT(0, 0, strTestText);
+    m_RadarAltBold.RenderFontNT(0, 0, strTestText);
 
     glDisable(GL_STENCIL_TEST);
 	glColor3f(1,1,1);
@@ -127,13 +127,10 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
     p.GetModel().Translate(_CEN_X, -_CEN_Y,0);
 
-    MathSupport<int>::size sz = painter->fontRenderer()->getSize();
-    painter->fontRenderer()->onSize(cx, cy);
     painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1));//, _CEN_X, _CEN_Y );
     p.bindMatrices(*painter->fontRenderer()->shader());
     painter->fontRenderer()->renderText(0,20, strTestText);
     painter->endFont();
-    painter->fontRenderer()->onSize(sz.width, sz.height);
 
     p.Pop();
 

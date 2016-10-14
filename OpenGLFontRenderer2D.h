@@ -15,8 +15,6 @@ public:
     void selectRenderer(Renderer* r);
     void selectFont(OpenGLFontTexture* texture);
     OpenGLFontTexture* getFont();
-    void onSize( int cx, int cy);
-    MathSupport<int>::size getSize() const;
     void setFontColor(const Vector4F& color);
     void beginRender();
     void renderText(int x, int y, std::string str);
@@ -27,7 +25,6 @@ public:
 
 private:
     OpenGLFontMeshBuilder _fontMesh;
-    MathSupport<int>::size _screenSize;
     Vector4F _fontColor = {1,1,1,1};
     Renderer* _renderer = 0;
     OpenGLShaderProgram* _shader = 0;

@@ -23,7 +23,6 @@ public:
 private:
     OpenGLFontRenderer2D* _fontRenderer = 0 ;
     OpenGLShaderProgram* _primitiveShader = 0;
-
 };
 
 

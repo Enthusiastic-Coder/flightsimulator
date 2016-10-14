@@ -24,17 +24,6 @@ OpenGLFontTexture *OpenGLFontRenderer2D::getFont()
     return  _fontMesh.getFontTexture();
 }
 
-void OpenGLFontRenderer2D::onSize(int cx, int cy)
-{
-    _screenSize.width = cx;
-    _screenSize.height = cy;
-}
-
-MathSupport<int>::size OpenGLFontRenderer2D::getSize() const
-{
-    return _screenSize;
-}
-
 void OpenGLFontRenderer2D::setFontColor(const Vector4F &color)
 {
     _fontColor = color;
@@ -58,7 +47,7 @@ void OpenGLFontRenderer2D::renderText( int x, int y, std::string str)
         return;
 
     _fontMesh.clear();
-    _fontMesh.add( x, _screenSize.height - y, str);
+    _fontMesh.add( x, y, str);
     _fontMesh.render(_renderer);
 }
 

@@ -115,7 +115,7 @@ OpenGLPipeline::OpenGLPipeline() :
 void OpenGLPipeline::applyScreenProjection(OpenGLPipeline& p, int x, int y, int cx, int cy)
 {
     p.GetProjection().LoadIdentity();
-    p.GetProjection().SetOrthographic(x, x+cx, y, y+cy, -1, 1);
+    p.GetProjection().SetOrthographic(x, x+cx, y-cy, y , -1, 1);
     p.GetModel().LoadIdentity();
     p.GetView().LoadIdentity();
 }
