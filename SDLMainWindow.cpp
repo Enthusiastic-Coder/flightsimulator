@@ -1513,8 +1513,6 @@ void SDLMainWindow::RenderFPS()
 
     _fontRenderer.beginRender();
 
-    p.bindMatrices(_renderer->progId());
-
     float fps = 0.0f;
     for( int i=0; i < FPS_RESOLUTION; i++ )
         fps += _framerate[i];
@@ -1553,8 +1551,6 @@ void SDLMainWindow::RenderInfo()
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
     _fontRenderer.beginRender();
-
-    p.bindMatrices(_renderer->progId());
 
     _fontRenderer.renderText( 15, 15, "3D Virtual World by Mo" );
     _fontRenderer.renderText( 15, 30, "------------------------------------------" );

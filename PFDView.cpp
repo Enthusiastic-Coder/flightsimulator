@@ -37,27 +37,23 @@ PFDView::PFDView()
 
 void PFDView::Initialise(HDC hdc)
 {
-	m_PfdHorizFreeFont.CreateBitmapFont( hdc, "Tahoma", 14, FW_NORMAL );
-    //_PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
-
+    m_PfdHorizFreeFont.CreateBitmapFont( hdc, "Tahoma", 14, FW_NORMAL );
 	m_PfdAirSpdFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
-    //_PfdHorizFreeFont.loadfile("fonts/Arial-10.png");
-	
 	m_RadarAltBold.CreateBitmapFont( hdc, "Tahoma", 18, FW_NORMAL);
-    //_PfdHorizFreeFont.loadfile("fonts/Tahoma-11.png");
-
-	m_AltLargeFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
+    m_AltLargeFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
 	m_AltSmallFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
 
 	m_PfdHorizFreeFont.SetOffset( 0, 10 );
 	m_AltSmallFreeFont.SetOffset( 0, 10 );
 	m_PfdAirSpdFreeFont.SetOffset(0, 10 );
 	m_AltLargeFreeFont.SetOffset(0,10);
-
     m_RadarAltBold.SetOffset(0, 10 );
 
-    _PfdHorizFreeFont.loadfile("fonts/Tahoma-11.png");
-
+    _PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
+    _PfdAirSpdFreeFont.loadfile("fonts/Arial-10.png");
+    _RadarAltBold.loadfile("fonts/Tahoma-11.png");
+    _AltLargeFreeFont.loadfile("fonts/Arial-10.png");
+    _AltSmallFreeFont.loadfile("fonts/Arial-10.png");
 }
 
 
@@ -110,8 +106,8 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     DrawHdg();
 
     std::string strTestText = "----Hello World";
-
-    m_RadarAltBold.RenderFontNT(0, 0, strTestText);
+    std::string strTestText2 = strTestText;
+  //  strTestText2[2] = '+';
 
     glDisable(GL_STENCIL_TEST);
 	glColor3f(1,1,1);
@@ -125,11 +121,10 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->fontRenderer()->renderer()->camID);
     p.Push();
     OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
-    p.GetModel().Translate(_CEN_X, -_CEN_Y,0);
+    p.GetModel().Translate(_CEN_X, -_CEN_Y-13,0);
 
-    painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1));//, _CEN_X, _CEN_Y );
-    p.bindMatrices(*painter->fontRenderer()->shader());
-    painter->fontRenderer()->renderText(0,20, strTestText);
+    painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1));
+    painter->fontRenderer()->renderText(0,0, strTestText2);
     painter->endFont();
 
     p.Pop();

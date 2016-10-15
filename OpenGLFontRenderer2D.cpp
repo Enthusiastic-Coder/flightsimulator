@@ -37,6 +37,7 @@ void OpenGLFontRenderer2D::beginRender()
         return;
 
     _renderer->useProgram(*_shader);
+    OpenGLPipeline::Get(_renderer->camID).bindMatrices(*_shader);
     _renderer->progId().sendUniform("textColor", _fontColor);
     _fontMesh.beginRender(_renderer);
 }
