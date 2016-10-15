@@ -199,7 +199,6 @@ void OpenGLSliderControl::render(Renderer *r)
     // draw solid transparent _color rectangle showing current value
     // draw outline rectangle showing final value
     OpenGLPipeline& pipeline = OpenGLPipeline::Get(r->camID);
-    pipeline.GetModel().Push();
     pipeline.GetProjection().LoadIdentity();
     pipeline.GetProjection().SetOrthographic(0, _cx, _cy, 0, -1, 1);
     pipeline.GetModel().LoadIdentity();
@@ -294,7 +293,6 @@ void OpenGLSliderControl::render(Renderer *r)
     renderThumb(r, GL_TRIANGLE_FAN, _currentValue, Vector4F(1,1,1,0.5f));
     renderThumb(r, GL_LINE_LOOP, _value, outlineColor);
 
-    pipeline.GetModel().Pop();
 }
 
 float OpenGLSliderControl::getCurrentValue() const

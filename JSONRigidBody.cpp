@@ -365,7 +365,7 @@ void JSONRigidBody::renderForceGenerators(Renderer* r)
 	if (getMeshModel() == 0)
 		return;
 
-    OpenGLPipeline& mat = OpenGLPipeline::Get(0);
+    OpenGLPipeline& mat = OpenGLPipeline::Get(r->camID);
 	mat.Push();
     mat.GetModel().TranslateLocation(getGPSLocation());
 	applyModelMatrix(mat.GetModel());
