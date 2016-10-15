@@ -21,16 +21,15 @@ void OpenGLPainter::selectPrimitiveShader(OpenGLShaderProgram *shader)
     _primitiveShader = shader;
 }
 
-void OpenGLPainter::setFontOffset(int ox, int oy)
-{
-    //_fontRenderer->setOffset(ox, oy);
-}
-
 void OpenGLPainter::beginFont(OpenGLFontTexture *font, Vector4F color)
 {
     _fontRenderer->selectFont(font);
-    _fontRenderer->setFontColor(color);
     _fontRenderer->beginRender();
+}
+
+void OpenGLPainter::setFontColor(Vector4F color)
+{
+    _fontRenderer->setFontColor(color);
 }
 
 void OpenGLPainter::renderText(int x, int y, std::string text)

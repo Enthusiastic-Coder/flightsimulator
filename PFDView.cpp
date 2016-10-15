@@ -68,9 +68,8 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 
     _CX = 100;
     _CY = 100;
-
 	_CEN_X = cx/2;
-    _CEN_Y = cy/2;// - maxY()/2;
+    _CEN_Y = cy/2;
 
     glOrtho(0, cx, cy, 0,-1, 1);
 
@@ -79,14 +78,13 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 	glLoadIdentity();
 	
 	glTranslatef( _CEN_X, _CEN_Y, 0 );
-    ///glScalef(float(cx)/cy*0+1.3f,1.0f, 1.0f);
 
 	glDisable(GL_TEXTURE_2D );
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
 
     glBegin(GL_QUADS);
-        glColor3f(0,0,1);
+        glColor3f(0,0,0);
         glVertex2f( -_CX*1.2, _CY*1.4 );
         glVertex2f( _CX*1.5, _CY*1.4 );
         glVertex2f( _CX*1.5, -_CY*1.3 );
@@ -112,16 +110,18 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->renderer()->camID);
     p.Push();
     OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
-    p.GetModel().Translate(_CEN_X, -_CEN_Y-13*0,0);
+    p.GetModel().Translate(_CEN_X, -_CEN_Y,0);
 
     painter->beginFont(&_PfdHorizFreeFont);
     painter->renderText(0,0, "TEST");
+    painter->setFontColor({1,0,0,1});
+    painter->renderText(0,20, "red text");
     painter->endFont();
 
     painter->beginPrimitive();
 
     painter->setPrimitiveColor(Vector4F(1,0,0,0.5));
-    painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
+    //painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
     painter->endPrimitive();
 
 

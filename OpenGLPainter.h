@@ -17,8 +17,8 @@ public:
     void selectFontRenderer(OpenGLFontRenderer2D *f);
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
-    void setFontOffset(int ox, int oy);
     void beginFont(OpenGLFontTexture* font, Vector4F color=Vector4F(1,1,1,1));
+    void setFontColor(Vector4F color);
     void renderText(int x, int y, std::string text);
     void endFont();
 

@@ -27,6 +27,7 @@ OpenGLFontTexture *OpenGLFontRenderer2D::getFont()
 void OpenGLFontRenderer2D::setFontColor(const Vector4F &color)
 {
     _fontColor = color;
+    _renderer->progId().sendUniform("textColor", _fontColor);
 }
 
 void OpenGLFontRenderer2D::beginRender()
@@ -38,7 +39,7 @@ void OpenGLFontRenderer2D::beginRender()
 
     _renderer->useProgram(*_shader);
     OpenGLPipeline::Get(_renderer->camID).bindMatrices(_renderer->progId());
-    _renderer->progId().sendUniform("textColor", _fontColor);
+    setFontColor(_fontColor);
     _fontMesh.beginRender(_renderer);
 }
 
