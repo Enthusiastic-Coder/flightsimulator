@@ -1515,7 +1515,7 @@ void SDLMainWindow::RenderFPS()
     OpenGLPipeline& p = OpenGLPipeline::Get(_renderer->camID);
     p.Push();
     OpenGLPipeline::applyScreenProjection(p, 0, 0, w, h);
-    p.GetModel().Translate(0, -30,0);
+    p.GetModel().Translate(0, 30,0);
 
     _fontRenderer.beginRender();
 
@@ -1552,7 +1552,7 @@ void SDLMainWindow::RenderInfo()
     OpenGLPipeline& p = OpenGLPipeline::Get(_renderer->camID);
     p.Push();
     OpenGLPipeline::applyScreenProjection(p, 0, 0, w, h);
-    p.GetModel().Translate(0, -30,0);
+    p.GetModel().Translate(0, 30,0);
 
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));

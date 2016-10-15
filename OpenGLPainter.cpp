@@ -59,21 +59,16 @@ void OpenGLPainter::setPrimitiveColor(Vector4F color)
 
 void OpenGLPainter::drawPoint(float x, float y)
 {
-    Renderer* r = renderer();
-
     float vertices[] = {
         x,y
     };
 
-    r->setPrimitiveType(GL_POINTS);
-    r->bindVertex(Renderer::Vertex, 2, vertices);
-    r->setVertexCountOffset( indicesCount(vertices,2));
-    r->Render();
+    drawPoints(vertices, 2);
 }
 
 void OpenGLPainter::drawPoints(float *pts, int count)
 {
-
+    drawPrimitive(pts, count, GL_POINTS);
 }
 
 void OpenGLPainter::drawLine(float x1, float y1, float x2, float y2)
