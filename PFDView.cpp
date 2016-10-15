@@ -110,7 +110,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->renderer()->camID);
     p.Push();
     OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
-    p.GetModel().Translate(_CEN_X, -_CEN_Y,0);
+    p.GetModel().Translate(_CEN_X, _CEN_Y,0);
 
     painter->beginFont(&_PfdHorizFreeFont);
     painter->renderText(0,0, "TEST");
@@ -121,6 +121,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     painter->beginPrimitive();
 
     painter->setPrimitiveColor(Vector4F(1,0,0,0.5));
+    painter->drawQuad(0,0, 50, 50);
     //painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
     painter->endPrimitive();
 

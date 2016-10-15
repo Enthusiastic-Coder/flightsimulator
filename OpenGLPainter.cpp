@@ -76,10 +76,10 @@ void OpenGLPainter::drawQuad(float x, float y, float w, float h)
     Renderer* r = renderer();
 
     float vertices[] = {
-        x, -y, 0,
-        x+w, -y, 0,
-        x+w, -y-h, 0,
-        x, -y-h, 0
+        x, y, 0,
+        x+w, y, 0,
+        x+w, y+h, 0,
+        x, y+h, 0
     };
     r->bindVertex(Renderer::Vertex, 3, vertices);
     r->setVertexCountOffset( indicesCount(vertices,3));
