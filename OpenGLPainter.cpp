@@ -21,9 +21,9 @@ void OpenGLPainter::beginFont(OpenGLFontTexture *font, Vector4F color)
     _fontRenderer->beginRender();
 }
 
-OpenGLFontRenderer2D *OpenGLPainter::fontRenderer()
+void OpenGLPainter::renderText(int x, int y, std::string text)
 {
-    return _fontRenderer;
+    _fontRenderer->renderText(x, y, text);
 }
 
 void OpenGLPainter::endFont()

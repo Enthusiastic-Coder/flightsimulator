@@ -124,7 +124,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     p.GetModel().Translate(_CEN_X, -_CEN_Y-13,0);
 
     painter->beginFont(&_PfdHorizFreeFont, Vector4F(1,1,1,1));
-    painter->fontRenderer()->renderText(0,0, strTestText2);
+    painter->renderText(0,0, strTestText2);
     painter->endFont();
 
     p.Pop();

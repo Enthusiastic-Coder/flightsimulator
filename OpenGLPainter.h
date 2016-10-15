@@ -7,6 +7,7 @@ class OpenGLFontTexture;
 class Renderer;
 
 #include "vector4.h"
+#include <string>
 
 class OpenGLPainter
 {
@@ -15,7 +16,7 @@ public:
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
     void beginFont(OpenGLFontTexture* font, Vector4F color);
-    OpenGLFontRenderer2D* fontRenderer();
+    void renderText(int x, int y, std::string text);
     void endFont();
 
     void beginPrimitive();
