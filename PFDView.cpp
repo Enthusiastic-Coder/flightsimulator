@@ -37,23 +37,18 @@ PFDView::PFDView()
 
 void PFDView::Initialise(HDC hdc)
 {
-    m_PfdHorizFreeFont.CreateBitmapFont( hdc, "Tahoma", 14, FW_NORMAL );
-	m_PfdAirSpdFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
-	m_RadarAltBold.CreateBitmapFont( hdc, "Tahoma", 18, FW_NORMAL);
+    m_PfdHorizFreeFont.CreateBitmapFont( hdc, "Tahoma", 14, FW_NORMAL );//done
+    m_PfdAirSpdFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );//done
+    m_RadarAltBold.CreateBitmapFont( hdc, "Tahoma", 18, FW_NORMAL);//done
     m_AltLargeFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
 	m_AltSmallFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
-
-	m_PfdHorizFreeFont.SetOffset( 0, 10 );
-	m_AltSmallFreeFont.SetOffset( 0, 10 );
-	m_PfdAirSpdFreeFont.SetOffset(0, 10 );
-	m_AltLargeFreeFont.SetOffset(0,10);
-    m_RadarAltBold.SetOffset(0, 10 );
 
     _PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
     _PfdAirSpdFreeFont.loadfile("fonts/Arial-10.png");
     _RadarAltBold.loadfile("fonts/Tahoma-11.png");
     _AltLargeFreeFont.loadfile("fonts/Arial-10.png");
     _AltSmallFreeFont.loadfile("fonts/Arial-10.png");
+
 }
 
 
@@ -91,7 +86,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 	glEnable(GL_STENCIL_TEST);
 
     glBegin(GL_QUADS);
-        glColor3f(0,0,0);
+        glColor3f(0,0,1);
         glVertex2f( -_CX*1.2, _CY*1.4 );
         glVertex2f( _CX*1.5, _CY*1.4 );
         glVertex2f( _CX*1.5, -_CY*1.3 );
@@ -117,14 +112,16 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->renderer()->camID);
     p.Push();
     OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
-    p.GetModel().Translate(_CEN_X, -_CEN_Y-13,0);
+    p.GetModel().Translate(_CEN_X, -_CEN_Y-13*0,0);
 
     painter->beginFont(&_PfdHorizFreeFont);
     painter->renderText(0,0, "TEST");
     painter->endFont();
 
     painter->beginPrimitive();
-    painter->drawQuad(0, 0, 10, 10);
+
+    painter->setPrimitiveColor(Vector4F(1,0,0,0.5));
+    painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
     painter->endPrimitive();
 
 
@@ -226,7 +223,7 @@ void PFDView::DrawHorizon()
 
 		{ //-30 to -10
 			
-			float dy = 10 * PIXEL_PER_PITCH;
+            float dy = 10 * PIXEL_PER_PITCH+10;
 			float fLine;
 
 			glBegin(GL_LINES);
@@ -264,7 +261,7 @@ void PFDView::DrawHorizon()
 				glVertex2f( 40, fLine );
 			glEnd();
 
-			fLine = dy;
+            fLine = dy;
 			m_PfdHorizFreeFont.RenderFontNT( -30, fLine-6, "10" );
 			m_PfdHorizFreeFont.RenderFontNT( 20, fLine-6, "10");
 
@@ -332,7 +329,7 @@ void PFDView::DrawHorizon()
 			{
 				if( iPitch == 0 ) continue;
 
-				fLine = -iPitch * PIXEL_PER_PITCH;
+                fLine = -iPitch * PIXEL_PER_PITCH +10;
 				str = format( "%d", abs(iPitch) );
 	
 				if( iPitch == 20 )
@@ -381,7 +378,7 @@ void PFDView::DrawHorizon()
 
 			glEnd();
 
-			fLine = dy - 10.0*PIXEL_PER_PITCH2;
+            fLine = dy - 10.0*PIXEL_PER_PITCH2+10;
 			glColor3f(1.0f,1.0f,1.0f);
 			m_PfdHorizFreeFont.RenderFontNT( -40, fLine-6, "30" );
 			m_PfdHorizFreeFont.RenderFontNT( 30, fLine-6, "30");
@@ -390,7 +387,7 @@ void PFDView::DrawHorizon()
 		{ // 50 to 90
 			//for( int iPitch = 50; iPitch <= 90; iPitch+=20)
 			float fLine;
-			float dy = -20 * PIXEL_PER_PITCH - 30*PIXEL_PER_PITCH2;
+            float dy = -20 * PIXEL_PER_PITCH - 30*PIXEL_PER_PITCH2+10;
 			glBegin(GL_LINES);
 				glColor3f(1.0f,1.0f,1.0f);
 
@@ -407,15 +404,15 @@ void PFDView::DrawHorizon()
 				glVertex2f( 40, fLine );
 			glEnd();
 
-			fLine = dy;
+            fLine = dy+10;
 			m_PfdHorizFreeFont.RenderFontNT( -45, fLine-6, "50" );
 			m_PfdHorizFreeFont.RenderFontNT( 35, fLine-6, "50");
 
-			fLine = dy - 20.0*PIXEL_PER_PITCH2; //-20 Degrees
+            fLine = dy - 20.0*PIXEL_PER_PITCH2+10; //-20 Degrees
 			m_PfdHorizFreeFont.RenderFontNT( -50, fLine-6, "70" );
 			m_PfdHorizFreeFont.RenderFontNT( 40, fLine-6, "70");
 
-			fLine = dy - 40.0*PIXEL_PER_PITCH2;//-30 degrees
+            fLine = dy - 40.0*PIXEL_PER_PITCH2+10;//-30 degrees
 			m_PfdHorizFreeFont.RenderFontNT( -55, fLine-6, "90" );
 			m_PfdHorizFreeFont.RenderFontNT( 45, fLine-6, "90");		}
 
@@ -605,7 +602,7 @@ void PFDView::DrawHorizon()
 				else
 					glColor3f( 0.2f, 0.9f, 0.2f );
 
-				int yPos = 70;
+                int yPos = 80;
 
                 if( _fAlt < -99 )
 					m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
@@ -870,7 +867,7 @@ void PFDView::DrawAlt()
 
 		for( int x = (int)minAlt; x <= maxAlt; x+= 500)
 		{
-			y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
+            y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax + 10;
 			std::string strAlt;
 			strAlt = format( "%03.0f", abs(x)/100.0 );
 			m_AltLargeFreeFont.RenderFontNT( 87, y-8, strAlt );
@@ -998,7 +995,7 @@ void PFDView::DrawScrollAlt()
 
 #define SCROLL_TEXT_PIXEL_PER_ALT 0.5f
 
-	float dPixel = dA * SCROLL_TEXT_PIXEL_PER_ALT - 7;
+    float dPixel = dA * SCROLL_TEXT_PIXEL_PER_ALT - 7 + 10;
 
 	m_AltSmallFreeFont.RenderFontNT( 111, dPixel-40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[2][3] );
 	m_AltSmallFreeFont.RenderFontNT( 111, dPixel-20*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[1][3] );
@@ -1007,9 +1004,9 @@ void PFDView::DrawScrollAlt()
 	m_AltSmallFreeFont.RenderFontNT( 111, dPixel+40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf2[2][3] );
 
 	float yPosNoChange[3];
-	yPosNoChange[0] = -10 - 20 * SCROLL_TEXT_PIXEL_PER_ALT - 0.5+2;
-	yPosNoChange[1] = -7 -0.5 +2;
-	yPosNoChange[2] = -5 + 20 * SCROLL_TEXT_PIXEL_PER_ALT - 0.5 + 2;
+    yPosNoChange[0] = -10 - 20 * SCROLL_TEXT_PIXEL_PER_ALT - 0.5+2 + 10;
+    yPosNoChange[1] = -7 -0.5 +2  + 10;
+    yPosNoChange[2] = -5 + 20 * SCROLL_TEXT_PIXEL_PER_ALT - 0.5 + 2 + 10;
 
 	if( centralAlt < 0 )
 	{
@@ -1023,15 +1020,15 @@ void PFDView::DrawScrollAlt()
 	if( rotaryAltBuf1[0][3] == '8' )
 	{
 		float yPos[3];
-		yPos[0] = dPixel+SCROLL_TEXT_PIXEL_PER_ALT-10;
-		yPos[1] = dPixel+20*SCROLL_TEXT_PIXEL_PER_ALT-9;
-		yPos[2] = dPixel+40*SCROLL_TEXT_PIXEL_PER_ALT-9;
+        yPos[0] = dPixel+SCROLL_TEXT_PIXEL_PER_ALT-10 +10;
+        yPos[1] = dPixel+20*SCROLL_TEXT_PIXEL_PER_ALT-9+10;
+        yPos[2] = dPixel+40*SCROLL_TEXT_PIXEL_PER_ALT-9+10;
 
 		if( centralAlt < 0 )
 		{
-			yPos[0] -= 4;
-			yPos[1] -= 4;
-			yPos[2] -= 4;
+            yPos[0] -= 4;
+            yPos[1] -= 4;
+            yPos[2] -= 4;
 		}
 
 		bDrawn[2] = true;
@@ -1177,9 +1174,9 @@ void PFDView::DrawVSI()
 		//strVSI.Format( "%2.0f", fVsi /100.0f );
 		strVSI = buf;
         if( _fVSI < 0 )
-			m_AltSmallFreeFont.RenderFontNT( 130, dy-1, strVSI );
+            m_AltSmallFreeFont.RenderFontNT( 130, dy-1+10, strVSI );
 		else
-			m_AltSmallFreeFont.RenderFontNT( 130, dy + dy_vsi-1, strVSI );
+            m_AltSmallFreeFont.RenderFontNT( 130, dy + dy_vsi-1+10, strVSI );
 	}
 
 
@@ -1310,7 +1307,7 @@ float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
 	{
 		//strSpd.Format( "%03d", spdTick );
 		strSpd = format("%03d", spdTick);
-		m_PfdAirSpdFreeFont.RenderFontNT( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+12, strSpd );
+        m_PfdAirSpdFreeFont.RenderFontNT( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+2, strSpd );
 		//m_AltLargeFreeFont.RenderFontNT( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+12, strSpd );
 		//m_Tahoma8OGLFont.RenderFontNoTransform(-108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+12, strSpd.GetBuffer() );
 	}
@@ -1410,11 +1407,11 @@ void PFDView::DrawHdg()
 
 		if( h % 30 == 0 )
 		{
-			m_AltLargeFreeFont.RenderFontNT( x-6, 120, strHdg );
+            m_AltLargeFreeFont.RenderFontNT( x-6, 130, strHdg );
 		}
 		else
 		{			
-			m_AltSmallFreeFont.RenderFontNT( x-5, 120, strHdg );
+            m_AltSmallFreeFont.RenderFontNT( x-5, 130, strHdg );
 		}
 	}
 

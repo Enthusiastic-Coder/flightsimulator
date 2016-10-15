@@ -21,6 +21,11 @@ void OpenGLPainter::selectPrimitiveShader(OpenGLShaderProgram *shader)
     _primitiveShader = shader;
 }
 
+void OpenGLPainter::setFontOffset(int ox, int oy)
+{
+    //_fontRenderer->setOffset(ox, oy);
+}
+
 void OpenGLPainter::beginFont(OpenGLFontTexture *font, Vector4F color)
 {
     _fontRenderer->selectFont(font);
@@ -43,13 +48,14 @@ void OpenGLPainter::beginPrimitive()
     Renderer* r = renderer();
     r->useProgram(*_primitiveShader);
     OpenGLPipeline::Get(r->camID).bindMatrices(r->progId());
-    r->progId().sendUniform("primitiveColor", _primitiveColor);
+    setPrimitiveColor(_primitiveColor);
     r->setUseIndex(false);
 }
 
 void OpenGLPainter::setPrimitiveColor(Vector4F color)
 {
     _primitiveColor = color;
+    renderer()->progId().sendUniform("primitiveColor", _primitiveColor);
 }
 
 void OpenGLPainter::drawPoint(float x, float y)
@@ -71,10 +77,10 @@ void OpenGLPainter::drawQuad(float x, float y, float w, float h)
     Renderer* r = renderer();
 
     float vertices[] = {
-        x, y, 0,
-        x+w, y, 0,
-        x+w, y+h, 0,
-        x, y+h, 0
+        x, -y, 0,
+        x+w, -y, 0,
+        x+w, -y-h, 0,
+        x, -y-h, 0
     };
     r->bindVertex(Renderer::Vertex, 3, vertices);
     r->setVertexCountOffset( indicesCount(vertices,3));
