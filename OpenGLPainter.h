@@ -4,6 +4,7 @@
 class OpenGLFontRenderer2D;
 class OpenGLShaderProgram;
 class OpenGLFontTexture;
+class Renderer;
 
 #include "vector4.h"
 
@@ -19,6 +20,8 @@ public:
 
     void beginPrimitive();
     void endPrimitive();
+
+    Renderer *renderer();
 
 private:
     OpenGLFontRenderer2D* _fontRenderer = 0 ;

@@ -40,3 +40,8 @@ void OpenGLPainter::endPrimitive()
 {
     OpenGLShaderProgram::useDefault();
 }
+
+Renderer *OpenGLPainter::renderer()
+{
+    return _fontRenderer->renderer();
+}

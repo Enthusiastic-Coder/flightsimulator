@@ -1,6 +1,6 @@
 #include "OpenGLFontRenderer2D.h"
 #include "OpenGLFontTexture.h"
-#include <OpenGLPipeline.h>
+#include "OpenGLPipeline.h"
 #include "OpenGLRenderer.h"
 #include "OpenGLShaderProgram.h"
 
@@ -64,9 +64,4 @@ void OpenGLFontRenderer2D::endRender()
 Renderer *OpenGLFontRenderer2D::renderer()
 {
     return _renderer;
-}
-
-OpenGLShaderProgram *OpenGLFontRenderer2D::shader()
-{
-    return _shader;
 }

@@ -21,7 +21,6 @@ public:
     void endRender();
 
     Renderer* renderer();
-    OpenGLShaderProgram* shader();
 
 private:
     OpenGLFontMeshBuilder _fontMesh;
