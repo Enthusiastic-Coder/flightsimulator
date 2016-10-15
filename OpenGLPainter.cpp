@@ -33,7 +33,7 @@ void OpenGLPainter::endFont()
 
 void OpenGLPainter::beginPrimitive()
 {
-    _fontRenderer->renderer()->useProgram(*_primitiveShader);
+    renderer()->useProgram(*_primitiveShader);
 }
 
 void OpenGLPainter::endPrimitive()
