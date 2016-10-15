@@ -1,8 +1,15 @@
+#include "stdafx.h"
 #include "OpenGLPainter.h"
 #include "OpenGLFontRenderer2D.h"
 #include "OpenGLShaderProgram.h"
 #include "OpenGLFontTexture.h"
 #include "OpenGLRenderer.h"
+#include "OpenGLPipeline.h"
+
+Renderer *OpenGLPainter::renderer()
+{
+    return _fontRenderer->renderer();
+}
 
 void OpenGLPainter::selectFontRenderer(OpenGLFontRenderer2D *f)
 {
@@ -33,15 +40,51 @@ void OpenGLPainter::endFont()
 
 void OpenGLPainter::beginPrimitive()
 {
-    renderer()->useProgram(*_primitiveShader);
+    Renderer* r = renderer();
+    r->useProgram(*_primitiveShader);
+    OpenGLPipeline::Get(r->camID).bindMatrices(r->progId());
+    r->progId().sendUniform("primitiveColor", _primitiveColor);
+    r->setUseIndex(false);
+}
+
+void OpenGLPainter::setPrimitiveColor(Vector4F color)
+{
+    _primitiveColor = color;
+}
+
+void OpenGLPainter::drawPoint(float x, float y)
+{
+    Renderer* r = renderer();
+
+    r->setPrimitiveType(GL_POINTS);
+    r->setVertexCountOffset(1);
+
+}
+
+void OpenGLPainter::drawPoints(float *pts, int count)
+{
+
+}
+
+void OpenGLPainter::drawQuad(float x, float y, float w, float h)
+{
+    Renderer* r = renderer();
+
+    float vertices[] = {
+        x, y, 0,
+        x+w, y, 0,
+        x+w, y+h, 0,
+        x, y+h, 0
+    };
+    r->bindVertex(Renderer::Vertex, 3, vertices);
+    r->setVertexCountOffset( indicesCount(vertices,3));
+    r->setPrimitiveType(GL_QUADS);
+    r->Render();
 }
 
 void OpenGLPainter::endPrimitive()
 {
+    renderer()->unBindBuffers();
     OpenGLShaderProgram::useDefault();
 }
 
-Renderer *OpenGLPainter::renderer()
-{
-    return _fontRenderer->renderer();
-}

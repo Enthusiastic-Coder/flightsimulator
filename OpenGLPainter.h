@@ -12,6 +12,8 @@ class Renderer;
 class OpenGLPainter
 {
 public:
+    Renderer *renderer();
+
     void selectFontRenderer(OpenGLFontRenderer2D *f);
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
@@ -21,25 +23,26 @@ public:
 
     void beginPrimitive();
     void setPrimitiveColor(Vector4F color);
-    void fillQuad(int x, int y, int w, int h);
-    void drawQuad(int x, int y, int w, int h);
-    void drawLine(int x1, int y1, int x2, int y2);
-    void drawLines(int* pts, int count);
-    void drawLineLoop( int* pts, int count);
-    void drawLineStrip(int* pts, int count);
-    void drawTriangles(int* pts, int count);
-    void fillTriangles(int* pts, int count);
-    void drawTriangleFan(int* pts, int count);
-    void fillTriangleFan(int* pts, int count);
-    void drawQuads(int* pts, int count);
-    void fillQuads(int* pts, int count);
+    void drawPoint(float x, float y);
+    void drawPoints(float* pts, int count);
+    void drawLine(float x1, float y1, float x2, float y2);
+    void drawLines(float* pts, int count);
+    void drawLineLoop( float* pts, int count);
+    void drawLineStrip(float* pts, int count);
+    void drawTriangles(float* pts, int count);
+    void drawTriangleFan(float* pts, int count);
+    void drawQuad(float x, float y, float w, float h);
+    void drawQuads(float* pts, int count);
+    void fillTriangles(float* pts, int count);
+    void fillTriangleFan(float* pts, int count);
+    void fillQuad(float x, float y, float w, float h);
+    void fillQuads(float* pts, int count);
     void endPrimitive();
-
-    Renderer *renderer();
 
 private:
     OpenGLFontRenderer2D* _fontRenderer = 0 ;
     OpenGLShaderProgram* _primitiveShader = 0;
+    Vector4F _primitiveColor = Vector4F(1,1,1,1);
 };
 
 

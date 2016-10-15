@@ -105,10 +105,6 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     DrawVSI();
     DrawHdg();
 
-    std::string strTestText = "----Hello World";
-    std::string strTestText2 = strTestText;
-  //  strTestText2[2] = '+';
-
     glDisable(GL_STENCIL_TEST);
 	glColor3f(1,1,1);
 
@@ -124,11 +120,13 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     p.GetModel().Translate(_CEN_X, -_CEN_Y-13,0);
 
     painter->beginFont(&_PfdHorizFreeFont);
-    painter->renderText(0,0, strTestText2);
+    painter->renderText(0,0, "TEST");
     painter->endFont();
 
     painter->beginPrimitive();
+    painter->drawQuad(0, 0, 10, 10);
     painter->endPrimitive();
+
 
     p.Pop();
 
