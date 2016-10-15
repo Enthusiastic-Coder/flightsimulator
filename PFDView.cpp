@@ -121,8 +121,10 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     painter->beginPrimitive();
 
     painter->setPrimitiveColor(Vector4F(1,0,0,0.5));
-    painter->drawQuad(0,0, 50, 50);
-    //painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
+    //painter->drawQuad(0,0, 50, 50);
+    painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
+    painter->setPrimitiveColor({0,1,0,0.5});
+    painter->fillQuad(-_CX*1.2+10, -_CY*1.3+10, 270-20, 270-20);
     painter->endPrimitive();
 
 

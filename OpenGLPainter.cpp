@@ -61,9 +61,14 @@ void OpenGLPainter::drawPoint(float x, float y)
 {
     Renderer* r = renderer();
 
-    r->setPrimitiveType(GL_POINTS);
-    r->setVertexCountOffset(1);
+    float vertices[] = {
+        x,y
+    };
 
+    r->setPrimitiveType(GL_POINTS);
+    r->bindVertex(Renderer::Vertex, 2, vertices);
+    r->setVertexCountOffset( indicesCount(vertices,2));
+    r->Render();
 }
 
 void OpenGLPainter::drawPoints(float *pts, int count)
@@ -71,25 +76,144 @@ void OpenGLPainter::drawPoints(float *pts, int count)
 
 }
 
+void OpenGLPainter::drawLine(float x1, float y1, float x2, float y2)
+{
+    Renderer* r = renderer();
+
+    float vertices[] = {
+        x1, y1,
+        x2, y2
+    };
+
+    r->bindVertex(Renderer::Vertex, 2, vertices);
+    r->setVertexCountOffset( indicesCount(vertices,2));
+    r->setPrimitiveType(GL_LINES);
+    r->Render();
+}
+
+void OpenGLPainter::drawLines(float *pts, int count)
+{
+     drawPrimitive(pts, count, GL_LINES);
+}
+
+void OpenGLPainter::drawLineLoop(float *pts, int count)
+{
+    drawPrimitive(pts, count, GL_LINE_LOOP);
+}
+
+void OpenGLPainter::drawLineStrip(float *pts, int count)
+{
+    drawPrimitive(pts, count, GL_LINE_STRIP);
+}
+
+void OpenGLPainter::drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3)
+{
+    Renderer* r = renderer();
+
+    float vertices[] = {
+        x1, y1,
+        x2, y2,
+        x3, y3
+    };
+    r->bindVertex(Renderer::Vertex, 2, vertices);
+    r->setVertexCountOffset( indicesCount(vertices,2));
+    r->setPrimitiveType(GL_LINE_LOOP);
+    r->Render();
+}
+
+void OpenGLPainter::drawTriangles(float *pts, int count)
+{
+    Renderer* r = renderer();
+    r->setPrimitiveType(GL_LINE_LOOP);
+
+    for( int i=0; i < count; i+= 2*3)
+    {
+        r->bindVertex(Renderer::Vertex, 2, pts);
+        r->setVertexCountOffset(2, i);
+        r->Render();
+    }
+}
+
+void OpenGLPainter::drawTriangleFan(float *pts, int count)
+{
+    drawPrimitive(pts, count, GL_TRIANGLE_FAN);
+}
+
 void OpenGLPainter::drawQuad(float x, float y, float w, float h)
 {
     Renderer* r = renderer();
 
     float vertices[] = {
-        x, y, 0,
-        x+w, y, 0,
-        x+w, y+h, 0,
-        x, y+h, 0
+        x, y,
+        x+w, y,
+        x+w, y+h,
+        x, y+h
     };
-    r->bindVertex(Renderer::Vertex, 3, vertices);
-    r->setVertexCountOffset( indicesCount(vertices,3));
-    r->setPrimitiveType(GL_QUADS);
+    r->bindVertex(Renderer::Vertex, 2, vertices);
+    r->setVertexCountOffset( indicesCount(vertices,2));
+    r->setPrimitiveType(GL_LINE_LOOP);
     r->Render();
+}
+
+void OpenGLPainter::drawQuads(float *pts, int count)
+{
+    Renderer* r = renderer();
+    r->setPrimitiveType(GL_LINE_LOOP);
+
+    for( int i=0; i < count; i+= 2*4)
+    {
+        r->bindVertex(Renderer::Vertex, 2, pts);
+        r->setVertexCountOffset(4, i);
+        r->Render();
+    }
+}
+
+void OpenGLPainter::fillTriangles(float *pts, int count)
+{
+    drawPrimitive(pts, count, GL_TRIANGLES);
+}
+
+void OpenGLPainter::fillQuad(float x, float y, float w, float h)
+{
+    Renderer* r = renderer();
+
+    float vertices[] = {
+        x, y,
+        x+w, y,
+        x+w, y+h,
+        x, y+h
+    };
+    r->bindVertex(Renderer::Vertex, 2, vertices);
+    r->setVertexCountOffset( indicesCount(vertices,2));
+    r->setPrimitiveType(GL_TRIANGLE_FAN);
+    r->Render();
+}
+
+void OpenGLPainter::fillQuads(float *pts, int count)
+{
+    for(int i=0; i < count; i += 4*2)
+    {
+//        float vertices[] = {
+//            pts[i], pts[i+1], 0,
+//            pts[i+2], pts[i+3], 0,
+//            pts[i+6], pts[i+7], 0,
+//            pts[i+], pts[i+1], 0
+//        };
+    }
 }
 
 void OpenGLPainter::endPrimitive()
 {
     renderer()->unBindBuffers();
     OpenGLShaderProgram::useDefault();
+}
+
+void OpenGLPainter::drawPrimitive(float *pts, int count, int primType)
+{
+    Renderer* r = renderer();
+    r->bindVertex(Renderer::Vertex, 2, pts);
+    r->setVertexCountOffset( count/2);
+    r->setPrimitiveType(primType);
+    r->Render();
 }
 

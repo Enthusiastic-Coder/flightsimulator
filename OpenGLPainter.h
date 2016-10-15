@@ -30,6 +30,7 @@ public:
     void drawLines(float* pts, int count);
     void drawLineLoop( float* pts, int count);
     void drawLineStrip(float* pts, int count);
+    void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
     void drawTriangles(float* pts, int count);
     void drawTriangleFan(float* pts, int count);
     void drawQuad(float x, float y, float w, float h);
@@ -39,6 +40,9 @@ public:
     void fillQuad(float x, float y, float w, float h);
     void fillQuads(float* pts, int count);
     void endPrimitive();
+
+private:
+    void drawPrimitive(float* pts, int count, int primType);
 
 private:
     OpenGLFontRenderer2D* _fontRenderer = 0 ;
