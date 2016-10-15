@@ -181,6 +181,12 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         return false;
     }
 
+    if( !_simpleColorPrimitiveShaderProgram.loadFiles("shaders/simpleColorPrimitiveShader.vert", "shaders/simpleColorPrimitiveShader.frag"))
+    {
+        SDL_Log("%s %s", _simpleColorPrimitiveShaderProgram.getError().c_str(), "simpleColorPrimitiveShader Failed");
+        return false;
+    }
+
     if( !_fontShaderProgram.loadFiles("shaders/fontShader.vert", "shaders/fontShader.frag"))
     {
         SDL_Log("%s %s", _fontShaderProgram.getError().c_str(), "_fontShaderProgram Failed");
@@ -1264,7 +1270,7 @@ void SDLMainWindow::onRender()
 
         OpenGLPainter painter;
         painter.selectFontRenderer(&_fontRenderer);
-        painter.selectPrimitiveShader(&_simplePrimitiveShaderProgram);
+        painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
 
         _pfdInstrument.render(&painter, _pfdColorTexture.width(), _pfdColorTexture.height());
 

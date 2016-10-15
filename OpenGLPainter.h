@@ -29,6 +29,8 @@ public:
     void drawLineStrip(int* pts, int count);
     void drawTriangles(int* pts, int count);
     void fillTriangles(int* pts, int count);
+    void drawTriangleFan(int* pts, int count);
+    void fillTriangleFan(int* pts, int count);
     void drawQuads(int* pts, int count);
     void fillQuads(int* pts, int count);
     void endPrimitive();
