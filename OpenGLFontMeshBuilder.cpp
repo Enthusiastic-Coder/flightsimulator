@@ -69,7 +69,6 @@ void OpenGLFontMeshBuilder::beginRender(Renderer *r)
     r->setPrimitiveType(GL_TRIANGLES);
     r->setUseIndex(false);
     if( _fontTexture != 0)  r->bindTexture(&_fontTexture->texture());
-    glDepthMask(GL_FALSE);
 }
 
 void OpenGLFontMeshBuilder::render(Renderer *r)
@@ -83,7 +82,6 @@ void OpenGLFontMeshBuilder::render(Renderer *r)
 
 void OpenGLFontMeshBuilder::endRender(Renderer *r)
 {
-    glDepthMask(GL_TRUE);
     r->unBindTexture();
 }
 

@@ -112,7 +112,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 	glPopMatrix();
 	glMatrixMode( GL_MODELVIEW  );
 	glPopMatrix();
-	glEnable(GL_DEPTH_TEST);
+
 
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->renderer()->camID);
     p.Push();
@@ -129,6 +129,8 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 
 
     p.Pop();
+
+    glEnable(GL_DEPTH_TEST);
 
 }
 
