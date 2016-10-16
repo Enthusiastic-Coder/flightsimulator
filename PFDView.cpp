@@ -103,11 +103,12 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     DrawHorizon(painter);
     DrawSpd(painter);
     DrawAlt(painter);
+    DrawVSI(painter);
     //_DrawFlightModes();
     //_DrawHorizon();
     //_DrawSpd();
     //_DrawAlt();
-    _DrawVSI();
+    //_DrawVSI();
     _DrawHdg();
 
     p.Pop();
@@ -2450,7 +2451,134 @@ void PFDView::DrawScrollAlt(OpenGLPainter *painter)
 
 void PFDView::DrawVSI(OpenGLPainter *painter)
 {
+    //VSI
 
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+
+    painter->beginPrimitive();
+    painter->setPrimitiveColor({0.4f, 0.4f, 0.4f, 1});
+    painter->fillQuad(125, -80, 140, -50, 140, 50, 125, 80);
+
+
+#define PIXEL_PER_VSI_1000		0.05f
+
+    glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP);
+
+        float fVsi = fabs(_fVSI);
+        float dy = 0.0f;
+        painter->setPrimitiveColor({0.1f, 1.0f, 0.1f, 1});
+
+        if( fVsi < 1050 )
+        {
+            dy = -PIXEL_PER_VSI_1000 * _fVSI;
+
+            painter->fillQuad(140, -2, 140, 2, 125, dy +2, 125, dy -2);
+        }
+        else
+        {
+            if( fVsi > 6000 )
+                painter->setPrimitiveColor({0.9f, 0.9f, 0.2f});
+
+            dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
+
+            dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
+
+            if( _fVSI > 0 )
+                dy = -dy;
+
+            float resDy = dy;
+            if( resDy > 75 ) resDy = 75;
+            if( resDy < -75 ) resDy = -75;
+
+            painter->fillQuad(140, -2, 140, 2, 125, resDy+2, 125, resDy-2);
+          }
+
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    if( fVsi > 100 )
+    {
+        if( dy > 75 ) dy = 75;
+        if( dy < -75) dy = -75;
+
+        float dy_vsi = 0.0f;
+        float end_x = 142;
+        painter->setPrimitiveColor({0,0,0,1});
+
+        if( _fVSI < 0 )
+        {
+            dy += 5;
+            dy_vsi = 12;
+        }
+        else
+        {
+            dy -= 5;
+            dy_vsi = -12;
+        }
+
+        painter->fillQuad(125, dy + dy_vsi, end_x, dy + dy_vsi, end_x, dy, 125, dy );
+        painter->endPrimitive();
+
+        painter->beginFont(&_AltSmallFreeFont);
+
+        if( fVsi > 6000 )
+            painter->setFontColor({0.9f, 0.9f, 0.2f, 1} );
+        else
+            painter->setFontColor({0.1f,0.9f,0.1f});
+
+        std::string strVSI;
+        char buf[32];
+        sprintf(buf, "%2.0f", fVsi / 100.0f);
+
+        strVSI = buf;
+        if( _fVSI < 0 )
+            painter->renderText( 130, dy-1+10, strVSI );
+        else
+            painter->renderText( 130, dy + dy_vsi-1+10, strVSI );
+
+        painter->endFont();
+    }
+
+    {// VSI markings
+        painter->beginPrimitive();
+        painter->setPrimitiveColor({1,1,1,1});
+
+        if( _Vsi.vertex2Size()== 0)
+        {
+            _Vsi.addVertex( 125, -25 );
+            _Vsi.addVertex( 126, -25 );
+
+            _Vsi.addVertex( 125, -50 );
+            _Vsi.addVertex( 127, -50 );
+
+            _Vsi.addVertex( 125, -63 );
+            _Vsi.addVertex( 126, -63 );
+
+            _Vsi.addVertex( 125, -75 );
+            _Vsi.addVertex( 127, -75 );
+//////////////////
+            _Vsi.addVertex( 125, 25 );
+            _Vsi.addVertex( 126, 25 );
+
+            _Vsi.addVertex( 125, 50 );
+            _Vsi.addVertex( 127, 50 );
+
+            _Vsi.addVertex( 125, 63 );
+            _Vsi.addVertex( 126, 63 );
+
+            _Vsi.addVertex( 125, 75 );
+            _Vsi.addVertex( 127, 75 );
+
+            _Vsi.addVertex( 125, -1 );
+            _Vsi.addVertex( 128, -1 );
+            _Vsi.addVertex( 128, 1 );
+            _Vsi.addVertex( 125, 1 );
+        }
+
+        painter->drawLines(_Vsi.vertex2Ptr(0), 16);
+        painter->fillQuads(_Vsi.vertex2Ptr(16), 4);
+        painter->endPrimitive();
+    }
 }
 
 void PFDView::DrawHdg(OpenGLPainter *painter)
