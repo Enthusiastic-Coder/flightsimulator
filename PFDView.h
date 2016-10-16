@@ -26,8 +26,6 @@ public:
     float _fHdg;
 
 private:
-    GLuint _iTexture;
-
     OpenGLFontTexture _PfdHorizFreeFont;
     OpenGLFontTexture _PfdAirSpdFreeFont;
     OpenGLFontTexture _AltLargeFreeFont;
@@ -45,15 +43,23 @@ private:
     float _CX;
     float _CY;
 
-    void DrawHorizon();
     void BuildAltTape(char buffer[][32], int line_count, int centralAlt, bool bIncreasing);
-    void DrawAlt();
-    void DrawScrollAlt();
 
-    void DrawVSI();
-    void DrawHdg();
-    void DrawSpd();
-    void DrawFlightModes();
+    void _DrawHorizon();
+    void _DrawAlt();
+    void _DrawScrollAlt();
+    void _DrawVSI();
+    void _DrawHdg();
+    void _DrawSpd();
+    void _DrawFlightModes();
+
+    void DrawHorizon(OpenGLPainter* painter);
+    void DrawAlt(OpenGLPainter* painter);
+    void DrawScrollAlt(OpenGLPainter* painter);
+    void DrawVSI(OpenGLPainter* painter);
+    void DrawHdg(OpenGLPainter* painter);
+    void DrawSpd(OpenGLPainter* painter);
+    void DrawFlightModes(OpenGLPainter* painter);
 };
 
 #endif //__PFD__VIEW__H__

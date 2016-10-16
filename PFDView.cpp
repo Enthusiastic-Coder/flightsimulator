@@ -83,13 +83,13 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
 
-    glBegin(GL_QUADS);
-        glColor3f(0,0,0);
-        glVertex2f( -_CX*1.2, _CY*1.4 );
-        glVertex2f( _CX*1.5, _CY*1.4 );
-        glVertex2f( _CX*1.5, -_CY*1.3 );
-        glVertex2f( -_CX*1.2, -_CY*1.3 );
-    glEnd();
+//    glBegin(GL_QUADS);
+//        glColor3f(0,0,0);
+//        glVertex2f( -_CX*1.2, _CY*1.4 );
+//        glVertex2f( _CX*1.5, _CY*1.4 );
+//        glVertex2f( _CX*1.5, -_CY*1.3 );
+//        glVertex2f( -_CX*1.2, -_CY*1.3 );
+//    glEnd();
 
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->renderer()->camID);
     p.Push();
@@ -105,18 +105,19 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     painter->beginPrimitive();
 
     painter->setPrimitiveColor(Vector4F(1,0,0,0.5));
-    painter->fillQuad(0,0, 50, 50);
+    painter->setPrimitiveColor({0,0,0,1});
+    painter->fillQuad(-_CX*1.2, -_CY*1.3, 270, 270);
+
+    painter->setPrimitiveColor({1,1,1,1});
     painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
-    painter->setPrimitiveColor({0,1,0,0.5});
-    painter->fillQuad(-_CX*1.2+10, -_CY*1.3+10, 270-20, 270-20);
     painter->endPrimitive();
 
-    DrawFlightModes();
-    DrawHorizon();
-    DrawSpd();
-    DrawAlt();
-    DrawVSI();
-    DrawHdg();
+    _DrawFlightModes();
+    _DrawHorizon();
+    _DrawSpd();
+    _DrawAlt();
+    _DrawVSI();
+    _DrawHdg();
 
 
     p.Pop();
@@ -133,7 +134,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 
 }
 
-void PFDView::DrawHorizon()
+void PFDView::_DrawHorizon()
 {
 	glStencilFunc( GL_ALWAYS, 1, 0xFFFFFFFF );
 	glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
@@ -775,7 +776,7 @@ void PFDView::DrawHorizon()
 	}
 }
 
-void PFDView::DrawAlt()
+void PFDView::_DrawAlt()
 { 
 	// Altitude
 
@@ -807,7 +808,7 @@ void PFDView::DrawAlt()
 		glEnd();
 	}
 
-	DrawScrollAlt();/****************************/
+    _DrawScrollAlt();/****************************/
 
 	glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
 	glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
@@ -975,7 +976,7 @@ void PFDView::BuildAltTape(char buffer[][32], int line_count, int centralAlt, bo
 	}
 }
 
-void PFDView::DrawScrollAlt()
+void PFDView::_DrawScrollAlt()
 {
 #define NUMBER_OF_ALT_LINES	4
 	glStencilFunc( GL_EQUAL, 4, 0xFFFFFFFF );
@@ -1077,7 +1078,7 @@ void PFDView::DrawScrollAlt()
 	}
 }
 
-void PFDView::DrawVSI()
+void PFDView::_DrawVSI()
 {
 	//VSI
 
@@ -1220,7 +1221,7 @@ void PFDView::DrawVSI()
 	}
 }
 
-void PFDView::DrawSpd()
+void PFDView::_DrawSpd()
 {
 	 // AirSpeed
 	glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
@@ -1315,7 +1316,7 @@ float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
 	}
 }
 
-void PFDView::DrawHdg()
+void PFDView::_DrawHdg()
 {
 	// Hdg
 #define PIXEL_PER_HDG  2.6f
@@ -1419,7 +1420,7 @@ void PFDView::DrawHdg()
 
 }
 
-void PFDView::DrawFlightModes()
+void PFDView::_DrawFlightModes()
 {
 	//glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );	
 	//glStencilFunc( GL_GREATER, 1, 0xFFFFFFFF );
@@ -1447,6 +1448,41 @@ void PFDView::DrawFlightModes()
         glVertex2f( 105, -dy+20 );
         glVertex2f( 105, -dy+60 );
         glVertex2f( 104, -dy+60 );
-    glEnd();
+        glEnd();
+}
+
+void PFDView::DrawHorizon(OpenGLPainter *painter)
+{
+
+}
+
+void PFDView::DrawAlt(OpenGLPainter *painter)
+{
+
+}
+
+void PFDView::DrawScrollAlt(OpenGLPainter *painter)
+{
+
+}
+
+void PFDView::DrawVSI(OpenGLPainter *painter)
+{
+
+}
+
+void PFDView::DrawHdg(OpenGLPainter *painter)
+{
+
+}
+
+void PFDView::DrawSpd(OpenGLPainter *painter)
+{
+
+}
+
+void PFDView::DrawFlightModes(OpenGLPainter *painter)
+{
+
 }
 
