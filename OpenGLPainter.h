@@ -33,8 +33,8 @@ public:
     void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
     void drawTriangles(float* pts, int count);
     void drawTriangleFan(const float *pts, int count);
-    void drawQuad(float x, float y, float w, float h);
-    void drawQuads(float* pts, int count);
+    void drawQuad(const float x, float y, float w, float h);
+    void drawQuads(const float* pts, int count);
     void fillTriangles(float* pts, int count);
     void fillTriangleFan(const float* pts, int count);
     void fillQuad(float x, float y, float w, float h);

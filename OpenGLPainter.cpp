@@ -132,7 +132,7 @@ void OpenGLPainter::drawTriangleFan(const float *pts, int count)
     drawPrimitive(pts, count, GL_TRIANGLE_FAN);
 }
 
-void OpenGLPainter::drawQuad(float x, float y, float w, float h)
+void OpenGLPainter::drawQuad(const float x, float y, float w, float h)
 {
     float vertices[] = {
         x, y,
@@ -148,7 +148,7 @@ void OpenGLPainter::drawQuad(float x, float y, float w, float h)
     r->Render();
 }
 
-void OpenGLPainter::drawQuads(float *pts, int count)
+void OpenGLPainter::drawQuads(const float *pts, int count)
 {
     Renderer* r = renderer();
     r->setPrimitiveType(GL_LINE_LOOP);

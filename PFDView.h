@@ -71,6 +71,11 @@ private:
     meshData _horizPos20ToPos30;
     meshData _horizPos50ToPos90;
     meshData _horizMagFlyUp;
+    meshData _horizMagFlyDown;
+    meshData _horizDataSkyGround;
+    meshData _horizData2;
+    meshData _horizRudder;
+    meshData _horizGroundBox;
 };
 
 #endif //__PFD__VIEW__H__

@@ -1840,12 +1840,12 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
                 fLine2 = dy2 + 5.0 * PIXEL_PER_PITCH2;//To
 
                 _horizMagFlyDown.addVertex(-10, fLine );
-                _horizMagFlyDown.addVertex((-15, fLine );
-                _horizMagFlyDown.addVertex(( 0, fLine2 );
-                _horizMagFlyDown.addVertex(( 15, fLine );
-                _horizMagFlyDown.addVertex(( 10, fLine );
-                _horizMagFlyDown.addVertex(( 0, fLine2-5 );
-                _horizMagFlyDown.addVertex(( -10, fLine );
+                _horizMagFlyDown.addVertex(-15, fLine );
+                _horizMagFlyDown.addVertex( 0, fLine2 );
+                _horizMagFlyDown.addVertex( 15, fLine );
+                _horizMagFlyDown.addVertex( 10, fLine );
+                _horizMagFlyDown.addVertex( 0, fLine2-5 );
+                _horizMagFlyDown.addVertex( -10, fLine );
             }
         }
 
@@ -1857,175 +1857,201 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
     p.GetModel().Pop();
 
     p.GetModel().Push();
+    p.GetModel().Rotate(0, 0, _fBank);
 
-    p.GetModel().Pop();
-
-    return;
-
-    { //Draw surrounding horizon bits
-        glPushMatrix();
-            glRotatef( -_fBank, 0, 0, 1 );
-
+    {
+        if( _horizDataSkyGround.vertex2Size() == 0)
+        {
             float fy;
             fy = std::max( _fPitch * PIXEL_PER_PITCH,
                         PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
-            //fy = min( _CEN_Y-105, fy );
-            //fy = max( -_CEN_Y+100, fy );
             fy = std::min( 60.0f, fy );
             fy = std::max( -60.0f, fy );
 
-            glBegin(GL_QUADS);
-                glColor3ub(30,140,242);//Sky
-                glVertex2f(-100, -215 );
-                glVertex2f(100, -215 );
-                glVertex2f(100, -60 );
-                glVertex2f(-100, -60 );
-                //glVertex2f(100, -_CEN_Y+100 );
-                //glVertex2f(-100, -_CEN_Y+100 );
+            _horizDataSkyGround.addVertex(-100, -215 );
+            _horizDataSkyGround.addVertex(100, -215 );
+            _horizDataSkyGround.addVertex(100, -60 );
+            _horizDataSkyGround.addVertex(-100, -60 );
 
-                glColor3ub(127,90,56);//Ground
-                //glColor3ub(88,61,44);//Ground
-                glVertex2f(-100, fy );
-                glVertex2f(100, fy );
-                glVertex2f(100, 215 );
-                glVertex2f(-100, 215 );
-            glEnd();
+            _horizDataSkyGround.addVertex(-100, fy );
+            _horizDataSkyGround.addVertex(100, fy );
+            _horizDataSkyGround.addVertex(100, 215 );
+            _horizDataSkyGround.addVertex(-100, 215 );
 
-            glBegin(GL_LINES);
-                glColor3f(1.0f,1.0f,1.0f) ;
-                //glVertex2f( -100, -_CEN_Y+100  );
-                //glVertex2f( 100, -_CEN_Y+100  );
-                glVertex2f( -100, -60  );
-                glVertex2f( 100, -60  );
+            _horizDataSkyGround.addVertex( -100, -60  );
+            _horizDataSkyGround.addVertex( 100, -60  );
 
-                glVertex2f( -100, fy  );
-                glVertex2f( 100, fy  );
-            glEnd();
+            _horizDataSkyGround.addVertex( -100, fy  );
+            _horizDataSkyGround.addVertex( 100, fy  );
+        }
 
-            if( _fAlt < 3.0f)
+        painter->beginPrimitive();
+            painter->setPrimitiveColor({0.12f,0.55f,0.95f,1});
+            painter->drawQuads(_horizDataSkyGround.vertex2Ptr(0), 4);
+
+            painter->setPrimitiveColor({0.5f,0.35f,0.22f,1});
+            painter->drawQuads(_horizDataSkyGround.vertex2Ptr(4), 4);
+
+            painter->setPrimitiveColor({1,1,1,1});
+            painter->drawLines(_horizDataSkyGround.vertex2Ptr(8), 4);
+
+        painter->endPrimitive();
+
+        if( _fAlt < 3.0f)
+        {
+            float dy = _fPitch * PIXEL_PER_PITCH;
+            if( dy +4 < 60 && dy > -60 )
             {
-                float dy = _fPitch * PIXEL_PER_PITCH;
-                //if( dy +4 < _CEN_Y-100 && dy > -_CEN_Y+100 )
-                if( dy +4 < 60 && dy > -60 )
-                {
-                    glPushMatrix();
-                        glTranslatef( 0, _fPitch * PIXEL_PER_PITCH, 0 );
-                        {//Hdg Lines
-                            #define PIXEL_PER_HDG  2.6f
+                p.GetModel().Push();
+                p.GetModel().Translate( 0, _fPitch * PIXEL_PER_PITCH, 0 );
+                    {//Hdg Lines
+                        #define PIXEL_PER_HDG  2.6f
 
-                            glColor3f(1.0f,1.0f,1.0f);
-                            glBegin(GL_QUADS);
-                                int dH = (int)_fHdg % 10;
-                                int minHdg = (_fHdg - dH - 40);
-                                int maxHdg = minHdg + 80;
-                                int x;
+                        if( _horizData2.vertex2Size() == 0)
+                        {
+                            int dH = (int)_fHdg % 10;
+                            int minHdg = (_fHdg - dH - 40);
+                            int maxHdg = minHdg + 80;
+                            int x;
 
-                                for( int h = minHdg; h <= maxHdg; h+= 10 )
-                                {
-                                    x = (h - _fHdg) * PIXEL_PER_HDG;
+                            for( int h = minHdg; h <= maxHdg; h+= 10 )
+                            {
+                                x = (h - _fHdg) * PIXEL_PER_HDG;
 
-                                    glVertex2f( x-1, 0 );
-                                    glVertex2f( x, 0 );
-                                    glVertex2f( x, 4 );
-                                    glVertex2f( x-1, 4 );
-                                }
-
-                            glEnd();
+                                _horizData2.addVertex( x-1, 0 );
+                                _horizData2.addVertex( x, 0 );
+                                _horizData2.addVertex( x, 4 );
+                                _horizData2.addVertex( x-1, 4 );
+                            }
                         }
-                    glPopMatrix();
-                }
-            }
 
-            int dy = 210;
-            glBegin(GL_LINE_LOOP);
-                glVertex2f( 0, -dy/2+5 );
-                glVertex2f( 4, -dy/2+11 );
-                glVertex2f( -4, -dy/2+11 );
+                        painter->beginPrimitive();
+                            painter->setPrimitiveColor({1,1,1,1});
+                            painter->fillQuads(PRIMITIVE2D(_horizData2));
+                        painter->endPrimitive();
+                    }
+                p.GetModel().Pop();
+            }
+        }
+
+        int dy = 210;
+        if( _horizRudder.vertex2Size() == 0)
+        {
+            _horizRudder.addVertex( 0, -dy/2+5 );
+            _horizRudder.addVertex( 4, -dy/2+11 );
+            _horizRudder.addVertex( -4, -dy/2+11 );
+//Rudder Assymtry
+            _horizRudder.addVertex( 4, -dy/2+11 );
+            _horizRudder.addVertex( 6, -dy/2+14 );
+            _horizRudder.addVertex( -6, -dy/2+14 );
+            _horizRudder.addVertex( -4, -dy/2+11 );
+
+        }
+
+        painter->beginPrimitive();
+            painter->drawLineLoop(_horizRudder.vertex2Ptr(0), 3);
+            painter->drawLineLoop(_horizRudder.vertex2Ptr(3), 4);
+        painter->endPrimitive();
+
+        // When on ground show surrounding square and joystick position and ground tracking if ILS available
+        if( _fAlt < 3.0f )
+        {
+            glColor3f(1.0f, 1.0f, 1.0f);
+            glBegin(GL_LINES);
+
+
             glEnd();
 
-            //Rudder Assymtry
-            glBegin(GL_LINE_LOOP);
-                glVertex2f( 4, -dy/2+11 );
-                glVertex2f( 6, -dy/2+14 );
-                glVertex2f( -6, -dy/2+14 );
-                glVertex2f( -4, -dy/2+11 );
-            glEnd();
-
-
-            // When on ground show surrounding square and joystick position and ground tracking if ILS available
-            if( _fAlt < 3.0f )
+            if( _horizGroundBox.vertex2Size() == 0)
             {
-                glColor3f(1.0f, 1.0f, 1.0f);
-                glBegin(GL_LINES);
-                glVertex2f( -55, -45 );
-                glVertex2f( -45, -45 );
-                glVertex2f( -55, -45 );
-                glVertex2f( -55, -35 );
+                _horizGroundBox.addVertex( -55, -45 );
+                _horizGroundBox.addVertex( -45, -45 );
+                _horizGroundBox.addVertex( -55, -45 );
+                _horizGroundBox.addVertex( -55, -35 );
 
-                glVertex2f( -55, 45 );
-                glVertex2f( -45, 45 );
-                glVertex2f( -55, 45 );
-                glVertex2f( -55, 35 );
+                _horizGroundBox.addVertex( -55, 45 );
+                _horizGroundBox.addVertex( -45, 45 );
+                _horizGroundBox.addVertex( -55, 45 );
+                _horizGroundBox.addVertex( -55, 35 );
 
-                glVertex2f( 55, -45 );
-                glVertex2f( 45, -45 );
-                glVertex2f( 55, -45 );
-                glVertex2f( 55, -35 );
+                _horizGroundBox.addVertex( 55, -45 );
+                _horizGroundBox.addVertex( 45, -45 );
+                _horizGroundBox.addVertex( 55, -45 );
+                _horizGroundBox.addVertex( 55, -35 );
 
-                glVertex2f( 55, 45 );
-                glVertex2f( 45, 45 );
-                glVertex2f( 55, 45 );
-                glVertex2f( 55, 35 );
-
-                glEnd();
+                _horizGroundBox.addVertex( 55, 45 );
+                _horizGroundBox.addVertex( 45, 45 );
+                _horizGroundBox.addVertex( 55, 45 );
+                _horizGroundBox.addVertex( 55, 35 );
             }
 
-            glPopMatrix();
-
-            if( _fAlt < 2500 )
-            {
-                std::string sAlt;
-                if( _fAlt <= -5 )
-                {
-                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
-                }
-                else if( _fAlt <= 5 )
-                {
-                    sAlt = format( "%d", (int)_fAlt );
-                }
-                else if( _fAlt <= 50 )
-                {
-                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
-                }
-                else
-                {
-                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 10  );
-                }
-
-                if( _fAlt <= 400 )
-                    glColor3f( 0.9f, 0.9f, 0.2f );
-                else
-                    glColor3f( 0.2f, 0.9f, 0.2f );
-
-                int yPos = 80;
-
-                if( _fAlt < -99 )
-                    m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
-                else if( _fAlt < -9 )
-                    m_RadarAltBold.RenderFontNT( -10, yPos, sAlt );
-                else if( _fAlt < 0 )
-                    m_RadarAltBold.RenderFontNT( -5, yPos, sAlt );
-                else if( _fAlt < 10 )
-                    m_RadarAltBold.RenderFontNT( -2, yPos, sAlt );
-                else if( _fAlt < 100 )
-                    m_RadarAltBold.RenderFontNT( -5, yPos, sAlt );
-                else if( _fAlt < 1000 )
-                    m_RadarAltBold.RenderFontNT( -9, yPos, sAlt );
-                else
-                    m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
-            }
+            painter->beginPrimitive();
+                painter->setPrimitiveColor({1,1,1,1});
+                painter->drawLines(PRIMITIVE2D(_horizGroundBox));
+            painter->endPrimitive();
+        }
 
     }
+
+    p.GetModel().Pop();
+
+    {
+
+        float fy;
+        fy = std::max( _fPitch * PIXEL_PER_PITCH,
+                    PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
+        fy = std::min( 60.0f, fy );
+        fy = std::max( -60.0f, fy );
+
+        if( _fAlt < 2500 )
+        {
+            std::string sAlt;
+            if( _fAlt <= -5 )
+            {
+                sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
+            }
+            else if( _fAlt <= 5 )
+            {
+                sAlt = format( "%d", (int)_fAlt );
+            }
+            else if( _fAlt <= 50 )
+            {
+                sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
+            }
+            else
+            {
+                sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 10  );
+            }
+
+            painter->beginFont(&_RadarAltBold);
+            if( _fAlt <= 400 )
+                painter->setFontColor({ 0.9f, 0.9f, 0.2f, 1.0f});
+            else
+                painter->setFontColor({ 0.2f, 0.9f, 0.2f, 1.0f});
+
+            int yPos = 80;
+
+            if( _fAlt < -99 )
+                painter->renderText( -13, yPos, sAlt );
+            else if( _fAlt < -9 )
+                painter->renderText( -10, yPos, sAlt );
+            else if( _fAlt < 0 )
+                painter->renderText( -5, yPos, sAlt );
+            else if( _fAlt < 10 )
+                painter->renderText( -2, yPos, sAlt );
+            else if( _fAlt < 100 )
+                painter->renderText( -5, yPos, sAlt );
+            else if( _fAlt < 1000 )
+                painter->renderText( -9, yPos, sAlt );
+            else
+                painter->renderText( -13, yPos, sAlt );
+
+            painter->endFont();
+        }
+    }
+
+
+    return;/////////////////////////////////////////////////////////////
 
     { //Aircraft on Horizon
 
