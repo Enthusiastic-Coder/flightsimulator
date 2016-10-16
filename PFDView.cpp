@@ -86,14 +86,6 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
 
-//    glBegin(GL_QUADS);
-//        glColor3f(0,0,0);
-//        glVertex2f( -_CX*1.2, _CY*1.4 );
-//        glVertex2f( _CX*1.5, _CY*1.4 );
-//        glVertex2f( _CX*1.5, -_CY*1.3 );
-//        glVertex2f( -_CX*1.2, -_CY*1.3 );
-//    glEnd();
-
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->renderer()->camID);
     p.Push();
     OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
@@ -109,9 +101,10 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 
     DrawFlightModes(painter);
     DrawHorizon(painter);
+    DrawSpd(painter);
     //_DrawFlightModes();
     //_DrawHorizon();
-    _DrawSpd();
+    //_DrawSpd();
     _DrawAlt();
     _DrawVSI();
     _DrawHdg();
@@ -2248,6 +2241,109 @@ void PFDView::DrawHdg(OpenGLPainter *painter)
 
 void PFDView::DrawSpd(OpenGLPainter *painter)
 {
+    // AirSpeed
+   glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+   glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+
+   if( _SpdMeshData.vertex2Size() == 0)
+   {
+       _SpdMeshData.addVertex(-110, -80);
+       _SpdMeshData.addVertex(-65, -80);
+       _SpdMeshData.addVertex(-65, 80);
+       _SpdMeshData.addVertex(-110, 80);
+
+       _SpdMeshData.addVertex( -110, -80 );
+       _SpdMeshData.addVertex( -80, -80 );
+       _SpdMeshData.addVertex( -80, 80 );
+       _SpdMeshData.addVertex( -110, 80 );
+
+       _SpdMeshData.addVertex( -70, -3 );
+       _SpdMeshData.addVertex( -70, 3 );
+       _SpdMeshData.addVertex( -75, 1 );
+       _SpdMeshData.addVertex( -75, -1 );
+
+       _SpdMeshData.addVertex(-75,-1);
+       _SpdMeshData.addVertex(-75,1);
+       _SpdMeshData.addVertex(-85,1);
+       _SpdMeshData.addVertex(-85,-1);
+
+       _SpdMeshData.addVertex( -110, -80 );
+       _SpdMeshData.addVertex( -72, -80 );
+       _SpdMeshData.addVertex( -72, -79 );
+       _SpdMeshData.addVertex( -110, -79 );
+
+       _SpdMeshData.addVertex( -85,0);
+       _SpdMeshData.addVertex( -110,0);
+   }
+
+   painter->beginPrimitive();
+   painter->setPrimitiveColor({0,0,0,1});
+   painter->fillQuads(_SpdMeshData.vertex2Ptr(0), 4);
+
+   glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
+   glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+
+   painter->setPrimitiveColor({0.3f,0.3f,0.3f,1});
+   painter->fillQuads(_SpdMeshData.vertex2Ptr(4), 4);
+
+   painter->setPrimitiveColor({1,1,0,1});
+   painter->fillQuads(_SpdMeshData.vertex2Ptr(8), 8);
+
+   painter->setPrimitiveColor({1,1,1,1});
+   painter->fillQuads(_SpdMeshData.vertex2Ptr(16), 4);
+
+   painter->setPrimitiveColor({1,1,0,1});
+   painter->drawLines(_SpdMeshData.vertex2Ptr(20), 2);
+
+
+
+   float fAirSpd = _fAirSpd;
+   if( _fAirSpd < 30 ) fAirSpd = 30;
+
+#define PIXEL_PER_KNOT (17/9.0)
+
+float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
+
+    if( _SpdMeshData2.vertex2Size() == 0)
+    {
+        for( int spdTick = 30; spdTick < 600; spdTick +=10 )
+        {
+            float tick_y = -(spdTick-20) * PIXEL_PER_KNOT+tick_start;
+            _SpdMeshData2.addVertex(-85, tick_y );
+            _SpdMeshData2.addVertex(-80, tick_y  );
+            _SpdMeshData2.addVertex(-80, tick_y+1 );
+            _SpdMeshData2.addVertex(-85, tick_y+1  );
+        }
+    }
+
+    painter->setPrimitiveColor({1,1,1,1});
+    painter->fillQuads(PRIMITIVE2D(_SpdMeshData2));
+
+    if( tick_start > 80 )
+    {
+        float vertices[] = {
+            -110, 80 ,
+            -72, 80,
+            -72, 79,
+            -110, 79
+        };
+        painter->fillQuads(vertices, 4);
+    }
+
+    painter->drawLine(-80, tick_start, -80, -PIXEL_PER_KNOT*600);
+
+   painter->endPrimitive();
+
+    painter->beginFont(&_PfdAirSpdFreeFont);
+    painter->setFontColor({1,1,1,1});
+
+   std::string strSpd;
+   for( int spdTick = 40; spdTick < 600; spdTick +=20 )
+   {
+       strSpd = format("%03d", spdTick);
+       painter->renderText( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+2, strSpd );
+   }
+   painter->endFont();
 
 }
 
@@ -2255,33 +2351,33 @@ void PFDView::DrawFlightModes(OpenGLPainter *painter)
 {
     float dy = 140;
 
-    if( _horizFlightMode.vertex2Size() == 0)
+    if( _FlightModeData.vertex2Size() == 0)
     {
-        _horizFlightMode.addVertex( -61, -dy+20);
-        _horizFlightMode.addVertex( -60, -dy+20);
-        _horizFlightMode.addVertex( -60, -dy+60);
-        _horizFlightMode.addVertex( -61, -dy+60);
+        _FlightModeData.addVertex( -61, -dy+20);
+        _FlightModeData.addVertex( -60, -dy+20);
+        _FlightModeData.addVertex( -60, -dy+60);
+        _FlightModeData.addVertex( -61, -dy+60);
 
-        _horizFlightMode.addVertex( -6, -dy+20);
-        _horizFlightMode.addVertex(  -5, -dy+20);
-        _horizFlightMode.addVertex(  -5, -dy+60);
-        _horizFlightMode.addVertex(  -6, -dy+60);
+        _FlightModeData.addVertex( -6, -dy+20);
+        _FlightModeData.addVertex(  -5, -dy+20);
+        _FlightModeData.addVertex(  -5, -dy+60);
+        _FlightModeData.addVertex(  -6, -dy+60);
 
-        _horizFlightMode.addVertex(  49, -dy+20);
-        _horizFlightMode.addVertex(  50, -dy+20);
-        _horizFlightMode.addVertex(  50, -dy+60);
-        _horizFlightMode.addVertex(  49, -dy+60);
+        _FlightModeData.addVertex(  49, -dy+20);
+        _FlightModeData.addVertex(  50, -dy+20);
+        _FlightModeData.addVertex(  50, -dy+60);
+        _FlightModeData.addVertex(  49, -dy+60);
 
-        _horizFlightMode.addVertex( 104, -dy+20);
-        _horizFlightMode.addVertex( 105, -dy+20);
-        _horizFlightMode.addVertex( 105, -dy+60);
-        _horizFlightMode.addVertex( 104, -dy+60);
+        _FlightModeData.addVertex( 104, -dy+20);
+        _FlightModeData.addVertex( 105, -dy+20);
+        _FlightModeData.addVertex( 105, -dy+60);
+        _FlightModeData.addVertex( 104, -dy+60);
     }
 
 
     painter->beginPrimitive();
         painter->setPrimitiveColor({1,1,1,1});
-        painter->fillQuads(PRIMITIVE2D(_horizFlightMode));
+        painter->fillQuads(PRIMITIVE2D(_FlightModeData));
     painter->endPrimitive();
 }
 
