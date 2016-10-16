@@ -91,22 +91,6 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
         glVertex2f( -_CX*1.2, -_CY*1.3 );
     glEnd();
 
-    DrawFlightModes();
-    DrawHorizon();
-    DrawSpd();
-    DrawAlt();
-    DrawVSI();
-    DrawHdg();
-
-    glDisable(GL_STENCIL_TEST);
-	glColor3f(1,1,1);
-
-	glMatrixMode( GL_PROJECTION  );
-	glPopMatrix();
-	glMatrixMode( GL_MODELVIEW  );
-	glPopMatrix();
-
-
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->renderer()->camID);
     p.Push();
     OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
@@ -127,8 +111,23 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     painter->fillQuad(-_CX*1.2+10, -_CY*1.3+10, 270-20, 270-20);
     painter->endPrimitive();
 
+    DrawFlightModes();
+    DrawHorizon();
+    DrawSpd();
+    DrawAlt();
+    DrawVSI();
+    DrawHdg();
+
 
     p.Pop();
+
+    glDisable(GL_STENCIL_TEST);
+    glColor3f(1,1,1);
+
+    glMatrixMode( GL_PROJECTION  );
+    glPopMatrix();
+    glMatrixMode( GL_MODELVIEW  );
+    glPopMatrix();
 
     glEnable(GL_DEPTH_TEST);
 
