@@ -54,9 +54,6 @@ void PFDView::Initialise()
 
 void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 {
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
     glClear(GL_STENCIL_BUFFER_BIT);
 
     glMatrixMode( GL_PROJECTION  );
@@ -103,7 +100,6 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     p.GetModel().Pop();
 
     glDisable(GL_STENCIL_TEST);
-    glColor3f(1,1,1);
 
     glMatrixMode( GL_PROJECTION  );
     glPopMatrix();
@@ -294,12 +290,10 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         float fLine;
         if( _horizNeg30ToNeg10.vertex2Size() == 0)
         {
-            //glColor3f(1.0f,1.0f,1.0f);
             fLine = dy + 5.0*PIXEL_PER_PITCH3;
             _horizNeg30ToNeg10.addVertex( -8, fLine );
             _horizNeg30ToNeg10.addVertex( 8, fLine );
 
-            //glColor3f(0.2f,0.9f,0.2f);
             _horizNeg30ToNeg10.addVertex( -8, fLine-1 );
             _horizNeg30ToNeg10.addVertex( -14, fLine-1 );
             _horizNeg30ToNeg10.addVertex( -8, fLine+1 );
@@ -310,7 +304,6 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
             _horizNeg30ToNeg10.addVertex( 8, fLine+1 );
             _horizNeg30ToNeg10.addVertex( 14, fLine+1 );
 
-            //glColor3f(1.0f,1.0f,1.0f);
             fLine = dy + 10.0*PIXEL_PER_PITCH3;
             _horizNeg30ToNeg10.addVertex( -20, fLine );
             _horizNeg30ToNeg10.addVertex( 20, fLine );
