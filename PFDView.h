@@ -85,6 +85,7 @@ private:
     meshData _SpdMeshData;
     meshData _SpdMeshData2;
     meshData _AltDataOne;
+    meshData _AltDataTwo;
 };
 
 #endif //__PFD__VIEW__H__

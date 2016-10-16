@@ -93,7 +93,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 
     painter->beginPrimitive();
         painter->setPrimitiveColor({0,0,0,1});
-        painter->fillQuad(-_CX*1.2, -_CY*1.3, 270, 270);
+        painter->fillRect(-_CX*1.2, -_CY*1.3, 270, 270);
 
         painter->setPrimitiveColor({1,1,1,1});
         painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
@@ -2252,32 +2252,39 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
 
     DrawScrollAlt(painter);/****************************/
 
-   return;////////////////////////////////
     glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
     glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
-    glColor3f(1.0f,1.0f,0.0f);
-    glBegin(GL_LINE_STRIP); //Outline yellow of alt read out
-        glVertex2f(85, -7);
-        glVertex2f(110, -7);
-        glVertex2f(110, -12);
-        glVertex2f(124, -12);
-        glVertex2f(124, 13);
-        glVertex2f(110, 13);
-        glVertex2f(110, 7);
-        glVertex2f(85, 7);
-    glEnd();
+
+    painter->beginPrimitive();
+
+    if( _AltDataTwo.vertex2Size() == 0)
+    {
+        _AltDataTwo.addVertex(85, -7);
+        _AltDataTwo.addVertex(110, -7);
+        _AltDataTwo.addVertex(110, -12);
+        _AltDataTwo.addVertex(124, -12);
+        _AltDataTwo.addVertex(124, 13);
+        _AltDataTwo.addVertex(110, 13);
+        _AltDataTwo.addVertex(110, 7);
+        _AltDataTwo.addVertex(85, 7);
+
+        _AltDataTwo.addVertex( 85, -_CEN_Y + 80 );
+        _AltDataTwo.addVertex( 110, -_CEN_Y + 80 );
+        _AltDataTwo.addVertex( 110, _CEN_Y - 80 );
+        _AltDataTwo.addVertex( 85, _CEN_Y - 80 );
+
+    }
+
+    painter->setPrimitiveColor({1,1,0,1});
+    painter->drawLineStrip(_AltDataTwo.vertex2Ptr(0), 8);
 
     glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
     glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
     //Altitude Bar
-    glColor3f(0.4f,0.4f,0.4f );
-    glBegin(GL_QUADS);
-        glVertex2f( 85, -_CEN_Y + 80 );
-        glVertex2f( 110, -_CEN_Y + 80 );
-        glVertex2f( 110, _CEN_Y - 80 );
-        glVertex2f( 85, _CEN_Y - 80 );
-    glEnd();
+
+    painter->setPrimitiveColor({0.4f, 0.4f, 0.4f, 1.0});
+    painter->fillQuads(_AltDataTwo.vertex2Ptr(8), 4);
 
     //Altitude
     {
@@ -2289,60 +2296,45 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
         float ymax = (dA + ALT_RANGE) * PIXEL_PER_ALT_FEET;
         float y;
 
-        glColor3f(1.0f, 1.0f,1.0f);
-        glBegin(GL_TRIANGLES);
+        painter->setPrimitiveColor({1,1,1, 1.0});
+
         for( int x = (int)minAlt; x <= maxAlt; x+= 500)
         {
             y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
-            glVertex2f( 82, y-2 );
-            glVertex2f( 85, y );
-            glVertex2f( 82, y+2 );
+            painter->fillTriangle(82, y-2, 85, y, 82, y+2);
         }
-        glEnd();
 
-        glBegin(GL_QUADS);
         for( int x = (int)minAlt; x <= maxAlt; x+= 100)
         {
             y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
-            glVertex2f( 107, y-1 );
-            glVertex2f( 110, y-1 );
-            glVertex2f( 110, y+1 );
-            glVertex2f( 107, y+1 );
+            painter->fillQuad(107, y-1, 110, y-1, 110, y+1, 107, y+1);
         }
-        glEnd();
+
+        painter->endPrimitive();
+        painter->beginFont(&_AltLargeFreeFont);
 
         for( int x = (int)minAlt; x <= maxAlt; x+= 500)
         {
             y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax + 10;
             std::string strAlt;
             strAlt = format( "%03.0f", abs(x)/100.0 );
-            m_AltLargeFreeFont.RenderFontNT( 87, y-8, strAlt );
+            painter->renderText( 87, y-8, strAlt );
         }
+        painter->endFont();
     }
 
-    glColor3f(1.0f, 1.0f,1.0f);
-    glBegin(GL_LINES);
-        glVertex2f(110, -_CEN_Y + 80 );
-        glVertex2f(110, _CEN_Y - 80 );
-    glEnd();
-    glBegin(GL_QUADS); //Yellow line to right
-        glColor3f(1.0f,1.0f,0.0f);
-        glVertex2f( 67, -1 );
-        glVertex2f( 80, -1 );
-        glVertex2f( 80, 1 );
-        glVertex2f( 67, 1 );
-    glEnd();
+    painter->beginPrimitive();
+    painter->setPrimitiveColor({1,1,1,1});
+    painter->drawLine(110, -_CEN_Y + 80, 110, _CEN_Y + 80 );
 
-    //return;
+    painter->setPrimitiveColor({1,1,0,1});
+    painter->fillQuad(67, -1, 80, -1, 80, 1, 67, 1);
 
     glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
-    glBegin(GL_QUADS);	//White ends of altitude bar
-        glColor3f(1.0f, 1.0f,1.0f);
-        glVertex2f(85, _CEN_Y - 80 );
-        glVertex2f(120, _CEN_Y - 80 );
-        glVertex2f(120, _CEN_Y - 81 );
-        glVertex2f(85, _CEN_Y - 81 );
-    glEnd();
+    painter->setPrimitiveColor({1,1,1,1});
+
+    painter->fillQuad(85, _CEN_Y - 80, 120, _CEN_Y - 80,120, _CEN_Y - 81, 85, _CEN_Y - 81 );
+    painter->endPrimitive();
 }
 
 void PFDView::DrawScrollAlt(OpenGLPainter *painter)
