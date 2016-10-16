@@ -80,6 +80,7 @@ private:
     meshData _horizYellowMarker;
     meshData _horizAirOnHoriz2;
     meshData _horizMarkers;
+    meshData _horiz45Markers;
 };
 
 #endif //__PFD__VIEW__H__

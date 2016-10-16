@@ -2201,32 +2201,28 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
     }
 
 
+    { // -45 and 45 markers around edge
+        float fsin = sin(M_PI/4);
+        float fcos = -cos(M_PI/4);
 
-    return;/////////////////////////////////////////////////////////////
+        float x1 = fsin * _CX;
+        float y1 = fcos * _CY;
 
-    { //Aircraft on Horizon
+        float x2 = fsin * (_CX+10);
+        float y2 = fcos * (_CY+10);
 
+        if( _horiz45Markers.vertex2Size() ==0)
+        {
+            _horiz45Markers.addVertex(x1, y1 );
+            _horiz45Markers.addVertex(x2, y2 );
 
-
-
-        { // -45 and 45 markers around edge
-            float fsin = sin(M_PI/4);
-            float fcos = -cos(M_PI/4);
-
-            float x1 = fsin * _CX;
-            float y1 = fcos * _CY;
-
-            float x2 = fsin * (_CX+10);
-            float y2 = fcos * (_CY+10);
-
-            glBegin(GL_LINES);
-                glVertex2f(x1, y1 );
-                glVertex2f(x2, y2 );
-
-                glVertex2f(-x1, y1 );
-                glVertex2f(-x2, y2 );
-            glEnd();
+            _horiz45Markers.addVertex(-x1, y1 );
+            _horiz45Markers.addVertex(-x2, y2 );
         }
+
+        painter->beginPrimitive();
+            painter->drawLines(PRIMITIVE2D(_horiz45Markers));
+        painter->endPrimitive();
     }
 }
 
