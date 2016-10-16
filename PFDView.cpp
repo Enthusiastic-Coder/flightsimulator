@@ -2255,31 +2255,33 @@ void PFDView::DrawFlightModes(OpenGLPainter *painter)
 {
     float dy = 140;
 
-    float pts[] = {
-        -61, -dy+20,
-         -60, -dy+20,
-         -60, -dy+60,
-         -61, -dy+60,
+    if( _horizFlightMode.vertex2Size() == 0)
+    {
+        _horizFlightMode.addVertex( -61, -dy+20);
+        _horizFlightMode.addVertex( -60, -dy+20);
+        _horizFlightMode.addVertex( -60, -dy+60);
+        _horizFlightMode.addVertex( -61, -dy+60);
 
-         -6, -dy+20,
-         -5, -dy+20,
-         -5, -dy+60,
-         -6, -dy+60,
+        _horizFlightMode.addVertex( -6, -dy+20);
+        _horizFlightMode.addVertex(  -5, -dy+20);
+        _horizFlightMode.addVertex(  -5, -dy+60);
+        _horizFlightMode.addVertex(  -6, -dy+60);
 
-         49, -dy+20,
-         50, -dy+20,
-         50, -dy+60,
-         49, -dy+60,
+        _horizFlightMode.addVertex(  49, -dy+20);
+        _horizFlightMode.addVertex(  50, -dy+20);
+        _horizFlightMode.addVertex(  50, -dy+60);
+        _horizFlightMode.addVertex(  49, -dy+60);
 
-         104, -dy+20,
-         105, -dy+20 ,
-         105, -dy+60 ,
-         104, -dy+60
-    };
+        _horizFlightMode.addVertex( 104, -dy+20);
+        _horizFlightMode.addVertex( 105, -dy+20);
+        _horizFlightMode.addVertex( 105, -dy+60);
+        _horizFlightMode.addVertex( 104, -dy+60);
+    }
+
 
     painter->beginPrimitive();
-    painter->setPrimitiveColor({1,1,1,1});
-    painter->fillQuads(pts, sizeof(pts)/sizeof(pts[0])/2);
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->fillQuads(PRIMITIVE2D(_horizFlightMode));
     painter->endPrimitive();
 }
 

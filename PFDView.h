@@ -81,6 +81,8 @@ private:
     meshData _horizAirOnHoriz2;
     meshData _horizMarkers;
     meshData _horiz45Markers;
+
+    meshData _horizFlightMode;
 };
 
 #endif //__PFD__VIEW__H__
