@@ -1953,12 +1953,6 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         // When on ground show surrounding square and joystick position and ground tracking if ILS available
         if( _fAlt < 3.0f )
         {
-            glColor3f(1.0f, 1.0f, 1.0f);
-            glBegin(GL_LINES);
-
-
-            glEnd();
-
             if( _horizGroundBox.vertex2Size() == 0)
             {
                 _horizGroundBox.addVertex( -55, -45 );
@@ -1993,7 +1987,6 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
     p.GetModel().Pop();
 
     {
-
         float fy;
         fy = std::max( _fPitch * PIXEL_PER_PITCH,
                        PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
@@ -2261,9 +2254,6 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
 
     DrawScrollAlt(painter);/****************************/
 
-    glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
-    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
-
     painter->beginPrimitive();
 
     if( _AltDataTwo.vertex2Size() == 0)
@@ -2281,8 +2271,10 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
         _AltDataTwo.addVertex( 110, -_CEN_Y + 80 );
         _AltDataTwo.addVertex( 110, _CEN_Y - 80 );
         _AltDataTwo.addVertex( 85, _CEN_Y - 80 );
-
     }
+
+    glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
 
     painter->setPrimitiveColor({1,1,0,1});
     painter->drawLineStrip(_AltDataTwo.vertex2Ptr(0), 8);
