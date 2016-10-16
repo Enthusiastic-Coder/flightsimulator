@@ -1,7 +1,6 @@
 #ifndef __PFD__VIEW__H__
 #define __PFD__VIEW__H__
 
-#include "OGLPFDFont.h"
 #include "OpenGLFontTexture.h"
 #include "MeshData.h"
 
@@ -15,7 +14,7 @@ class PFDView
 public:
 	PFDView();
 
-	void Initialise(HDC hdc);
+    void Initialise();
 	
     void render(OpenGLPainter* painter, int cx, int cy);
 
@@ -33,26 +32,12 @@ private:
     OpenGLFontTexture _AltSmallFreeFont;
     OpenGLFontTexture _RadarAltBold;
 
-    OGLPFDFont m_PfdHorizFreeFont;
-    OGLPFDFont m_PfdAirSpdFreeFont;
-    OGLPFDFont m_AltLargeFreeFont;
-    OGLPFDFont m_AltSmallFreeFont;
-    OGLPFDFont m_RadarAltBold;
-
     float _CEN_X;
     float _CEN_Y;
     float _CX;
     float _CY;
 
     void BuildAltTape(char buffer[][32], int line_count, int centralAlt, bool bIncreasing);
-
-    void _DrawHorizon();
-    void _DrawAlt();
-    void _DrawScrollAlt();
-    void _DrawVSI();
-    void _DrawHdg();
-    void _DrawSpd();
-    void _DrawFlightModes();
 
     void DrawHorizon(OpenGLPainter* painter);
     void DrawAlt(OpenGLPainter* painter);

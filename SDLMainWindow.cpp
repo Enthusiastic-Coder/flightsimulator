@@ -307,7 +307,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     return true;
 }
 
-bool SDLMainWindow::onInitialise(HDC hdc)
+bool SDLMainWindow::onInitialise()
 {
     try
     {
@@ -338,7 +338,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 #endif
         _WorldSystem.setLightFraction(0.9f);
 
-        _pfdInstrument.Initialise(hdc);
+        _pfdInstrument.Initialise();
 
         _WorldSystem.loadBodyRecorderedData();
 

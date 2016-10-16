@@ -35,8 +35,6 @@ SOURCES += AeroControlSurface.cpp \
     MeshModel.cpp \
     MipMapTerrainMeshModel.cpp \
     MipMapTerrainMeshModelCollection.cpp \
-    OGLFont.cpp \
-    OGLPFDFont.cpp \
     OpenGLFrameBuffer.cpp \
     OpenGLRenderBuffer.cpp \
     OpenGLShaderProgram.cpp \
@@ -130,8 +128,6 @@ HEADERS  += CompositeListForceGenerator.inl \
     MeshModel.h \
     MipMapTerrainMeshModel.h \
     MipMapTerrainMeshModelCollection.h \
-    OGLFont.h \
-    OGLPFDFont.h \
     OpenGLFrameBuffer.h \
     OpenGLRenderBuffer.h \
     OpenGLShaderProgram.h \

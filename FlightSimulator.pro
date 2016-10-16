@@ -37,7 +37,7 @@ HEADERS += SDLGameLoop.h \
             SDLSurfaceHelper.h
 
 win32 {
-    LIBS += -lGdi32
+    LIBS += -lUser32
 }
 
 deploy_images.files += ./images/*

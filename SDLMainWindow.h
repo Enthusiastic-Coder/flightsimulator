@@ -39,7 +39,7 @@ public:
     const char* persistFilename() const;
 
 protected:
-    bool onInitialise(HDC hdc) override;
+    bool onInitialise() override;
     void onUnInitialise() override;
     void onUpdate() override;
     void onRender() override;
