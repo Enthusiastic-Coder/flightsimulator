@@ -3,6 +3,7 @@
 
 #include "OGLPFDFont.h"
 #include "OpenGLFontTexture.h"
+#include "MeshData.h"
 
 class OpenGLPainter;
 
@@ -60,6 +61,8 @@ private:
     void DrawHdg(OpenGLPainter* painter);
     void DrawSpd(OpenGLPainter* painter);
     void DrawFlightModes(OpenGLPainter* painter);
+
+    meshData _horizData;
 };
 
 #endif //__PFD__VIEW__H__

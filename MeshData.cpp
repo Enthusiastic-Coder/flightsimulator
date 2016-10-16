@@ -8,6 +8,16 @@ void meshData::clear() {
     _indices.clear();
 }
 
+void meshData::addVertex(const Vector2F &v)
+{
+    _vertex2Data.push_back(v);
+}
+
+void meshData::addVertex(float x, float y)
+{
+    addVertex(Vector2F(x,y));
+}
+
 void meshData::addVertex(const Vector3F &v)
 {
     _vertexData.push_back(v);
@@ -117,6 +127,11 @@ const unsigned short *meshData::indexPtr(size_t offset) const
     return &_indices[offset];
 }
 
+size_t meshData::vertex2Size() const
+{
+    return _vertex2Data.size();
+}
+
 size_t meshData::vertexSize() const
 {
     return _vertexData.size();
@@ -165,6 +180,14 @@ std::pair<float, float> meshData::getTexture(size_t idx) const
 unsigned short meshData::getIndex(size_t idx) const
 {
     return _indices[idx];
+}
+
+const float *meshData::vertex2Ptr(size_t offset) const
+{
+    if( offset >= _vertex2Data.size())
+        return 0;
+
+    return &_vertex2Data[offset].x;
 }
 
 void meshData::setVertex(size_t idx, Vector3F v)

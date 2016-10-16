@@ -127,7 +127,7 @@ void OpenGLPainter::drawTriangles(float *pts, int count)
     }
 }
 
-void OpenGLPainter::drawTriangleFan(float *pts, int count)
+void OpenGLPainter::drawTriangleFan(const float *pts, int count)
 {
     drawPrimitive(pts, count, GL_TRIANGLE_FAN);
 }
@@ -164,6 +164,11 @@ void OpenGLPainter::drawQuads(float *pts, int count)
 void OpenGLPainter::fillTriangles(float *pts, int count)
 {
     drawPrimitive(pts, count, GL_TRIANGLES);
+}
+
+void OpenGLPainter::fillTriangleFan(const float *pts, int count)
+{
+    drawPrimitive(pts, count, GL_TRIANGLE_FAN);
 }
 
 void OpenGLPainter::fillQuad(float x, float y, float w, float h)
@@ -210,11 +215,11 @@ void OpenGLPainter::endPrimitive()
     OpenGLShaderProgram::useDefault();
 }
 
-void OpenGLPainter::drawPrimitive(float *pts, int count, int primType)
+void OpenGLPainter::drawPrimitive(const float *pts, int count, int primType)
 {
     Renderer* r = renderer();
     r->bindVertex(Renderer::Vertex, 2, pts);
-    r->setVertexCountOffset( count/2);
+    r->setVertexCountOffset( count);
     r->setPrimitiveType(primType);
     r->Render();
 }

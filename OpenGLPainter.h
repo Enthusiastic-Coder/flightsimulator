@@ -32,17 +32,17 @@ public:
     void drawLineStrip(float* pts, int count);
     void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
     void drawTriangles(float* pts, int count);
-    void drawTriangleFan(float* pts, int count);
+    void drawTriangleFan(const float *pts, int count);
     void drawQuad(float x, float y, float w, float h);
     void drawQuads(float* pts, int count);
     void fillTriangles(float* pts, int count);
-    void fillTriangleFan(float* pts, int count);
+    void fillTriangleFan(const float* pts, int count);
     void fillQuad(float x, float y, float w, float h);
     void fillQuads(float* pts, int count);
     void endPrimitive();
 
 private:
-    void drawPrimitive(float* pts, int count, int primType);
+    void drawPrimitive(const float* pts, int count, int primType);
 
 private:
     OpenGLFontRenderer2D* _fontRenderer = 0 ;
