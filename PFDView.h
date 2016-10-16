@@ -63,6 +63,11 @@ private:
     void DrawFlightModes(OpenGLPainter* painter);
 
     meshData _horizData;
+    meshData _horizDataSky;
+    meshData _horizDataGround;
+    meshData _horizHdgLines;
+    meshData _horizNeg30ToNeg10;
+    meshData _horizNeg10ToPos20;
 };
 
 #endif //__PFD__VIEW__H__

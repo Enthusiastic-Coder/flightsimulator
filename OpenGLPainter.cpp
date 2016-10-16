@@ -85,7 +85,7 @@ void OpenGLPainter::drawLine(float x1, float y1, float x2, float y2)
     r->Render();
 }
 
-void OpenGLPainter::drawLines(float *pts, int count)
+void OpenGLPainter::drawLines(const float *pts, int count)
 {
      drawPrimitive(pts, count, GL_LINES);
 }
@@ -186,25 +186,15 @@ void OpenGLPainter::fillQuad(float x, float y, float w, float h)
     r->Render();
 }
 
-void OpenGLPainter::fillQuads(float *pts, int count)
+void OpenGLPainter::fillQuads(const float *pts, int count)
 {
     Renderer* r = renderer();
-    r->setPrimitiveType(GL_TRIANGLES);
+    r->setPrimitiveType(GL_TRIANGLE_FAN);
+    r->bindVertex(Renderer::Vertex, 2, pts);
 
-    for(int i=0; i < count; i += 4*2)
+    for(int i=0; i < count; i += 4)
     {
-        float vertices[] = {
-            pts[i], pts[i+1],
-            pts[i+2], pts[i+3],
-            pts[i+6], pts[i+7],
-
-            pts[i+2], pts[i+3],
-            pts[i+4], pts[i+5],
-            pts[i+6], pts[i+7],
-        };
-
-        r->bindVertex(Renderer::Vertex, 2, vertices);
-        r->setVertexCountOffset( indicesCount(vertices,2));
+        r->setVertexCountOffset( 4, i);
         r->Render();
     }
 }
