@@ -2,6 +2,7 @@
 #include "MeshData.h"
 
 void meshData::clear() {
+    _vertex2Data.clear();
     _vertexData.clear();
     _normalData.clear();
     _texCoordData.clear();
