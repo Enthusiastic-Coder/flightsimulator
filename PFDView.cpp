@@ -19,9 +19,9 @@
 
 template<class T> std::string format(std::string str, T val)
 {
-	char buf[128];
-	sprintf(buf, str.c_str(), val);
-	return buf;
+    char buf[128];
+    sprintf(buf, str.c_str(), val);
+    return buf;
 }
 
 PFDView::PFDView()
@@ -32,10 +32,10 @@ PFDView::PFDView()
     _fAlt = -1.0f;
     _fVSI = 0.0f;
     _fHdg = 360.0f;
-	_CEN_X = 0.0f;
-	_CEN_Y = 0.0f;
-	_CX = 100.0f;
-	_CY = 100.0f;
+    _CEN_X = 0.0f;
+    _CEN_Y = 0.0f;
+    _CX = 100.0f;
+    _CY = 100.0f;
 }
 
 void PFDView::Initialise(HDC hdc)
@@ -44,7 +44,7 @@ void PFDView::Initialise(HDC hdc)
     m_PfdAirSpdFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );//done
     m_RadarAltBold.CreateBitmapFont( hdc, "Tahoma", 18, FW_NORMAL);//done
     m_AltLargeFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
-	m_AltSmallFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
+    m_AltSmallFreeFont.CreateBitmapFont( hdc, "Arial", 15, FW_NORMAL );
 
     _PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
     _PfdAirSpdFreeFont.loadfile("fonts/Arial-10.png");
@@ -63,28 +63,28 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-	glClear(GL_STENCIL_BUFFER_BIT);
+    glClear(GL_STENCIL_BUFFER_BIT);
 
-	glMatrixMode( GL_PROJECTION  );
-	glPushMatrix();
+    glMatrixMode( GL_PROJECTION  );
+    glPushMatrix();
     glLoadIdentity();
 
     _CX = 100;
     _CY = 100;
-	_CEN_X = cx/2;
+    _CEN_X = cx/2;
     _CEN_Y = cy/2;
 
     glOrtho(0, cx, cy, 0,-1, 1);
 
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	
-	glTranslatef( _CEN_X, _CEN_Y, 0 );
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
 
-	glDisable(GL_TEXTURE_2D );
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_STENCIL_TEST);
+    glTranslatef( _CEN_X, _CEN_Y, 0 );
+
+    glDisable(GL_TEXTURE_2D );
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
 
     OpenGLPipeline& p = OpenGLPipeline::Get(painter->renderer()->camID);
     p.Push();
@@ -92,11 +92,11 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     p.GetModel().Translate(_CEN_X, _CEN_Y,0);
 
     painter->beginPrimitive();
-        painter->setPrimitiveColor({0,0,0,1});
-        painter->fillRect(-_CX*1.2, -_CY*1.3, 270, 270);
+    painter->setPrimitiveColor({0,0,0,1});
+    painter->fillRect(-_CX*1.2, -_CY*1.3, 270, 270);
 
-        painter->setPrimitiveColor({1,1,1,1});
-        painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
+    painter->setPrimitiveColor({1,1,1,1});
+    painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
     painter->endPrimitive();
 
     DrawFlightModes(painter);
@@ -104,12 +104,13 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     DrawSpd(painter);
     DrawAlt(painter);
     DrawVSI(painter);
+    DrawHdg(painter);
     //_DrawFlightModes();
     //_DrawHorizon();
     //_DrawSpd();
     //_DrawAlt();
     //_DrawVSI();
-    _DrawHdg();
+    //_DrawHdg();
 
     p.Pop();
 
@@ -127,1319 +128,1319 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 
 void PFDView::_DrawHorizon()
 {
-	glStencilFunc( GL_ALWAYS, 1, 0xFFFFFFFF );
-	glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glStencilFunc( GL_ALWAYS, 1, 0xFFFFFFFF );
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
 
-//Stencil Horizon
-	{ // Set stencil values.
-		glColor3ub(1,0,0);
-		glBegin(GL_TRIANGLE_FAN);
-			for( float fAng = 0; fAng <= 360; fAng += 2.0f )
-			{
-				float fAngRad = fAng/180.0f * M_PI;
-				float x = cos(fAngRad ) * _CX;
-				float y = -sin(fAngRad ) * _CY;
-				if( x < -65 ) x = -65;
-				if( x > 65 ) x = 65;
+    //Stencil Horizon
+    { // Set stencil values.
+        glColor3ub(1,0,0);
+        glBegin(GL_TRIANGLE_FAN);
+        for( float fAng = 0; fAng <= 360; fAng += 2.0f )
+        {
+            float fAngRad = fAng/180.0f * M_PI;
+            float x = cos(fAngRad ) * _CX;
+            float y = -sin(fAngRad ) * _CY;
+            if( x < -65 ) x = -65;
+            if( x > 65 ) x = 65;
 
-				glVertex2f(x, y);
-			}
-		glEnd();
-	}
+            glVertex2f(x, y);
+        }
+        glEnd();
+    }
 
-	glStencilFunc( GL_EQUAL, 1, 0xFFFFFFFF );
-	glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+    glStencilFunc( GL_EQUAL, 1, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
 #define PIXEL_PER_PITCH 3.2f
 #define PIXEL_PER_PITCH2 (PIXEL_PER_PITCH*0.8f)
 #define PIXEL_PER_PITCH3 (PIXEL_PER_PITCH*0.5f)
 
-	{//Horizon
-		glPushMatrix();
+    {//Horizon
+        glPushMatrix();
         glRotatef( -_fBank, 0, 0, 1 );
-		
-		float dY;
-		{
+
+        float dY;
+        {
             if( _fPitch > 20 )
-			{
+            {
                 dY = 20 * PIXEL_PER_PITCH + (_fPitch-20)*PIXEL_PER_PITCH2;
-			}
+            }
             else if( _fPitch  > -10 )
-			{
+            {
                 dY = _fPitch * PIXEL_PER_PITCH;
-			}
-			else
-			{
+            }
+            else
+            {
                 dY = -10 * PIXEL_PER_PITCH + (_fPitch+10) * PIXEL_PER_PITCH3;
-			}
-		}
+            }
+        }
 
-		glTranslatef( 0, dY, 0 );
+        glTranslatef( 0, dY, 0 );
 
-		glBegin(GL_QUADS);
-			glColor3ub(30,140,242);//Sky
-			glVertex2f(-100, -315 );
-			glVertex2f(100, -315 );
-			glVertex2f(100, 0 );
-			glVertex2f(-100, 0 );
+        glBegin(GL_QUADS);
+        glColor3ub(30,140,242);//Sky
+        glVertex2f(-100, -315 );
+        glVertex2f(100, -315 );
+        glVertex2f(100, 0 );
+        glVertex2f(-100, 0 );
 
-			glColor3ub(127,90,56);//Ground
-			//glColor3ub(88,61,44);//Ground
-			glVertex2f(-100, 0 );
-			glVertex2f(100, 0 );
-			glVertex2f(100, 315 );
-			glVertex2f(-100, 315 );
-		glEnd();
+        glColor3ub(127,90,56);//Ground
+        //glColor3ub(88,61,44);//Ground
+        glVertex2f(-100, 0 );
+        glVertex2f(100, 0 );
+        glVertex2f(100, 315 );
+        glVertex2f(-100, 315 );
+        glEnd();
 
-		{//Hdg Lines
-			#define PIXEL_PER_HDG  2.6f
+        {//Hdg Lines
+#define PIXEL_PER_HDG  2.6f
 
-			glColor3f(1.0f,1.0f,1.0f);
-			glBegin(GL_QUADS);
-                int dH = (int)_fHdg % 10;
-                int minHdg = (_fHdg - dH - 40);
-				int maxHdg = minHdg + 80;
-				int x;
+            glColor3f(1.0f,1.0f,1.0f);
+            glBegin(GL_QUADS);
+            int dH = (int)_fHdg % 10;
+            int minHdg = (_fHdg - dH - 40);
+            int maxHdg = minHdg + 80;
+            int x;
 
-				{
-					for( int h = minHdg; h <= maxHdg; h+= 10 )
-					{
-                        x = (h - _fHdg) * PIXEL_PER_HDG;
+            {
+                for( int h = minHdg; h <= maxHdg; h+= 10 )
+                {
+                    x = (h - _fHdg) * PIXEL_PER_HDG;
 
-						glVertex2f( x-1, 0 );
-						glVertex2f( x, 0 );
-						glVertex2f( x, 4 );
-						glVertex2f( x-1, 4 );
-					}
-				}
-			glEnd();
-		}
+                    glVertex2f( x-1, 0 );
+                    glVertex2f( x, 0 );
+                    glVertex2f( x, 4 );
+                    glVertex2f( x-1, 4 );
+                }
+            }
+            glEnd();
+        }
 
-		{ //-30 to -10
-			
+        { //-30 to -10
+
             float dy = 10 * PIXEL_PER_PITCH+10;
-			float fLine;
+            float fLine;
 
-			glBegin(GL_LINES);
-				glColor3f(1.0f,1.0f,1.0f);
-				fLine = dy + 5.0*PIXEL_PER_PITCH3;
-				glVertex2f( -8, fLine );
-				glVertex2f( 8, fLine );
+            glBegin(GL_LINES);
+            glColor3f(1.0f,1.0f,1.0f);
+            fLine = dy + 5.0*PIXEL_PER_PITCH3;
+            glVertex2f( -8, fLine );
+            glVertex2f( 8, fLine );
 
-				glColor3f(0.2f,0.9f,0.2f);
-				glVertex2f( -8, fLine-1 );glVertex2f( -14, fLine-1 );
-				glVertex2f( -8, fLine+1 );glVertex2f( -14, fLine+1 );
+            glColor3f(0.2f,0.9f,0.2f);
+            glVertex2f( -8, fLine-1 );glVertex2f( -14, fLine-1 );
+            glVertex2f( -8, fLine+1 );glVertex2f( -14, fLine+1 );
 
-				glVertex2f( 8, fLine-1 );glVertex2f( 14, fLine-1 );
-				glVertex2f( 8, fLine+1 );glVertex2f( 14, fLine+1 );
+            glVertex2f( 8, fLine-1 );glVertex2f( 14, fLine-1 );
+            glVertex2f( 8, fLine+1 );glVertex2f( 14, fLine+1 );
 
-				glColor3f(1.0f,1.0f,1.0f);
-				fLine = dy + 10.0*PIXEL_PER_PITCH3;
-				glVertex2f( -20, fLine );
-				glVertex2f( 20, fLine );
+            glColor3f(1.0f,1.0f,1.0f);
+            fLine = dy + 10.0*PIXEL_PER_PITCH3;
+            glVertex2f( -20, fLine );
+            glVertex2f( 20, fLine );
 
-				fLine = dy + 20.0*PIXEL_PER_PITCH3;
-				glVertex2f( -25, fLine );
-				glVertex2f( 25, fLine );
+            fLine = dy + 20.0*PIXEL_PER_PITCH3;
+            glVertex2f( -25, fLine );
+            glVertex2f( 25, fLine );
 
-				fLine = dy + 40.0*PIXEL_PER_PITCH3;
-				glVertex2f( -30, fLine );
-				glVertex2f( 30, fLine );
+            fLine = dy + 40.0*PIXEL_PER_PITCH3;
+            glVertex2f( -30, fLine );
+            glVertex2f( 30, fLine );
 
-				fLine = dy + 60.0*PIXEL_PER_PITCH3;
-				glVertex2f( -35, fLine );
-				glVertex2f( 35, fLine );
+            fLine = dy + 60.0*PIXEL_PER_PITCH3;
+            glVertex2f( -35, fLine );
+            glVertex2f( 35, fLine );
 
-				fLine = dy + 80.0*PIXEL_PER_PITCH3;
-				glVertex2f( -40, fLine );
-				glVertex2f( 40, fLine );
-			glEnd();
+            fLine = dy + 80.0*PIXEL_PER_PITCH3;
+            glVertex2f( -40, fLine );
+            glVertex2f( 40, fLine );
+            glEnd();
 
             fLine = dy;
-			m_PfdHorizFreeFont.RenderFontNT( -30, fLine-6, "10" );
-			m_PfdHorizFreeFont.RenderFontNT( 20, fLine-6, "10");
+            m_PfdHorizFreeFont.RenderFontNT( -30, fLine-6, "10" );
+            m_PfdHorizFreeFont.RenderFontNT( 20, fLine-6, "10");
 
-			fLine = dy + 10.0*PIXEL_PER_PITCH3; //-20 Degrees
-			m_PfdHorizFreeFont.RenderFontNT( -35, fLine-6, "20" );
-			m_PfdHorizFreeFont.RenderFontNT( 25, fLine-6, "20");
+            fLine = dy + 10.0*PIXEL_PER_PITCH3; //-20 Degrees
+            m_PfdHorizFreeFont.RenderFontNT( -35, fLine-6, "20" );
+            m_PfdHorizFreeFont.RenderFontNT( 25, fLine-6, "20");
 
-			fLine = dy + 20.0*PIXEL_PER_PITCH3;//-30 degrees
-			m_PfdHorizFreeFont.RenderFontNT( -40, fLine-6, "30" );
-			m_PfdHorizFreeFont.RenderFontNT( 30, fLine-6, "30");
+            fLine = dy + 20.0*PIXEL_PER_PITCH3;//-30 degrees
+            m_PfdHorizFreeFont.RenderFontNT( -40, fLine-6, "30" );
+            m_PfdHorizFreeFont.RenderFontNT( 30, fLine-6, "30");
 
-			fLine = dy + 40.0*PIXEL_PER_PITCH3;//-50 degrees
-			m_PfdHorizFreeFont.RenderFontNT( -45, fLine-6, "50" );
-			m_PfdHorizFreeFont.RenderFontNT( 35, fLine-6, "50");
+            fLine = dy + 40.0*PIXEL_PER_PITCH3;//-50 degrees
+            m_PfdHorizFreeFont.RenderFontNT( -45, fLine-6, "50" );
+            m_PfdHorizFreeFont.RenderFontNT( 35, fLine-6, "50");
 
-			fLine = dy + 60.0*PIXEL_PER_PITCH3;//-70 degrees
-			m_PfdHorizFreeFont.RenderFontNT( -50, fLine-6, "70" );
-			m_PfdHorizFreeFont.RenderFontNT( 40, fLine-6, "70");
+            fLine = dy + 60.0*PIXEL_PER_PITCH3;//-70 degrees
+            m_PfdHorizFreeFont.RenderFontNT( -50, fLine-6, "70" );
+            m_PfdHorizFreeFont.RenderFontNT( 40, fLine-6, "70");
 
-			fLine = dy + 80.0*PIXEL_PER_PITCH3;//-90 degrees
-			m_PfdHorizFreeFont.RenderFontNT( -55, fLine-6, "90" );
-			m_PfdHorizFreeFont.RenderFontNT( 45, fLine-6, "90");
-		}
+            fLine = dy + 80.0*PIXEL_PER_PITCH3;//-90 degrees
+            m_PfdHorizFreeFont.RenderFontNT( -55, fLine-6, "90" );
+            m_PfdHorizFreeFont.RenderFontNT( 45, fLine-6, "90");
+        }
 
-		{// -10 to 20
-			glBegin(GL_LINES);
-				glColor3f(1.0f,1.0f,1.0f);
+        {// -10 to 20
+            glBegin(GL_LINES);
+            glColor3f(1.0f,1.0f,1.0f);
 
-				glVertex2d(	-100, 0 );
-				glVertex2d(	100, 0 );
+            glVertex2d(	-100, 0 );
+            glVertex2d(	100, 0 );
 
-				float fLine;
-				for( int iPitch = -10; iPitch <= 20; iPitch+=10)
-				{
-					fLine = -iPitch * PIXEL_PER_PITCH;
+            float fLine;
+            for( int iPitch = -10; iPitch <= 20; iPitch+=10)
+            {
+                fLine = -iPitch * PIXEL_PER_PITCH;
 
-					if(iPitch )
-					{	
-						glVertex2f( -16, fLine );
-						glVertex2f( 16, fLine );					
-					}
+                if(iPitch )
+                {
+                    glVertex2f( -16, fLine );
+                    glVertex2f( 16, fLine );
+                }
 
-					if(iPitch == 20) continue;
-		
-					fLine = -(iPitch+2.5) * PIXEL_PER_PITCH;
-					glVertex2f( -4, fLine );
-					glVertex2f( 4, fLine );
+                if(iPitch == 20) continue;
 
-					fLine = -(iPitch+5) * PIXEL_PER_PITCH;
-					glVertex2f( -8, fLine );
-					glVertex2f( 8, fLine );
+                fLine = -(iPitch+2.5) * PIXEL_PER_PITCH;
+                glVertex2f( -4, fLine );
+                glVertex2f( 4, fLine );
 
-					fLine = -(iPitch+	7.5) * PIXEL_PER_PITCH;
-					glVertex2f( -4, fLine );
-					glVertex2f( 4, fLine );
-				}
-			glEnd();
-		}
+                fLine = -(iPitch+5) * PIXEL_PER_PITCH;
+                glVertex2f( -8, fLine );
+                glVertex2f( 8, fLine );
 
-		{ // 0 to 20 Text
-			glColor3f(1.0f,1.0f,1.0f);
-			std::string str;
-			float fLine = 0;
-			for( int iPitch = 0; iPitch <= 20; iPitch+=10)
-			{
-				if( iPitch == 0 ) continue;
+                fLine = -(iPitch+	7.5) * PIXEL_PER_PITCH;
+                glVertex2f( -4, fLine );
+                glVertex2f( 4, fLine );
+            }
+            glEnd();
+        }
+
+        { // 0 to 20 Text
+            glColor3f(1.0f,1.0f,1.0f);
+            std::string str;
+            float fLine = 0;
+            for( int iPitch = 0; iPitch <= 20; iPitch+=10)
+            {
+                if( iPitch == 0 ) continue;
 
                 fLine = -iPitch * PIXEL_PER_PITCH +10;
-				str = format( "%d", abs(iPitch) );
-	
-				if( iPitch == 20 )
-				{
-					m_PfdHorizFreeFont.RenderFontNT( -35, fLine-6, str );
-					m_PfdHorizFreeFont.RenderFontNT( 25, fLine-6, str);
-				}
-				else
-				{
-					m_PfdHorizFreeFont.RenderFontNT( -30, fLine-6, str );
-					m_PfdHorizFreeFont.RenderFontNT( 20, fLine-6, str);
-				}
-			}
-		}
+                str = format( "%d", abs(iPitch) );
 
-		//20 to 30
-		{
-			float dy = -20 * PIXEL_PER_PITCH;
-			float fLine;
-			glBegin(GL_LINES);
-				glColor3f(1.0f,1.0f,1.0f);
-				fLine = dy - 2.5*PIXEL_PER_PITCH2;
-				glVertex2f( -4, fLine ); //22.5
-				glVertex2f( 4, fLine );
+                if( iPitch == 20 )
+                {
+                    m_PfdHorizFreeFont.RenderFontNT( -35, fLine-6, str );
+                    m_PfdHorizFreeFont.RenderFontNT( 25, fLine-6, str);
+                }
+                else
+                {
+                    m_PfdHorizFreeFont.RenderFontNT( -30, fLine-6, str );
+                    m_PfdHorizFreeFont.RenderFontNT( 20, fLine-6, str);
+                }
+            }
+        }
 
-				fLine = dy - 5.0*PIXEL_PER_PITCH2;
-				glVertex2f( -8, fLine ); //25.0
-				glVertex2f( 8, fLine );
+        //20 to 30
+        {
+            float dy = -20 * PIXEL_PER_PITCH;
+            float fLine;
+            glBegin(GL_LINES);
+            glColor3f(1.0f,1.0f,1.0f);
+            fLine = dy - 2.5*PIXEL_PER_PITCH2;
+            glVertex2f( -4, fLine ); //22.5
+            glVertex2f( 4, fLine );
 
-				fLine = dy - 7.5*PIXEL_PER_PITCH2;
-				glVertex2f( -4, fLine ); //27.5
-				glVertex2f( 4, fLine );
+            fLine = dy - 5.0*PIXEL_PER_PITCH2;
+            glVertex2f( -8, fLine ); //25.0
+            glVertex2f( 8, fLine );
 
-				fLine = dy - 10.0*PIXEL_PER_PITCH2;
-				glVertex2f( -20, fLine ); //30
-				glVertex2f( 20, fLine );
+            fLine = dy - 7.5*PIXEL_PER_PITCH2;
+            glVertex2f( -4, fLine ); //27.5
+            glVertex2f( 4, fLine );
 
-				glColor3f(0.2f,0.9f,0.2f);
+            fLine = dy - 10.0*PIXEL_PER_PITCH2;
+            glVertex2f( -20, fLine ); //30
+            glVertex2f( 20, fLine );
 
-				glVertex2f( -25, fLine-1 ); glVertex2f( -20, fLine-1 );
-				glVertex2f( -25, fLine+1 ); glVertex2f( -20, fLine+1 );
+            glColor3f(0.2f,0.9f,0.2f);
 
-				glVertex2f( 25, fLine-1 ); glVertex2f( 20, fLine-1 );
-				glVertex2f( 25, fLine+1 ); glVertex2f( 20, fLine+1 );
+            glVertex2f( -25, fLine-1 ); glVertex2f( -20, fLine-1 );
+            glVertex2f( -25, fLine+1 ); glVertex2f( -20, fLine+1 );
+
+            glVertex2f( 25, fLine-1 ); glVertex2f( 20, fLine-1 );
+            glVertex2f( 25, fLine+1 ); glVertex2f( 20, fLine+1 );
 
 
-			glEnd();
+            glEnd();
 
             fLine = dy - 10.0*PIXEL_PER_PITCH2+10;
-			glColor3f(1.0f,1.0f,1.0f);
-			m_PfdHorizFreeFont.RenderFontNT( -40, fLine-6, "30" );
-			m_PfdHorizFreeFont.RenderFontNT( 30, fLine-6, "30");
-		}
+            glColor3f(1.0f,1.0f,1.0f);
+            m_PfdHorizFreeFont.RenderFontNT( -40, fLine-6, "30" );
+            m_PfdHorizFreeFont.RenderFontNT( 30, fLine-6, "30");
+        }
 
-		{ // 50 to 90
-			//for( int iPitch = 50; iPitch <= 90; iPitch+=20)
-			float fLine;
+        { // 50 to 90
+            //for( int iPitch = 50; iPitch <= 90; iPitch+=20)
+            float fLine;
             float dy = -20 * PIXEL_PER_PITCH - 30*PIXEL_PER_PITCH2+10;
-			glBegin(GL_LINES);
-				glColor3f(1.0f,1.0f,1.0f);
+            glBegin(GL_LINES);
+            glColor3f(1.0f,1.0f,1.0f);
 
-				fLine = dy;
-				glVertex2f( -30, fLine );
-				glVertex2f( 30, fLine );
+            fLine = dy;
+            glVertex2f( -30, fLine );
+            glVertex2f( 30, fLine );
 
-				fLine = dy - 20.0*PIXEL_PER_PITCH2;
-				glVertex2f( -35, fLine );
-				glVertex2f( 35, fLine );
+            fLine = dy - 20.0*PIXEL_PER_PITCH2;
+            glVertex2f( -35, fLine );
+            glVertex2f( 35, fLine );
 
-				fLine = dy - 40.0*PIXEL_PER_PITCH2;
-				glVertex2f( -40, fLine );
-				glVertex2f( 40, fLine );
-			glEnd();
+            fLine = dy - 40.0*PIXEL_PER_PITCH2;
+            glVertex2f( -40, fLine );
+            glVertex2f( 40, fLine );
+            glEnd();
 
             fLine = dy+10;
-			m_PfdHorizFreeFont.RenderFontNT( -45, fLine-6, "50" );
-			m_PfdHorizFreeFont.RenderFontNT( 35, fLine-6, "50");
+            m_PfdHorizFreeFont.RenderFontNT( -45, fLine-6, "50" );
+            m_PfdHorizFreeFont.RenderFontNT( 35, fLine-6, "50");
 
             fLine = dy - 20.0*PIXEL_PER_PITCH2+10; //-20 Degrees
-			m_PfdHorizFreeFont.RenderFontNT( -50, fLine-6, "70" );
-			m_PfdHorizFreeFont.RenderFontNT( 40, fLine-6, "70");
+            m_PfdHorizFreeFont.RenderFontNT( -50, fLine-6, "70" );
+            m_PfdHorizFreeFont.RenderFontNT( 40, fLine-6, "70");
 
             fLine = dy - 40.0*PIXEL_PER_PITCH2+10;//-30 degrees
-			m_PfdHorizFreeFont.RenderFontNT( -55, fLine-6, "90" );
-			m_PfdHorizFreeFont.RenderFontNT( 45, fLine-6, "90");		}
+            m_PfdHorizFreeFont.RenderFontNT( -55, fLine-6, "90" );
+            m_PfdHorizFreeFont.RenderFontNT( 45, fLine-6, "90");		}
 
-		{//magenta Fly Up warning arrows from deep dive
-			glColor3f(1.0f,0.0f,1.0f);
-			float fLine;
-			float fLine2;
-			float dy = 10 * PIXEL_PER_PITCH;
-			for( int iPitch = -40; iPitch >= -80; iPitch -= 20)
-			{
-				glBegin(GL_LINE_LOOP);
-					float dy2 = dy -(iPitch+10) * PIXEL_PER_PITCH3;
-					fLine = dy2 + 5 * PIXEL_PER_PITCH3;//From
-					fLine2 = dy2 - 2.5 * PIXEL_PER_PITCH3;//To
+        {//magenta Fly Up warning arrows from deep dive
+            glColor3f(1.0f,0.0f,1.0f);
+            float fLine;
+            float fLine2;
+            float dy = 10 * PIXEL_PER_PITCH;
+            for( int iPitch = -40; iPitch >= -80; iPitch -= 20)
+            {
+                glBegin(GL_LINE_LOOP);
+                float dy2 = dy -(iPitch+10) * PIXEL_PER_PITCH3;
+                fLine = dy2 + 5 * PIXEL_PER_PITCH3;//From
+                fLine2 = dy2 - 2.5 * PIXEL_PER_PITCH3;//To
 
-					glVertex2f(-15, fLine );
-					glVertex2f(-10, fLine );
-					glVertex2f( 0, fLine2 );
-					glVertex2f( 10, fLine );
-					glVertex2f( 15, fLine );
-					glVertex2f( 0, fLine2-5 );
-					glVertex2f( -15, fLine );
-				glEnd();
-			}
-		}
+                glVertex2f(-15, fLine );
+                glVertex2f(-10, fLine );
+                glVertex2f( 0, fLine2 );
+                glVertex2f( 10, fLine );
+                glVertex2f( 15, fLine );
+                glVertex2f( 0, fLine2-5 );
+                glVertex2f( -15, fLine );
+                glEnd();
+            }
+        }
 
-		{//magenta Fly Down warning arrows from steep climb
-			glColor3f(1.0f,0.0f,1.0f);
-			float fLine;
-			float fLine2;
-			float dy = -20 * PIXEL_PER_PITCH;
-			for( int iPitch = 40; iPitch <= 80; iPitch += 20)
-			{
-				glBegin(GL_LINE_LOOP);
-					float dy2 = dy -(iPitch-20) * PIXEL_PER_PITCH2;
-					fLine = dy2 - 5 * PIXEL_PER_PITCH2;//From
-					fLine2 = dy2 + 5.0 * PIXEL_PER_PITCH2;//To
+        {//magenta Fly Down warning arrows from steep climb
+            glColor3f(1.0f,0.0f,1.0f);
+            float fLine;
+            float fLine2;
+            float dy = -20 * PIXEL_PER_PITCH;
+            for( int iPitch = 40; iPitch <= 80; iPitch += 20)
+            {
+                glBegin(GL_LINE_LOOP);
+                float dy2 = dy -(iPitch-20) * PIXEL_PER_PITCH2;
+                fLine = dy2 - 5 * PIXEL_PER_PITCH2;//From
+                fLine2 = dy2 + 5.0 * PIXEL_PER_PITCH2;//To
 
-					glVertex2f(-10, fLine );
-					glVertex2f(-15, fLine );
-					glVertex2f( 0, fLine2 );
-					glVertex2f( 15, fLine );
-					glVertex2f( 10, fLine );
-					glVertex2f( 0, fLine2-5 );
-					glVertex2f( -10, fLine );
-				glEnd();
-			}
-		}
+                glVertex2f(-10, fLine );
+                glVertex2f(-15, fLine );
+                glVertex2f( 0, fLine2 );
+                glVertex2f( 15, fLine );
+                glVertex2f( 10, fLine );
+                glVertex2f( 0, fLine2-5 );
+                glVertex2f( -10, fLine );
+                glEnd();
+            }
+        }
 
-		glPopMatrix();
-	}
+        glPopMatrix();
+    }
 
-	{ //Draw surrounding horizon bits
-		glPushMatrix();
-            glRotatef( -_fBank, 0, 0, 1 );
+    { //Draw surrounding horizon bits
+        glPushMatrix();
+        glRotatef( -_fBank, 0, 0, 1 );
 
-			float fy;
-            fy = std::max( _fPitch * PIXEL_PER_PITCH,
-                        PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
-			//fy = min( _CEN_Y-105, fy );
-			//fy = max( -_CEN_Y+100, fy );
-            fy = std::min( 60.0f, fy );
-            fy = std::max( -60.0f, fy );
-			
-			glBegin(GL_QUADS);
-				glColor3ub(30,140,242);//Sky
-				glVertex2f(-100, -215 );
-				glVertex2f(100, -215 );
-				glVertex2f(100, -60 );
-				glVertex2f(-100, -60 );
-				//glVertex2f(100, -_CEN_Y+100 );
-				//glVertex2f(-100, -_CEN_Y+100 );
+        float fy;
+        fy = std::max( _fPitch * PIXEL_PER_PITCH,
+                       PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
+        //fy = min( _CEN_Y-105, fy );
+        //fy = max( -_CEN_Y+100, fy );
+        fy = std::min( 60.0f, fy );
+        fy = std::max( -60.0f, fy );
 
-				glColor3ub(127,90,56);//Ground
-				//glColor3ub(88,61,44);//Ground
-				glVertex2f(-100, fy );
-				glVertex2f(100, fy );
-				glVertex2f(100, 215 );
-				glVertex2f(-100, 215 );
-			glEnd();
+        glBegin(GL_QUADS);
+        glColor3ub(30,140,242);//Sky
+        glVertex2f(-100, -215 );
+        glVertex2f(100, -215 );
+        glVertex2f(100, -60 );
+        glVertex2f(-100, -60 );
+        //glVertex2f(100, -_CEN_Y+100 );
+        //glVertex2f(-100, -_CEN_Y+100 );
 
-			glBegin(GL_LINES);
-				glColor3f(1.0f,1.0f,1.0f) ;
-				//glVertex2f( -100, -_CEN_Y+100  );
-				//glVertex2f( 100, -_CEN_Y+100  );
-				glVertex2f( -100, -60  );
-				glVertex2f( 100, -60  );
+        glColor3ub(127,90,56);//Ground
+        //glColor3ub(88,61,44);//Ground
+        glVertex2f(-100, fy );
+        glVertex2f(100, fy );
+        glVertex2f(100, 215 );
+        glVertex2f(-100, 215 );
+        glEnd();
 
-				glVertex2f( -100, fy  );
-				glVertex2f( 100, fy  );
-			glEnd();
+        glBegin(GL_LINES);
+        glColor3f(1.0f,1.0f,1.0f) ;
+        //glVertex2f( -100, -_CEN_Y+100  );
+        //glVertex2f( 100, -_CEN_Y+100  );
+        glVertex2f( -100, -60  );
+        glVertex2f( 100, -60  );
 
-            if( _fAlt < 3.0f)
-			{
-                float dy = _fPitch * PIXEL_PER_PITCH;
-				//if( dy +4 < _CEN_Y-100 && dy > -_CEN_Y+100 )
-				if( dy +4 < 60 && dy > -60 )
-				{
-					glPushMatrix();
-                        glTranslatef( 0, _fPitch * PIXEL_PER_PITCH, 0 );
-						{//Hdg Lines
-							#define PIXEL_PER_HDG  2.6f
+        glVertex2f( -100, fy  );
+        glVertex2f( 100, fy  );
+        glEnd();
 
-							glColor3f(1.0f,1.0f,1.0f);
-							glBegin(GL_QUADS);
-                                int dH = (int)_fHdg % 10;
-                                int minHdg = (_fHdg - dH - 40);
-								int maxHdg = minHdg + 80;
-								int x;
+        if( _fAlt < 3.0f)
+        {
+            float dy = _fPitch * PIXEL_PER_PITCH;
+            //if( dy +4 < _CEN_Y-100 && dy > -_CEN_Y+100 )
+            if( dy +4 < 60 && dy > -60 )
+            {
+                glPushMatrix();
+                glTranslatef( 0, _fPitch * PIXEL_PER_PITCH, 0 );
+                {//Hdg Lines
+#define PIXEL_PER_HDG  2.6f
 
-								for( int h = minHdg; h <= maxHdg; h+= 10 )
-								{
-                                    x = (h - _fHdg) * PIXEL_PER_HDG;
+                    glColor3f(1.0f,1.0f,1.0f);
+                    glBegin(GL_QUADS);
+                    int dH = (int)_fHdg % 10;
+                    int minHdg = (_fHdg - dH - 40);
+                    int maxHdg = minHdg + 80;
+                    int x;
 
-									glVertex2f( x-1, 0 );
-									glVertex2f( x, 0 );
-									glVertex2f( x, 4 );
-									glVertex2f( x-1, 4 );
-								}
-								
-							glEnd();
-						}
-					glPopMatrix();
-				}
-			}
+                    for( int h = minHdg; h <= maxHdg; h+= 10 )
+                    {
+                        x = (h - _fHdg) * PIXEL_PER_HDG;
 
-			int dy = 210;
-			glBegin(GL_LINE_LOOP);
-				glVertex2f( 0, -dy/2+5 );
-				glVertex2f( 4, -dy/2+11 );
-				glVertex2f( -4, -dy/2+11 );
-			glEnd();
+                        glVertex2f( x-1, 0 );
+                        glVertex2f( x, 0 );
+                        glVertex2f( x, 4 );
+                        glVertex2f( x-1, 4 );
+                    }
 
-			//Rudder Assymtry
-			glBegin(GL_LINE_LOOP);
-				glVertex2f( 4, -dy/2+11 );
-				glVertex2f( 6, -dy/2+14 );
-				glVertex2f( -6, -dy/2+14 );
-				glVertex2f( -4, -dy/2+11 );
-			glEnd();
+                    glEnd();
+                }
+                glPopMatrix();
+            }
+        }
 
-			
-			// When on ground show surrounding square and joystick position and ground tracking if ILS available
-            if( _fAlt < 3.0f )
-			{ 
-				glColor3f(1.0f, 1.0f, 1.0f);
-				glBegin(GL_LINES);
-				glVertex2f( -55, -45 );	glVertex2f( -45, -45 );
-				glVertex2f( -55, -45 ); glVertex2f( -55, -35 );
+        int dy = 210;
+        glBegin(GL_LINE_LOOP);
+        glVertex2f( 0, -dy/2+5 );
+        glVertex2f( 4, -dy/2+11 );
+        glVertex2f( -4, -dy/2+11 );
+        glEnd();
 
-				glVertex2f( -55, 45 );	glVertex2f( -45, 45 );
-				glVertex2f( -55, 45 ); glVertex2f( -55, 35 );
-
-				glVertex2f( 55, -45 );	glVertex2f( 45, -45 );
-				glVertex2f( 55, -45 ); glVertex2f( 55, -35 );
-
-				glVertex2f( 55, 45 );	glVertex2f( 45, 45 );
-				glVertex2f( 55, 45 ); glVertex2f( 55, 35 );
-
-				glEnd();
-			}
-
-			glPopMatrix();
-
-            if( _fAlt < 2500 )
-			{
-				std::string sAlt;
-                if( _fAlt <= -5 )
-				{
-                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
-				}
-                else if( _fAlt <= 5 )
-				{
-                    sAlt = format( "%d", (int)_fAlt );
-				}
-                else if( _fAlt <= 50 )
-				{
-                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
-				}
-				else
-				{
-                    sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 10  );
-				}
-
-                if( _fAlt <= 400 )
-					glColor3f( 0.9f, 0.9f, 0.2f );
-				else
-					glColor3f( 0.2f, 0.9f, 0.2f );
-
-                int yPos = 80;
-
-                if( _fAlt < -99 )
-					m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
-                else if( _fAlt < -9 )
-					m_RadarAltBold.RenderFontNT( -10, yPos, sAlt );
-                else if( _fAlt < 0 )
-					m_RadarAltBold.RenderFontNT( -5, yPos, sAlt );
-                else if( _fAlt < 10 )
-					m_RadarAltBold.RenderFontNT( -2, yPos, sAlt );
-                else if( _fAlt < 100 )
-					m_RadarAltBold.RenderFontNT( -5, yPos, sAlt );
-                else if( _fAlt < 1000 )
-					m_RadarAltBold.RenderFontNT( -9, yPos, sAlt );
-				else
-					m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
-			}
-
-	}
-
-	{ //Aircraft on Horizon
-
-		glBegin(GL_QUADS); 
-			//Outer center left yellow
-			glColor3f(1, 1, 0 );
-			glVertex2f( -63, -3 );
-			glVertex2f( -40, -3 );
-			glVertex2f( -40, 3 );
-			glVertex2f( -63, 3 );
-
-			glVertex2f( -40, -3 );
-			glVertex2f( -35, -3 );
-			glVertex2f( -35, 10 );
-			glVertex2f( -40, 10 );
-
-			//Outer center right yellow
-			glVertex2f( 63, -3 );
-			glVertex2f( 40, -3 );
-			glVertex2f( 40, 3 );
-			glVertex2f( 63, 3 );
-
-			glVertex2f( 40, -3 );
-			glVertex2f( 35, -3 );
-			glVertex2f( 35, 10 );
-			glVertex2f( 40, 10 );
-
-			//Center
-			glVertex2d( -3, -3 );
-			glVertex2d( 3, -3 );
-			glVertex2d( 3, 3 );
-			glVertex2d( -3, 3 );
-		
-			glColor3f(0.0f,0.0f,0.0f); // Center blackLeft
-			glVertex2d( -62, -2 );
-			glVertex2d( -36, -2 );
-			glVertex2d( -36, 2 );
-			glVertex2d( -62, 2 );
-
-			glVertex2d( -39, -2 );
-			glVertex2d( -36, -2 );
-			glVertex2d( -36, 9 );
-			glVertex2d( -39, 9 );
-
-			//Center Right
-			glVertex2d( 36, -2 );
-			glVertex2d( 62, -2 );
-			glVertex2d( 62, 2 );
-			glVertex2d( 36, 2 );
-
-			glVertex2d( 36, -2 );
-			glVertex2d( 39, -2 );
-			glVertex2d( 39, 9 );
-			glVertex2d( 36, 9 );
-
-			//Center
-			glVertex2d( -2, -2 );
-			glVertex2d( 2, -2 );
-			glVertex2d( 2, 2 );
-			glVertex2d( -2, 2 );
-		glEnd();
+        //Rudder Assymtry
+        glBegin(GL_LINE_LOOP);
+        glVertex2f( 4, -dy/2+11 );
+        glVertex2f( 6, -dy/2+14 );
+        glVertex2f( -6, -dy/2+14 );
+        glVertex2f( -4, -dy/2+11 );
+        glEnd();
 
 
-		glStencilFunc( GL_ALWAYS, 2, 0xFFFFFFFF );
-		glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+        // When on ground show surrounding square and joystick position and ground tracking if ILS available
+        if( _fAlt < 3.0f )
+        {
+            glColor3f(1.0f, 1.0f, 1.0f);
+            glBegin(GL_LINES);
+            glVertex2f( -55, -45 );	glVertex2f( -45, -45 );
+            glVertex2f( -55, -45 ); glVertex2f( -55, -35 );
 
-		//Center Yellow marker at 0 degrees around perimter of horizon
-		glColor3f(1.0f,1.0f,0);
-		glBegin(GL_LINE_LOOP);
-			glVertex2f( -4, -84 - 25 );
-			glVertex2f( 4, -84 - 25 );
-			glVertex2f( 0, -74 - 25 );
-		glEnd();
+            glVertex2f( -55, 45 );	glVertex2f( -45, 45 );
+            glVertex2f( -55, 45 ); glVertex2f( -55, 35 );
 
-		glColor3f(1.0f,1.0f, 1.0f);
-		glBegin(GL_LINE_STRIP);
-			for( int iAng = -30; iAng <= 30; iAng ++ )
-			{
-				float fAngRad = iAng/180.0f * M_PI;
-				float x = sin(fAngRad ) * _CX;
-				float y = -cos(fAngRad ) * _CY;
+            glVertex2f( 55, -45 );	glVertex2f( 45, -45 );
+            glVertex2f( 55, -45 ); glVertex2f( 55, -35 );
 
-				glVertex2f(x, y);
-			}
-		glEnd();
+            glVertex2f( 55, 45 );	glVertex2f( 45, 45 );
+            glVertex2f( 55, 45 ); glVertex2f( 55, 35 );
 
-		// Markers around Horizon denoating 10, 20, 30, and 45 degrees.
-		for( int iAng = -30; iAng < 0; iAng +=10 )
-		{
-			int dA = 1;
-			int dH = 5;
+            glEnd();
+        }
 
-			if( iAng == -30 )
-			{
-				dA = 1.5;
-				dH = 10;
-			}
+        glPopMatrix();
 
-			float fAngRad1 = (iAng-dA)/180.0f * M_PI;
-			float fAngRad2 = (iAng+dA)/180.0f * M_PI;
+        if( _fAlt < 2500 )
+        {
+            std::string sAlt;
+            if( _fAlt <= -5 )
+            {
+                sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
+            }
+            else if( _fAlt <= 5 )
+            {
+                sAlt = format( "%d", (int)_fAlt );
+            }
+            else if( _fAlt <= 50 )
+            {
+                sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 5  );
+            }
+            else
+            {
+                sAlt = format( "%d", (int)_fAlt - (int)_fAlt % 10  );
+            }
 
-			float fSinRad1 = sin(fAngRad1 );
-			float fCosRad1 = -cos(fAngRad1 );
+            if( _fAlt <= 400 )
+                glColor3f( 0.9f, 0.9f, 0.2f );
+            else
+                glColor3f( 0.2f, 0.9f, 0.2f );
 
-			float fSinRad2 = sin(fAngRad2 );
-			float fCosRad2 = -cos(fAngRad2 );
+            int yPos = 80;
 
-			float x1 = fSinRad1 * _CX;
-			float y1 = fCosRad1 * _CY;
-			float x2 = fSinRad2 * _CX;
-			float y2 = fCosRad2 * _CY;
+            if( _fAlt < -99 )
+                m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
+            else if( _fAlt < -9 )
+                m_RadarAltBold.RenderFontNT( -10, yPos, sAlt );
+            else if( _fAlt < 0 )
+                m_RadarAltBold.RenderFontNT( -5, yPos, sAlt );
+            else if( _fAlt < 10 )
+                m_RadarAltBold.RenderFontNT( -2, yPos, sAlt );
+            else if( _fAlt < 100 )
+                m_RadarAltBold.RenderFontNT( -5, yPos, sAlt );
+            else if( _fAlt < 1000 )
+                m_RadarAltBold.RenderFontNT( -9, yPos, sAlt );
+            else
+                m_RadarAltBold.RenderFontNT( -13, yPos, sAlt );
+        }
 
-			float x3 = fSinRad2 * (_CX+dH);
-			float y3 = fCosRad2 * (_CY+dH);
-			float x4 = fSinRad1 * (_CX+dH);
-			float y4 = fCosRad1 * (_CY+dH);
+    }
 
-			glBegin(GL_LINE_LOOP);
-				glVertex2f(x1, y1);
-				glVertex2f(x2, y2);
-				glVertex2f(x3, y3);
-				glVertex2f(x4, y4);
-			glEnd();
-			glBegin(GL_LINE_LOOP);
-				glVertex2f(-x1, y1);
-				glVertex2f(-x2, y2);
-				glVertex2f(-x3, y3);
-				glVertex2f(-x4, y4);
-			glEnd();
-		}
+    { //Aircraft on Horizon
 
-		{ // -45 and 45 markers around edge
-			float fsin = sin(M_PI/4);
-			float fcos = -cos(M_PI/4);
+        glBegin(GL_QUADS);
+        //Outer center left yellow
+        glColor3f(1, 1, 0 );
+        glVertex2f( -63, -3 );
+        glVertex2f( -40, -3 );
+        glVertex2f( -40, 3 );
+        glVertex2f( -63, 3 );
 
-			float x1 = fsin * _CX;
-			float y1 = fcos * _CY;
+        glVertex2f( -40, -3 );
+        glVertex2f( -35, -3 );
+        glVertex2f( -35, 10 );
+        glVertex2f( -40, 10 );
 
-			float x2 = fsin * (_CX+10);
-			float y2 = fcos * (_CY+10);
+        //Outer center right yellow
+        glVertex2f( 63, -3 );
+        glVertex2f( 40, -3 );
+        glVertex2f( 40, 3 );
+        glVertex2f( 63, 3 );
 
-			glBegin(GL_LINES);
-				glVertex2f(x1, y1 ); 
-				glVertex2f(x2, y2 );
+        glVertex2f( 40, -3 );
+        glVertex2f( 35, -3 );
+        glVertex2f( 35, 10 );
+        glVertex2f( 40, 10 );
 
-				glVertex2f(-x1, y1 ); 
-				glVertex2f(-x2, y2 );
-			glEnd();
-		}
-	}
+        //Center
+        glVertex2d( -3, -3 );
+        glVertex2d( 3, -3 );
+        glVertex2d( 3, 3 );
+        glVertex2d( -3, 3 );
+
+        glColor3f(0.0f,0.0f,0.0f); // Center blackLeft
+        glVertex2d( -62, -2 );
+        glVertex2d( -36, -2 );
+        glVertex2d( -36, 2 );
+        glVertex2d( -62, 2 );
+
+        glVertex2d( -39, -2 );
+        glVertex2d( -36, -2 );
+        glVertex2d( -36, 9 );
+        glVertex2d( -39, 9 );
+
+        //Center Right
+        glVertex2d( 36, -2 );
+        glVertex2d( 62, -2 );
+        glVertex2d( 62, 2 );
+        glVertex2d( 36, 2 );
+
+        glVertex2d( 36, -2 );
+        glVertex2d( 39, -2 );
+        glVertex2d( 39, 9 );
+        glVertex2d( 36, 9 );
+
+        //Center
+        glVertex2d( -2, -2 );
+        glVertex2d( 2, -2 );
+        glVertex2d( 2, 2 );
+        glVertex2d( -2, 2 );
+        glEnd();
+
+
+        glStencilFunc( GL_ALWAYS, 2, 0xFFFFFFFF );
+        glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+
+        //Center Yellow marker at 0 degrees around perimter of horizon
+        glColor3f(1.0f,1.0f,0);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f( -4, -84 - 25 );
+        glVertex2f( 4, -84 - 25 );
+        glVertex2f( 0, -74 - 25 );
+        glEnd();
+
+        glColor3f(1.0f,1.0f, 1.0f);
+        glBegin(GL_LINE_STRIP);
+        for( int iAng = -30; iAng <= 30; iAng ++ )
+        {
+            float fAngRad = iAng/180.0f * M_PI;
+            float x = sin(fAngRad ) * _CX;
+            float y = -cos(fAngRad ) * _CY;
+
+            glVertex2f(x, y);
+        }
+        glEnd();
+
+        // Markers around Horizon denoating 10, 20, 30, and 45 degrees.
+        for( int iAng = -30; iAng < 0; iAng +=10 )
+        {
+            int dA = 1;
+            int dH = 5;
+
+            if( iAng == -30 )
+            {
+                dA = 1.5;
+                dH = 10;
+            }
+
+            float fAngRad1 = (iAng-dA)/180.0f * M_PI;
+            float fAngRad2 = (iAng+dA)/180.0f * M_PI;
+
+            float fSinRad1 = sin(fAngRad1 );
+            float fCosRad1 = -cos(fAngRad1 );
+
+            float fSinRad2 = sin(fAngRad2 );
+            float fCosRad2 = -cos(fAngRad2 );
+
+            float x1 = fSinRad1 * _CX;
+            float y1 = fCosRad1 * _CY;
+            float x2 = fSinRad2 * _CX;
+            float y2 = fCosRad2 * _CY;
+
+            float x3 = fSinRad2 * (_CX+dH);
+            float y3 = fCosRad2 * (_CY+dH);
+            float x4 = fSinRad1 * (_CX+dH);
+            float y4 = fCosRad1 * (_CY+dH);
+
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(x1, y1);
+            glVertex2f(x2, y2);
+            glVertex2f(x3, y3);
+            glVertex2f(x4, y4);
+            glEnd();
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(-x1, y1);
+            glVertex2f(-x2, y2);
+            glVertex2f(-x3, y3);
+            glVertex2f(-x4, y4);
+            glEnd();
+        }
+
+        { // -45 and 45 markers around edge
+            float fsin = sin(M_PI/4);
+            float fcos = -cos(M_PI/4);
+
+            float x1 = fsin * _CX;
+            float y1 = fcos * _CY;
+
+            float x2 = fsin * (_CX+10);
+            float y2 = fcos * (_CY+10);
+
+            glBegin(GL_LINES);
+            glVertex2f(x1, y1 );
+            glVertex2f(x2, y2 );
+
+            glVertex2f(-x1, y1 );
+            glVertex2f(-x2, y2 );
+            glEnd();
+        }
+    }
 }
 
 void PFDView::_DrawAlt()
 { 
-	// Altitude
+    // Altitude
 
-	glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );	
-	glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
-	{ //Set stencil bits
-		glBegin(GL_QUADS);
-		
-			glColor3f(0.0f, 0.0f, 0.0f );
-			glVertex2f(125, -80);
-			glVertex2f(65, -80);
-			glVertex2f(65, 80);
-			glVertex2f(125, 80);
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    { //Set stencil bits
+        glBegin(GL_QUADS);
 
-		glEnd();
+        glColor3f(0.0f, 0.0f, 0.0f );
+        glVertex2f(125, -80);
+        glVertex2f(65, -80);
+        glVertex2f(65, 80);
+        glVertex2f(125, 80);
 
-		glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
-		glBegin( GL_QUADS );
-			glColor3f(0.0f, 0.0f, 0.0f );
-			glVertex2f(85, -7);
-			glVertex2f(110, -7);
-			glVertex2f(110, 7);
-			glVertex2f(85, 7);
+        glEnd();
 
-			glVertex2f(110, -12);
-			glVertex2f(125, -12);
-			glVertex2f(125, 13);
-			glVertex2f(110, 13);
-		glEnd();
-	}
+        glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
+        glBegin( GL_QUADS );
+        glColor3f(0.0f, 0.0f, 0.0f );
+        glVertex2f(85, -7);
+        glVertex2f(110, -7);
+        glVertex2f(110, 7);
+        glVertex2f(85, 7);
+
+        glVertex2f(110, -12);
+        glVertex2f(125, -12);
+        glVertex2f(125, 13);
+        glVertex2f(110, 13);
+        glEnd();
+    }
 
     _DrawScrollAlt();/****************************/
 
-	glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
-	glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
-	glColor3f(1.0f,1.0f,0.0f);
-	glBegin(GL_LINE_STRIP); //Outline yellow of alt read out
-		glVertex2f(85, -7);
-		glVertex2f(110, -7);
-		glVertex2f(110, -12);
-		glVertex2f(124, -12);
-		glVertex2f(124, 13);
-		glVertex2f(110, 13);
-		glVertex2f(110, 7);
-		glVertex2f(85, 7);
-	glEnd();
+    glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glColor3f(1.0f,1.0f,0.0f);
+    glBegin(GL_LINE_STRIP); //Outline yellow of alt read out
+    glVertex2f(85, -7);
+    glVertex2f(110, -7);
+    glVertex2f(110, -12);
+    glVertex2f(124, -12);
+    glVertex2f(124, 13);
+    glVertex2f(110, 13);
+    glVertex2f(110, 7);
+    glVertex2f(85, 7);
+    glEnd();
 
-	glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
-	glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+    glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
-	//Altitude Bar
-	glColor3f(0.4f,0.4f,0.4f );
-	glBegin(GL_QUADS);
-		glVertex2f( 85, -_CEN_Y + 80 );
-		glVertex2f( 110, -_CEN_Y + 80 );
-		glVertex2f( 110, _CEN_Y - 80 );
-		glVertex2f( 85, _CEN_Y - 80 );
-	glEnd();
+    //Altitude Bar
+    glColor3f(0.4f,0.4f,0.4f );
+    glBegin(GL_QUADS);
+    glVertex2f( 85, -_CEN_Y + 80 );
+    glVertex2f( 110, -_CEN_Y + 80 );
+    glVertex2f( 110, _CEN_Y - 80 );
+    glVertex2f( 85, _CEN_Y - 80 );
+    glEnd();
 
-	//Altitude
-	{
+    //Altitude
+    {
 #define ALT_RANGE 1000
 #define PIXEL_PER_ALT_FEET 0.13333f
         int dA = (int)_fAlt % 500;
         float minAlt = _fAlt - dA - ALT_RANGE;
-		float maxAlt = minAlt + 2 * ALT_RANGE;
-		float ymax = (dA + ALT_RANGE) * PIXEL_PER_ALT_FEET;
-		float y;
+        float maxAlt = minAlt + 2 * ALT_RANGE;
+        float ymax = (dA + ALT_RANGE) * PIXEL_PER_ALT_FEET;
+        float y;
 
-		glColor3f(1.0f, 1.0f,1.0f);
-		glBegin(GL_TRIANGLES);
-		for( int x = (int)minAlt; x <= maxAlt; x+= 500)
-		{
-			y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
-			glVertex2f( 82, y-2 );
-			glVertex2f( 85, y );
-			glVertex2f( 82, y+2 );
-		}
-		glEnd();
+        glColor3f(1.0f, 1.0f,1.0f);
+        glBegin(GL_TRIANGLES);
+        for( int x = (int)minAlt; x <= maxAlt; x+= 500)
+        {
+            y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
+            glVertex2f( 82, y-2 );
+            glVertex2f( 85, y );
+            glVertex2f( 82, y+2 );
+        }
+        glEnd();
 
-		glBegin(GL_QUADS);
-		for( int x = (int)minAlt; x <= maxAlt; x+= 100)
-		{
-			y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
-			glVertex2f( 107, y-1 );
-			glVertex2f( 110, y-1 );
-			glVertex2f( 110, y+1 );
-			glVertex2f( 107, y+1 );
-		}
-		glEnd();
+        glBegin(GL_QUADS);
+        for( int x = (int)minAlt; x <= maxAlt; x+= 100)
+        {
+            y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
+            glVertex2f( 107, y-1 );
+            glVertex2f( 110, y-1 );
+            glVertex2f( 110, y+1 );
+            glVertex2f( 107, y+1 );
+        }
+        glEnd();
 
-		for( int x = (int)minAlt; x <= maxAlt; x+= 500)
-		{
+        for( int x = (int)minAlt; x <= maxAlt; x+= 500)
+        {
             y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax + 10;
-			std::string strAlt;
-			strAlt = format( "%03.0f", abs(x)/100.0 );
-			m_AltLargeFreeFont.RenderFontNT( 87, y-8, strAlt );
-		}
-	}
+            std::string strAlt;
+            strAlt = format( "%03.0f", abs(x)/100.0 );
+            m_AltLargeFreeFont.RenderFontNT( 87, y-8, strAlt );
+        }
+    }
 
-	glColor3f(1.0f, 1.0f,1.0f);
-	glBegin(GL_LINES);	
-		glVertex2f(110, -_CEN_Y + 80 );
-		glVertex2f(110, _CEN_Y - 80 );
-	glEnd();
-	glBegin(GL_QUADS); //Yellow line to right
-		glColor3f(1.0f,1.0f,0.0f);
-		glVertex2f( 67, -1 );
-		glVertex2f( 80, -1 );
-		glVertex2f( 80, 1 );
-		glVertex2f( 67, 1 );
-	glEnd();
+    glColor3f(1.0f, 1.0f,1.0f);
+    glBegin(GL_LINES);
+    glVertex2f(110, -_CEN_Y + 80 );
+    glVertex2f(110, _CEN_Y - 80 );
+    glEnd();
+    glBegin(GL_QUADS); //Yellow line to right
+    glColor3f(1.0f,1.0f,0.0f);
+    glVertex2f( 67, -1 );
+    glVertex2f( 80, -1 );
+    glVertex2f( 80, 1 );
+    glVertex2f( 67, 1 );
+    glEnd();
 
     //return;
 
-	glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
-	glBegin(GL_QUADS);	//White ends of altitude bar
-		glColor3f(1.0f, 1.0f,1.0f);
-		glVertex2f(85, _CEN_Y - 80 );
-		glVertex2f(120, _CEN_Y - 80 );
-		glVertex2f(120, _CEN_Y - 81 );
-		glVertex2f(85, _CEN_Y - 81 );
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    glBegin(GL_QUADS);	//White ends of altitude bar
+    glColor3f(1.0f, 1.0f,1.0f);
+    glVertex2f(85, _CEN_Y - 80 );
+    glVertex2f(120, _CEN_Y - 80 );
+    glVertex2f(120, _CEN_Y - 81 );
+    glVertex2f(85, _CEN_Y - 81 );
     glEnd();
 }
 
 void PFDView::BuildAltTape(char buffer[][32], int line_count, int centralAlt, bool bIncreasing)
 {
-	char altBuf[16];
-	sprintf_s( altBuf, 16, "%5d", abs(centralAlt) );
+    char altBuf[16];
+    sprintf_s( altBuf, 16, "%5d", abs(centralAlt) );
 
-	if( altBuf[3] == ' ' ) altBuf[3]= '0';
+    if( altBuf[3] == ' ' ) altBuf[3]= '0';
 
-	int altJump;
+    int altJump;
 
-	if( bIncreasing )
-		altJump = 20;
-	else
-		altJump = -20;
+    if( bIncreasing )
+        altJump = 20;
+    else
+        altJump = -20;
 
-	strcpy_s(buffer[0], sizeof(buffer[0])/sizeof(char), altBuf );
+    strcpy_s(buffer[0], sizeof(buffer[0])/sizeof(char), altBuf );
 
-	for( int i = 1; i < line_count; i++ )
-	{
-		strcpy_s( buffer[i], sizeof(buffer[i])/sizeof(char), buffer[i-1] );
+    for( int i = 1; i < line_count; i++ )
+    {
+        strcpy_s( buffer[i], sizeof(buffer[i])/sizeof(char), buffer[i-1] );
 
-		bool bAltPositive = (centralAlt + altJump * i) >= 0;
-		
-		for( int j=0; j < 3; j++ )
-		{
-			int digit;
-			
-			if( buffer[i][j] == ' ' )
-				digit = 0;
-			else
-				digit = buffer[i][j] - '0';
-			
-			if(bAltPositive == bIncreasing)
-			{
-				if( digit == 9 ) 
-					digit = 0;
-				else
-					digit++;
-			}
-			else
-			{
-				if( digit == 0 ) 
-					digit = 9;
-				else
-					digit--;
-			}
+        bool bAltPositive = (centralAlt + altJump * i) >= 0;
 
-			buffer[i][j] = digit + '0';
-		}
-		int hundred;
-		
-		if( buffer[i][3] ==' ' )
-			hundred = 0;
-		else
-			hundred = buffer[i][3] - '0';
-		
-		if(bAltPositive == bIncreasing)
-		{
-			if( hundred == 8 )
-				hundred = 0;
-			else
-				hundred += 2;
-		}
-		else
-		{
-			if( hundred == 0 )
-				hundred = 8;
-			else
-				hundred -= 2;
-		}
+        for( int j=0; j < 3; j++ )
+        {
+            int digit;
 
-		buffer[i][3] = hundred + '0';
-	}
+            if( buffer[i][j] == ' ' )
+                digit = 0;
+            else
+                digit = buffer[i][j] - '0';
+
+            if(bAltPositive == bIncreasing)
+            {
+                if( digit == 9 )
+                    digit = 0;
+                else
+                    digit++;
+            }
+            else
+            {
+                if( digit == 0 )
+                    digit = 9;
+                else
+                    digit--;
+            }
+
+            buffer[i][j] = digit + '0';
+        }
+        int hundred;
+
+        if( buffer[i][3] ==' ' )
+            hundred = 0;
+        else
+            hundred = buffer[i][3] - '0';
+
+        if(bAltPositive == bIncreasing)
+        {
+            if( hundred == 8 )
+                hundred = 0;
+            else
+                hundred += 2;
+        }
+        else
+        {
+            if( hundred == 0 )
+                hundred = 8;
+            else
+                hundred -= 2;
+        }
+
+        buffer[i][3] = hundred + '0';
+    }
 }
 
 void PFDView::_DrawScrollAlt()
 {
 #define NUMBER_OF_ALT_LINES	4
-	glStencilFunc( GL_EQUAL, 4, 0xFFFFFFFF );
-	glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+    glStencilFunc( GL_EQUAL, 4, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
     if( _fAlt <= 400 )
-		glColor3f( 0.9f, 0.9f, 0.2f );
-	else
-		glColor3f( 0.2f, 0.9f, 0.2f );
+        glColor3f( 0.9f, 0.9f, 0.2f );
+    else
+        glColor3f( 0.2f, 0.9f, 0.2f );
 
     int dA = (int)_fAlt % 20;
     int centralAlt = (int)_fAlt - dA;
 
-	char rotaryAltBuf1[NUMBER_OF_ALT_LINES][32];
-	char rotaryAltBuf2[NUMBER_OF_ALT_LINES][32];
+    char rotaryAltBuf1[NUMBER_OF_ALT_LINES][32];
+    char rotaryAltBuf2[NUMBER_OF_ALT_LINES][32];
 
-	BuildAltTape( rotaryAltBuf1, NUMBER_OF_ALT_LINES, centralAlt, true);
-	BuildAltTape( rotaryAltBuf2, NUMBER_OF_ALT_LINES, centralAlt, false);
+    BuildAltTape( rotaryAltBuf1, NUMBER_OF_ALT_LINES, centralAlt, true);
+    BuildAltTape( rotaryAltBuf2, NUMBER_OF_ALT_LINES, centralAlt, false);
 
 #define SCROLL_TEXT_PIXEL_PER_ALT 0.5f
 
     float dPixel = dA * SCROLL_TEXT_PIXEL_PER_ALT - 7 + 10;
 
-	m_AltSmallFreeFont.RenderFontNT( 111, dPixel-40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[2][3] );
-	m_AltSmallFreeFont.RenderFontNT( 111, dPixel-20*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[1][3] );
-	m_AltSmallFreeFont.RenderFontNT( 111, dPixel, &rotaryAltBuf1[0][3] );
-	m_AltSmallFreeFont.RenderFontNT( 111, dPixel+20*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf2[1][3] );
-	m_AltSmallFreeFont.RenderFontNT( 111, dPixel+40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf2[2][3] );
+    m_AltSmallFreeFont.RenderFontNT( 111, dPixel-40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[2][3] );
+    m_AltSmallFreeFont.RenderFontNT( 111, dPixel-20*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[1][3] );
+    m_AltSmallFreeFont.RenderFontNT( 111, dPixel, &rotaryAltBuf1[0][3] );
+    m_AltSmallFreeFont.RenderFontNT( 111, dPixel+20*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf2[1][3] );
+    m_AltSmallFreeFont.RenderFontNT( 111, dPixel+40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf2[2][3] );
 
-	float yPosNoChange[3];
+    float yPosNoChange[3];
     yPosNoChange[0] = -10 - 20 * SCROLL_TEXT_PIXEL_PER_ALT - 0.5+2 + 10;
     yPosNoChange[1] = -7 -0.5 +2  + 10;
     yPosNoChange[2] = -5 + 20 * SCROLL_TEXT_PIXEL_PER_ALT - 0.5 + 2 + 10;
 
-	if( centralAlt < 0 )
-	{
-		yPosNoChange[0]++;
-		yPosNoChange[1]++;
-		yPosNoChange[2]++;
-	}
+    if( centralAlt < 0 )
+    {
+        yPosNoChange[0]++;
+        yPosNoChange[1]++;
+        yPosNoChange[2]++;
+    }
 
     bool bDrawn[5] = {false};
 
-	if( rotaryAltBuf1[0][3] == '8' )
-	{
-		float yPos[3];
+    if( rotaryAltBuf1[0][3] == '8' )
+    {
+        float yPos[3];
         yPos[0] = dPixel+SCROLL_TEXT_PIXEL_PER_ALT-10 +10;
         yPos[1] = dPixel+20*SCROLL_TEXT_PIXEL_PER_ALT-9+10;
         yPos[2] = dPixel+40*SCROLL_TEXT_PIXEL_PER_ALT-9+10;
 
-		if( centralAlt < 0 )
-		{
+        if( centralAlt < 0 )
+        {
             yPos[0] -= 4;
             yPos[1] -= 4;
             yPos[2] -= 4;
-		}
+        }
 
-		bDrawn[2] = true;
-		m_AltLargeFreeFont.RenderFontNT( 102, yPos[0], rotaryAltBuf1[1][2] );
-		m_AltLargeFreeFont.RenderFontNT( 102, yPos[1], rotaryAltBuf1[0][2] );
-		m_AltLargeFreeFont.RenderFontNT( 102, yPos[2], rotaryAltBuf2[1][2] );
+        bDrawn[2] = true;
+        m_AltLargeFreeFont.RenderFontNT( 102, yPos[0], rotaryAltBuf1[1][2] );
+        m_AltLargeFreeFont.RenderFontNT( 102, yPos[1], rotaryAltBuf1[0][2] );
+        m_AltLargeFreeFont.RenderFontNT( 102, yPos[2], rotaryAltBuf2[1][2] );
 
-		if( rotaryAltBuf1[0][2] == '9' )
-		{
-			bDrawn[1] = true;
-			m_AltLargeFreeFont.RenderFontNT( 94, yPos[0], rotaryAltBuf1[1][1] );
-			m_AltLargeFreeFont.RenderFontNT( 94, yPos[1], rotaryAltBuf1[0][1] );
-			m_AltLargeFreeFont.RenderFontNT( 94, yPos[2], rotaryAltBuf2[1][1] );
+        if( rotaryAltBuf1[0][2] == '9' )
+        {
+            bDrawn[1] = true;
+            m_AltLargeFreeFont.RenderFontNT( 94, yPos[0], rotaryAltBuf1[1][1] );
+            m_AltLargeFreeFont.RenderFontNT( 94, yPos[1], rotaryAltBuf1[0][1] );
+            m_AltLargeFreeFont.RenderFontNT( 94, yPos[2], rotaryAltBuf2[1][1] );
 
-			if( rotaryAltBuf1[0][1] == '9' )
-			{
-				bDrawn[0] = true;
-				m_AltLargeFreeFont.RenderFontNT( 86, yPos[0], rotaryAltBuf1[1][0] );
-				m_AltLargeFreeFont.RenderFontNT( 86, yPos[1], rotaryAltBuf1[0][0] );
-				m_AltLargeFreeFont.RenderFontNT( 86, yPos[2], rotaryAltBuf2[1][0] );
-			}
-		}
-	}
-	
-	if( !bDrawn[0] )
-	{
-		m_AltLargeFreeFont.RenderFontNT( 86, yPosNoChange[0], rotaryAltBuf1[1][0] );
-		m_AltLargeFreeFont.RenderFontNT( 86, yPosNoChange[1], rotaryAltBuf1[0][0] );
-		m_AltLargeFreeFont.RenderFontNT( 86, yPosNoChange[2], rotaryAltBuf2[1][0] );
-	}
+            if( rotaryAltBuf1[0][1] == '9' )
+            {
+                bDrawn[0] = true;
+                m_AltLargeFreeFont.RenderFontNT( 86, yPos[0], rotaryAltBuf1[1][0] );
+                m_AltLargeFreeFont.RenderFontNT( 86, yPos[1], rotaryAltBuf1[0][0] );
+                m_AltLargeFreeFont.RenderFontNT( 86, yPos[2], rotaryAltBuf2[1][0] );
+            }
+        }
+    }
 
-	if( !bDrawn[1] )
-	{
-		m_AltLargeFreeFont.RenderFontNT( 94, yPosNoChange[0], rotaryAltBuf1[1][1] );
-		m_AltLargeFreeFont.RenderFontNT( 94, yPosNoChange[1], rotaryAltBuf1[0][1] );
-		m_AltLargeFreeFont.RenderFontNT( 94, yPosNoChange[2], rotaryAltBuf2[1][1] );
-	}
+    if( !bDrawn[0] )
+    {
+        m_AltLargeFreeFont.RenderFontNT( 86, yPosNoChange[0], rotaryAltBuf1[1][0] );
+        m_AltLargeFreeFont.RenderFontNT( 86, yPosNoChange[1], rotaryAltBuf1[0][0] );
+        m_AltLargeFreeFont.RenderFontNT( 86, yPosNoChange[2], rotaryAltBuf2[1][0] );
+    }
 
-	if( !bDrawn[2] )
-	{
-		m_AltLargeFreeFont.RenderFontNT( 102, yPosNoChange[0], rotaryAltBuf1[1][2] );
-		m_AltLargeFreeFont.RenderFontNT( 102, yPosNoChange[1], rotaryAltBuf1[0][2] );
-		m_AltLargeFreeFont.RenderFontNT( 102, yPosNoChange[2], rotaryAltBuf2[1][2] );
-	}
+    if( !bDrawn[1] )
+    {
+        m_AltLargeFreeFont.RenderFontNT( 94, yPosNoChange[0], rotaryAltBuf1[1][1] );
+        m_AltLargeFreeFont.RenderFontNT( 94, yPosNoChange[1], rotaryAltBuf1[0][1] );
+        m_AltLargeFreeFont.RenderFontNT( 94, yPosNoChange[2], rotaryAltBuf2[1][1] );
+    }
+
+    if( !bDrawn[2] )
+    {
+        m_AltLargeFreeFont.RenderFontNT( 102, yPosNoChange[0], rotaryAltBuf1[1][2] );
+        m_AltLargeFreeFont.RenderFontNT( 102, yPosNoChange[1], rotaryAltBuf1[0][2] );
+        m_AltLargeFreeFont.RenderFontNT( 102, yPosNoChange[2], rotaryAltBuf2[1][2] );
+    }
 }
 
 void PFDView::_DrawVSI()
 {
-	//VSI
+    //VSI
 
-	glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
-	glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
-	glColor3f(0.4f, 0.4f, 0.4f );
-	glBegin( GL_POLYGON);
-		glVertex2f( 125, -80 );
-		glVertex2f( 140, -50 );
-		glVertex2f( 140, 50 );
-		glVertex2f( 125, 80 );
-	glEnd();
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glColor3f(0.4f, 0.4f, 0.4f );
+    glBegin( GL_POLYGON);
+    glVertex2f( 125, -80 );
+    glVertex2f( 140, -50 );
+    glVertex2f( 140, 50 );
+    glVertex2f( 125, 80 );
+    glEnd();
 
 #define PIXEL_PER_VSI_1000		0.05f
 
-	glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
-	glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP);
 
-	glBegin(GL_QUADS);
+    glBegin(GL_QUADS);
 
-        float fVsi = fabs(_fVSI);
-		float dy = 0.0f;
-		glColor3f( 0.1f, 1.0f, 0.1f );
+    float fVsi = fabs(_fVSI);
+    float dy = 0.0f;
+    glColor3f( 0.1f, 1.0f, 0.1f );
 
-		if( fVsi < 1050 )
-		{
-            dy = -PIXEL_PER_VSI_1000 * _fVSI;
+    if( fVsi < 1050 )
+    {
+        dy = -PIXEL_PER_VSI_1000 * _fVSI;
 
-			glVertex2f( 140, -2 );
-			glVertex2f( 140, 2 );
-			glVertex2f( 125, dy + 2 );
-			glVertex2f( 125, dy - 2 );
-		}
-		else
-		{		 
-			if( fVsi > 6000 )
-			{
-				glColor3f( 0.9f, 0.9f, 0.2f );
-			}
+        glVertex2f( 140, -2 );
+        glVertex2f( 140, 2 );
+        glVertex2f( 125, dy + 2 );
+        glVertex2f( 125, dy - 2 );
+    }
+    else
+    {
+        if( fVsi > 6000 )
+        {
+            glColor3f( 0.9f, 0.9f, 0.2f );
+        }
 
-			dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
+        dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
 
-			glVertex2f( 140, -2 );
-			glVertex2f( 140, 2 );
-			dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
+        glVertex2f( 140, -2 );
+        glVertex2f( 140, 2 );
+        dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
 
-            if( _fVSI > 0 )
-			{
-				dy = -dy;
-			}
-			
-			float resDy = dy;
-			if( resDy > 75 ) resDy = 75;
-			if( resDy < -75 ) resDy = -75;
-			
-			glVertex2f( 125, resDy+2 );
-			glVertex2f( 125, resDy-2 );
-		}
-	glEnd();
-	
-	glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
-	if( fVsi > 100 )
-	{
-		if( dy > 75 ) dy = 75;
-		if( dy < -75) dy = -75;
-		float dy_vsi = 0.0f;
-		float end_x = 142;
-		glBegin(GL_QUADS);
-		glColor3f(0.0f,0.0f,0.0f );
-            if( _fVSI < 0 )
-			{
-				dy += 5;
-				dy_vsi = 12;
-			}
-			else
-			{
-				dy -= 5;
-				dy_vsi = -12;
-			}
-			
-			glVertex2f(125, dy + dy_vsi );
-			glVertex2f(end_x, dy + dy_vsi );
-			glVertex2f(end_x, dy );
-			glVertex2f(125, dy );
-		glEnd();
-		
+        if( _fVSI > 0 )
+        {
+            dy = -dy;
+        }
 
-		if( fVsi > 6000 )
-			glColor3f( 0.9f, 0.9f, 0.2f );
-		else
-			glColor3f(0.1f,0.9f,0.1f);
+        float resDy = dy;
+        if( resDy > 75 ) resDy = 75;
+        if( resDy < -75 ) resDy = -75;
 
-		std::string strVSI;
-		char buf[32];
-		sprintf(buf, "%2.0f", fVsi / 100.0f);
-		//strVSI.Format( "%2.0f", fVsi /100.0f );
-		strVSI = buf;
+        glVertex2f( 125, resDy+2 );
+        glVertex2f( 125, resDy-2 );
+    }
+    glEnd();
+
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    if( fVsi > 100 )
+    {
+        if( dy > 75 ) dy = 75;
+        if( dy < -75) dy = -75;
+        float dy_vsi = 0.0f;
+        float end_x = 142;
+        glBegin(GL_QUADS);
+        glColor3f(0.0f,0.0f,0.0f );
+        if( _fVSI < 0 )
+        {
+            dy += 5;
+            dy_vsi = 12;
+        }
+        else
+        {
+            dy -= 5;
+            dy_vsi = -12;
+        }
+
+        glVertex2f(125, dy + dy_vsi );
+        glVertex2f(end_x, dy + dy_vsi );
+        glVertex2f(end_x, dy );
+        glVertex2f(125, dy );
+        glEnd();
+
+
+        if( fVsi > 6000 )
+            glColor3f( 0.9f, 0.9f, 0.2f );
+        else
+            glColor3f(0.1f,0.9f,0.1f);
+
+        std::string strVSI;
+        char buf[32];
+        sprintf(buf, "%2.0f", fVsi / 100.0f);
+        //strVSI.Format( "%2.0f", fVsi /100.0f );
+        strVSI = buf;
         if( _fVSI < 0 )
             m_AltSmallFreeFont.RenderFontNT( 130, dy-1+10, strVSI );
-		else
+        else
             m_AltSmallFreeFont.RenderFontNT( 130, dy + dy_vsi-1+10, strVSI );
-	}
+    }
 
 
-	{// VSI markings
-		glColor3f(1.0f,1.0f,1.0f) ;
+    {// VSI markings
+        glColor3f(1.0f,1.0f,1.0f) ;
 
-		glBegin(GL_LINES); 
-			glVertex2f( 125, -25 );
-			glVertex2f( 126, -25 );
+        glBegin(GL_LINES);
+        glVertex2f( 125, -25 );
+        glVertex2f( 126, -25 );
 
-			glVertex2f( 125, -50 );
-			glVertex2f( 127, -50 );
+        glVertex2f( 125, -50 );
+        glVertex2f( 127, -50 );
 
-			glVertex2f( 125, -63 );
-			glVertex2f( 126, -63 );
+        glVertex2f( 125, -63 );
+        glVertex2f( 126, -63 );
 
-			glVertex2f( 125, -75 );
-			glVertex2f( 127, -75 );
-//////////////////
-			glVertex2f( 125, 25 );
-			glVertex2f( 126, 25 );
+        glVertex2f( 125, -75 );
+        glVertex2f( 127, -75 );
+        //////////////////
+        glVertex2f( 125, 25 );
+        glVertex2f( 126, 25 );
 
-			glVertex2f( 125, 50 );
-			glVertex2f( 127, 50 );
+        glVertex2f( 125, 50 );
+        glVertex2f( 127, 50 );
 
-			glVertex2f( 125, 63 );
-			glVertex2f( 126, 63 );
+        glVertex2f( 125, 63 );
+        glVertex2f( 126, 63 );
 
-			glVertex2f( 125, 75 );
-			glVertex2f( 127, 75 );
-		glEnd();
+        glVertex2f( 125, 75 );
+        glVertex2f( 127, 75 );
+        glEnd();
 
-		glBegin(GL_QUADS);
-			glVertex2f( 125, -1 );
-			glVertex2f( 128, -1 );
-			glVertex2f( 128, 1 );
-			glVertex2f( 125, 1 );
-		glEnd();
-	}
+        glBegin(GL_QUADS);
+        glVertex2f( 125, -1 );
+        glVertex2f( 128, -1 );
+        glVertex2f( 128, 1 );
+        glVertex2f( 125, 1 );
+        glEnd();
+    }
 }
 
 void PFDView::_DrawSpd()
 {
-	 // AirSpeed
-	glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
-	glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    // AirSpeed
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
 
-	{ //Set stencil bits
-		glBegin(GL_QUADS);
-			glColor3f(0.0f, 0.0f, 0.0f );
-			glVertex2f(-110, -80);
-			glVertex2f(-65, -80);
-			glVertex2f(-65, 80);
-			glVertex2f(-110, 80);
-		glEnd();
-	}
+    { //Set stencil bits
+        glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 0.0f );
+        glVertex2f(-110, -80);
+        glVertex2f(-65, -80);
+        glVertex2f(-65, 80);
+        glVertex2f(-110, 80);
+        glEnd();
+    }
 
-	glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
-	glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+    glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
-	glBegin(GL_QUADS);
-		glColor3f(0.3f, 0.3f, 0.3f );
-		glVertex2f( -110, -80 );
-		glVertex2f( -80, -80 );
-		glVertex2f( -80, 80 );
-		glVertex2f( -110, 80 );
+    glBegin(GL_QUADS);
+    glColor3f(0.3f, 0.3f, 0.3f );
+    glVertex2f( -110, -80 );
+    glVertex2f( -80, -80 );
+    glVertex2f( -80, 80 );
+    glVertex2f( -110, 80 );
 
-		glColor3f(1.0f,1.0f,0.0f );
-		glVertex2f( -70, -3 );
-		glVertex2f( -70, 3 );
-		glVertex2f( -75, 1 );
-		glVertex2f( -75, -1 );
-	
-		glVertex2f(-75,-1);
-		glVertex2f(-75,1);
-		glVertex2f(-85,1);
-		glVertex2f(-85,-1);
+    glColor3f(1.0f,1.0f,0.0f );
+    glVertex2f( -70, -3 );
+    glVertex2f( -70, 3 );
+    glVertex2f( -75, 1 );
+    glVertex2f( -75, -1 );
+
+    glVertex2f(-75,-1);
+    glVertex2f(-75,1);
+    glVertex2f(-85,1);
+    glVertex2f(-85,-1);
 
 
-		glColor3f(1.0f,1.0f,1.0f );
-		glVertex2f( -110, -80 );
-		glVertex2f( -72, -80 );
-		glVertex2f( -72, -79 );
-		glVertex2f( -110, -79 );
-	glEnd();
+    glColor3f(1.0f,1.0f,1.0f );
+    glVertex2f( -110, -80 );
+    glVertex2f( -72, -80 );
+    glVertex2f( -72, -79 );
+    glVertex2f( -110, -79 );
+    glEnd();
 
-	glBegin(GL_LINES);
-		glColor3f(1.0f,1.0f,0.0f );
-		glVertex2f( -85,0);
-		glVertex2f( -110,0);
-	glEnd();
+    glBegin(GL_LINES);
+    glColor3f(1.0f,1.0f,0.0f );
+    glVertex2f( -85,0);
+    glVertex2f( -110,0);
+    glEnd();
 
     float fAirSpd = _fAirSpd;
     if( _fAirSpd < 30 ) fAirSpd = 30;
 
 #define PIXEL_PER_KNOT (17/9.0)
 
-float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
+    float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
 
-	glBegin(GL_QUADS);
-	glColor3f(1.0f,1.0f,1.0f );
-		for( int spdTick = 30; spdTick < 600; spdTick +=10 )
-		{
-			float tick_y = -(spdTick-20) * PIXEL_PER_KNOT+tick_start;
-			glVertex2f(-85, tick_y );
-			glVertex2f(-80, tick_y  );
-			glVertex2f(-80, tick_y+1 );
-			glVertex2f(-85, tick_y+1  );
-		}
+    glBegin(GL_QUADS);
+    glColor3f(1.0f,1.0f,1.0f );
+    for( int spdTick = 30; spdTick < 600; spdTick +=10 )
+    {
+        float tick_y = -(spdTick-20) * PIXEL_PER_KNOT+tick_start;
+        glVertex2f(-85, tick_y );
+        glVertex2f(-80, tick_y  );
+        glVertex2f(-80, tick_y+1 );
+        glVertex2f(-85, tick_y+1  );
+    }
 
-		if( tick_start > 80 )
-		{
-			glVertex2f( -110, 80 );
-			glVertex2f( -72, 80 );
-			glVertex2f( -72, 79 );
-			glVertex2f( -110, 79 );
-		}
-	glEnd();
+    if( tick_start > 80 )
+    {
+        glVertex2f( -110, 80 );
+        glVertex2f( -72, 80 );
+        glVertex2f( -72, 79 );
+        glVertex2f( -110, 79 );
+    }
+    glEnd();
 
-	glBegin(GL_LINES);
-		glVertex2f( -80, tick_start );
-		glVertex2f( -80, -PIXEL_PER_KNOT*600 );
-	glEnd();
+    glBegin(GL_LINES);
+    glVertex2f( -80, tick_start );
+    glVertex2f( -80, -PIXEL_PER_KNOT*600 );
+    glEnd();
 
-	//CString strSpd;
-	std::string strSpd;
-	for( int spdTick = 40; spdTick < 600; spdTick +=20 )
-	{
-		//strSpd.Format( "%03d", spdTick );
-		strSpd = format("%03d", spdTick);
+    //CString strSpd;
+    std::string strSpd;
+    for( int spdTick = 40; spdTick < 600; spdTick +=20 )
+    {
+        //strSpd.Format( "%03d", spdTick );
+        strSpd = format("%03d", spdTick);
         m_PfdAirSpdFreeFont.RenderFontNT( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+2, strSpd );
-		//m_AltLargeFreeFont.RenderFontNT( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+12, strSpd );
-		//m_Tahoma8OGLFont.RenderFontNoTransform(-108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+12, strSpd.GetBuffer() );
-	}
+        //m_AltLargeFreeFont.RenderFontNT( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+12, strSpd );
+        //m_Tahoma8OGLFont.RenderFontNoTransform(-108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+12, strSpd.GetBuffer() );
+    }
 }
 
 void PFDView::_DrawHdg()
 {
-	// Hdg
+    // Hdg
 #define PIXEL_PER_HDG  2.6f
-	glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );	
-	glStencilFunc( GL_ALWAYS, 1, 0xFFFFFFFF );
-		
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glStencilFunc( GL_ALWAYS, 1, 0xFFFFFFFF );
 
-	{ //Set stencil bits
-		glBegin(GL_QUADS);
 
-			glColor3f(1.0f,1.0f,0.0f);
-			glVertex2f( -1, 100 );
-			glVertex2f( 1, 100 );
-			glVertex2f( 1, 110 );
-			glVertex2f( -1, 110 );
+    { //Set stencil bits
+        glBegin(GL_QUADS);
 
-			glColor3f(0.4f, 0.4f, 0.4f );
-			glVertex2f( -65, 110);
-			glVertex2f(65, 110);
-			glVertex2f(65, 135);
-			glVertex2f(-65, 135);
+        glColor3f(1.0f,1.0f,0.0f);
+        glVertex2f( -1, 100 );
+        glVertex2f( 1, 100 );
+        glVertex2f( 1, 110 );
+        glVertex2f( -1, 110 );
 
-		glEnd();
-	}
+        glColor3f(0.4f, 0.4f, 0.4f );
+        glVertex2f( -65, 110);
+        glVertex2f(65, 110);
+        glVertex2f(65, 135);
+        glVertex2f(-65, 135);
 
-	glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );	
-	glStencilFunc( GL_EQUAL, 1, 0xFFFFFFFF );
-	
-	glBegin(GL_QUADS);
-		glColor3f(1.0f,1.0f,1.0f);
-		glVertex2f( -64, 110);
-		glVertex2f(65, 110);
-		glVertex2f(65, 111);
-		glVertex2f(-64, 111);
+        glEnd();
+    }
 
-		glVertex2f( -64, 110);
-		glVertex2f(-65, 110);
-		glVertex2f(-65, 135);
-		glVertex2f(-64, 135);
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+    glStencilFunc( GL_EQUAL, 1, 0xFFFFFFFF );
 
-		glVertex2f( 64, 110);
-		glVertex2f( 65, 110);
-		glVertex2f( 65, 135);
-		glVertex2f( 64, 135);
+    glBegin(GL_QUADS);
+    glColor3f(1.0f,1.0f,1.0f);
+    glVertex2f( -64, 110);
+    glVertex2f(65, 110);
+    glVertex2f(65, 111);
+    glVertex2f(-64, 111);
 
-        int dH = ((int)_fHdg) % 10;
-        int minHdg = (int(_fHdg) - dH - 40);
-		int maxHdg = minHdg + 80;
-		int x;
+    glVertex2f( -64, 110);
+    glVertex2f(-65, 110);
+    glVertex2f(-65, 135);
+    glVertex2f(-64, 135);
 
-		{
-			for( int h = minHdg; h <= maxHdg; h+= 5 )
-			{
-                x = (h - _fHdg) * PIXEL_PER_HDG;
+    glVertex2f( 64, 110);
+    glVertex2f( 65, 110);
+    glVertex2f( 65, 135);
+    glVertex2f( 64, 135);
 
-				if( h % 10 == 0 )
-				{
-					glVertex2f( x-1, 110 );
-					glVertex2f( x, 110 );
-					glVertex2f( x, 117 );
-					glVertex2f( x-1, 117 );
-				
-				}
-				else if( h % 5 == 0 )
-				{
-					glVertex2f( x-1, 110 );
-					glVertex2f( x, 110 );
-					glVertex2f( x, 114 );
-					glVertex2f( x-1, 114 );
-				}
-			}
-		}
-	glEnd();
-	
-	std::string strHdg;
-	for( int h = minHdg; h <= maxHdg; h+= 10 )
-	{
+    int dH = ((int)_fHdg) % 10;
+    int minHdg = (int(_fHdg) - dH - 40);
+    int maxHdg = minHdg + 80;
+    int x;
+
+    {
+        for( int h = minHdg; h <= maxHdg; h+= 5 )
+        {
+            x = (h - _fHdg) * PIXEL_PER_HDG;
+
+            if( h % 10 == 0 )
+            {
+                glVertex2f( x-1, 110 );
+                glVertex2f( x, 110 );
+                glVertex2f( x, 117 );
+                glVertex2f( x-1, 117 );
+
+            }
+            else if( h % 5 == 0 )
+            {
+                glVertex2f( x-1, 110 );
+                glVertex2f( x, 110 );
+                glVertex2f( x, 114 );
+                glVertex2f( x-1, 114 );
+            }
+        }
+    }
+    glEnd();
+
+    std::string strHdg;
+    for( int h = minHdg; h <= maxHdg; h+= 10 )
+    {
         x = (h - _fHdg) * PIXEL_PER_HDG;
-		if( h <= 0 )
-		{
-			strHdg = format( "%02.0f", (h+360)/10.0 );
-		}
-		else if( h >360 )
-		{
-			strHdg = format( "%02.0f", (h-360)/10.0 );
-		}
-		else
-		{
-			strHdg = format( "%02.0f", h/10.0 );
-		}
+        if( h <= 0 )
+        {
+            strHdg = format( "%02.0f", (h+360)/10.0 );
+        }
+        else if( h >360 )
+        {
+            strHdg = format( "%02.0f", (h-360)/10.0 );
+        }
+        else
+        {
+            strHdg = format( "%02.0f", h/10.0 );
+        }
 
-		if( h % 30 == 0 )
-		{
+        if( h % 30 == 0 )
+        {
             m_AltLargeFreeFont.RenderFontNT( x-6, 130, strHdg );
-		}
-		else
-		{			
+        }
+        else
+        {
             m_AltSmallFreeFont.RenderFontNT( x-5, 130, strHdg );
-		}
-	}
+        }
+    }
 
 }
 
 void PFDView::_DrawFlightModes()
 {
-	//glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );	
-	//glStencilFunc( GL_GREATER, 1, 0xFFFFFFFF );
-	//Flight Modes
+    //glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+    //glStencilFunc( GL_GREATER, 1, 0xFFFFFFFF );
+    //Flight Modes
 
-	float dy = 140;
-	glBegin(GL_QUADS);
-	glColor3f(1.0f,1.0f,1.0f );
-		glVertex2f( -61, -dy+20 );
-		glVertex2f( -60, -dy+20 );
-		glVertex2f( -60, -dy+60 );
-		glVertex2f( -61, -dy+60 );
+    float dy = 140;
+    glBegin(GL_QUADS);
+    glColor3f(1.0f,1.0f,1.0f );
+    glVertex2f( -61, -dy+20 );
+    glVertex2f( -60, -dy+20 );
+    glVertex2f( -60, -dy+60 );
+    glVertex2f( -61, -dy+60 );
 
-		glVertex2f( -6, -dy+20 );
-		glVertex2f( -5, -dy+20 );
-		glVertex2f( -5, -dy+60 );
-		glVertex2f( -6, -dy+60 );
+    glVertex2f( -6, -dy+20 );
+    glVertex2f( -5, -dy+20 );
+    glVertex2f( -5, -dy+60 );
+    glVertex2f( -6, -dy+60 );
 
-		glVertex2f( 49, -dy+20 );
-		glVertex2f( 50, -dy+20 );
-		glVertex2f( 50, -dy+60 );
-		glVertex2f( 49, -dy+60 );
+    glVertex2f( 49, -dy+20 );
+    glVertex2f( 50, -dy+20 );
+    glVertex2f( 50, -dy+60 );
+    glVertex2f( 49, -dy+60 );
 
-        glVertex2f( 104, -dy+20 );
-        glVertex2f( 105, -dy+20 );
-        glVertex2f( 105, -dy+60 );
-        glVertex2f( 104, -dy+60 );
-        glEnd();
+    glVertex2f( 104, -dy+20 );
+    glVertex2f( 105, -dy+20 );
+    glVertex2f( 105, -dy+60 );
+    glVertex2f( 104, -dy+60 );
+    glEnd();
 }
 
 void PFDView::DrawHorizon(OpenGLPainter *painter)
@@ -1461,10 +1462,10 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
     }
 
-//Stencil Horizon
+    //Stencil Horizon
     painter->beginPrimitive();
-        painter->setPrimitiveColor({0,0,0,1});
-        painter->fillTriangleFan(PRIMITIVE2D(_horizData));
+    painter->setPrimitiveColor({0,0,0,1});
+    painter->fillTriangleFan(PRIMITIVE2D(_horizData));
     painter->endPrimitive();
 
     glStencilFunc( GL_EQUAL, 1, 0xFFFFFFFF );
@@ -1513,16 +1514,16 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
     }
 
     painter->beginPrimitive();
-        painter->setPrimitiveColor({0.12f, 0.55f, 0.95f, 1.0f});
-        painter->fillQuads(PRIMITIVE2D(_horizDataSky));
+    painter->setPrimitiveColor({0.12f, 0.55f, 0.95f, 1.0f});
+    painter->fillQuads(PRIMITIVE2D(_horizDataSky));
 
-        painter->setPrimitiveColor({0.5f, 0.35f, 0.22f, 1.0f});
-        painter->fillQuads(PRIMITIVE2D(_horizDataGround));
+    painter->setPrimitiveColor({0.5f, 0.35f, 0.22f, 1.0f});
+    painter->fillQuads(PRIMITIVE2D(_horizDataGround));
 
     painter->endPrimitive();
 
     {//Hdg Lines
-        #define PIXEL_PER_HDG  2.6f
+#define PIXEL_PER_HDG  2.6f
 
         if( _horizHdgLines.vertex2Size()==0)
         {
@@ -1543,8 +1544,8 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,1,1,1});
-            painter->fillQuads(PRIMITIVE2D(_horizHdgLines));
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->fillQuads(PRIMITIVE2D(_horizHdgLines));
         painter->endPrimitive();
     }
 
@@ -1553,84 +1554,84 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
         float dy = 10 * PIXEL_PER_PITCH+10;
         float fLine;
-       if( _horizNeg30ToNeg10.vertex2Size() == 0)
-       {
+        if( _horizNeg30ToNeg10.vertex2Size() == 0)
+        {
             glBegin(GL_LINES);
-                //glColor3f(1.0f,1.0f,1.0f);
-                fLine = dy + 5.0*PIXEL_PER_PITCH3;
-                _horizNeg30ToNeg10.addVertex( -8, fLine );
-                _horizNeg30ToNeg10.addVertex( 8, fLine );
+            //glColor3f(1.0f,1.0f,1.0f);
+            fLine = dy + 5.0*PIXEL_PER_PITCH3;
+            _horizNeg30ToNeg10.addVertex( -8, fLine );
+            _horizNeg30ToNeg10.addVertex( 8, fLine );
 
-                //glColor3f(0.2f,0.9f,0.2f);
-                _horizNeg30ToNeg10.addVertex( -8, fLine-1 );
-                _horizNeg30ToNeg10.addVertex( -14, fLine-1 );
-                _horizNeg30ToNeg10.addVertex( -8, fLine+1 );
-                _horizNeg30ToNeg10.addVertex( -14, fLine+1 );
+            //glColor3f(0.2f,0.9f,0.2f);
+            _horizNeg30ToNeg10.addVertex( -8, fLine-1 );
+            _horizNeg30ToNeg10.addVertex( -14, fLine-1 );
+            _horizNeg30ToNeg10.addVertex( -8, fLine+1 );
+            _horizNeg30ToNeg10.addVertex( -14, fLine+1 );
 
-                _horizNeg30ToNeg10.addVertex( 8, fLine-1 );
-                _horizNeg30ToNeg10.addVertex( 14, fLine-1 );
-                _horizNeg30ToNeg10.addVertex( 8, fLine+1 );
-                _horizNeg30ToNeg10.addVertex( 14, fLine+1 );
+            _horizNeg30ToNeg10.addVertex( 8, fLine-1 );
+            _horizNeg30ToNeg10.addVertex( 14, fLine-1 );
+            _horizNeg30ToNeg10.addVertex( 8, fLine+1 );
+            _horizNeg30ToNeg10.addVertex( 14, fLine+1 );
 
-                //glColor3f(1.0f,1.0f,1.0f);
-                fLine = dy + 10.0*PIXEL_PER_PITCH3;
-                _horizNeg30ToNeg10.addVertex( -20, fLine );
-                _horizNeg30ToNeg10.addVertex( 20, fLine );
+            //glColor3f(1.0f,1.0f,1.0f);
+            fLine = dy + 10.0*PIXEL_PER_PITCH3;
+            _horizNeg30ToNeg10.addVertex( -20, fLine );
+            _horizNeg30ToNeg10.addVertex( 20, fLine );
 
-                fLine = dy + 20.0*PIXEL_PER_PITCH3;
-                _horizNeg30ToNeg10.addVertex( -25, fLine );
-                _horizNeg30ToNeg10.addVertex( 25, fLine );
+            fLine = dy + 20.0*PIXEL_PER_PITCH3;
+            _horizNeg30ToNeg10.addVertex( -25, fLine );
+            _horizNeg30ToNeg10.addVertex( 25, fLine );
 
-                fLine = dy + 40.0*PIXEL_PER_PITCH3;
-                _horizNeg30ToNeg10.addVertex( -30, fLine );
-                _horizNeg30ToNeg10.addVertex( 30, fLine );
+            fLine = dy + 40.0*PIXEL_PER_PITCH3;
+            _horizNeg30ToNeg10.addVertex( -30, fLine );
+            _horizNeg30ToNeg10.addVertex( 30, fLine );
 
-                fLine = dy + 60.0*PIXEL_PER_PITCH3;
-                _horizNeg30ToNeg10.addVertex( -35, fLine );
-                _horizNeg30ToNeg10.addVertex( 35, fLine );
+            fLine = dy + 60.0*PIXEL_PER_PITCH3;
+            _horizNeg30ToNeg10.addVertex( -35, fLine );
+            _horizNeg30ToNeg10.addVertex( 35, fLine );
 
-                fLine = dy + 80.0*PIXEL_PER_PITCH3;
-                _horizNeg30ToNeg10.addVertex( -40, fLine );
-                _horizNeg30ToNeg10.addVertex( 40, fLine );
+            fLine = dy + 80.0*PIXEL_PER_PITCH3;
+            _horizNeg30ToNeg10.addVertex( -40, fLine );
+            _horizNeg30ToNeg10.addVertex( 40, fLine );
             glEnd();
-       }
+        }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,1,1,1});
-            painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(0), 2);
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(0), 2);
 
-            painter->setPrimitiveColor({0.2f,0.9f,0.2f,1.0f});
-            painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(2), 8);
+        painter->setPrimitiveColor({0.2f,0.9f,0.2f,1.0f});
+        painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(2), 8);
 
-            painter->setPrimitiveColor({1,1,1,1});
-            painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(8), 10);
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(8), 10);
 
         painter->endPrimitive();
 
         fLine = dy;
         painter->beginFont(&_PfdHorizFreeFont);
-            painter->renderText(-30, fLine-6, "10");
-            painter->renderText(20, fLine-6, "10");
+        painter->renderText(-30, fLine-6, "10");
+        painter->renderText(20, fLine-6, "10");
 
-            fLine = dy + 10.0*PIXEL_PER_PITCH3; //-20 Degrees
-            painter->renderText( -35, fLine-6, "20" );
-            painter->renderText( 25, fLine-6, "20");
+        fLine = dy + 10.0*PIXEL_PER_PITCH3; //-20 Degrees
+        painter->renderText( -35, fLine-6, "20" );
+        painter->renderText( 25, fLine-6, "20");
 
-            fLine = dy + 20.0*PIXEL_PER_PITCH3;//-30 degrees
-            painter->renderText( -40, fLine-6, "30" );
-            painter->renderText( 30, fLine-6, "30");
+        fLine = dy + 20.0*PIXEL_PER_PITCH3;//-30 degrees
+        painter->renderText( -40, fLine-6, "30" );
+        painter->renderText( 30, fLine-6, "30");
 
-            fLine = dy + 40.0*PIXEL_PER_PITCH3;//-50 degrees
-            painter->renderText( -45, fLine-6, "50" );
-            painter->renderText( 35, fLine-6, "50");
+        fLine = dy + 40.0*PIXEL_PER_PITCH3;//-50 degrees
+        painter->renderText( -45, fLine-6, "50" );
+        painter->renderText( 35, fLine-6, "50");
 
-            fLine = dy + 60.0*PIXEL_PER_PITCH3;//-70 degrees
-            painter->renderText( -50, fLine-6, "70" );
-            painter->renderText( 40, fLine-6, "70");
+        fLine = dy + 60.0*PIXEL_PER_PITCH3;//-70 degrees
+        painter->renderText( -50, fLine-6, "70" );
+        painter->renderText( 40, fLine-6, "70");
 
-            fLine = dy + 80.0*PIXEL_PER_PITCH3;//-90 degrees
-            painter->renderText( -55, fLine-6, "90" );
-            painter->renderText( 45, fLine-6, "90");
+        fLine = dy + 80.0*PIXEL_PER_PITCH3;//-90 degrees
+        painter->renderText( -55, fLine-6, "90" );
+        painter->renderText( 45, fLine-6, "90");
         painter->endFont();
     }
 
@@ -1669,8 +1670,8 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,1,1,1});
-            painter->drawLines(PRIMITIVE2D(_horizNeg10ToPos20));
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->drawLines(PRIMITIVE2D(_horizNeg10ToPos20));
         painter->endPrimitive();
     }
 
@@ -1734,17 +1735,17 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,1,1,1});
-            painter->drawLines(_horizPos20ToPos30.vertex2Ptr(0), 8);
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->drawLines(_horizPos20ToPos30.vertex2Ptr(0), 8);
 
-            painter->setPrimitiveColor({0.2f,0.9f,0.2f,1});
-            painter->drawLines(_horizPos20ToPos30.vertex2Ptr(8), 8);
+        painter->setPrimitiveColor({0.2f,0.9f,0.2f,1});
+        painter->drawLines(_horizPos20ToPos30.vertex2Ptr(8), 8);
         painter->endPrimitive();
 
         painter->beginFont(&_PfdHorizFreeFont);
-            fLine = dy - 10.0*PIXEL_PER_PITCH2+10;
-            painter->renderText( -40, fLine-6, "30" );
-            painter->renderText( 30, fLine-6, "30");
+        fLine = dy - 10.0*PIXEL_PER_PITCH2+10;
+        painter->renderText( -40, fLine-6, "30" );
+        painter->renderText( 30, fLine-6, "30");
         painter->endFont();
     }
 
@@ -1769,22 +1770,22 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,1,1,1});
-            painter->drawLines(PRIMITIVE2D(_horizPos50ToPos90));
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->drawLines(PRIMITIVE2D(_horizPos50ToPos90));
         painter->endPrimitive();
 
         fLine = dy+10;
         painter->beginFont(&_PfdHorizFreeFont);
-            painter->renderText( -45, fLine-6, "50" );
-            painter->renderText( 35, fLine-6, "50");
+        painter->renderText( -45, fLine-6, "50" );
+        painter->renderText( 35, fLine-6, "50");
 
         fLine = dy - 20.0*PIXEL_PER_PITCH2+10; //-20 Degrees
-            painter->renderText( -50, fLine-6, "70" );
-            painter->renderText( 40, fLine-6, "70");
+        painter->renderText( -50, fLine-6, "70" );
+        painter->renderText( 40, fLine-6, "70");
 
         fLine = dy - 40.0*PIXEL_PER_PITCH2+10;//-30 degrees
-            painter->renderText( -55, fLine-6, "90" );
-            painter->renderText( 45, fLine-6, "90");
+        painter->renderText( -55, fLine-6, "90" );
+        painter->renderText( 45, fLine-6, "90");
         painter->endFont();
     }
 
@@ -1811,8 +1812,8 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,0,1,1});
-            painter->drawLineLoop(PRIMITIVE2D(_horizMagFlyUp));
+        painter->setPrimitiveColor({1,0,1,1});
+        painter->drawLineLoop(PRIMITIVE2D(_horizMagFlyUp));
         painter->endPrimitive();
     }
 
@@ -1839,8 +1840,8 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,0,1,1});
-            painter->drawLineLoop(PRIMITIVE2D(_horizMagFlyDown));
+        painter->setPrimitiveColor({1,0,1,1});
+        painter->drawLineLoop(PRIMITIVE2D(_horizMagFlyDown));
         painter->endPrimitive();
     }
     p.GetModel().Pop();
@@ -1853,7 +1854,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         {
             float fy;
             fy = std::max( _fPitch * PIXEL_PER_PITCH,
-                        PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
+                           PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
             fy = std::min( 60.0f, fy );
             fy = std::max( -60.0f, fy );
 
@@ -1875,14 +1876,14 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({0.12f,0.55f,0.95f,1});
-            painter->drawQuads(_horizDataSkyGround.vertex2Ptr(0), 4);
+        painter->setPrimitiveColor({0.12f,0.55f,0.95f,1});
+        painter->drawQuads(_horizDataSkyGround.vertex2Ptr(0), 4);
 
-            painter->setPrimitiveColor({0.5f,0.35f,0.22f,1});
-            painter->drawQuads(_horizDataSkyGround.vertex2Ptr(4), 4);
+        painter->setPrimitiveColor({0.5f,0.35f,0.22f,1});
+        painter->drawQuads(_horizDataSkyGround.vertex2Ptr(4), 4);
 
-            painter->setPrimitiveColor({1,1,1,1});
-            painter->drawLines(_horizDataSkyGround.vertex2Ptr(8), 4);
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->drawLines(_horizDataSkyGround.vertex2Ptr(8), 4);
 
         painter->endPrimitive();
 
@@ -1893,32 +1894,32 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
             {
                 p.GetModel().Push();
                 p.GetModel().Translate( 0, _fPitch * PIXEL_PER_PITCH, 0 );
-                    {//Hdg Lines
-                        #define PIXEL_PER_HDG  2.6f
+                {//Hdg Lines
+#define PIXEL_PER_HDG  2.6f
 
-                        if( _horizData2.vertex2Size() == 0)
+                    if( _horizData2.vertex2Size() == 0)
+                    {
+                        int dH = (int)_fHdg % 10;
+                        int minHdg = (_fHdg - dH - 40);
+                        int maxHdg = minHdg + 80;
+                        int x;
+
+                        for( int h = minHdg; h <= maxHdg; h+= 10 )
                         {
-                            int dH = (int)_fHdg % 10;
-                            int minHdg = (_fHdg - dH - 40);
-                            int maxHdg = minHdg + 80;
-                            int x;
+                            x = (h - _fHdg) * PIXEL_PER_HDG;
 
-                            for( int h = minHdg; h <= maxHdg; h+= 10 )
-                            {
-                                x = (h - _fHdg) * PIXEL_PER_HDG;
-
-                                _horizData2.addVertex( x-1, 0 );
-                                _horizData2.addVertex( x, 0 );
-                                _horizData2.addVertex( x, 4 );
-                                _horizData2.addVertex( x-1, 4 );
-                            }
+                            _horizData2.addVertex( x-1, 0 );
+                            _horizData2.addVertex( x, 0 );
+                            _horizData2.addVertex( x, 4 );
+                            _horizData2.addVertex( x-1, 4 );
                         }
-
-                        painter->beginPrimitive();
-                            painter->setPrimitiveColor({1,1,1,1});
-                            painter->fillQuads(PRIMITIVE2D(_horizData2));
-                        painter->endPrimitive();
                     }
+
+                    painter->beginPrimitive();
+                    painter->setPrimitiveColor({1,1,1,1});
+                    painter->fillQuads(PRIMITIVE2D(_horizData2));
+                    painter->endPrimitive();
+                }
                 p.GetModel().Pop();
             }
         }
@@ -1929,7 +1930,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
             _horizRudder.addVertex( 0, -dy/2+5 );
             _horizRudder.addVertex( 4, -dy/2+11 );
             _horizRudder.addVertex( -4, -dy/2+11 );
-//Rudder Assymtry
+            //Rudder Assymtry
             _horizRudder.addVertex( 4, -dy/2+11 );
             _horizRudder.addVertex( 6, -dy/2+14 );
             _horizRudder.addVertex( -6, -dy/2+14 );
@@ -1938,8 +1939,8 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->drawLineLoop(_horizRudder.vertex2Ptr(0), 3);
-            painter->drawLineLoop(_horizRudder.vertex2Ptr(3), 4);
+        painter->drawLineLoop(_horizRudder.vertex2Ptr(0), 3);
+        painter->drawLineLoop(_horizRudder.vertex2Ptr(3), 4);
         painter->endPrimitive();
 
         // When on ground show surrounding square and joystick position and ground tracking if ILS available
@@ -1975,8 +1976,8 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
             }
 
             painter->beginPrimitive();
-                painter->setPrimitiveColor({1,1,1,1});
-                painter->drawLines(PRIMITIVE2D(_horizGroundBox));
+            painter->setPrimitiveColor({1,1,1,1});
+            painter->drawLines(PRIMITIVE2D(_horizGroundBox));
             painter->endPrimitive();
         }
 
@@ -1988,7 +1989,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
         float fy;
         fy = std::max( _fPitch * PIXEL_PER_PITCH,
-                    PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
+                       PIXEL_PER_PITCH *( _fAlt / 80.0f * 10 + _fPitch) );
         fy = std::min( 60.0f, fy );
         fy = std::max( -60.0f, fy );
 
@@ -2100,10 +2101,10 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,1,0,1});
-            painter->fillQuads(_horizAirOnHoriz.vertex2Ptr(0), 20);
-            painter->setPrimitiveColor({0,0,0,1});
-            painter->fillQuads(_horizAirOnHoriz.vertex2Ptr(20), 20);
+        painter->setPrimitiveColor({1,1,0,1});
+        painter->fillQuads(_horizAirOnHoriz.vertex2Ptr(0), 20);
+        painter->setPrimitiveColor({0,0,0,1});
+        painter->fillQuads(_horizAirOnHoriz.vertex2Ptr(20), 20);
         painter->endPrimitive();
 
         glStencilFunc( GL_ALWAYS, 2, 0xFFFFFFFF );
@@ -2119,8 +2120,8 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,1,0,1});
-            painter->drawLineLoop(PRIMITIVE2D(_horizYellowMarker));
+        painter->setPrimitiveColor({1,1,0,1});
+        painter->drawLineLoop(PRIMITIVE2D(_horizYellowMarker));
         painter->endPrimitive();
 
         if( _horizAirOnHoriz2.vertex2Size() == 0)
@@ -2135,8 +2136,8 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->setPrimitiveColor({1,1,1,1});
-            painter->drawLineStrip(PRIMITIVE2D(_horizAirOnHoriz2));
+        painter->setPrimitiveColor({1,1,1,1});
+        painter->drawLineStrip(PRIMITIVE2D(_horizAirOnHoriz2));
         painter->endPrimitive();
 
         if( _horizMarkers.vertex2Size() == 0)
@@ -2185,7 +2186,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->drawQuads(PRIMITIVE2D(_horizMarkers));
+        painter->drawQuads(PRIMITIVE2D(_horizMarkers));
         painter->endPrimitive();
     }
 
@@ -2210,7 +2211,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-            painter->drawLines(PRIMITIVE2D(_horiz45Markers));
+        painter->drawLines(PRIMITIVE2D(_horiz45Markers));
         painter->endPrimitive();
     }
 }
@@ -2466,34 +2467,34 @@ void PFDView::DrawVSI(OpenGLPainter *painter)
     glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
     glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP);
 
-        float fVsi = fabs(_fVSI);
-        float dy = 0.0f;
-        painter->setPrimitiveColor({0.1f, 1.0f, 0.1f, 1});
+    float fVsi = fabs(_fVSI);
+    float dy = 0.0f;
+    painter->setPrimitiveColor({0.1f, 1.0f, 0.1f, 1});
 
-        if( fVsi < 1050 )
-        {
-            dy = -PIXEL_PER_VSI_1000 * _fVSI;
+    if( fVsi < 1050 )
+    {
+        dy = -PIXEL_PER_VSI_1000 * _fVSI;
 
-            painter->fillQuad(140, -2, 140, 2, 125, dy +2, 125, dy -2);
-        }
-        else
-        {
-            if( fVsi > 6000 )
-                painter->setPrimitiveColor({0.9f, 0.9f, 0.2f});
+        painter->fillQuad(140, -2, 140, 2, 125, dy +2, 125, dy -2);
+    }
+    else
+    {
+        if( fVsi > 6000 )
+            painter->setPrimitiveColor({0.9f, 0.9f, 0.2f});
 
-            dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
+        dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
 
-            dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
+        dy = PIXEL_PER_VSI_1000 * (1000 +  0.5f * (fVsi-1000));
 
-            if( _fVSI > 0 )
-                dy = -dy;
+        if( _fVSI > 0 )
+            dy = -dy;
 
-            float resDy = dy;
-            if( resDy > 75 ) resDy = 75;
-            if( resDy < -75 ) resDy = -75;
+        float resDy = dy;
+        if( resDy > 75 ) resDy = 75;
+        if( resDy < -75 ) resDy = -75;
 
-            painter->fillQuad(140, -2, 140, 2, 125, resDy+2, 125, resDy-2);
-          }
+        painter->fillQuad(140, -2, 140, 2, 125, resDy+2, 125, resDy-2);
+    }
 
     glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
     if( fVsi > 100 )
@@ -2556,7 +2557,7 @@ void PFDView::DrawVSI(OpenGLPainter *painter)
 
             _Vsi.addVertex( 125, -75 );
             _Vsi.addVertex( 127, -75 );
-//////////////////
+            //////////////////
             _Vsi.addVertex( 125, 25 );
             _Vsi.addVertex( 126, 25 );
 
@@ -2583,73 +2584,150 @@ void PFDView::DrawVSI(OpenGLPainter *painter)
 
 void PFDView::DrawHdg(OpenGLPainter *painter)
 {
+    // Hdg
+#define PIXEL_PER_HDG  2.6f
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glStencilFunc( GL_ALWAYS, 1, 0xFFFFFFFF );
+
+
+    { //Set stencil bits
+        painter->beginPrimitive();
+        painter->setPrimitiveColor({1,1,0,1});
+        painter->fillQuad(-1, 100, 1, 100, 1, 110, -1, 110);
+
+        painter->setPrimitiveColor({0.4f, 0.4f, 0.4f, 1});
+        painter->fillQuad(-65, 110, 65, 110, 65, 135, -65, 135);
+    }
+
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+    glStencilFunc( GL_EQUAL, 1, 0xFFFFFFFF );
+
+    painter->setPrimitiveColor({1,1,1,1});
+    painter->fillQuad(-64, 110, 65, 110, 65, 111, -64, 111);
+    painter->fillQuad(-64, 110, -65, 110, -65, 135, -64, 135);
+    painter->fillQuad(64, 110, 65, 110, 65, 135, 64, 135);
+
+    int dH = ((int)_fHdg) % 10;
+    int minHdg = (int(_fHdg) - dH - 40);
+    int maxHdg = minHdg + 80;
+    int x;
+
+    {
+        for( int h = minHdg; h <= maxHdg; h+= 5 )
+        {
+            x = (h - _fHdg) * PIXEL_PER_HDG;
+
+            if( h % 10 == 0 )
+            {
+                painter->fillQuad(x-1, 110, x, 110, x, 117, x-1, 117);
+            }
+            else if( h % 5 == 0 )
+            {
+                painter->fillQuad(x-1, 110, x, 110, x, 114, x-1, 114);
+            }
+        }
+    }
+    painter->endPrimitive();
+
+
+    painter->setFontColor({1,1,1,1});
+    std::string strHdg;
+    for( int h = minHdg; h <= maxHdg; h+= 10 )
+    {
+        x = (h - _fHdg) * PIXEL_PER_HDG;
+        if( h <= 0 )
+        {
+            strHdg = format( "%02.0f", (h+360)/10.0 );
+        }
+        else if( h >360 )
+        {
+            strHdg = format( "%02.0f", (h-360)/10.0 );
+        }
+        else
+        {
+            strHdg = format( "%02.0f", h/10.0 );
+        }
+
+        if( h % 30 == 0 )
+        {
+            painter->beginFont(&_AltLargeFreeFont);
+            painter->renderText( x-6, 130, strHdg );
+            painter->endFont();
+        }
+        else
+        {
+            painter->beginFont(&_AltSmallFreeFont);
+            painter->renderText( x-5, 130, strHdg );
+            painter->endFont();
+        }
+    }
 
 }
 
 void PFDView::DrawSpd(OpenGLPainter *painter)
 {
     // AirSpeed
-   glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
-   glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
 
-   if( _SpdMeshData.vertex2Size() == 0)
-   {
-       _SpdMeshData.addVertex(-110, -80);
-       _SpdMeshData.addVertex(-65, -80);
-       _SpdMeshData.addVertex(-65, 80);
-       _SpdMeshData.addVertex(-110, 80);
+    if( _SpdMeshData.vertex2Size() == 0)
+    {
+        _SpdMeshData.addVertex(-110, -80);
+        _SpdMeshData.addVertex(-65, -80);
+        _SpdMeshData.addVertex(-65, 80);
+        _SpdMeshData.addVertex(-110, 80);
 
-       _SpdMeshData.addVertex( -110, -80 );
-       _SpdMeshData.addVertex( -80, -80 );
-       _SpdMeshData.addVertex( -80, 80 );
-       _SpdMeshData.addVertex( -110, 80 );
+        _SpdMeshData.addVertex( -110, -80 );
+        _SpdMeshData.addVertex( -80, -80 );
+        _SpdMeshData.addVertex( -80, 80 );
+        _SpdMeshData.addVertex( -110, 80 );
 
-       _SpdMeshData.addVertex( -70, -3 );
-       _SpdMeshData.addVertex( -70, 3 );
-       _SpdMeshData.addVertex( -75, 1 );
-       _SpdMeshData.addVertex( -75, -1 );
+        _SpdMeshData.addVertex( -70, -3 );
+        _SpdMeshData.addVertex( -70, 3 );
+        _SpdMeshData.addVertex( -75, 1 );
+        _SpdMeshData.addVertex( -75, -1 );
 
-       _SpdMeshData.addVertex(-75,-1);
-       _SpdMeshData.addVertex(-75,1);
-       _SpdMeshData.addVertex(-85,1);
-       _SpdMeshData.addVertex(-85,-1);
+        _SpdMeshData.addVertex(-75,-1);
+        _SpdMeshData.addVertex(-75,1);
+        _SpdMeshData.addVertex(-85,1);
+        _SpdMeshData.addVertex(-85,-1);
 
-       _SpdMeshData.addVertex( -110, -80 );
-       _SpdMeshData.addVertex( -72, -80 );
-       _SpdMeshData.addVertex( -72, -79 );
-       _SpdMeshData.addVertex( -110, -79 );
+        _SpdMeshData.addVertex( -110, -80 );
+        _SpdMeshData.addVertex( -72, -80 );
+        _SpdMeshData.addVertex( -72, -79 );
+        _SpdMeshData.addVertex( -110, -79 );
 
-       _SpdMeshData.addVertex( -85,0);
-       _SpdMeshData.addVertex( -110,0);
-   }
+        _SpdMeshData.addVertex( -85,0);
+        _SpdMeshData.addVertex( -110,0);
+    }
 
-   painter->beginPrimitive();
-   painter->setPrimitiveColor({0,0,0,1});
-   painter->fillQuads(_SpdMeshData.vertex2Ptr(0), 4);
+    painter->beginPrimitive();
+    painter->setPrimitiveColor({0,0,0,1});
+    painter->fillQuads(_SpdMeshData.vertex2Ptr(0), 4);
 
-   glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
-   glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+    glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
-   painter->setPrimitiveColor({0.3f,0.3f,0.3f,1});
-   painter->fillQuads(_SpdMeshData.vertex2Ptr(4), 4);
+    painter->setPrimitiveColor({0.3f,0.3f,0.3f,1});
+    painter->fillQuads(_SpdMeshData.vertex2Ptr(4), 4);
 
-   painter->setPrimitiveColor({1,1,0,1});
-   painter->fillQuads(_SpdMeshData.vertex2Ptr(8), 8);
+    painter->setPrimitiveColor({1,1,0,1});
+    painter->fillQuads(_SpdMeshData.vertex2Ptr(8), 8);
 
-   painter->setPrimitiveColor({1,1,1,1});
-   painter->fillQuads(_SpdMeshData.vertex2Ptr(16), 4);
+    painter->setPrimitiveColor({1,1,1,1});
+    painter->fillQuads(_SpdMeshData.vertex2Ptr(16), 4);
 
-   painter->setPrimitiveColor({1,1,0,1});
-   painter->drawLines(_SpdMeshData.vertex2Ptr(20), 2);
+    painter->setPrimitiveColor({1,1,0,1});
+    painter->drawLines(_SpdMeshData.vertex2Ptr(20), 2);
 
 
 
-   float fAirSpd = _fAirSpd;
-   if( _fAirSpd < 30 ) fAirSpd = 30;
+    float fAirSpd = _fAirSpd;
+    if( _fAirSpd < 30 ) fAirSpd = 30;
 
 #define PIXEL_PER_KNOT (17/9.0)
 
-float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
+    float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
 
     if( _SpdMeshData2.vertex2Size() == 0)
     {
@@ -2679,18 +2757,18 @@ float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
 
     painter->drawLine(-80, tick_start, -80, -PIXEL_PER_KNOT*600);
 
-   painter->endPrimitive();
+    painter->endPrimitive();
 
     painter->beginFont(&_PfdAirSpdFreeFont);
     painter->setFontColor({1,1,1,1});
 
-   std::string strSpd;
-   for( int spdTick = 40; spdTick < 600; spdTick +=20 )
-   {
-       strSpd = format("%03d", spdTick);
-       painter->renderText( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+2, strSpd );
-   }
-   painter->endFont();
+    std::string strSpd;
+    for( int spdTick = 40; spdTick < 600; spdTick +=20 )
+    {
+        strSpd = format("%03d", spdTick);
+        painter->renderText( -108, -(spdTick-20) * PIXEL_PER_KNOT+tick_start+2, strSpd );
+    }
+    painter->endFont();
 
 }
 
@@ -2723,8 +2801,8 @@ void PFDView::DrawFlightModes(OpenGLPainter *painter)
 
 
     painter->beginPrimitive();
-        painter->setPrimitiveColor({1,1,1,1});
-        painter->fillQuads(PRIMITIVE2D(_FlightModeData));
+    painter->setPrimitiveColor({1,1,1,1});
+    painter->fillQuads(PRIMITIVE2D(_FlightModeData));
     painter->endPrimitive();
 }
 
