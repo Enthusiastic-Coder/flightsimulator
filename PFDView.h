@@ -84,6 +84,7 @@ private:
     meshData _FlightModeData;
     meshData _SpdMeshData;
     meshData _SpdMeshData2;
+    meshData _AltDataOne;
 };
 
 #endif //__PFD__VIEW__H__

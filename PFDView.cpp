@@ -102,18 +102,13 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     DrawFlightModes(painter);
     DrawHorizon(painter);
     DrawSpd(painter);
+    DrawAlt(painter);
     //_DrawFlightModes();
     //_DrawHorizon();
     //_DrawSpd();
-    _DrawAlt();
+    //_DrawAlt();
     _DrawVSI();
     _DrawHdg();
-
-    painter->beginFont(&_PfdHorizFreeFont);
-        painter->renderText(0,0, "TEST");
-        painter->setFontColor({1,0,0,1});
-        painter->renderText(0,20, "red text");
-    painter->endFont();
 
     p.Pop();
 
@@ -2221,12 +2216,244 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
 void PFDView::DrawAlt(OpenGLPainter *painter)
 {
+    // Altitude
 
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    { //Set stencil bits
+
+        if( _AltDataOne.vertex2Size() == 0)
+        {
+            _AltDataOne.addVertex(125, -80);
+            _AltDataOne.addVertex(65, -80);
+            _AltDataOne.addVertex(65, 80);
+            _AltDataOne.addVertex(125, 80);
+
+            _AltDataOne.addVertex(85, -7);
+            _AltDataOne.addVertex(110, -7);
+            _AltDataOne.addVertex(110, 7);
+            _AltDataOne.addVertex(85, 7);
+
+            _AltDataOne.addVertex(110, -12);
+            _AltDataOne.addVertex(125, -12);
+            _AltDataOne.addVertex(125, 13);
+            _AltDataOne.addVertex(110, 13);
+        }
+
+        painter->beginPrimitive();
+        painter->setPrimitiveColor({0,0,0,1});
+
+        painter->fillQuads(_AltDataOne.vertex2Ptr(0), 4);
+
+        glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
+        painter->fillQuads(_AltDataOne.vertex2Ptr(4), 8);
+        painter->endPrimitive();
+    }
+
+    DrawScrollAlt(painter);/****************************/
+
+   return;////////////////////////////////
+    glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
+    glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
+    glColor3f(1.0f,1.0f,0.0f);
+    glBegin(GL_LINE_STRIP); //Outline yellow of alt read out
+        glVertex2f(85, -7);
+        glVertex2f(110, -7);
+        glVertex2f(110, -12);
+        glVertex2f(124, -12);
+        glVertex2f(124, 13);
+        glVertex2f(110, 13);
+        glVertex2f(110, 7);
+        glVertex2f(85, 7);
+    glEnd();
+
+    glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+
+    //Altitude Bar
+    glColor3f(0.4f,0.4f,0.4f );
+    glBegin(GL_QUADS);
+        glVertex2f( 85, -_CEN_Y + 80 );
+        glVertex2f( 110, -_CEN_Y + 80 );
+        glVertex2f( 110, _CEN_Y - 80 );
+        glVertex2f( 85, _CEN_Y - 80 );
+    glEnd();
+
+    //Altitude
+    {
+#define ALT_RANGE 1000
+#define PIXEL_PER_ALT_FEET 0.13333f
+        int dA = (int)_fAlt % 500;
+        float minAlt = _fAlt - dA - ALT_RANGE;
+        float maxAlt = minAlt + 2 * ALT_RANGE;
+        float ymax = (dA + ALT_RANGE) * PIXEL_PER_ALT_FEET;
+        float y;
+
+        glColor3f(1.0f, 1.0f,1.0f);
+        glBegin(GL_TRIANGLES);
+        for( int x = (int)minAlt; x <= maxAlt; x+= 500)
+        {
+            y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
+            glVertex2f( 82, y-2 );
+            glVertex2f( 85, y );
+            glVertex2f( 82, y+2 );
+        }
+        glEnd();
+
+        glBegin(GL_QUADS);
+        for( int x = (int)minAlt; x <= maxAlt; x+= 100)
+        {
+            y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax;
+            glVertex2f( 107, y-1 );
+            glVertex2f( 110, y-1 );
+            glVertex2f( 110, y+1 );
+            glVertex2f( 107, y+1 );
+        }
+        glEnd();
+
+        for( int x = (int)minAlt; x <= maxAlt; x+= 500)
+        {
+            y = (minAlt - x) * PIXEL_PER_ALT_FEET + ymax + 10;
+            std::string strAlt;
+            strAlt = format( "%03.0f", abs(x)/100.0 );
+            m_AltLargeFreeFont.RenderFontNT( 87, y-8, strAlt );
+        }
+    }
+
+    glColor3f(1.0f, 1.0f,1.0f);
+    glBegin(GL_LINES);
+        glVertex2f(110, -_CEN_Y + 80 );
+        glVertex2f(110, _CEN_Y - 80 );
+    glEnd();
+    glBegin(GL_QUADS); //Yellow line to right
+        glColor3f(1.0f,1.0f,0.0f);
+        glVertex2f( 67, -1 );
+        glVertex2f( 80, -1 );
+        glVertex2f( 80, 1 );
+        glVertex2f( 67, 1 );
+    glEnd();
+
+    //return;
+
+    glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
+    glBegin(GL_QUADS);	//White ends of altitude bar
+        glColor3f(1.0f, 1.0f,1.0f);
+        glVertex2f(85, _CEN_Y - 80 );
+        glVertex2f(120, _CEN_Y - 80 );
+        glVertex2f(120, _CEN_Y - 81 );
+        glVertex2f(85, _CEN_Y - 81 );
+    glEnd();
 }
 
 void PFDView::DrawScrollAlt(OpenGLPainter *painter)
 {
+#define NUMBER_OF_ALT_LINES	4
+    glStencilFunc( GL_EQUAL, 4, 0xFFFFFFFF );
+    glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
+
+    int dA = (int)_fAlt % 20;
+    int centralAlt = (int)_fAlt - dA;
+
+    char rotaryAltBuf1[NUMBER_OF_ALT_LINES][32];
+    char rotaryAltBuf2[NUMBER_OF_ALT_LINES][32];
+
+    BuildAltTape( rotaryAltBuf1, NUMBER_OF_ALT_LINES, centralAlt, true);
+    BuildAltTape( rotaryAltBuf2, NUMBER_OF_ALT_LINES, centralAlt, false);
+
+#define SCROLL_TEXT_PIXEL_PER_ALT 0.5f
+
+    float dPixel = dA * SCROLL_TEXT_PIXEL_PER_ALT - 7 + 10;
+
+    painter->beginFont(&_AltSmallFreeFont);
+
+    if( _fAlt <= 400 )
+        painter->setFontColor({ 0.9f, 0.9f, 0.2f, 1} );
+    else
+        painter->setFontColor({ 0.2f, 0.9f, 0.2f, 1} );
+
+    painter->renderText( 111, dPixel-40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[2][3] );
+    painter->renderText( 111, dPixel-20*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[1][3] );
+    painter->renderText( 111, dPixel, &rotaryAltBuf1[0][3] );
+    painter->renderText( 111, dPixel+20*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf2[1][3] );
+    painter->renderText( 111, dPixel+40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf2[2][3] );
+
+    painter->endFont();
+
+    float yPosNoChange[3];
+    yPosNoChange[0] = -10 - 20 * SCROLL_TEXT_PIXEL_PER_ALT - 0.5+2 + 10;
+    yPosNoChange[1] = -7 -0.5 +2  + 10;
+    yPosNoChange[2] = -5 + 20 * SCROLL_TEXT_PIXEL_PER_ALT - 0.5 + 2 + 10;
+
+    if( centralAlt < 0 )
+    {
+        yPosNoChange[0]++;
+        yPosNoChange[1]++;
+        yPosNoChange[2]++;
+    }
+
+    bool bDrawn[5] = {false};
+
+    painter->beginFont(&_AltLargeFreeFont);
+
+    if( rotaryAltBuf1[0][3] == '8' )
+    {
+        float yPos[3];
+        yPos[0] = dPixel+SCROLL_TEXT_PIXEL_PER_ALT-10 +10;
+        yPos[1] = dPixel+20*SCROLL_TEXT_PIXEL_PER_ALT-9+10;
+        yPos[2] = dPixel+40*SCROLL_TEXT_PIXEL_PER_ALT-9+10;
+
+        if( centralAlt < 0 )
+        {
+            yPos[0] -= 4;
+            yPos[1] -= 4;
+            yPos[2] -= 4;
+        }
+
+        bDrawn[2] = true;
+        painter->renderText( 102, yPos[0], rotaryAltBuf1[1][2] );
+        painter->renderText( 102, yPos[1], rotaryAltBuf1[0][2] );
+        painter->renderText( 102, yPos[2], rotaryAltBuf2[1][2] );
+
+        if( rotaryAltBuf1[0][2] == '9' )
+        {
+            bDrawn[1] = true;
+            painter->renderText( 94, yPos[0], rotaryAltBuf1[1][1] );
+            painter->renderText( 94, yPos[1], rotaryAltBuf1[0][1] );
+            painter->renderText( 94, yPos[2], rotaryAltBuf2[1][1] );
+
+            if( rotaryAltBuf1[0][1] == '9' )
+            {
+                bDrawn[0] = true;
+                painter->renderText( 86, yPos[0], rotaryAltBuf1[1][0] );
+                painter->renderText( 86, yPos[1], rotaryAltBuf1[0][0] );
+                painter->renderText( 86, yPos[2], rotaryAltBuf2[1][0] );
+            }
+        }
+    }
+
+    if( !bDrawn[0] )
+    {
+        painter->renderText( 86, yPosNoChange[0], rotaryAltBuf1[1][0] );
+        painter->renderText( 86, yPosNoChange[1], rotaryAltBuf1[0][0] );
+        painter->renderText( 86, yPosNoChange[2], rotaryAltBuf2[1][0] );
+    }
+
+    if( !bDrawn[1] )
+    {
+        painter->renderText( 94, yPosNoChange[0], rotaryAltBuf1[1][1] );
+        painter->renderText( 94, yPosNoChange[1], rotaryAltBuf1[0][1] );
+        painter->renderText( 94, yPosNoChange[2], rotaryAltBuf2[1][1] );
+    }
+
+    if( !bDrawn[2] )
+    {
+        painter->renderText( 102, yPosNoChange[0], rotaryAltBuf1[1][2] );
+        painter->renderText( 102, yPosNoChange[1], rotaryAltBuf1[0][2] );
+        painter->renderText( 102, yPosNoChange[2], rotaryAltBuf2[1][2] );
+    }
+
+    painter->endFont();
 }
 
 void PFDView::DrawVSI(OpenGLPainter *painter)

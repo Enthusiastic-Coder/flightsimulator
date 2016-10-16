@@ -37,6 +37,11 @@ void OpenGLPainter::renderText(int x, int y, std::string text)
     _fontRenderer->renderText(x, y, text);
 }
 
+void OpenGLPainter::renderText(int x, int y, char ch)
+{
+    _fontRenderer->renderText(x, y, ch);
+}
+
 void OpenGLPainter::endFont()
 {
     _fontRenderer->endRender();

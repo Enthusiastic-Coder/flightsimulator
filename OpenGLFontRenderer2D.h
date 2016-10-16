@@ -18,6 +18,7 @@ public:
     void setFontColor(const Vector4F& color);
     void beginRender();
     void renderText(int x, int y, std::string str);
+    void renderText(int x, int y, char ch);
     void endRender();
 
     Renderer* renderer();

@@ -53,6 +53,19 @@ void OpenGLFontRenderer2D::renderText( int x, int y, std::string str)
     _fontMesh.render(_renderer);
 }
 
+void OpenGLFontRenderer2D::renderText(int x, int y, char ch)
+{
+    if( _renderer ==0)
+        return;
+
+    std::string str = " ";
+    str[0] = ch;
+    _fontMesh.clear();
+    _fontMesh.add( x, y, str);
+    _fontMesh.render(_renderer);
+
+}
+
 void OpenGLFontRenderer2D::endRender()
 {
     if( _renderer ==0)
