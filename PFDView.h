@@ -76,6 +76,10 @@ private:
     meshData _horizData2;
     meshData _horizRudder;
     meshData _horizGroundBox;
+    meshData _horizAirOnHoriz;
+    meshData _horizYellowMarker;
+    meshData _horizAirOnHoriz2;
+    meshData _horizMarkers;
 };
 
 #endif //__PFD__VIEW__H__

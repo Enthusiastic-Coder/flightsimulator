@@ -2050,138 +2050,164 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
     }
 
-
-    return;/////////////////////////////////////////////////////////////
-
     { //Aircraft on Horizon
 
-        glBegin(GL_QUADS);
+        if( _horizAirOnHoriz.vertex2Size() == 0)
+        {
             //Outer center left yellow
-            glColor3f(1, 1, 0 );
-            glVertex2f( -63, -3 );
-            glVertex2f( -40, -3 );
-            glVertex2f( -40, 3 );
-            glVertex2f( -63, 3 );
+            _horizAirOnHoriz.addVertex( -63, -3 );
+            _horizAirOnHoriz.addVertex( -40, -3 );
+            _horizAirOnHoriz.addVertex( -40, 3 );
+            _horizAirOnHoriz.addVertex( -63, 3 );
 
-            glVertex2f( -40, -3 );
-            glVertex2f( -35, -3 );
-            glVertex2f( -35, 10 );
-            glVertex2f( -40, 10 );
+            _horizAirOnHoriz.addVertex( -40, -3 );
+            _horizAirOnHoriz.addVertex( -35, -3 );
+            _horizAirOnHoriz.addVertex( -35, 10 );
+            _horizAirOnHoriz.addVertex( -40, 10 );
 
             //Outer center right yellow
-            glVertex2f( 63, -3 );
-            glVertex2f( 40, -3 );
-            glVertex2f( 40, 3 );
-            glVertex2f( 63, 3 );
+            _horizAirOnHoriz.addVertex( 63, -3 );
+            _horizAirOnHoriz.addVertex( 40, -3 );
+            _horizAirOnHoriz.addVertex( 40, 3 );
+            _horizAirOnHoriz.addVertex( 63, 3 );
 
-            glVertex2f( 40, -3 );
-            glVertex2f( 35, -3 );
-            glVertex2f( 35, 10 );
-            glVertex2f( 40, 10 );
+            _horizAirOnHoriz.addVertex( 40, -3 );
+            _horizAirOnHoriz.addVertex( 35, -3 );
+            _horizAirOnHoriz.addVertex( 35, 10 );
+            _horizAirOnHoriz.addVertex( 40, 10 );
 
             //Center
-            glVertex2d( -3, -3 );
-            glVertex2d( 3, -3 );
-            glVertex2d( 3, 3 );
-            glVertex2d( -3, 3 );
+            _horizAirOnHoriz.addVertex( -3, -3 );
+            _horizAirOnHoriz.addVertex( 3, -3 );
+            _horizAirOnHoriz.addVertex( 3, 3 );
+            _horizAirOnHoriz.addVertex( -3, 3 );
 
-            glColor3f(0.0f,0.0f,0.0f); // Center blackLeft
-            glVertex2d( -62, -2 );
-            glVertex2d( -36, -2 );
-            glVertex2d( -36, 2 );
-            glVertex2d( -62, 2 );
+            _horizAirOnHoriz.addVertex( -62, -2 );
+            _horizAirOnHoriz.addVertex( -36, -2 );
+            _horizAirOnHoriz.addVertex( -36, 2 );
+            _horizAirOnHoriz.addVertex( -62, 2 );
 
-            glVertex2d( -39, -2 );
-            glVertex2d( -36, -2 );
-            glVertex2d( -36, 9 );
-            glVertex2d( -39, 9 );
+            _horizAirOnHoriz.addVertex( -39, -2 );
+            _horizAirOnHoriz.addVertex( -36, -2 );
+            _horizAirOnHoriz.addVertex( -36, 9 );
+            _horizAirOnHoriz.addVertex( -39, 9 );
 
             //Center Right
-            glVertex2d( 36, -2 );
-            glVertex2d( 62, -2 );
-            glVertex2d( 62, 2 );
-            glVertex2d( 36, 2 );
+            _horizAirOnHoriz.addVertex( 36, -2 );
+            _horizAirOnHoriz.addVertex( 62, -2 );
+            _horizAirOnHoriz.addVertex( 62, 2 );
+            _horizAirOnHoriz.addVertex( 36, 2 );
 
-            glVertex2d( 36, -2 );
-            glVertex2d( 39, -2 );
-            glVertex2d( 39, 9 );
-            glVertex2d( 36, 9 );
+            _horizAirOnHoriz.addVertex( 36, -2 );
+            _horizAirOnHoriz.addVertex( 39, -2 );
+            _horizAirOnHoriz.addVertex( 39, 9 );
+            _horizAirOnHoriz.addVertex( 36, 9 );
 
             //Center
-            glVertex2d( -2, -2 );
-            glVertex2d( 2, -2 );
-            glVertex2d( 2, 2 );
-            glVertex2d( -2, 2 );
-        glEnd();
+            _horizAirOnHoriz.addVertex( -2, -2 );
+            _horizAirOnHoriz.addVertex( 2, -2 );
+            _horizAirOnHoriz.addVertex( 2, 2 );
+            _horizAirOnHoriz.addVertex( -2, 2 );
+        }
 
+        painter->beginPrimitive();
+            painter->setPrimitiveColor({1,1,0,1});
+            painter->fillQuads(_horizAirOnHoriz.vertex2Ptr(0), 20);
+            painter->setPrimitiveColor({0,0,0,1});
+            painter->fillQuads(_horizAirOnHoriz.vertex2Ptr(20), 20);
+        painter->endPrimitive();
 
         glStencilFunc( GL_ALWAYS, 2, 0xFFFFFFFF );
         glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
 
         //Center Yellow marker at 0 degrees around perimter of horizon
-        glColor3f(1.0f,1.0f,0);
-        glBegin(GL_LINE_LOOP);
-            glVertex2f( -4, -84 - 25 );
-            glVertex2f( 4, -84 - 25 );
-            glVertex2f( 0, -74 - 25 );
-        glEnd();
 
-        glColor3f(1.0f,1.0f, 1.0f);
-        glBegin(GL_LINE_STRIP);
+        if( _horizYellowMarker.vertex2Size() == 0)
+        {
+            _horizYellowMarker.addVertex( -4, -84 - 25 );
+            _horizYellowMarker.addVertex( 4, -84 - 25 );
+            _horizYellowMarker.addVertex( 0, -74 - 25 );
+        }
+
+        painter->beginPrimitive();
+            painter->setPrimitiveColor({1,1,0,1});
+            painter->drawLineLoop(PRIMITIVE2D(_horizYellowMarker));
+        painter->endPrimitive();
+
+        if( _horizAirOnHoriz2.vertex2Size() == 0)
+        {
             for( int iAng = -30; iAng <= 30; iAng ++ )
             {
                 float fAngRad = iAng/180.0f * M_PI;
                 float x = sin(fAngRad ) * _CX;
                 float y = -cos(fAngRad ) * _CY;
-
-                glVertex2f(x, y);
+                _horizAirOnHoriz2.addVertex(x, y);
             }
-        glEnd();
-
-        // Markers around Horizon denoating 10, 20, 30, and 45 degrees.
-        for( int iAng = -30; iAng < 0; iAng +=10 )
-        {
-            int dA = 1;
-            int dH = 5;
-
-            if( iAng == -30 )
-            {
-                dA = 1.5;
-                dH = 10;
-            }
-
-            float fAngRad1 = (iAng-dA)/180.0f * M_PI;
-            float fAngRad2 = (iAng+dA)/180.0f * M_PI;
-
-            float fSinRad1 = sin(fAngRad1 );
-            float fCosRad1 = -cos(fAngRad1 );
-
-            float fSinRad2 = sin(fAngRad2 );
-            float fCosRad2 = -cos(fAngRad2 );
-
-            float x1 = fSinRad1 * _CX;
-            float y1 = fCosRad1 * _CY;
-            float x2 = fSinRad2 * _CX;
-            float y2 = fCosRad2 * _CY;
-
-            float x3 = fSinRad2 * (_CX+dH);
-            float y3 = fCosRad2 * (_CY+dH);
-            float x4 = fSinRad1 * (_CX+dH);
-            float y4 = fCosRad1 * (_CY+dH);
-
-            glBegin(GL_LINE_LOOP);
-                glVertex2f(x1, y1);
-                glVertex2f(x2, y2);
-                glVertex2f(x3, y3);
-                glVertex2f(x4, y4);
-            glEnd();
-            glBegin(GL_LINE_LOOP);
-                glVertex2f(-x1, y1);
-                glVertex2f(-x2, y2);
-                glVertex2f(-x3, y3);
-                glVertex2f(-x4, y4);
-            glEnd();
         }
+
+        painter->beginPrimitive();
+            painter->setPrimitiveColor({1,1,1,1});
+            painter->drawLineStrip(PRIMITIVE2D(_horizAirOnHoriz2));
+        painter->endPrimitive();
+
+        if( _horizMarkers.vertex2Size() == 0)
+        {
+            // Markers around Horizon denoating 10, 20, 30, and 45 degrees.
+            for( int iAng = -30; iAng < 0; iAng +=10 )
+            {
+                int dA = 1;
+                int dH = 5;
+
+                if( iAng == -30 )
+                {
+                    dA = 1.5;
+                    dH = 10;
+                }
+
+                float fAngRad1 = (iAng-dA)/180.0f * M_PI;
+                float fAngRad2 = (iAng+dA)/180.0f * M_PI;
+
+                float fSinRad1 = sin(fAngRad1 );
+                float fCosRad1 = -cos(fAngRad1 );
+
+                float fSinRad2 = sin(fAngRad2 );
+                float fCosRad2 = -cos(fAngRad2 );
+
+                float x1 = fSinRad1 * _CX;
+                float y1 = fCosRad1 * _CY;
+                float x2 = fSinRad2 * _CX;
+                float y2 = fCosRad2 * _CY;
+
+                float x3 = fSinRad2 * (_CX+dH);
+                float y3 = fCosRad2 * (_CY+dH);
+                float x4 = fSinRad1 * (_CX+dH);
+                float y4 = fCosRad1 * (_CY+dH);
+
+                _horizMarkers.addVertex(x1, y1);
+                _horizMarkers.addVertex(x2, y2);
+                _horizMarkers.addVertex(x3, y3);
+                _horizMarkers.addVertex(x4, y4);
+
+                _horizMarkers.addVertex(-x1, y1);
+                _horizMarkers.addVertex(-x2, y2);
+                _horizMarkers.addVertex(-x3, y3);
+                _horizMarkers.addVertex(-x4, y4);
+            }
+        }
+
+        painter->beginPrimitive();
+            painter->drawQuads(PRIMITIVE2D(_horizMarkers));
+        painter->endPrimitive();
+    }
+
+
+
+    return;/////////////////////////////////////////////////////////////
+
+    { //Aircraft on Horizon
+
+
+
 
         { // -45 and 45 markers around edge
             float fsin = sin(M_PI/4);

@@ -95,7 +95,7 @@ void OpenGLPainter::drawLineLoop(const float *pts, int count)
     drawPrimitive(pts, count, GL_LINE_LOOP);
 }
 
-void OpenGLPainter::drawLineStrip(float *pts, int count)
+void OpenGLPainter::drawLineStrip(const float *pts, int count)
 {
     drawPrimitive(pts, count, GL_LINE_STRIP);
 }
@@ -152,10 +152,10 @@ void OpenGLPainter::drawQuads(const float *pts, int count)
 {
     Renderer* r = renderer();
     r->setPrimitiveType(GL_LINE_LOOP);
+    r->bindVertex(Renderer::Vertex, 2, pts);
 
-    for( int i=0; i < count; i+= 2*4)
+    for( int i=0; i < count; i+= 4)
     {
-        r->bindVertex(Renderer::Vertex, 2, pts);
         r->setVertexCountOffset(4, i);
         r->Render();
     }

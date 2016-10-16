@@ -29,7 +29,7 @@ public:
     void drawLine(float x1, float y1, float x2, float y2);
     void drawLines(const float *pts, int count);
     void drawLineLoop(const float *pts, int count);
-    void drawLineStrip(float* pts, int count);
+    void drawLineStrip(const float *pts, int count);
     void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
     void drawTriangles(float* pts, int count);
     void drawTriangleFan(const float *pts, int count);
