@@ -1799,318 +1799,68 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         painter->endFont();
     }
 
-    p.GetModel().Pop();
-    return;
-
-    {//Horizon
-        glPushMatrix();
-        glRotatef( -_fBank, 0, 0, 1 );
-
-//        float dY;
-//        {
-//            if( _fPitch > 20 )
-//            {
-//                dY = 20 * PIXEL_PER_PITCH + (_fPitch-20)*PIXEL_PER_PITCH2;
-//            }
-//            else if( _fPitch  > -10 )
-//            {
-//                dY = _fPitch * PIXEL_PER_PITCH;
-//            }
-//            else
-//            {
-//                dY = -10 * PIXEL_PER_PITCH + (_fPitch+10) * PIXEL_PER_PITCH3;
-//            }
-//        }
-
-//        glTranslatef( 0, dY, 0 );
-
-//        glBegin(GL_QUADS);
-//            glColor3ub(30,140,242);//Sky
-//            glVertex2f(-100, -315 );
-//            glVertex2f(100, -315 );
-//            glVertex2f(100, 0 );
-//            glVertex2f(-100, 0 );
-
-//            glColor3ub(127,90,56);//Ground
-//            //glColor3ub(88,61,44);//Ground
-//            glVertex2f(-100, 0 );
-//            glVertex2f(100, 0 );
-//            glVertex2f(100, 315 );
-//            glVertex2f(-100, 315 );
-//        glEnd();
-
-//        {//Hdg Lines
-//            #define PIXEL_PER_HDG  2.6f
-
-//            glColor3f(1.0f,1.0f,1.0f);
-//            glBegin(GL_QUADS);
-//                int dH = (int)_fHdg % 10;
-//                int minHdg = (_fHdg - dH - 40);
-//                int maxHdg = minHdg + 80;
-//                int x;
-
-//                {
-//                    for( int h = minHdg; h <= maxHdg; h+= 10 )
-//                    {
-//                        x = (h - _fHdg) * PIXEL_PER_HDG;
-
-//                        glVertex2f( x-1, 0 );
-//                        glVertex2f( x, 0 );
-//                        glVertex2f( x, 4 );
-//                        glVertex2f( x-1, 4 );
-//                    }
-//                }
-//            glEnd();
-//        }
-
-//        { //-30 to -10
-
-//            float dy = 10 * PIXEL_PER_PITCH+10;
-//            float fLine;
-
-//            glBegin(GL_LINES);
-//                glColor3f(1.0f,1.0f,1.0f);
-//                fLine = dy + 5.0*PIXEL_PER_PITCH3;
-//                glVertex2f( -8, fLine );
-//                glVertex2f( 8, fLine );
-
-//                glColor3f(0.2f,0.9f,0.2f);
-//                glVertex2f( -8, fLine-1 );
-//                glVertex2f( -14, fLine-1 );
-//                glVertex2f( -8, fLine+1 );
-//                glVertex2f( -14, fLine+1 );
-
-//                glVertex2f( 8, fLine-1 );
-//                glVertex2f( 14, fLine-1 );
-//                glVertex2f( 8, fLine+1 );
-//                glVertex2f( 14, fLine+1 );
-
-//                glColor3f(1.0f,1.0f,1.0f);
-//                fLine = dy + 10.0*PIXEL_PER_PITCH3;
-//                glVertex2f( -20, fLine );
-//                glVertex2f( 20, fLine );
-
-//                fLine = dy + 20.0*PIXEL_PER_PITCH3;
-//                glVertex2f( -25, fLine );
-//                glVertex2f( 25, fLine );
-
-//                fLine = dy + 40.0*PIXEL_PER_PITCH3;
-//                glVertex2f( -30, fLine );
-//                glVertex2f( 30, fLine );
-
-//                fLine = dy + 60.0*PIXEL_PER_PITCH3;
-//                glVertex2f( -35, fLine );
-//                glVertex2f( 35, fLine );
-
-//                fLine = dy + 80.0*PIXEL_PER_PITCH3;
-//                glVertex2f( -40, fLine );
-//                glVertex2f( 40, fLine );
-//            glEnd();
-
-//            fLine = dy;
-//            m_PfdHorizFreeFont.RenderFontNT( -30, fLine-6, "10" );
-//            m_PfdHorizFreeFont.RenderFontNT( 20, fLine-6, "10");
-
-//            fLine = dy + 10.0*PIXEL_PER_PITCH3; //-20 Degrees
-//            m_PfdHorizFreeFont.RenderFontNT( -35, fLine-6, "20" );
-//            m_PfdHorizFreeFont.RenderFontNT( 25, fLine-6, "20");
-
-//            fLine = dy + 20.0*PIXEL_PER_PITCH3;//-30 degrees
-//            m_PfdHorizFreeFont.RenderFontNT( -40, fLine-6, "30" );
-//            m_PfdHorizFreeFont.RenderFontNT( 30, fLine-6, "30");
-
-//            fLine = dy + 40.0*PIXEL_PER_PITCH3;//-50 degrees
-//            m_PfdHorizFreeFont.RenderFontNT( -45, fLine-6, "50" );
-//            m_PfdHorizFreeFont.RenderFontNT( 35, fLine-6, "50");
-
-//            fLine = dy + 60.0*PIXEL_PER_PITCH3;//-70 degrees
-//            m_PfdHorizFreeFont.RenderFontNT( -50, fLine-6, "70" );
-//            m_PfdHorizFreeFont.RenderFontNT( 40, fLine-6, "70");
-
-//            fLine = dy + 80.0*PIXEL_PER_PITCH3;//-90 degrees
-//            m_PfdHorizFreeFont.RenderFontNT( -55, fLine-6, "90" );
-//            m_PfdHorizFreeFont.RenderFontNT( 45, fLine-6, "90");
-//        }
-
-//        {// -10 to 20
-//            glBegin(GL_LINES);
-//                glColor3f(1.0f,1.0f,1.0f);
-
-//                glVertex2d(	-100, 0 );
-//                glVertex2d(	100, 0 );
-
-//                float fLine;
-//                for( int iPitch = -10; iPitch <= 20; iPitch+=10)
-//                {
-//                    fLine = -iPitch * PIXEL_PER_PITCH;
-
-//                    if(iPitch )
-//                    {
-//                        glVertex2f( -16, fLine );
-//                        glVertex2f( 16, fLine );
-//                    }
-
-//                    if(iPitch == 20) continue;
-
-//                    fLine = -(iPitch+2.5) * PIXEL_PER_PITCH;
-//                    glVertex2f( -4, fLine );
-//                    glVertex2f( 4, fLine );
-
-//                    fLine = -(iPitch+5) * PIXEL_PER_PITCH;
-//                    glVertex2f( -8, fLine );
-//                    glVertex2f( 8, fLine );
-
-//                    fLine = -(iPitch+	7.5) * PIXEL_PER_PITCH;
-//                    glVertex2f( -4, fLine );
-//                    glVertex2f( 4, fLine );
-//                }
-//            glEnd();
-//        }
-
-//        { // 0 to 20 Text
-//            glColor3f(1.0f,1.0f,1.0f);
-//            std::string str;
-//            float fLine = 0;
-//            for( int iPitch = 0; iPitch <= 20; iPitch+=10)
-//            {
-//                if( iPitch == 0 ) continue;
-
-//                fLine = -iPitch * PIXEL_PER_PITCH +10;
-//                str = format( "%d", abs(iPitch) );
-
-//                if( iPitch == 20 )
-//                {
-//                    m_PfdHorizFreeFont.RenderFontNT( -35, fLine-6, str );
-//                    m_PfdHorizFreeFont.RenderFontNT( 25, fLine-6, str);
-//                }
-//                else
-//                {
-//                    m_PfdHorizFreeFont.RenderFontNT( -30, fLine-6, str );
-//                    m_PfdHorizFreeFont.RenderFontNT( 20, fLine-6, str);
-//                }
-//            }
-//        }
-
-//        //20 to 30
-//        {
-//            float dy = -20 * PIXEL_PER_PITCH;
-//            float fLine;
-//            glBegin(GL_LINES);
-//                glColor3f(1.0f,1.0f,1.0f);
-//                fLine = dy - 2.5*PIXEL_PER_PITCH2;
-//                glVertex2f( -4, fLine ); //22.5
-//                glVertex2f( 4, fLine );
-
-//                fLine = dy - 5.0*PIXEL_PER_PITCH2;
-//                glVertex2f( -8, fLine ); //25.0
-//                glVertex2f( 8, fLine );
-
-//                fLine = dy - 7.5*PIXEL_PER_PITCH2;
-//                glVertex2f( -4, fLine ); //27.5
-//                glVertex2f( 4, fLine );
-
-//                fLine = dy - 10.0*PIXEL_PER_PITCH2;
-//                glVertex2f( -20, fLine ); //30
-//                glVertex2f( 20, fLine );
-
-//                glColor3f(0.2f,0.9f,0.2f);
-
-//                glVertex2f( -25, fLine-1 ); glVertex2f( -20, fLine-1 );
-//                glVertex2f( -25, fLine+1 ); glVertex2f( -20, fLine+1 );
-
-//                glVertex2f( 25, fLine-1 ); glVertex2f( 20, fLine-1 );
-//                glVertex2f( 25, fLine+1 ); glVertex2f( 20, fLine+1 );
-
-
-//            glEnd();
-
-//            fLine = dy - 10.0*PIXEL_PER_PITCH2+10;
-//            glColor3f(1.0f,1.0f,1.0f);
-//            m_PfdHorizFreeFont.RenderFontNT( -40, fLine-6, "30" );
-//            m_PfdHorizFreeFont.RenderFontNT( 30, fLine-6, "30");
-//        }
-
-        { // 50 to 90
-            //for( int iPitch = 50; iPitch <= 90; iPitch+=20)
-            float fLine;
-            float dy = -20 * PIXEL_PER_PITCH - 30*PIXEL_PER_PITCH2+10;
-            glBegin(GL_LINES);
-                glColor3f(1.0f,1.0f,1.0f);
-
-                fLine = dy;
-                glVertex2f( -30, fLine );
-                glVertex2f( 30, fLine );
-
-                fLine = dy - 20.0*PIXEL_PER_PITCH2;
-                glVertex2f( -35, fLine );
-                glVertex2f( 35, fLine );
-
-                fLine = dy - 40.0*PIXEL_PER_PITCH2;
-                glVertex2f( -40, fLine );
-                glVertex2f( 40, fLine );
-            glEnd();
-
-            fLine = dy+10;
-            m_PfdHorizFreeFont.RenderFontNT( -45, fLine-6, "50" );
-            m_PfdHorizFreeFont.RenderFontNT( 35, fLine-6, "50");
-
-            fLine = dy - 20.0*PIXEL_PER_PITCH2+10; //-20 Degrees
-            m_PfdHorizFreeFont.RenderFontNT( -50, fLine-6, "70" );
-            m_PfdHorizFreeFont.RenderFontNT( 40, fLine-6, "70");
-
-            fLine = dy - 40.0*PIXEL_PER_PITCH2+10;//-30 degrees
-            m_PfdHorizFreeFont.RenderFontNT( -55, fLine-6, "90" );
-            m_PfdHorizFreeFont.RenderFontNT( 45, fLine-6, "90");
-        }
-
-        {//magenta Fly Up warning arrows from deep dive
-            glColor3f(1.0f,0.0f,1.0f);
+    {//magenta Fly Up warning arrows from deep dive
+        if( _horizMagFlyUp.vertex2Size() ==0)
+        {
             float fLine;
             float fLine2;
             float dy = 10 * PIXEL_PER_PITCH;
             for( int iPitch = -40; iPitch >= -80; iPitch -= 20)
             {
-                glBegin(GL_LINE_LOOP);
-                    float dy2 = dy -(iPitch+10) * PIXEL_PER_PITCH3;
-                    fLine = dy2 + 5 * PIXEL_PER_PITCH3;//From
-                    fLine2 = dy2 - 2.5 * PIXEL_PER_PITCH3;//To
+                float dy2 = dy -(iPitch+10) * PIXEL_PER_PITCH3;
+                fLine = dy2 + 5 * PIXEL_PER_PITCH3;//From
+                fLine2 = dy2 - 2.5 * PIXEL_PER_PITCH3;//To
 
-                    glVertex2f(-15, fLine );
-                    glVertex2f(-10, fLine );
-                    glVertex2f( 0, fLine2 );
-                    glVertex2f( 10, fLine );
-                    glVertex2f( 15, fLine );
-                    glVertex2f( 0, fLine2-5 );
-                    glVertex2f( -15, fLine );
-                glEnd();
+                _horizMagFlyUp.addVertex(-15, fLine );
+                _horizMagFlyUp.addVertex(-10, fLine );
+                _horizMagFlyUp.addVertex( 0, fLine2 );
+                _horizMagFlyUp.addVertex( 10, fLine );
+                _horizMagFlyUp.addVertex( 15, fLine );
+                _horizMagFlyUp.addVertex( 0, fLine2-5 );
+                _horizMagFlyUp.addVertex( -15, fLine );
             }
         }
 
-        {//magenta Fly Down warning arrows from steep climb
-            glColor3f(1.0f,0.0f,1.0f);
+        painter->beginPrimitive();
+            painter->setPrimitiveColor({1,0,1,1});
+            painter->drawLineLoop(PRIMITIVE2D(_horizMagFlyUp));
+        painter->endPrimitive();
+    }
+
+    {//magenta Fly Down warning arrows from steep climb
+        if(_horizMagFlyDown.vertex2Size()==0)
+        {
             float fLine;
             float fLine2;
             float dy = -20 * PIXEL_PER_PITCH;
             for( int iPitch = 40; iPitch <= 80; iPitch += 20)
             {
-                glBegin(GL_LINE_LOOP);
-                    float dy2 = dy -(iPitch-20) * PIXEL_PER_PITCH2;
-                    fLine = dy2 - 5 * PIXEL_PER_PITCH2;//From
-                    fLine2 = dy2 + 5.0 * PIXEL_PER_PITCH2;//To
+                float dy2 = dy -(iPitch-20) * PIXEL_PER_PITCH2;
+                fLine = dy2 - 5 * PIXEL_PER_PITCH2;//From
+                fLine2 = dy2 + 5.0 * PIXEL_PER_PITCH2;//To
 
-                    glVertex2f(-10, fLine );
-                    glVertex2f(-15, fLine );
-                    glVertex2f( 0, fLine2 );
-                    glVertex2f( 15, fLine );
-                    glVertex2f( 10, fLine );
-                    glVertex2f( 0, fLine2-5 );
-                    glVertex2f( -10, fLine );
-                glEnd();
+                _horizMagFlyDown.addVertex(-10, fLine );
+                _horizMagFlyDown.addVertex((-15, fLine );
+                _horizMagFlyDown.addVertex(( 0, fLine2 );
+                _horizMagFlyDown.addVertex(( 15, fLine );
+                _horizMagFlyDown.addVertex(( 10, fLine );
+                _horizMagFlyDown.addVertex(( 0, fLine2-5 );
+                _horizMagFlyDown.addVertex(( -10, fLine );
             }
         }
 
-        glPopMatrix();
+        painter->beginPrimitive();
+            painter->setPrimitiveColor({1,0,1,1});
+            painter->drawLineLoop(PRIMITIVE2D(_horizMagFlyDown));
+        painter->endPrimitive();
     }
+    p.GetModel().Pop();
+
+    p.GetModel().Push();
+
+    p.GetModel().Pop();
+
+    return;
 
     { //Draw surrounding horizon bits
         glPushMatrix();

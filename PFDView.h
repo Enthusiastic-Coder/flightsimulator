@@ -70,6 +70,7 @@ private:
     meshData _horizNeg10ToPos20;
     meshData _horizPos20ToPos30;
     meshData _horizPos50ToPos90;
+    meshData _horizMagFlyUp;
 };
 
 #endif //__PFD__VIEW__H__

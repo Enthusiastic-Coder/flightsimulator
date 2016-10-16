@@ -90,7 +90,7 @@ void OpenGLPainter::drawLines(const float *pts, int count)
      drawPrimitive(pts, count, GL_LINES);
 }
 
-void OpenGLPainter::drawLineLoop(float *pts, int count)
+void OpenGLPainter::drawLineLoop(const float *pts, int count)
 {
     drawPrimitive(pts, count, GL_LINE_LOOP);
 }
