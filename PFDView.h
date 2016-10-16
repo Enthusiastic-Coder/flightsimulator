@@ -68,6 +68,8 @@ private:
     meshData _horizHdgLines;
     meshData _horizNeg30ToNeg10;
     meshData _horizNeg10ToPos20;
+    meshData _horizPos20ToPos30;
+    meshData _horizPos50ToPos90;
 };
 
 #endif //__PFD__VIEW__H__
