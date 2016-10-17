@@ -14,8 +14,6 @@ class PFDView
 public:
 	PFDView();
 
-    void Initialise();
-	
     void render(OpenGLPainter* painter, int cx, int cy);
 
     float _fPitch;

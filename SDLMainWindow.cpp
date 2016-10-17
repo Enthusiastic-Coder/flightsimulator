@@ -338,8 +338,6 @@ bool SDLMainWindow::onInitialise()
 #endif
         _WorldSystem.setLightFraction(0.9f);
 
-        _pfdInstrument.Initialise();
-
         _WorldSystem.loadBodyRecorderedData();
 
         FILE *fPersistFile = NULL;
