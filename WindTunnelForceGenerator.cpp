@@ -2,12 +2,19 @@
 #include "WindTunnelForceGenerator.h"
 #include "AeroSectionElementForceGenerator.h"
 #include "AeroSectionSubElementForceGenerator.h"
+#include "AeroForceGenerator.h"
+#include "WorldSystem.h"
 
-WindTunnelForceGenerator::WindTunnelForceGenerator(AeroForceGenerator &lAfg, AeroForceGenerator &rAfg) :
-    _bPitchRate(true),
-    _lAfg( lAfg ),
-    _rAfg( rAfg )
+
+WindTunnelForceGenerator::WindTunnelForceGenerator() :
+    _bPitchRate(true)
 {
+}
+
+void WindTunnelForceGenerator::setLeftRightWing(AeroForceGenerator *lAfg, AeroForceGenerator *rAfg)
+{
+    _lAfg = lAfg;
+    _rAfg = rAfg;
 }
 
 void WindTunnelForceGenerator::onApplyForce(Particle *p, double dt)

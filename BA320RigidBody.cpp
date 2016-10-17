@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BA320RigidBody.h"
 #include "JSONRigidBodyBuilder.h"
+#include "WorldSystem.h"
 
 #include <iostream>
 BAAirbus320CustomForceGenerator::BAAirbus320CustomForceGenerator() {}
@@ -58,7 +59,7 @@ void BAAirbus320CustomForceGenerator::onApplyForce(Particle *p, double dt)
 
 BAAirbus320JSONRigidBody::BAAirbus320JSONRigidBody(std::string name) :
     JSONRigidBody(name),
-    _windTunnel(_left_wing,_right_wing),
+    //_windTunnel(_left_wing,_right_wing),
     _vertical_tail(&_rudderAoaData),
     _left_wing(&_wingAoaData,true),
     _right_wing(&_wingAoaData, true),

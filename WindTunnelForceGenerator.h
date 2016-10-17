@@ -4,19 +4,21 @@
 
 #include <shlwapi.h>
 #pragma comment( lib, "shlwapi.lib" )  // needed for the ColorHLSToRGB() function
+#include "GSForceGenerator.h"
 
-
-#include "AeroForceGenerator.h"
+class AeroForceGenerator;
 
 class WindTunnelForceGenerator : public GSForceGenerator
 {
 public:
     FORCEGENERATOR_TYPE( Type_Custom )
 
-    WindTunnelForceGenerator(AeroForceGenerator& lAfg , AeroForceGenerator& rAfg );
+    WindTunnelForceGenerator();
 
-	AeroForceGenerator& _lAfg;
-	AeroForceGenerator& _rAfg;
+    void setLeftRightWing( AeroForceGenerator* lAfg , AeroForceGenerator* rAfg );
+
+    AeroForceGenerator* _lAfg;
+    AeroForceGenerator* _rAfg;
 
     void onApplyForce( Particle *p, double dt ) override;
     void drawForceGenerator(GSRigidBody* p, Renderer* args) override;
