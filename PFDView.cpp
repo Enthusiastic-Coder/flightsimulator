@@ -56,22 +56,10 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 {
     glClear(GL_STENCIL_BUFFER_BIT);
 
-    glMatrixMode( GL_PROJECTION  );
-    glPushMatrix();
-    glLoadIdentity();
-
     _CX = 100;
     _CY = 100;
     _CEN_X = cx/2;
     _CEN_Y = cy/2;
-
-    glOrtho(0, cx, cy, 0,-1, 1);
-
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    glTranslatef( _CEN_X, _CEN_Y, 0 );
 
     glDisable(GL_TEXTURE_2D );
     glDisable(GL_DEPTH_TEST);
@@ -100,12 +88,6 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     p.GetModel().Pop();
 
     glDisable(GL_STENCIL_TEST);
-
-    glMatrixMode( GL_PROJECTION  );
-    glPopMatrix();
-    glMatrixMode( GL_MODELVIEW  );
-    glPopMatrix();
-
     glEnable(GL_DEPTH_TEST);
 }
 
