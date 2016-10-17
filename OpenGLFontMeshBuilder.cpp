@@ -14,7 +14,6 @@ void OpenGLFontMeshBuilder::clear()
 
 void OpenGLFontMeshBuilder::add(int x, int y, std::string str, bool bHorizontal)
 {
-
     for( size_t i =0; i < str.length(); ++i)
     {
         MathSupport<int>::size sz = _fontTexture->getFontSize(str[i]);
@@ -44,7 +43,7 @@ void OpenGLFontMeshBuilder::add(int x, int y, int dx, int dy, char ch)
     _meshData.addVertex(Vector3F(x+dx,y,0));
     _meshData.addTexture(uvs[1].first, uvs[1].second);
 
-    _meshData.addVertex(Vector3F(x,y+dy,0));
+    _meshData.addVertex(Vector3F(x,y-dy,0));
     _meshData.addTexture(uvs[3].first, uvs[3].second);
 
     //Triangle B
@@ -52,10 +51,10 @@ void OpenGLFontMeshBuilder::add(int x, int y, int dx, int dy, char ch)
     _meshData.addVertex(Vector3F(x+dx,y,0));
     _meshData.addTexture(uvs[1].first, uvs[1].second);
 
-    _meshData.addVertex(Vector3F(x+dx,y+dy,0));
+    _meshData.addVertex(Vector3F(x+dx,y-dy,0));
     _meshData.addTexture(uvs[2].first, uvs[2].second);
 
-    _meshData.addVertex(Vector3F(x,y+dy,0));
+    _meshData.addVertex(Vector3F(x,y-dy,0));
     _meshData.addTexture(uvs[3].first, uvs[3].second);
 }
 
@@ -69,7 +68,6 @@ void OpenGLFontMeshBuilder::beginRender(Renderer *r)
     r->setPrimitiveType(GL_TRIANGLES);
     r->setUseIndex(false);
     if( _fontTexture != 0)  r->bindTexture(&_fontTexture->texture());
-    glDepthMask(GL_FALSE);
 }
 
 void OpenGLFontMeshBuilder::render(Renderer *r)
@@ -83,7 +81,6 @@ void OpenGLFontMeshBuilder::render(Renderer *r)
 
 void OpenGLFontMeshBuilder::endRender(Renderer *r)
 {
-    glDepthMask(GL_TRUE);
     r->unBindTexture();
 }
 

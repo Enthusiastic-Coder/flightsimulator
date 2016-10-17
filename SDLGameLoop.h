@@ -21,7 +21,7 @@ public:
     void update();
     void postQuit();
 
-    virtual bool onInitialise(HDC) {return false;}
+    virtual bool onInitialise() {return false;}
     virtual void onUnInitialise() {}
     virtual void onUpdate() {}
     virtual void onRender() {}

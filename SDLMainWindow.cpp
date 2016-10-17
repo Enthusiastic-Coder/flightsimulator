@@ -28,6 +28,7 @@
 #include "OpenGLFontTexture.h"
 #include "OpenGLFontRenderer2D.h"
 #include "OpenGLTextureRenderer2D.h"
+#include "OpenGLPainter.h"
 
 #define MS_TO_KTS( value ) fabs(value*3.2808*3600/5280/1.15f)
 #define MS_TO_MPH( value ) MS_TO_KTS( value*1.15 )
@@ -101,12 +102,10 @@ void SDLMainWindow::onFingerUp(SDL_TouchFingerEvent* e)
 void SDLMainWindow::onSize(int width, int height)
 {
     SDLGameLoop::onSize(width, height);
-    _fontRenderer.onSize(width, height);
     _textureRenderer.onSize(0,0, width, height);
     _powerSliderControl.onSize(width, height);
     _buttonTextureManager.onSizeLayout();
 
-    _oglFont.OnSize(width,height);
     for(int i=0; i < 3; ++i)
     {
         OpenGLMatrixStack & mat = OpenGLPipeline::Get(i).GetProjection();
@@ -126,8 +125,10 @@ SDLMainWindow::SDLMainWindow() :
     _showCursor(true),
     //_paused(false),
     _framecount(0),
+#ifndef LOCATED_AT_LONDON
     _soundDevice(0),
     _soundContext(0),
+#endif
     _textureRenderer(_renderer),
     _buttonTextureManager(&_textureRenderer)
 
@@ -177,6 +178,12 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     if( !_simplePrimitiveShaderProgram.loadFiles("shaders/simplePrimitiveShader.vert", "shaders/simplePrimitiveShader.frag"))
     {
         SDL_Log("%s %s", _simplePrimitiveShaderProgram.getError().c_str(), "simplePrimitiveShader Failed");
+        return false;
+    }
+
+    if( !_simpleColorPrimitiveShaderProgram.loadFiles("shaders/simpleColorPrimitiveShader.vert", "shaders/simpleColorPrimitiveShader.frag"))
+    {
+        SDL_Log("%s %s", _simpleColorPrimitiveShaderProgram.getError().c_str(), "simpleColorPrimitiveShader Failed");
         return false;
     }
 
@@ -247,16 +254,20 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     }
 #endif
 
-//    _openGLFrameBuffer.bind();
-//    _openGLFrameBuffer.attachColorTexture2D(0, _shadowTextureMap1);
+    int pfdWidth = 350;
+    int pfdHeight = 350;
 
-//    if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
-//    {
-//        SDL_Log("FrameBuffer not complete. - FrameBuffer Failed");
-//        return false;
-//    }
+    if( !_pfdColorTexture.generate(pfdWidth, pfdHeight, false))
+    {
+        SDL_Log("Failed to create texture - PFD color Texture");
+        return false;
+    }
 
-//    _openGLFrameBuffer.unbind();
+    if( !_pfdStencilBuffer.generateStencil(pfdWidth, pfdHeight))
+    {
+        SDL_Log("Failed to create stencil - PFD stencil buffer");
+        return false;
+    }
 
 #ifndef LOCATED_AT_LONDON
     int width, height;
@@ -296,7 +307,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     return true;
 }
 
-bool SDLMainWindow::onInitialise(HDC hdc)
+bool SDLMainWindow::onInitialise()
 {
     try
     {
@@ -308,6 +319,9 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         //_myFontTexture.loadfile("fonts/MS Shell Dlg 2-28.png");
         //_myFontTexture.loadfile("fonts/Verdana-11-Bold.png");
         _myFontTexture.loadfile("fonts/Verdana-10.png");
+
+        _fontRenderer.selectShader(&_fontShaderProgram);
+        _fontRenderer.selectRenderer(_renderer);
 
         _WorldSystem.onInitialise();
 
@@ -324,7 +338,7 @@ bool SDLMainWindow::onInitialise(HDC hdc)
 #endif
         _WorldSystem.setLightFraction(0.9f);
 
-        _pfdInstrument.Initialise(hdc);
+        _pfdInstrument.Initialise();
 
         _WorldSystem.loadBodyRecorderedData();
 
@@ -349,20 +363,12 @@ bool SDLMainWindow::onInitialise(HDC hdc)
         _camera.setRemoteViewPtr( _WorldSystem.getCameraView());
         _camera.fastForwardLocalView();
 
-        //_WorldSystem.updateCameraView(_camera.getView());
-
         OnInitPolyMode();
 
         glEnable(GL_DEPTH_TEST);
 
-        glEnable(GL_COLOR_MATERIAL);
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE );
-
-        //_oglFont.CreateBitmapFont( hdc, "Tahoma", 16, FW_BOLD*0+FW_NORMAL*1 );
-        _oglFont.CreateBitmapFont( hdc, "Verdana", 16, FW_BOLD*0+FW_NORMAL*1 );
-        _oglFont.SetOffSet( 0, 30);
 
         glClearColor(0.0f,0.0f,0.0f, 1.0f);
 
@@ -791,13 +797,16 @@ void SDLMainWindow::onUpdate()
     if( _framecount >= FPS_RESOLUTION )
         _framecount = 0;
 
+    _buttonJoystick.setButtonVisible(!_buttonJoystick.isButtonDown());
     _buttonTextureManager.update(dt);
 
     JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
     if (focus)
     {
-        //if( focus->getState() == JSONRigidBody::STATE::PLAYBACK)
+        if( focus->getState() == JSONRigidBody::STATE::PLAYBACK)
             _powerSliderControl.setValue(focus->getPowerOutput(0));
+        else
+            _powerSliderControl.setValue(focus->getPower(0));
     }
 
     _powerSliderControl.update(dt);
@@ -936,19 +945,19 @@ void SDLMainWindow::onUpdate()
             const Vector3D& pos = pRigidBody->position();
             const Vector3D& vel = pRigidBody->velocity();
 
-            _pfdInstrument.m_fPitch = -euler.x;
-            _pfdInstrument.m_fBank = euler.z;
-            _pfdInstrument.m_fHdg = euler.y;
+            _pfdInstrument._fPitch = -euler.x;
+            _pfdInstrument._fBank = euler.z;
+            _pfdInstrument._fHdg = euler.y;
 
             HeightData data;
-            _pfdInstrument.m_fAlt = pRigidBody->Height() * 3.2808 - 2;
+            _pfdInstrument._fAlt = pRigidBody->Height() * 3.2808 - 2;
 
-            if (_pfdInstrument.m_fAlt < 762.0f && _WorldSystem.getHeightFromPosition(pRigidBody->getGPSLocation(), data))
-                _pfdInstrument.m_fAlt = data.Height() * 3.2808 - 2;
+            if (_pfdInstrument._fAlt < 762.0f && _WorldSystem.getHeightFromPosition(pRigidBody->getGPSLocation(), data))
+                _pfdInstrument._fAlt = data.Height() * 3.2808 - 2;
 
             Vector3D vWind = _WorldSystem.getWeather()->getWindFromPosition(Vector3D());
-            _pfdInstrument.m_fAirSpd = AirProperties::Airspeed((vel-vWind).Magnitude() * 3600.0/1000.0/1.60934/1.15, pRigidBody->Height(), 0 );
-            _pfdInstrument.m_fVSI = vel * pos.Unit() * 3.2808 * 60.0;
+            _pfdInstrument._fAirSpd = AirProperties::Airspeed((vel-vWind).Magnitude() * 3600.0/1000.0/1.60934/1.15, pRigidBody->Height(), 0 );
+            _pfdInstrument._fVSI = vel * pos.Unit() * 3.2808 * 60.0;
         }
     }
 
@@ -1242,7 +1251,36 @@ void SDLMainWindow::onRender()
     std::string desc = _WorldSystem.getCameraDescription();
     std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
     if( desc.find("cockpit") != std::string::npos)
-        _pfdInstrument.OnPaint(cx, cy);
+    {
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+
+        _openGLFrameBuffer.bind();
+        _openGLFrameBuffer.attachColorTexture2D(0, _pfdColorTexture);
+        _openGLFrameBuffer.attachStencilRenderBuffer(_pfdStencilBuffer);
+
+        if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
+        {
+            std::cout << "checkFrameBufferStatusComplete failed : RenderDepthTextures" << std::endl;
+            postQuit();
+            return;
+        }
+
+        glViewport(0, 0, _pfdColorTexture.width(), _pfdColorTexture.height());
+
+        OpenGLPainter painter;
+        painter.selectFontRenderer(&_fontRenderer);
+        painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
+
+        _pfdInstrument.render(&painter, _pfdColorTexture.width(), _pfdColorTexture.height());
+
+        _openGLFrameBuffer.attachColorTexture2D(0, 0);
+        _openGLFrameBuffer.attachStencilRenderBuffer(0);
+        _openGLFrameBuffer.unbind();
+
+        glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+        RenderTexture(_pfdColorTexture, 0.5f, 0.5f);
+    }
 
     if (_WorldSystem.isUsingMouse())
         RenderMouseFlying(cx, cy);
@@ -1253,11 +1291,11 @@ void SDLMainWindow::onRender()
         RenderInfo();
     else
         RenderFPS();
-
     if( global_fg_debug )
     {
         //RenderTexture(_reflectionTexture, 0);
-        RenderTexture(_shadowTextureMap1, 0);
+        RenderTexture(_shadowTextureMap1, 0, 1);
+
 #ifndef LOCATED_AT_LONDON
         RenderTexture(_shadowMapTexture2, 1);
         RenderTexture(_shadowMapTexture3, 2);
@@ -1433,22 +1471,27 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
     glEnable(GL_DEPTH_TEST);
 }
 
-void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, int pos)
+void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V)
 {
-    int size = 30*2;
+    int sw, sh;
+    GetScreenDims(sw, sh);
+
+    int width = 150 * float(sh)/sw;
+    int height = 150;
     glEnable(GL_BLEND);
 
     _renderer->useProgram(_fontShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
+    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.25);
 
     OpenGLTextureRenderer2D r(_renderer);
-    r.onSize(-100, -100, 200, 200);
+    r.onSize(0, 0, 200, 200);
     r.beginRender();
     texID.bind();
-    r.render(-100 + size*pos, -100, size, size);
+    r.render(200*U-width/2, 200*V-height/2, width, height);
 
-    _renderer->useProgram(_simplePrimitiveShaderProgram);
-    r.renderLineBorder(-100 + size*pos, -100, size, size);
+//    _renderer->useProgram(_simplePrimitiveShaderProgram);
+//    r.renderLineBorder( size*pos, 200-size, size, size);
 
     r.endRender();
 
@@ -1459,14 +1502,34 @@ void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, int pos)
 
 void SDLMainWindow::RenderFPS()
 {
-    OGLFontContainer _renderFont( _oglFont );
+    glEnable(GL_BLEND);
+    _renderer->dt = frameTime();
+    _renderer->camID = 0;
+
+    _fontRenderer.selectFont(&_myFontTexture);
+    _fontRenderer.setFontColor(Vector4F(1,1,1,1));
+
+    int w, h;
+    GetScreenDims(w, h);
+
+    OpenGLPipeline& p = OpenGLPipeline::Get(_renderer->camID);
+    p.Push();
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, w, h);
+    p.GetModel().Translate(0, 30,0);
+
+    _fontRenderer.beginRender();
+
     float fps = 0.0f;
     for( int i=0; i < FPS_RESOLUTION; i++ )
         fps += _framerate[i];
 
     char text[256]="";
     sprintf_s( text, _countof(text), "%.0f", fps / FPS_RESOLUTION);
-    _oglFont.RenderFont( 15, 5, text );
+    _fontRenderer.renderText( 15, 5, text );
+
+    _fontRenderer.endRender();
+    p.Pop();
+    glDisable(GL_BLEND);
 }
 
 void SDLMainWindow::RenderInfo()
@@ -1485,50 +1548,18 @@ void SDLMainWindow::RenderInfo()
     glEnable(GL_BLEND);
     _renderer->dt = frameTime();
     _renderer->camID = 0;
-    _renderer->useProgram( _fontShaderProgram);
+
+    OpenGLPipeline& p = OpenGLPipeline::Get(_renderer->camID);
+    p.Push();
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, w, h);
+    p.GetModel().Translate(0, 30,0);
 
     _fontRenderer.selectFont(&_myFontTexture);
     _fontRenderer.setFontColor(Vector4F(1,1,1,1));
-    _fontRenderer.beginRender( _renderer);
+    _fontRenderer.beginRender();
 
-    {
-        char text[1024]= {};
-        JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
-        if( pRigidBody )
-        {
-            Vector3D pos = pRigidBody->position();
-            Vector3D vel = pRigidBody->velocity();
-
-            Vector3D e = pRigidBody->getEuler();
-            Vector3D vb = pRigidBody->velocityBody();
-
-            GPSLocation gpsLocation(pRigidBody->position());
-
-            sprintf_s( text, _countof(text), "ModelPosition: [%.8f N, %.8f E] (%.2f)", gpsLocation._lat, gpsLocation._lng, gpsLocation._height );
-        }
-        int yPos = 300;
-        int dY = _fontRenderer.getFont()->getMaxFontSize().height;
-        _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
-
-        sprintf_s( text, _countof(text), "FT->x:%d, y:%d", _myFontTexture.texture().width(), _myFontTexture.texture().height());
-        _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
-
-        sprintf_s( text, _countof(text), "Slider [%.1f, %.1f]", _powerSliderControl.getCurrentValue(), _powerSliderControl.getValue());
-        _fontRenderer.renderText( _renderer, 0, yPos += dY, text);
-
-    }
-
-    _fontRenderer.endRender( _renderer);
-    OpenGLShaderProgram::useDefault();
-    glDisable(GL_BLEND);
-
-
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    OGLFontContainer _renderFont( _oglFont );
-
-
-    _oglFont.RenderFont( 15, 15, "3D Virtual World by Mo" );
-    _oglFont.RenderFont( 15, 30, "------------------------------------------" );
+    _fontRenderer.renderText( 15, 15, "3D Virtual World by Mo" );
+    _fontRenderer.renderText( 15, 30, "------------------------------------------" );
 
     static char *Version = (char*)glGetString(GL_VERSION);
     static char *Extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -1541,7 +1572,7 @@ void SDLMainWindow::RenderInfo()
     JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
 
     sprintf_s( text, _countof(text), "OpenGL [%s], Vendor [%s], Renderer[%s]", Version, Vendor, Renderer );
-    _oglFont.RenderFont( 15, 45, text );
+    _fontRenderer.renderText( 15, 45, text );
 
     std::string strFocus;
     if (pRigidBody)
@@ -1550,7 +1581,7 @@ void SDLMainWindow::RenderInfo()
         strFocus = "##NONE##";
 
     sprintf_s( text, _countof(text), "Object [%s], Running [%d]", strFocus.c_str(), isRunning() );
-    _oglFont.RenderFont( 15, 60, text );
+    _fontRenderer.renderText( 15, 60, text );
 
     GPSLocation cameraGPS(_camera.localView()->getPosition());
     Vector3F orientation = _camera.localView()->getOrientation();
@@ -1560,10 +1591,10 @@ void SDLMainWindow::RenderInfo()
                         orientation.x,
                         orientation.y,
                         orientation.z);
-    _oglFont.RenderFont( 15, 75, text );
+    _fontRenderer.renderText( 15, 75, text );
 
     sprintf_s( text, _countof(text), "CameraPosition: [%.8f N, %.8f E] (%.2f)", cameraGPS._lat, cameraGPS._lng, cameraGPS._height );
-    _oglFont.RenderFont( 15, 90, text );
+    _fontRenderer.renderText( 15, 90, text );
 
     if( pRigidBody )
     {
@@ -1577,12 +1608,12 @@ void SDLMainWindow::RenderInfo()
 
         sprintf_s( text, _countof(text), "ModelPosition: [%.8f N, %.8f E] (%.2f)", gpsLocation._lat, gpsLocation._lng, gpsLocation._height );
 
-        _oglFont.RenderFont( 15, 105, text );
+        _fontRenderer.renderText( 15, 105, text );
 
         double velMag = vel.Magnitude();
 
         sprintf_s( text, _countof(text), "Vel: [%.2f,%.2f,%.2f] (Kts:%.2f)(Mph:%.2f)", vel.x, vel.y, vel.z, MS_TO_KTS(velMag), MS_TO_MPH(velMag) );
-        _oglFont.RenderFont( 15, 120, text );
+        _fontRenderer.renderText( 15, 120, text );
 
         //MOJ_JEB
         /*if( _audiA8.hasFocus() )
@@ -1617,7 +1648,7 @@ void SDLMainWindow::RenderInfo()
         const Vector3D& cg = pRigidBody->cg();
 
         sprintf_s( text, _countof(text), "Ang V[%.2f,%.2f,%.2f] CG[%.2f,%.2f,%.2f]", angVel.x, angVel.y, angVel.z, cg.x, cg.y, cg.z );
-        _oglFont.RenderFont( 15, 135, text );
+        _fontRenderer.renderText( 15, 135, text );
 
 
         double dHeightOfGround(0.0);
@@ -1632,10 +1663,10 @@ void SDLMainWindow::RenderInfo()
         else
             sprintf_s( text, _countof(text), "HeightAbovePlane :[NOT AVAILABLE]");
 
-        _oglFont.RenderFont( 15, 150, text );
+        _fontRenderer.renderText( 15, 150, text );
 
         sprintf_s(text, _countof(text), "View [%d]:%s: Zoom :%.2f:", _WorldSystem.curViewIdx(), _WorldSystem.getCameraDescription().c_str(), _camera.localView()->getZoom());
-        _oglFont.RenderFont( 15, 165, text );
+        _fontRenderer.renderText( 15, 165, text );
 
         Vector3D acceleration = pRigidBody->getForce() / pRigidBody->getMass();
         double gForce = 1+acceleration.y / pRigidBody->gravity().y;
@@ -1645,10 +1676,10 @@ void SDLMainWindow::RenderInfo()
 
         sprintf_s(text, _countof(text), "G :[%.2f], FlightRec [%s]", gForce,
             state ==JSONRigidBody::STATE::NORMAL ? "Normal": (state ==JSONRigidBody::STATE::RECORDING ? "Recording": "Playback" ) );
-        _oglFont.RenderFont( 15, 180, text );
+        _fontRenderer.renderText( 15, 180, text );
 
         sprintf_s( text, _countof(text), "Camera-Object distance :%.2f: miles", _WorldSystem.focusedRigidBody()->getGPSLocation().distanceTo( _camera.localView()->getPosition() )*3.2808/5280 );
-        _oglFont.RenderFont( 15, 195, text );
+        _fontRenderer.renderText( 15, 195, text );
 
         if (state == JSONRigidBody::STATE::PLAYBACK)
         {
@@ -1656,7 +1687,7 @@ void SDLMainWindow::RenderInfo()
                                         pRigidBody->getFlightRecorder().timeSoFar(),
                                         pRigidBody->getFlightRecorder().totalTime()
                                             );
-            _oglFont.RenderFont(15, 210, text);
+            _fontRenderer.renderText(15, 210, text);
         }
 
         /*auto *rigidBody = _WorldSystem.focusedRigidBody();
@@ -1672,6 +1703,11 @@ void SDLMainWindow::RenderInfo()
             _oglFont.RenderFont( 15, 195, text );
         }*/
     }
+
+    _fontRenderer.endRender();
+    OpenGLShaderProgram::useDefault();
+    glDisable(GL_BLEND);
+    p.Pop();
 }
 
 void SDLMainWindow::setupCameraOrientation()

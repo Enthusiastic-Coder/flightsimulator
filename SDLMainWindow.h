@@ -16,7 +16,6 @@
 #include "PFDView.h"
 #include "SkyDome.h"
 #include "OpenGLRenderer.h"
-#include "OGLFont.h"
 
 #include "OpenGLFontTexture.h"
 #include "OpenGLFontRenderer2D.h"
@@ -40,7 +39,7 @@ public:
     const char* persistFilename() const;
 
 protected:
-    bool onInitialise(HDC hdc) override;
+    bool onInitialise() override;
     void onUnInitialise() override;
     void onUpdate() override;
     void onRender() override;
@@ -68,7 +67,7 @@ protected:
     void RenderTransparentRectangle( int x, int y, int cx, int cy, float R, float G, float B, float A);
     void RenderFPS();
     void RenderInfo();
-    void RenderTexture(OpenGLTexture2D &texID, int pos);
+    void RenderTexture(OpenGLTexture2D &texID, float U, float V);
     void OnRenderSkyBox();
     void OnInitSound();
     void OnUnitSound();
@@ -82,9 +81,8 @@ private:
     bool _showCursor;
     //bool _paused;
     bool _bUserPolygonLineView;
-    double _framerate[FPS_RESOLUTION];
+    float _framerate[FPS_RESOLUTION];
     int _framecount;
-    OGLFont _oglFont;
 
     PFDView _pfdInstrument;
     WorldSystem _WorldSystem;
@@ -111,6 +109,7 @@ private:
     Camera _camera;
     //////////////////////////////////
 
+#ifndef LOCATED_AT_LONDON
     ALCdevice* _soundDevice;
     ALCcontext* _soundContext;
 
@@ -129,7 +128,7 @@ private:
     std::map<int,ALuint> _soundHeightCallOutBuffers;
 ///////////////////////////////////////////
 
-#ifndef LOCATED_AT_LONDON
+
     OpenGLShaderProgram _reflectionShaderProgram;
     OpenGLShaderProgram _waterShaderProgram;
 #endif
@@ -137,6 +136,7 @@ private:
     OpenGLShaderProgram _simpleShaderProgram;
     OpenGLShaderProgram _shadowShaderProgram;
     OpenGLShaderProgram _simplePrimitiveShaderProgram;
+    OpenGLShaderProgram _simpleColorPrimitiveShaderProgram;
     OpenGLShaderProgram _fontShaderProgram;
     OpenGLShaderProgram _textureShaderProgram;
     OpenGLFrameBuffer _openGLFrameBuffer;
@@ -160,6 +160,9 @@ private:
     OpenGLTexture2D _reflectionTexture;
     OpenGLRenderBuffer _depthRenderBuffer;
 #endif
+
+    OpenGLTexture2D _pfdColorTexture;
+    OpenGLRenderBuffer _pfdStencilBuffer;
 
     Vector4F _skyColor = Vector4F(3 / 255.0f, 100 / 255.0f, 180 / 255.0f, 1.0f);
     Vector2F _lightDir = Vector2F(-45, 180);

@@ -35,8 +35,6 @@ SOURCES += AeroControlSurface.cpp \
     MeshModel.cpp \
     MipMapTerrainMeshModel.cpp \
     MipMapTerrainMeshModelCollection.cpp \
-    OGLFont.cpp \
-    OGLPFDFont.cpp \
     OpenGLFrameBuffer.cpp \
     OpenGLRenderBuffer.cpp \
     OpenGLShaderProgram.cpp \
@@ -84,7 +82,8 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/OpenGLTextureRenderer2D.cpp \
     $$PWD/OpenGLSliderControl.cpp \
     $$PWD/SDLJoystickSystem.cpp \
-    $$PWD/HeathrowRadar.cpp
+    $$PWD/HeathrowRadar.cpp \
+    $$PWD/OpenGLPainter.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
     AeroControlSurface.h \
@@ -129,8 +128,6 @@ HEADERS  += CompositeListForceGenerator.inl \
     MeshModel.h \
     MipMapTerrainMeshModel.h \
     MipMapTerrainMeshModelCollection.h \
-    OGLFont.h \
-    OGLPFDFont.h \
     OpenGLFrameBuffer.h \
     OpenGLRenderBuffer.h \
     OpenGLShaderProgram.h \
@@ -195,6 +192,7 @@ HEADERS  += CompositeListForceGenerator.inl \
     $$PWD/OpenGLSliderControl.h \
     $$PWD/HeathrowRadar.h \
     $$PWD/Win32JoystickSystem.h \
-    $$PWD/SDLJoystickSystem.h
+    $$PWD/SDLJoystickSystem.h \
+    $$PWD/OpenGLPainter.h
 
 

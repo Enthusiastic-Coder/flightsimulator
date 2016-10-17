@@ -316,6 +316,7 @@ void JSONRigidBody::Render(Renderer *r, bool bReflection, unsigned int shadowMap
         mat.GetModel().TranslateLocation(getGPSLocation());
 		if (bReflection)
 			mat.GetModel().Scale(1, -1, 1);
+        applyModelMatrix(mat.GetModel());
         mat.bindLegacyMatrices();
         renderMesh(r, shadowMapCount);//Imediate mode
 		mat.Pop();
@@ -364,7 +365,7 @@ void JSONRigidBody::renderForceGenerators(Renderer* r)
 	if (getMeshModel() == 0)
 		return;
 
-    OpenGLPipeline& mat = OpenGLPipeline::Get(0);
+    OpenGLPipeline& mat = OpenGLPipeline::Get(r->camID);
 	mat.Push();
     mat.GetModel().TranslateLocation(getGPSLocation());
 	applyModelMatrix(mat.GetModel());

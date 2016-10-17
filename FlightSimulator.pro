@@ -37,7 +37,7 @@ HEADERS += SDLGameLoop.h \
             SDLSurfaceHelper.h
 
 win32 {
-    LIBS += -lGdi32
+    LIBS += -lUser32
 }
 
 deploy_images.files += ./images/*
@@ -73,6 +73,4 @@ deploy_Fonts.path  = $$DEPLOY_DIR/Fonts
 INSTALLS += deploy_Fonts
 
 
-DISTFILES += .\shaders\* \
-    shaders/shadowShader-mobile.frag \
-    shaders/shadowShader-mobile.vert
+DISTFILES += .\shaders\*
