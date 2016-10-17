@@ -75,7 +75,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     painter->fillRect(-_CX*1.2, -_CY*1.3, 270, 270);
 
     painter->setPrimitiveColor({1,1,1,1});
-    painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
+    painter->drawRect(-_CX*1.2, -_CY*1.3, 270, 270);
     painter->endPrimitive();
 
     DrawFlightModes(painter);
