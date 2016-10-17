@@ -36,13 +36,18 @@ PFDView::PFDView()
     _CEN_Y = 0.0f;
     _CX = 100.0f;
     _CY = 100.0f;
+}
 
+void PFDView::Initialise()
+{
     _PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
     _PfdAirSpdFreeFont.loadfile("fonts/Arial-10.png");
     _RadarAltBold.loadfile("fonts/Tahoma-11.png");
     _AltLargeFreeFont.loadfile("fonts/Arial-10.png");
     _AltSmallFreeFont.loadfile("fonts/Arial-10.png");
+
 }
+
 
 /////////////////////////////////////////////////////////////////////////////
 // PFDView drawing
