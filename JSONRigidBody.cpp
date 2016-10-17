@@ -373,8 +373,6 @@ void JSONRigidBody::renderForceGenerators(Renderer* r)
 
 	if (getMeshModel()->InFrustum(mat.GetFrustum()))
 	{
-        //glDisable(GL_TEXTURE_2D);
-
 		if (global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force_and_wind_tunnel
 			|| global_force_lines_debug == __global_force_lines_debug::force_lines_aero_wind_tunnel)
             drawWindTunnel(r->dt);
@@ -382,9 +380,7 @@ void JSONRigidBody::renderForceGenerators(Renderer* r)
 		if (global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force ||
 			global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force_and_wind_tunnel)
 		{
-			//OpenGLPipeline::Get(0).Apply();
-
-			glDisable(GL_DEPTH_TEST);
+            glDisable(GL_DEPTH_TEST);
 
             for (const std::pair<int,GSForceGenerator*>& it : _setList)
                 it.second->drawForceGenerator(this, r);
