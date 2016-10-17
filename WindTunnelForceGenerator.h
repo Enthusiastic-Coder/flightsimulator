@@ -5,7 +5,7 @@
 #include <shlwapi.h>
 #pragma comment( lib, "shlwapi.lib" )  // needed for the ColorHLSToRGB() function
 
-#include "WorldSystem.h"
+
 #include "AeroForceGenerator.h"
 
 class WindTunnelForceGenerator : public GSForceGenerator

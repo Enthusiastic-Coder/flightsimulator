@@ -2,6 +2,7 @@
 #include "AircraftCarrierRigidBody.h"
 #include "JSONRigidBodyBuilder.h"
 #include "OpenGLRenderer.h"
+#include "WorldSystem.h"
 
 AircraftCarrierCustomForceGenerator::AircraftCarrierCustomForceGenerator() {}
 

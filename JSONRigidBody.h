@@ -9,6 +9,7 @@
 #include "OpenGLRenderer.h"
 #include "OpenGLPipeline.h"
 #include "CameraViewProvider.h"
+#include "WindTunnelForceGenerator.h"
 
 #include <set>
 #include <map>
@@ -155,7 +156,8 @@ private:
 	std::string _sName;
 	std::string _sID;
 	Hydraulics _hydraulics;
-	PivotObjects _pivots;
+	PivotObjects _pivots;    
+    WindTunnelForceGenerator _windTunnel;
 	bool _bShow;
     bool _bDrivingByMouse;
 	Type _typeFlags;

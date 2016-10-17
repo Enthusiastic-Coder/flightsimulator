@@ -1,3 +1,7 @@
+#include "JSONRigidBody.h"
+#include "AeroSectionElementForceGenerator.h"
+#include "AeroSectionSubElementForceGenerator.h"
+
 
 template<class ParentContainerT, class ContainerT, class ParentT>
 CompositeListForceGenerator<ParentContainerT,ContainerT,ParentT>::CompositeListForceGenerator(ParentT *parent) :

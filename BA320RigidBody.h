@@ -3,7 +3,6 @@
 #include "JSONRigidBodyBuilder.h"
 #include "SpringForceGenerator.h"
 #include "GravityForceGenerator.h"
-#include "WindTunnelForceGenerator.h"
 #include "ConstrainedSpringForceGenerator.h"
 
 class BAAirbus320CustomForceGenerator : public GSForceGenerator
@@ -21,8 +20,6 @@ class BAAirbus320JSONRigidBody : public JSONRigidBody, public WheelConstrainedSp
 {
 public:
 	BAAirbus320JSONRigidBody(std::string name);
-
-	WindTunnelForceGenerator _windTunnel;
 
 	BAAirbus320CustomForceGenerator _custom_fg;
 
