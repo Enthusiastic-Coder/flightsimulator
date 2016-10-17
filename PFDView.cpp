@@ -38,7 +38,7 @@ PFDView::PFDView()
     _CY = 100.0f;
 }
 
-void PFDView::Initialise()
+void PFDView::initialise()
 {
     _PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
     _PfdAirSpdFreeFont.loadfile("fonts/Arial-10.png");
