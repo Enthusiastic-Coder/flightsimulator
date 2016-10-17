@@ -123,11 +123,11 @@ void OpenGLPainter::drawTriangles(float *pts, int count)
 {
     Renderer* r = renderer();
     r->setPrimitiveType(GL_LINE_LOOP);
+    r->bindVertex(Renderer::Vertex, 2, pts);
 
-    for( int i=0; i < count; i+= 2*3)
+    for( int i=0; i < count; i+= 3)
     {
-        r->bindVertex(Renderer::Vertex, 2, pts+i);
-        r->setVertexCountOffset(3, 0);
+        r->setVertexCountOffset(3, i);
         r->Render();
     }
 }
