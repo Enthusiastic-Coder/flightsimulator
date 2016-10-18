@@ -76,7 +76,7 @@ protected:
 
     void setupCameraOrientation();
     void setupCameraPosition(bool bReflection=false);
-    bool processInputsForCamera();
+    void processInputsForCamera();
 
 private:
     bool _showCursor;

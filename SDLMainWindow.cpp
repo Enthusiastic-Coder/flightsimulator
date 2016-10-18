@@ -721,7 +721,7 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
     if( !isRunning() )
     {
-        _camera.processKey(2);
+        processInputsForCamera();
         ensureCameraAboveGround();
 
         update();
@@ -816,7 +816,7 @@ void SDLMainWindow::onUpdate()
 #endif
 
     if (GetFocus() == _hWnd)
-        _camera.processKey(2);
+        processInputsForCamera();
 
     if( GetAsyncKeyState( 'C' ) < 0 )
         _WorldSystem.incrChaseAngle(-50*dt);
@@ -1732,19 +1732,60 @@ void SDLMainWindow::setupCameraPosition(bool bReflection)
     mv.TranslateLocation(pos);
 }
 
-bool SDLMainWindow::processInputsForCamera()
+void SDLMainWindow::processInputsForCamera()
 {
     bool bShiftOn = GetAsyncKeyState(VK_SHIFT) < 0;
     bool bControlOn = GetAsyncKeyState(VK_CONTROL) < 0;
 
-    int jump = (bShiftOn ? 100 : 2);
+    float jump = (bShiftOn ? 100 : 2);
 
     if (bControlOn)
         jump /= 10;
 
-    //_camera.
+    if( ::GetAsyncKeyState(VK_LEFT) < 0)
+        _camera.incrOrientation(0, 0,  -(bShiftOn ? 5 : 0.5));
 
-    return false;
+    if( ::GetAsyncKeyState(VK_RIGHT) < 0)
+        _camera.incrOrientation(0, 0, (bShiftOn ? 5 : 0.5));
+
+    if( ::GetAsyncKeyState(VK_UP) < 0)
+        _camera.incrOrientation((bShiftOn ? 5 : 0.5), 0, 0);
+
+    if( ::GetAsyncKeyState(VK_DOWN) < 0)
+        _camera.incrOrientation(- (bShiftOn ? 5 : 0.5), 0, 0);
+
+    if( ::GetAsyncKeyState('Z') < 0 || ::GetAsyncKeyState('X') < 0)
+    {
+        int iFactor = ::GetAsyncKeyState('Z') <0 ? -1 : 1;
+        _camera.incrOrientation(0, iFactor * (bShiftOn ? jump / 10 : (bControlOn ? jump * 20 : jump)),0);
+    }
+
+    if( ::GetAsyncKeyState('Q') < 0)
+        _camera.moveForwards(jump);
+
+    if( ::GetAsyncKeyState('A') < 0)
+        _camera.moveForwards(-jump);
+
+    if( ::GetAsyncKeyState('C') < 0)
+        _camera.moveForwards(jump * 2, -90);
+
+    if( ::GetAsyncKeyState('V') < 0)
+        _camera.moveForwards(jump * 2, 90);
+
+    if( ::GetAsyncKeyState('W') < 0)
+        _camera.moveUp(jump/4);
+
+    if( ::GetAsyncKeyState('S') < 0)
+        _camera.moveUp(-jump/4);
+
+    if( ::GetAsyncKeyState(VK_SPACE) < 0)
+        _camera.setZOrientation(0.0f);
+
+    if (::GetAsyncKeyState(VK_OEM_MINUS) < 0 )
+        _camera.incrZoom( -0.1f);
+
+    if (::GetAsyncKeyState(VK_OEM_PLUS) < 0)
+        _camera.incrZoom( 0.1f);
 }
 
 void SDLMainWindow::OnInitPolyMode()
