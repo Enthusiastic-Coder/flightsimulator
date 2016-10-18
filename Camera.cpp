@@ -5,10 +5,8 @@
 
 #include <Windows.h>
 
-Camera::Camera() :
-    _remoteView(0)
+Camera::Camera() : _remoteView(0)
 {
-
 }
 
 void Camera::processKey( double jump)
@@ -120,7 +118,12 @@ void Camera::moveForwards(double units, double diffang )
 
 void Camera::moveUp(float fDist)
 {
-    _remoteView->setPosition( (_remoteView->getPosition().position().Magnitude() + fDist) * _remoteView->getPosition().position().Unit());
+    if( _remoteView ==0)
+        return;
+
+    GPSLocation loc = _remoteView->getPosition();
+    loc._height += fDist;
+    _remoteView->setPosition(loc);
 }
 
 void Camera::incrOrientation(float x, float y, float z)

@@ -1732,6 +1732,21 @@ void SDLMainWindow::setupCameraPosition(bool bReflection)
     mv.TranslateLocation(pos);
 }
 
+bool SDLMainWindow::processInputsForCamera()
+{
+    bool bShiftOn = GetAsyncKeyState(VK_SHIFT) < 0;
+    bool bControlOn = GetAsyncKeyState(VK_CONTROL) < 0;
+
+    int jump = (bShiftOn ? 100 : 2);
+
+    if (bControlOn)
+        jump /= 10;
+
+    //_camera.
+
+    return false;
+}
+
 void SDLMainWindow::OnInitPolyMode()
 {
     if( _bUserPolygonLineView )
