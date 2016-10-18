@@ -23,8 +23,6 @@ class BAAirbus380JSONRigidBody : public JSONRigidBody, public WheelConstrainedSp
 public:
 	BAAirbus380JSONRigidBody(std::string name);
 
-	WindTunnelForceGenerator _windTunnel;
-
 	BAAirbus380CustomForceGenerator _custom_fg;
 
 	AeroWheelSpringForceGenerator	_front_wheel,

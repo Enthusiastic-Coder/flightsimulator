@@ -773,7 +773,7 @@ void HarrierJSONRigidBody::addForceGenerators()
 	int fps = 150;
 
 	addForceGenerator( "custom_fg", &_custom_fg );
-    addForceGenerator( "windtunnel_fg", &_windTunnel);
+    //addForceGenerator( "windtunnel_fg", &_windTunnel);
 
 	/*addForceGenerator( "left_engine_under_pod", &_left_engine_under_pod, fps );
 	addForceGenerator( "right_engine_under_pod", &_right_engine_under_pod, fps );*/

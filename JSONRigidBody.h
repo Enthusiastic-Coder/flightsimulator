@@ -96,7 +96,7 @@ public:
     void renderForceGenerators(Renderer *r);
 
     void Render(Renderer *r, bool bReflection, unsigned int shadowMapCount);
-	void drawWindTunnel(double dt);
+    void drawWindTunnel(Renderer *args);
 
     virtual void onInitialise(WorldSystem *pWorldSystem);
 	virtual bool isUsingMouse();

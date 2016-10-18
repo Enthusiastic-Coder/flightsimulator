@@ -375,7 +375,7 @@ void JSONRigidBody::renderForceGenerators(Renderer* r)
 	{
 		if (global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force_and_wind_tunnel
 			|| global_force_lines_debug == __global_force_lines_debug::force_lines_aero_wind_tunnel)
-            drawWindTunnel(r->dt);
+            drawWindTunnel(r);
 
 		if (global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force ||
 			global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force_and_wind_tunnel)
@@ -670,10 +670,9 @@ FlightRecorder & JSONRigidBody::getFlightRecorder()
 	return _flightRecorder;
 }
 
-void JSONRigidBody::drawWindTunnel(double dt)
+void JSONRigidBody::drawWindTunnel(Renderer* args)
 {
-	//T* t = static_cast<T*>(this);
-    //t->drawWindTunnelLines(dt);
+    _windTunnel.drawForceGenerator(this, args);
 }
 
 bool JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
