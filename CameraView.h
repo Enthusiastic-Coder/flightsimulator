@@ -47,6 +47,7 @@ public:
     void setZOrientation(float z);
 
     void incrZoom(double diff);
+    void incrOrientation(Vector3F &v);
     void incrOrientation(float dx, float dy, float dz);
 
     std::string getDescription() const;

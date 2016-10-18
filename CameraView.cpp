@@ -130,6 +130,11 @@ void CameraView::incrZoom(double diff)
     _zoom += diff;
 }
 
+void CameraView::incrOrientation(Vector3F &v)
+{
+    incrOrientation(v.x, v.y, v.z);
+}
+
 void CameraView::persistReadState(FILE *fPersistFile)
 {
     fread(&_location,sizeof(GPSLocation), 1, fPersistFile);

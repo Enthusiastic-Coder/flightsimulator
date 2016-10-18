@@ -10,7 +10,15 @@ public:
     Camera();
 
     void processKey( double jump = 1.0f);
+
     void moveForwards(double units, double diffang = 0.0f);
+    void moveUp(float fDist);
+
+    void incrOrientation(float x, float y, float z);
+    void incrZoom(float fZoom);
+
+
+    void setZoom(float fZoom);
 
     void onUpdate( double dt);
 

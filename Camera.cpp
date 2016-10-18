@@ -41,16 +41,19 @@ void Camera::processKey( double jump)
         int iFactor = ::GetAsyncKeyState('Z') <0 ? -1 : 1;
         _remoteView->incrOrientation(0, iFactor * (bShiftOn ? jump / 10 : (bControlOn ? jump * 20 : jump)),0);
 
+        Vector3F orientation = _remoteView->getOrientation();
         if( ::GetAsyncKeyState('Z') < 0 )
         {
             if (_remoteView->getOrientation().y < 0)
-                _remoteView->incrOrientation(0, 360, 0);
+            {
+                orientation.y += 360;
+                _remoteView->incrOrientation(orientation);
+            }
         }
         else
         {
             if (_remoteView->getOrientation().y > 359)
             {
-                Vector3F orientation = _remoteView->getOrientation();
                 orientation.y = 360 - orientation.y;
                 _remoteView->setOrientation(orientation);
             }
@@ -70,10 +73,18 @@ void Camera::processKey( double jump)
         moveForwards(jump * 2, 90);
 
     if( ::GetAsyncKeyState('W') < 0)
-        _remoteView->setPosition( (_remoteView->getPosition().position().Magnitude() + jump / 4) * _remoteView->getPosition().position().Unit());
+    {
+        GPSLocation loc = _remoteView->getPosition();
+        loc._height += jump/4;
+        _remoteView->setPosition(loc);
+    }
 
     if( ::GetAsyncKeyState('S') < 0)
-        _remoteView->setPosition((_remoteView->getPosition().position().Magnitude() - jump / 4) * _remoteView->getPosition().position().Unit());
+    {
+        GPSLocation loc = _remoteView->getPosition();
+        loc._height -= jump/4;
+        _remoteView->setPosition(loc);
+    }
 
     if( ::GetAsyncKeyState(VK_SPACE) < 0)
         _remoteView->setZOrientation(0.0f);
@@ -105,6 +116,32 @@ void Camera::moveForwards(double units, double diffang )
         _remoteView->incrOrientation(0, -180, 0);
 
     fastForwardLocalView();
+}
+
+void Camera::moveUp(float fDist)
+{
+    _remoteView->setPosition( (_remoteView->getPosition().position().Magnitude() + fDist) * _remoteView->getPosition().position().Unit());
+}
+
+void Camera::incrOrientation(float x, float y, float z)
+{
+    if( _remoteView ==0)
+        return;
+
+    Vector3F orientation = _remoteView->getOrientation();
+
+    _remoteView->incrOrientation(x, y, z);
+
+    if (_remoteView->getOrientation().y < 0)
+    {
+        orientation.y += 360;
+        _remoteView->incrOrientation(orientation);
+    }
+    if (_remoteView->getOrientation().y > 359)
+    {
+        orientation.y = 360 - orientation.y;
+        _remoteView->setOrientation(orientation);
+    }
 }
 
 void Camera::onUpdate(double dt)
