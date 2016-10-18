@@ -1,9 +1,6 @@
 #pragma once
 
 #define ARROW_L		0.2f
-
-#include <shlwapi.h>
-#pragma comment( lib, "shlwapi.lib" )  // needed for the ColorHLSToRGB() function
 #include "GSForceGenerator.h"
 
 class AeroForceGenerator;
