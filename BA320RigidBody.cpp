@@ -663,7 +663,6 @@ void BAAirbus320JSONRigidBody::updateCameraView()
 
 bool BAAirbus320JSONRigidBody::onSyncKeyPress()
 {
-    //if( key == Qt::Key_F5)//Reset position
     if( GetKeyState(VK_F5) < 0)
     {
         reset();
@@ -671,7 +670,6 @@ bool BAAirbus320JSONRigidBody::onSyncKeyPress()
         return true;
     }
 
-    //if( key == Qt::Key_F7 ) // Reset for approach/landing
     if( GetKeyState(VK_F7) < 0)
     {
         double fMilesOut = 3.5f;
@@ -686,7 +684,6 @@ bool BAAirbus320JSONRigidBody::onSyncKeyPress()
         return true;
     }
 
-    //if( key == Qt::Key_F3 ) //Left Spoilers
     if( GetKeyState(VK_F3) <  0)
     {
         AeroControlSurface *pML = _left_wing.element(0)->controlSurfaceN(2);
@@ -712,7 +709,6 @@ bool BAAirbus320JSONRigidBody::onSyncKeyPress()
         return true;
     }
 
-    //if( key == Qt::Key_F4 ) //Right Spoilers
     if( GetKeyState( VK_F4) < 0)
     {
         AeroControlSurface *pMR = _right_wing.element(0)->controlSurfaceN(2);
@@ -738,7 +734,6 @@ bool BAAirbus320JSONRigidBody::onSyncKeyPress()
         return true;
     }
 
-    //if( key == Qt::Key_F1 || key == Qt::Key_F2 ) //Flaps
     if( GetKeyState(VK_F1) < 0 || GetKeyState(VK_F2) < 0)
     {
         AeroControlSurface* pML = _left_wing.element(0)->controlSurfaceN(1);
