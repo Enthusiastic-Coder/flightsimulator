@@ -2,6 +2,7 @@
 #include "HarrierRigidBody.h"
 #include "JSONRigidBodyBuilder.h"
 #include <iostream>
+#include "WorldSystem.h"
 
 HarrierCustomForceGenerator::HarrierCustomForceGenerator()  {}
 
@@ -58,7 +59,7 @@ void HarrierCustomForceGenerator::onApplyForce(Particle *p, double dt)
 
 HarrierJSONRigidBody::HarrierJSONRigidBody(std::string name) :
 	JSONRigidBody(name),
-    _windTunnel(_left_wing,_right_wing),
+    //_windTunnel(_left_wing,_right_wing),
 	_vertical_tail(&_rudderAoaData),
 	_left_wing(&_wingAoaData,true),
 	_right_wing(&_wingAoaData, true),
@@ -772,7 +773,7 @@ void HarrierJSONRigidBody::addForceGenerators()
 	int fps = 150;
 
 	addForceGenerator( "custom_fg", &_custom_fg );
-    addForceGenerator( "windtunnel_fg", &_windTunnel);
+    //addForceGenerator( "windtunnel_fg", &_windTunnel);
 
 	/*addForceGenerator( "left_engine_under_pod", &_left_engine_under_pod, fps );
 	addForceGenerator( "right_engine_under_pod", &_right_engine_under_pod, fps );*/

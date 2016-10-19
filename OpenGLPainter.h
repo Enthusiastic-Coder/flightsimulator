@@ -17,7 +17,7 @@ public:
     void selectFontRenderer(OpenGLFontRenderer2D *f);
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
-    void beginFont(OpenGLFontTexture* font, Vector4F color=Vector4F(1,1,1,1));
+    void beginFont(OpenGLFontTexture* font);
     void setFontColor(Vector4F color);
     void renderText(int x, int y, std::string text);
     void renderText(int x, int y, char ch);
@@ -34,7 +34,8 @@ public:
     void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
     void drawTriangles(float* pts, int count);
     void drawTriangleFan(const float *pts, int count);
-    void drawQuad(const float x, float y, float w, float h);
+    void drawRect(float x, float y, float w, float h);
+    void drawQuad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
     void drawQuads(const float* pts, int count);
     void fillTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
     void fillTriangles(float* pts, int count);

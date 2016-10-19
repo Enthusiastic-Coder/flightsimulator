@@ -130,6 +130,11 @@ void CameraView::incrZoom(double diff)
     _zoom += diff;
 }
 
+void CameraView::incrOrientation(Vector3F &v)
+{
+    incrOrientation(v.x, v.y, v.z);
+}
+
 void CameraView::persistReadState(FILE *fPersistFile)
 {
     fread(&_location,sizeof(GPSLocation), 1, fPersistFile);
@@ -142,6 +147,16 @@ void CameraView::persistWriteState(FILE *fPersistFile)
     fwrite(&_location,sizeof(GPSLocation), 1, fPersistFile);
     fwrite(&_orientation,sizeof(Vector3F), 1, fPersistFile);
     fwrite(&_zoom,sizeof(double), 1, fPersistFile);
+}
+
+void CameraView::persistReadState(rapidjson::Document *doc)
+{
+
+}
+
+void CameraView::persistWriteState(rapidjson::Document *doc)
+{
+
 }
 
 

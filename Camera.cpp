@@ -5,87 +5,8 @@
 
 #include <Windows.h>
 
-Camera::Camera() :
-    _remoteView(0)
+Camera::Camera() : _remoteView(0)
 {
-
-}
-
-void Camera::processKey( double jump)
-{
-    if( _remoteView ==0 )
-        return;
-
-    bool bShiftOn = GetAsyncKeyState(VK_SHIFT) < 0;
-    bool bControlOn = GetAsyncKeyState(VK_CONTROL) < 0;
-
-    jump = (bShiftOn ? 100 : jump);
-
-    if (bControlOn)
-        jump /= 10;
-
-    if( ::GetAsyncKeyState(VK_LEFT) < 0)
-        _remoteView->incrOrientation(0, 0,  -(bShiftOn ? 5 : 0.5));
-
-    if( ::GetAsyncKeyState(VK_RIGHT) < 0)
-        _remoteView->incrOrientation(0, 0, (bShiftOn ? 5 : 0.5));
-
-    if( ::GetAsyncKeyState(VK_UP) < 0)
-        _remoteView->incrOrientation((bShiftOn ? 5 : 0.5), 0, 0);
-
-    if( ::GetAsyncKeyState(VK_DOWN) < 0)
-        _remoteView->incrOrientation(- (bShiftOn ? 5 : 0.5), 0, 0);
-
-    if( ::GetAsyncKeyState('Z') < 0 || ::GetAsyncKeyState('X') < 0)
-    {
-        int iFactor = ::GetAsyncKeyState('Z') <0 ? -1 : 1;
-        _remoteView->incrOrientation(0, iFactor * (bShiftOn ? jump / 10 : (bControlOn ? jump * 20 : jump)),0);
-
-        if( ::GetAsyncKeyState('Z') < 0 )
-        {
-            if (_remoteView->getOrientation().y < 0)
-                _remoteView->incrOrientation(0, 360, 0);
-        }
-        else
-        {
-            if (_remoteView->getOrientation().y > 359)
-            {
-                Vector3F orientation = _remoteView->getOrientation();
-                orientation.y = 360 - orientation.y;
-                _remoteView->setOrientation(orientation);
-            }
-        }
-    }
-
-    if( ::GetAsyncKeyState('Q') < 0)
-        moveForwards(jump);
-
-    if( ::GetAsyncKeyState('A') < 0)
-        moveForwards(-jump);
-
-    if( ::GetAsyncKeyState('C') < 0)
-        moveForwards(jump * 2, -90);
-
-    if( ::GetAsyncKeyState('V') < 0)
-        moveForwards(jump * 2, 90);
-
-    if( ::GetAsyncKeyState('W') < 0)
-        _remoteView->setPosition( (_remoteView->getPosition().position().Magnitude() + jump / 4) * _remoteView->getPosition().position().Unit());
-
-    if( ::GetAsyncKeyState('S') < 0)
-        _remoteView->setPosition((_remoteView->getPosition().position().Magnitude() - jump / 4) * _remoteView->getPosition().position().Unit());
-
-    if( ::GetAsyncKeyState(VK_SPACE) < 0)
-        _remoteView->setZOrientation(0.0f);
-
-    if (::GetAsyncKeyState(VK_OEM_MINUS) < 0 )
-        _remoteView->incrZoom( -0.1);
-
-    if (::GetAsyncKeyState(VK_OEM_PLUS) < 0)
-        _remoteView->incrZoom( 0.1);
-
-    if (_remoteView->getZoom() < 1.0)
-        _remoteView->setZoom( 1.0);
 }
 
 void Camera::moveForwards(double units, double diffang )
@@ -105,6 +26,56 @@ void Camera::moveForwards(double units, double diffang )
         _remoteView->incrOrientation(0, -180, 0);
 
     fastForwardLocalView();
+}
+
+void Camera::moveUp(float fDist)
+{
+    if( _remoteView ==0)
+        return;
+
+    GPSLocation loc = _remoteView->getPosition();
+    loc._height += fDist;
+    _remoteView->setPosition(loc);
+}
+
+void Camera::incrOrientation(float x, float y, float z)
+{
+    if( _remoteView ==0)
+        return;
+
+    Vector3F orientation = _remoteView->getOrientation();
+
+    _remoteView->incrOrientation(x, y, z);
+
+    if (_remoteView->getOrientation().y < 0)
+    {
+        orientation.y += 360;
+        _remoteView->incrOrientation(orientation);
+    }
+    if (_remoteView->getOrientation().y > 359)
+    {
+        orientation.y = 360 - orientation.y;
+        _remoteView->setOrientation(orientation);
+    }
+}
+
+void Camera::incrZoom(float fZoom)
+{
+    if( _remoteView ==0)
+        return;
+
+    _remoteView->incrZoom( fZoom);
+
+    if (_remoteView->getZoom() < 1.0)
+        _remoteView->setZoom( 1.0);
+}
+
+void Camera::setZOrientation(float z)
+{
+    if( _remoteView ==0)
+        return;
+
+    _remoteView->setZOrientation(z);
 }
 
 void Camera::onUpdate(double dt)

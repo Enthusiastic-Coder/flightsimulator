@@ -6,7 +6,6 @@
 
 class GSRigidBody : 
     public GPSRigidBodyReferenceFrame<GSRigidBody,RigidBody>,
-	public IWindTunnelDrawable, 
 	//public IRigidBodyAttachable,
     public IDataRecordable<FlightRecorder>
 {

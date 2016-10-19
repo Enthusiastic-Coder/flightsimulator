@@ -26,9 +26,7 @@ public:
 
 //////////////////////////// Common //////////////////////////////
 	std::vector<std::unique_ptr<AircraftEngineForceGenerator>> _engines;
-
 //////////////////////////////////////////////////////////////////
-	WindTunnelForceGenerator _windTunnel;
 
 	HarrierCustomForceGenerator _custom_fg;
 

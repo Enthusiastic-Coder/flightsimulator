@@ -14,7 +14,6 @@
 #define FPS_RESOLUTION 20
 #define SATELLITE_RUNWAY
 #define FG_BLEND_VALUE 0.4f
-#define DRAW_SEATS
 
 #define arrayCount(arr)         (sizeof(arr)/sizeof(arr[0]))
 #define indicesCount(arr,n)     (sizeof(arr)/sizeof(arr[0])/n)

@@ -5,7 +5,9 @@
 #include <include_gl.h>
 #include "SDLGameLoop.h"
 
+#ifdef WIN32
 #include "loadWAV.h"
+#endif
 
 #include "WorldSystem.h"
 #include "OpenGLShaderProgram.h"
@@ -76,6 +78,7 @@ protected:
 
     void setupCameraOrientation();
     void setupCameraPosition(bool bReflection=false);
+    void processInputsForCamera();
 
 private:
     bool _showCursor;

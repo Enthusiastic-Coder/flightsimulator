@@ -373,18 +373,14 @@ void JSONRigidBody::renderForceGenerators(Renderer* r)
 
 	if (getMeshModel()->InFrustum(mat.GetFrustum()))
 	{
-        //glDisable(GL_TEXTURE_2D);
-
 		if (global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force_and_wind_tunnel
 			|| global_force_lines_debug == __global_force_lines_debug::force_lines_aero_wind_tunnel)
-            drawWindTunnel(r->dt);
+            drawWindTunnel(r);
 
 		if (global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force ||
 			global_force_lines_debug == __global_force_lines_debug::force_lines_aero_force_and_wind_tunnel)
 		{
-			//OpenGLPipeline::Get(0).Apply();
-
-			glDisable(GL_DEPTH_TEST);
+            glDisable(GL_DEPTH_TEST);
 
             for (const std::pair<int,GSForceGenerator*>& it : _setList)
                 it.second->drawForceGenerator(this, r);
@@ -585,7 +581,17 @@ void JSONRigidBody::persistWriteState(FILE* fPersistFile)
 	fwrite((void*) &velocity(), sizeof(velocity()), 1, fPersistFile );
 
 	fwrite( (void*)&getOrientation(), sizeof(getOrientation()), 1, fPersistFile );
-	fwrite((void*) &angularVelocity(), sizeof(angularVelocity()), 1, fPersistFile );
+    fwrite((void*) &angularVelocity(), sizeof(angularVelocity()), 1, fPersistFile );
+}
+
+void JSONRigidBody::persistReadState(rapidjson::Document *doc)
+{
+
+}
+
+void JSONRigidBody::persistWriteState(rapidjson::Document *doc)
+{
+
 }
 
 bool JSONRigidBody::typeMask(Type t)
@@ -674,10 +680,9 @@ FlightRecorder & JSONRigidBody::getFlightRecorder()
 	return _flightRecorder;
 }
 
-void JSONRigidBody::drawWindTunnel(double dt)
+void JSONRigidBody::drawWindTunnel(Renderer* args)
 {
-	//T* t = static_cast<T*>(this);
-    //t->drawWindTunnelLines(dt);
+    _windTunnel.drawForceGenerator(this, args);
 }
 
 bool JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)

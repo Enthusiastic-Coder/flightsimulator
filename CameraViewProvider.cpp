@@ -57,3 +57,13 @@ void CameraViewProvider::persistWriteState(FILE *fPersistFile)
         CameraView::Manager::get()->getView(this, i)->persistWriteState(fPersistFile);
 
 }
+
+void CameraViewProvider::persistReadState(rapidjson::Document *doc)
+{
+
+}
+
+void CameraViewProvider::persistWriteState(rapidjson::Document *doc)
+{
+
+}

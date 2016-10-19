@@ -9,6 +9,7 @@
 #include "OpenGLRenderer.h"
 #include "OpenGLPipeline.h"
 #include "CameraViewProvider.h"
+#include "WindTunnelForceGenerator.h"
 
 #include <set>
 #include <map>
@@ -23,7 +24,8 @@ class JSONRigidBody :
     public IMeshModel,
     public ICameraViewProvider,
     public ICameraChaseable,
-    public IFilePersist
+    public IFilePersist,
+    public IRapidJsonPersist
 {
 public:
 	enum class Type : int
@@ -95,7 +97,7 @@ public:
     void renderForceGenerators(Renderer *r);
 
     void Render(Renderer *r, bool bReflection, unsigned int shadowMapCount);
-	void drawWindTunnel(double dt);
+    void drawWindTunnel(Renderer *args);
 
     virtual void onInitialise(WorldSystem *pWorldSystem);
 	virtual bool isUsingMouse();
@@ -132,6 +134,10 @@ public:
     void persistReadState(FILE* fPersistFile ) override;
     void persistWriteState(FILE* fPersistFile ) override;
 
+// IRapidJsonPersist
+    void persistReadState(rapidjson::Document* doc) override;
+    void persistWriteState(rapidjson::Document* doc) override;
+
 protected:
 /// IMeshModel
     void renderMesh(Renderer *r, unsigned int shadowMapCount) override;
@@ -155,7 +161,8 @@ private:
 	std::string _sName;
 	std::string _sID;
 	Hydraulics _hydraulics;
-	PivotObjects _pivots;
+	PivotObjects _pivots;    
+    WindTunnelForceGenerator _windTunnel;
 	bool _bShow;
     bool _bDrivingByMouse;
 	Type _typeFlags;

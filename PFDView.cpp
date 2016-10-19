@@ -38,7 +38,7 @@ PFDView::PFDView()
     _CY = 100.0f;
 }
 
-void PFDView::Initialise()
+void PFDView::initialise()
 {
     _PfdHorizFreeFont.loadfile("fonts/Tahoma-9.png");
     _PfdAirSpdFreeFont.loadfile("fonts/Arial-10.png");
@@ -56,22 +56,10 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 {
     glClear(GL_STENCIL_BUFFER_BIT);
 
-    glMatrixMode( GL_PROJECTION  );
-    glPushMatrix();
-    glLoadIdentity();
-
     _CX = 100;
     _CY = 100;
     _CEN_X = cx/2;
     _CEN_Y = cy/2;
-
-    glOrtho(0, cx, cy, 0,-1, 1);
-
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    glTranslatef( _CEN_X, _CEN_Y, 0 );
 
     glDisable(GL_TEXTURE_2D );
     glDisable(GL_DEPTH_TEST);
@@ -87,7 +75,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     painter->fillRect(-_CX*1.2, -_CY*1.3, 270, 270);
 
     painter->setPrimitiveColor({1,1,1,1});
-    painter->drawQuad(-_CX*1.2, -_CY*1.3, 270, 270);
+    painter->drawRect(-_CX*1.2, -_CY*1.3, 270, 270);
     painter->endPrimitive();
 
     DrawFlightModes(painter);
@@ -100,12 +88,6 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     p.GetModel().Pop();
 
     glDisable(GL_STENCIL_TEST);
-
-    glMatrixMode( GL_PROJECTION  );
-    glPopMatrix();
-    glMatrixMode( GL_MODELVIEW  );
-    glPopMatrix();
-
     glEnable(GL_DEPTH_TEST);
 }
 
