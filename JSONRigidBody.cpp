@@ -611,10 +611,9 @@ void JSONRigidBody::persistWriteState(rapidjson::Document &doc)
     obj.AddMember("State", Value((int)state), a);
     obj.AddMember("GPSLocation", Value( getGPSLocation().toString(),a), a);
     obj.AddMember("Euler", Value(getEuler().toString(),a), a);
-
     obj.AddMember("Velocity", Value(velocity().toString(),a), a );
-   // obj.AddMember("Orientation", Value(getOrientation().toString(),a), a );
     obj.AddMember("AngularVelocity", Value(angularVelocity().toString(),a), a );
+
     doc.AddMember(Value(getID(), a), obj, a);
 }
 
