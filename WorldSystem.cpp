@@ -427,7 +427,9 @@ void WorldSystem::persistWriteState(FILE* fPersistFile)
 
 void WorldSystem::persistReadState(rapidjson::Document& doc)
 {
-
+    _fLightingFraction = doc["LightingFraction"].GetFloat();
+    _rigidBodyCollection.persistReadState(doc);
+    _cameraProvider.persistReadState(doc);
 }
 
 void WorldSystem::persistWriteState(rapidjson::Document& doc)

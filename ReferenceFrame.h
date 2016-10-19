@@ -58,6 +58,11 @@ public:
 		updateEuler();
 	}
 
+    void setEuler(const Vector3D v )
+    {
+        setEuler( v.x, v.y, v.z);
+    }
+
 	void setEuler( double x, double y, double z)
 	{
 		setOrientationHelper(x, y, z);

@@ -586,7 +586,17 @@ void JSONRigidBody::persistWriteState(FILE* fPersistFile)
 
 void JSONRigidBody::persistReadState(rapidjson::Document &doc)
 {
+    using namespace rapidjson;
+    Document::AllocatorType& a = doc.GetAllocator();
+    if( !doc.HasMember(Value(getID(), a)))
+        return;
 
+    Value& obj = doc[Value(getID(),a)];
+    setState((STATE)obj["State"].GetInt());
+    setPosition(GPSLocation(obj["GPSLocation"].GetString()));
+    setEuler( Vector3D(obj["Euler"].GetString()) );
+    setVelocity(Vector3D(obj["Velocity"].GetString()));
+    setAngularVelocity(Vector3D(obj["AngularVelocity"].GetString()));
 }
 
 void JSONRigidBody::persistWriteState(rapidjson::Document &doc)
@@ -602,11 +612,9 @@ void JSONRigidBody::persistWriteState(rapidjson::Document &doc)
     obj.AddMember("GPSLocation", Value( getGPSLocation().toString(),a), a);
     obj.AddMember("Euler", Value(getEuler().toString(),a), a);
 
-    obj.AddMember("Position", Value(position().toString(), a), a );
     obj.AddMember("Velocity", Value(velocity().toString(),a), a );
-    obj.AddMember("Orientation", Value(getOrientation().toString(),a), a );
+   // obj.AddMember("Orientation", Value(getOrientation().toString(),a), a );
     obj.AddMember("AngularVelocity", Value(angularVelocity().toString(),a), a );
-
     doc.AddMember(Value(getID(), a), obj, a);
 }
 

@@ -38,8 +38,6 @@ public:
     SDLMainWindow();
     ~SDLMainWindow();
 
-    const char* persistFilename() const;
-
 protected:
     bool onInitialise() override;
     void onUnInitialise() override;

@@ -587,11 +587,6 @@ void SDLMainWindow::OnUnitSound()
 #endif
 }
 
-const char* SDLMainWindow::persistFilename() const
-{
-    return "lastGPSpos.bin";
-}
-
 void SDLMainWindow::ensureCameraAboveGround()
 {
     HeightData data;
@@ -1778,11 +1773,11 @@ void SDLMainWindow::persistSettings(bool bSerialise)
         if(fPersistFile)
         {
             doc.SetObject();
-            doc.AddMember("UserPoyLineView", Value(_bUserPolygonLineView), a);
+            doc.AddMember("UserPolyLineView", Value(_bUserPolygonLineView), a);
             doc.AddMember("IsRunning", Value(isRunning()), a);
             doc.AddMember("global_fg_debug", Value(global_fg_debug), a);
             doc.AddMember("global_info", Value(global_info), a);
-            doc.AddMember("global_force_lines_debug", Value(global_force_lines_debug), a);
+            doc.AddMember("global_force_lines_debug", Value((int)global_force_lines_debug), a);
 
             _WorldSystem.persistWriteState( doc );
 
@@ -1797,22 +1792,30 @@ void SDLMainWindow::persistSettings(bool bSerialise)
     }
     else
     {
-        FILE *fPersistFile = NULL;
-        fopen_s(&fPersistFile, persistFilename(), "rb");
-        if (fPersistFile)
+        std::ifstream json;
+        json.open(strSettingsFilename);
+
+        if( json.is_open())
         {
-            fread(&_bUserPolygonLineView, sizeof(_bUserPolygonLineView), 1, fPersistFile);
+            std::string ret;
+            char buffer[4096];
+            while (json.read(buffer, sizeof(buffer)))
+                ret.append(buffer, sizeof(buffer));
+            ret.append(buffer, json.gcount());
 
-            bool bIsRunning(false);
-            fread(&bIsRunning, sizeof(bIsRunning), 1, fPersistFile);
-            setRunning(bIsRunning);
-            fread(&global_fg_debug, sizeof(global_fg_debug), 1, fPersistFile);
-            fread(&global_info, sizeof(global_info), 1, fPersistFile);
-            fread(&global_force_lines_debug, sizeof(global_force_lines_debug), 1, fPersistFile);
+            if( ret.length() > 0)
+            {
 
-            _WorldSystem.persistReadState(fPersistFile);
+                doc.Parse(ret.c_str());
 
-            fclose(fPersistFile);
+                _bUserPolygonLineView = doc["UserPolyLineView"].GetBool();
+                setRunning(doc["IsRunning"].GetBool());
+                global_fg_debug = doc["global_fg_debug"].GetBool();
+                global_info = doc["global_info"].GetBool();
+                global_force_lines_debug = (__global_force_lines_debug)doc["global_force_lines_debug"].GetInt();
+
+                _WorldSystem.persistReadState(doc);
+            }
         }
     }
 
