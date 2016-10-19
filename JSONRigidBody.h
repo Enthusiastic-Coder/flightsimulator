@@ -135,8 +135,8 @@ public:
     void persistWriteState(FILE* fPersistFile ) override;
 
 // IRapidJsonPersist
-    void persistReadState(rapidjson::Document* doc) override;
-    void persistWriteState(rapidjson::Document* doc) override;
+    void persistReadState(rapidjson::Document &doc) override;
+    void persistWriteState(rapidjson::Document& doc) override;
 
 protected:
 /// IMeshModel

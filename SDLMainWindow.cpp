@@ -1784,7 +1784,7 @@ void SDLMainWindow::persistSettings(bool bSerialise)
             doc.AddMember("global_info", Value(global_info), a);
             doc.AddMember("global_force_lines_debug", Value(global_force_lines_debug), a);
 
-            _WorldSystem.persistWriteState( &doc );
+            _WorldSystem.persistWriteState( doc );
 
             StringBuffer s;
             PrettyWriter<StringBuffer> writer(s);

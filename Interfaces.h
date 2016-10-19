@@ -110,6 +110,6 @@ struct IFilePersist
 
 struct IRapidJsonPersist
 {
-    virtual void persistReadState(rapidjson::Document* doc) = 0;
-    virtual void persistWriteState(rapidjson::Document* doc) = 0;
+    virtual void persistReadState(rapidjson::Document& doc) = 0;
+    virtual void persistWriteState(rapidjson::Document& doc) = 0;
 };

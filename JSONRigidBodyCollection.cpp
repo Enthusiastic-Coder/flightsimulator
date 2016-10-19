@@ -360,13 +360,13 @@ void JSONRigidBodyCollection::persistWriteState(FILE* fPersistFile)
     }
 }
 
-void JSONRigidBodyCollection::persistReadState(rapidjson::Document *doc)
+void JSONRigidBodyCollection::persistReadState(rapidjson::Document &doc)
 {
     for (JSONRigidBody* it : _bodyList)
         it->persistReadState(doc);
 }
 
-void JSONRigidBodyCollection::persistWriteState(rapidjson::Document *doc)
+void JSONRigidBodyCollection::persistWriteState(rapidjson::Document &doc)
 {
     for (JSONRigidBody* it : _bodyList)
         it->persistWriteState(doc);

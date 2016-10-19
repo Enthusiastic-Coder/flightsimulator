@@ -425,14 +425,14 @@ void WorldSystem::persistWriteState(FILE* fPersistFile)
     _cameraProvider.persistWriteState(fPersistFile);
 }
 
-void WorldSystem::persistReadState(rapidjson::Document *doc)
+void WorldSystem::persistReadState(rapidjson::Document& doc)
 {
 
 }
 
-void WorldSystem::persistWriteState(rapidjson::Document *doc)
+void WorldSystem::persistWriteState(rapidjson::Document& doc)
 {
-    doc->AddMember("LightingFraction", rapidjson::Value(_fLightingFraction), doc->GetAllocator());
+    doc.AddMember("LightingFraction", rapidjson::Value(_fLightingFraction), doc.GetAllocator());
     _rigidBodyCollection.persistWriteState(doc);
     _cameraProvider.persistWriteState(doc);
 }
