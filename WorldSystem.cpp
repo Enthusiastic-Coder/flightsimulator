@@ -44,6 +44,12 @@ WorldSystem::WorldSystem() :
     _cameraProvider(ViewPosition::ViewPositionEnd-1)
 {
     _cameraProvider.nextView();//GO to first view
+   _cameraProvider.getCameraView(FreeLooking)->setDescription("World:FreeLooking");
+   _cameraProvider.getCameraView(FreeLooking)->setShakingMode(true);
+
+   _cameraProvider.getCameraView(Free)->setDescription("World:Free");
+   _cameraProvider.getCameraView(Free)->setShakingMode(false);
+
 }
 
 void WorldSystem::update( double dt )
@@ -182,18 +188,13 @@ void WorldSystem::updateCameraView()
         {
             Vector3F lookAt = view->getPosition().offSetTo(pBody->getGPSLocation() + pBody->cg());
 
-            view->setShakingMode(true);
             view->setOrientation( MathSupport<float>::MakeEulerFromLookAt(lookAt));
-            view->setDescription("World:FreeLooking");
 
             CameraView* otherView = _cameraProvider.getCameraView(Free);
             otherView->setPosition(view->getPosition());
         }
         else if( pos == Free)
         {
-            view->setDescription("World:Free");
-            view->setShakingMode(false);
-
             CameraView* otherView = _cameraProvider.getCameraView(FreeLooking);
             otherView->setPosition(view->getPosition());
         }
