@@ -347,23 +347,7 @@ bool SDLMainWindow::onInitialise()
 
         _WorldSystem.loadBodyRecorderedData();
 
-        FILE *fPersistFile = NULL;
-        fopen_s(&fPersistFile, persistFilename(), "rb");
-        if (fPersistFile)
-        {
-            fread(&_bUserPolygonLineView, sizeof(_bUserPolygonLineView), 1, fPersistFile);
-
-            bool bIsRunning(false);
-            fread(&bIsRunning, sizeof(bIsRunning), 1, fPersistFile);
-            setRunning(bIsRunning);
-            fread(&global_fg_debug, sizeof(global_fg_debug), 1, fPersistFile);
-            fread(&global_info, sizeof(global_info), 1, fPersistFile);
-            fread(&global_force_lines_debug, sizeof(global_force_lines_debug), 1, fPersistFile);
-
-            _WorldSystem.persistReadState(fPersistFile);
-
-            fclose(fPersistFile);
-        }
+        persistSettings(false);
 
         _camera.setRemoteViewPtr( _WorldSystem.getCameraView());
         _camera.fastForwardLocalView();
@@ -625,22 +609,7 @@ void SDLMainWindow::ensureCameraAboveGround()
 
 void SDLMainWindow::onUnInitialise()
 {
-    FILE *fPersistFile = NULL;
-    fopen_s( &fPersistFile, persistFilename(), "wb" );
-    if(fPersistFile)
-    {
-        fwrite( &_bUserPolygonLineView, sizeof(_bUserPolygonLineView),1 , fPersistFile );
-        bool bIsRunning = isRunning();
-        fwrite( &bIsRunning, sizeof(bIsRunning), 1, fPersistFile );
-        fwrite( &global_fg_debug, sizeof(global_fg_debug),1, fPersistFile );
-        fwrite( &global_info, sizeof(global_info),1, fPersistFile );
-        fwrite( &global_force_lines_debug, sizeof(global_force_lines_debug), 1, fPersistFile );
-
-        _WorldSystem.persistWriteState( fPersistFile );
-
-        fclose(fPersistFile);
-    }
-
+    persistSettings(true);
     _WorldSystem.onUnintialise();
     OnUnitSound();
 }
@@ -1791,6 +1760,54 @@ void SDLMainWindow::processInputsForCamera()
 
     if (::GetAsyncKeyState(VK_OEM_PLUS) < 0)
         _camera.incrZoom( 0.1f);
+}
+
+void SDLMainWindow::persistSettings(bool bSerialise)
+{
+    using namespace rapidjson;
+
+    Document doc;
+    Document::AllocatorType& a = doc.GetAllocator();
+
+    if( bSerialise)
+    {
+        FILE *fPersistFile = NULL;
+        fopen_s( &fPersistFile, persistFilename(), "wb" );
+        if(fPersistFile)
+        {
+            fwrite( &_bUserPolygonLineView, sizeof(_bUserPolygonLineView),1 , fPersistFile );
+            bool bIsRunning = isRunning();
+            fwrite( &bIsRunning, sizeof(bIsRunning), 1, fPersistFile );
+            fwrite( &global_fg_debug, sizeof(global_fg_debug),1, fPersistFile );
+            fwrite( &global_info, sizeof(global_info),1, fPersistFile );
+            fwrite( &global_force_lines_debug, sizeof(global_force_lines_debug), 1, fPersistFile );
+
+            _WorldSystem.persistWriteState( fPersistFile );
+
+            fclose(fPersistFile);
+        }
+    }
+    else
+    {
+        FILE *fPersistFile = NULL;
+        fopen_s(&fPersistFile, persistFilename(), "rb");
+        if (fPersistFile)
+        {
+            fread(&_bUserPolygonLineView, sizeof(_bUserPolygonLineView), 1, fPersistFile);
+
+            bool bIsRunning(false);
+            fread(&bIsRunning, sizeof(bIsRunning), 1, fPersistFile);
+            setRunning(bIsRunning);
+            fread(&global_fg_debug, sizeof(global_fg_debug), 1, fPersistFile);
+            fread(&global_info, sizeof(global_info), 1, fPersistFile);
+            fread(&global_force_lines_debug, sizeof(global_force_lines_debug), 1, fPersistFile);
+
+            _WorldSystem.persistReadState(fPersistFile);
+
+            fclose(fPersistFile);
+        }
+    }
+
 }
 
 void SDLMainWindow::OnInitPolyMode()

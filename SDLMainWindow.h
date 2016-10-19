@@ -58,7 +58,6 @@ protected:
     void onSize(int width, int height) override;
     void onMove(int x, int y) override;
 
-
     bool createFrameBufferAndShaders();
     void OnInitPolyMode();
     void RenderScene();
@@ -79,6 +78,8 @@ protected:
     void setupCameraOrientation();
     void setupCameraPosition(bool bReflection=false);
     void processInputsForCamera();
+
+    void persistSettings(bool bSerialise);
 
 private:
     bool _showCursor;
