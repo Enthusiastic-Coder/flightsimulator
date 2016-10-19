@@ -425,6 +425,16 @@ void WorldSystem::persistWriteState(FILE* fPersistFile)
     _cameraProvider.persistWriteState(fPersistFile);
 }
 
+void WorldSystem::persistReadState(rapidjson::Document *doc)
+{
+
+}
+
+void WorldSystem::persistWriteState(rapidjson::Document *doc)
+{
+
+}
+
 JSONRigidBody *WorldSystem::focusedRigidBody()
 {
     return _rigidBodyCollection.focusedRigidBody();

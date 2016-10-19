@@ -7,7 +7,7 @@
 #include <GPSLocation.h>
 #include <interfaces.h>
 
-class CameraView : public IFilePersist
+class CameraView : public IFilePersist, public IRapidJsonPersist
 {
 private:
     class GroupCameraView
@@ -60,6 +60,10 @@ public:
 // IFilePersist
     void persistReadState(FILE* fPersistFile) override;
     void persistWriteState(FILE* fPersistFile) override;
+
+// IRapidJsonPersist
+    void persistReadState(rapidjson::Document* doc) override;
+    void persistWriteState(rapidjson::Document* doc) override;
 
 private:
     std::string _description;

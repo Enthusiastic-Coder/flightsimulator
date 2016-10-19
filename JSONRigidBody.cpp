@@ -581,7 +581,17 @@ void JSONRigidBody::persistWriteState(FILE* fPersistFile)
 	fwrite((void*) &velocity(), sizeof(velocity()), 1, fPersistFile );
 
 	fwrite( (void*)&getOrientation(), sizeof(getOrientation()), 1, fPersistFile );
-	fwrite((void*) &angularVelocity(), sizeof(angularVelocity()), 1, fPersistFile );
+    fwrite((void*) &angularVelocity(), sizeof(angularVelocity()), 1, fPersistFile );
+}
+
+void JSONRigidBody::persistReadState(rapidjson::Document *doc)
+{
+
+}
+
+void JSONRigidBody::persistWriteState(rapidjson::Document *doc)
+{
+
 }
 
 bool JSONRigidBody::typeMask(Type t)

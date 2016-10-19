@@ -149,4 +149,14 @@ void CameraView::persistWriteState(FILE *fPersistFile)
     fwrite(&_zoom,sizeof(double), 1, fPersistFile);
 }
 
+void CameraView::persistReadState(rapidjson::Document *doc)
+{
+
+}
+
+void CameraView::persistWriteState(rapidjson::Document *doc)
+{
+
+}
+
 

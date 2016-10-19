@@ -105,3 +105,11 @@ struct IFilePersist
     virtual void persistReadState(FILE* fPersistFile) = 0;
     virtual void persistWriteState(FILE* fPersistFile) = 0;
 };
+
+#include <rapidjson/document.h>
+
+struct IRapidJsonPersist
+{
+    virtual void persistReadState(rapidjson::Document* doc) = 0;
+    virtual void persistWriteState(rapidjson::Document* doc) = 0;
+};

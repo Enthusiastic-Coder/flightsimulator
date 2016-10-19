@@ -357,7 +357,17 @@ void JSONRigidBodyCollection::persistWriteState(FILE* fPersistFile)
 		fwrite(&euler, sizeof(euler), 1, fPersistFile);
 
         it->persistWriteState(fPersistFile);
-	}
+    }
+}
+
+void JSONRigidBodyCollection::persistReadState(rapidjson::Document *doc)
+{
+
+}
+
+void JSONRigidBodyCollection::persistWriteState(rapidjson::Document *doc)
+{
+
 }
 
 void JSONRigidBodyCollection::loadBodyRecorderedData()
