@@ -1766,23 +1766,31 @@ void SDLMainWindow::persistSettings(bool bSerialise)
 {
     using namespace rapidjson;
 
+    std::string strSettingsFilename = "lastpos.json";
+
     Document doc;
     Document::AllocatorType& a = doc.GetAllocator();
 
     if( bSerialise)
     {
         FILE *fPersistFile = NULL;
-        fopen_s( &fPersistFile, persistFilename(), "wb" );
+        fopen_s( &fPersistFile, strSettingsFilename.c_str(), "wb" );
         if(fPersistFile)
         {
-            fwrite( &_bUserPolygonLineView, sizeof(_bUserPolygonLineView),1 , fPersistFile );
-            bool bIsRunning = isRunning();
-            fwrite( &bIsRunning, sizeof(bIsRunning), 1, fPersistFile );
-            fwrite( &global_fg_debug, sizeof(global_fg_debug),1, fPersistFile );
-            fwrite( &global_info, sizeof(global_info),1, fPersistFile );
-            fwrite( &global_force_lines_debug, sizeof(global_force_lines_debug), 1, fPersistFile );
+            doc.SetObject();
+            doc.AddMember("UserPoyLineView", Value(_bUserPolygonLineView), a);
+            doc.AddMember("IsRunning", Value(isRunning()), a);
+            doc.AddMember("global_fg_debug", Value(global_fg_debug), a);
+            doc.AddMember("global_info", Value(global_info), a);
+            doc.AddMember("global_force_lines_debug", Value(global_force_lines_debug), a);
 
-            _WorldSystem.persistWriteState( fPersistFile );
+            _WorldSystem.persistWriteState( &doc );
+
+            StringBuffer s;
+            PrettyWriter<StringBuffer> writer(s);
+            doc.Accept(writer);
+
+            fwrite(s.GetString(), s.GetSize(), 1, fPersistFile);
 
             fclose(fPersistFile);
         }

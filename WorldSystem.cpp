@@ -432,7 +432,9 @@ void WorldSystem::persistReadState(rapidjson::Document *doc)
 
 void WorldSystem::persistWriteState(rapidjson::Document *doc)
 {
-
+    doc->AddMember("LightingFraction", rapidjson::Value(_fLightingFraction), doc->GetAllocator());
+    _rigidBodyCollection.persistWriteState(doc);
+    _cameraProvider.persistWriteState(doc);
 }
 
 JSONRigidBody *WorldSystem::focusedRigidBody()

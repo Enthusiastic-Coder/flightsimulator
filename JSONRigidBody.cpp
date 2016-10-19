@@ -591,7 +591,23 @@ void JSONRigidBody::persistReadState(rapidjson::Document *doc)
 
 void JSONRigidBody::persistWriteState(rapidjson::Document *doc)
 {
+    using namespace rapidjson;
+    Document::AllocatorType& a = doc->GetAllocator();
 
+    Value obj;
+    obj.SetObject();
+
+    JSONRigidBody::STATE state = getState();
+    obj.AddMember("State", Value((int)state), doc->GetAllocator());
+    obj.AddMember("GPSLocation", Value( getGPSLocation().toString(),a), a);
+    obj.AddMember("Euler", Value(getEuler().toString(),a), a);
+
+    obj.AddMember("Position", Value(position().toString(), a), a );
+    obj.AddMember("Velocity", Value(velocity().toString(),a), a );
+    obj.AddMember("Orientation", Value(getOrientation().toString(),a), a );
+    obj.AddMember("AngularVelocity", Value(angularVelocity().toString(),a), a );
+
+    doc->AddMember(Value(getID(), a), obj, a);
 }
 
 bool JSONRigidBody::typeMask(Type t)
