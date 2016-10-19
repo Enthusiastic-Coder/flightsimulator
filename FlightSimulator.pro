@@ -16,6 +16,11 @@ include(openal/openal.pri)
 INCLUDEPATH += rapidjson/include
 
 INCLUDEPATH += sdk/include
+
+win32 {
+    HEADERS += sdk/include/*
+}
+
 include(FlightSimulator.pri)
 
 win32 {
