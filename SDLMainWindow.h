@@ -5,7 +5,9 @@
 #include <include_gl.h>
 #include "SDLGameLoop.h"
 
+#ifdef WIN32
 #include "loadWAV.h"
+#endif
 
 #include "WorldSystem.h"
 #include "OpenGLShaderProgram.h"
