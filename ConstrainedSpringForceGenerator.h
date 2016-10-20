@@ -2,6 +2,7 @@
 
 #include "GSForceGenerator.h"
 #include "SimpleSpringModel.h"
+#include "JSONRigidBody.h"
 
 class ConstrainedSpringForceGenerator : public GSForceGenerator
 {

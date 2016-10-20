@@ -166,7 +166,7 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
         if (sLine.find("glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, &Indices") != std::string::npos)
         {
             bHasMaterials = false;
-            auto& countOffset = GetCountOffSet(sLine);
+            const auto& countOffset = GetCountOffSet(sLine);
 
             if (!bOnTriangle)
             {
@@ -187,7 +187,7 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
 
         if (sLine.find("glDrawElements(GL_TRIANGLE_STRIP") != std::string::npos)
         {
-            auto& countOffset = GetCountOffSet(sLine);
+             const auto& countOffset = GetCountOffSet(sLine);
 
             mesh = surface->addMesh();
             mesh->setPrimitveType(GL_TRIANGLE_STRIP);

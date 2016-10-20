@@ -379,7 +379,7 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 
         if( joy->numberofButtonsPressed())
         {
-            DWORD dwWord = joy->buttonFlagPressed();
+            int dwWord = joy->buttonFlagPressed();
 
             //128(down) - 32 (up)
             if( dwWord & 8 || dwWord & 4 )

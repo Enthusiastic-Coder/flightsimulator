@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include "AoaClData.h"
+#include <cstdlib>
 
 using namespace std;
 
@@ -13,8 +14,7 @@ void AoaClData::reset()
 bool AoaClData::load( std::string filename )
 {
 	reset();
-	FILE *file = NULL;
-	fopen_s( &file, filename.c_str(), "rt" );
+	FILE *file = fopen( filename.c_str(), "rt" );
 	
 	if( file == NULL )
 		return false;

@@ -24,8 +24,8 @@ public:
 private:
     Renderer* _renderer = 0;
     Vector4F _colorModulator = Vector4F(1,1,1,1);
-    int _X;
-    int _Y;
+    int _posX;
+    int _posY;
     int _cx;
     int _cy;
 };

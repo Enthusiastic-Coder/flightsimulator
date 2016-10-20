@@ -17,8 +17,8 @@ void OpenGLTextureRenderer2D::setColorModulator(Vector4F colorModulator)
 
 void OpenGLTextureRenderer2D::onSize(int x, int y, int width, int height)
 {
-    _X = x;
-    _Y = y;
+    _posX = x;
+    _posY = y;
     _cx = width;
     _cy = height;
 }
@@ -39,7 +39,7 @@ void OpenGLTextureRenderer2D::beginRender()
     pipeline.Push();
     pipeline.GetView().LoadIdentity();
     pipeline.GetProjection().LoadIdentity();
-    pipeline.GetProjection().SetOrthographic(_X, _X+ _cx, _Y+ _cy, _Y, -1, 1);
+    pipeline.GetProjection().SetOrthographic(_posX, _posX+ _cx, _posY+ _cy, _posY, -1, 1);
 
     glDisable(GL_DEPTH_TEST);
 }
