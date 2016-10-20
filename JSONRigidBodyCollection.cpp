@@ -187,9 +187,10 @@ bool JSONRigidBodyCollection::onSyncKeyPress()
 
 bool JSONRigidBodyCollection::toggleUsingMouse()
 {
-    if(focusedRigidBody())
+    auto* focus = focusedRigidBody();
+    if(focus != 0)
     {
-        focusedRigidBody()->setUsingMouse( !focusedRigidBody()->isUsingMouse() );
+        focus->setUsingMouse( !focusedRigidBody()->isUsingMouse() );
         return true;
     }
 

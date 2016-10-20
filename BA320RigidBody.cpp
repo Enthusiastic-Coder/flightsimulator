@@ -7,7 +7,8 @@
 BAAirbus320CustomForceGenerator::BAAirbus320CustomForceGenerator() {}
 
 void BAAirbus320CustomForceGenerator::onApplyForce(Particle *p, double dt)
-{	
+{
+#ifdef WIN32
     float goodForce = 200000.0f;
     JSONRigidBody& body = *reinterpret_cast<JSONRigidBody*>(p);
 
@@ -54,6 +55,7 @@ void BAAirbus320CustomForceGenerator::onApplyForce(Particle *p, double dt)
         body.applyForce( Vector3D(-3.74f,0,0.32f), Vector3D(0, 0, goodForce));
         body.applyForce( Vector3D(3.74f,0,0.32f), Vector3D(0, 0, goodForce));
     }
+#endif
 }
 
 
@@ -401,6 +403,7 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         }
     }
 
+#ifdef WIN32
     if( GetAsyncKeyState( '3' ) < 0 )
     {
         if( GetAsyncKeyState( VK_CONTROL ) == 0 )
@@ -551,7 +554,6 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
     if( GetAsyncKeyState( 'B' ) < 0 )
         applyBrakes(dt, GetAsyncKeyState( VK_SHIFT ) < 0);
 
-#ifdef WIN32
     if( isUsingMouse() )
     {
         //IMouse* mouse = InputHandler::getMouse();

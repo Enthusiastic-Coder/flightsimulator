@@ -612,6 +612,7 @@ void SDLMainWindow::onUnInitialise()
 
 void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 {
+#ifdef WIN32
     SDL_UNUSED(e);
     /*    if( e.key.keysym.scancode == SDL_SCANCODE_F11 )
             _WorldSystem.environment().incrLightFraction(-0.01f);
@@ -786,9 +787,7 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
                 global_force_lines_debug = (__global_force_lines_debug)(int)(__global_force_lines_debug::force_lines_begin+1);
         }
     }
-
-    //		  if( key == VK_SHIFT )
-    //		  _camera.toggleShift();
+#endif
 }
 
 void SDLMainWindow::onUpdate()
@@ -819,6 +818,7 @@ void SDLMainWindow::onUpdate()
     _nUVOffset += g_WaterFlow * dt;
 #endif
 
+#ifdef WIN32
     if (GetFocus() == _hWnd)
         processInputsForCamera();
 
@@ -839,6 +839,7 @@ void SDLMainWindow::onUpdate()
 
     if( GetAsyncKeyState( VK_OEM_COMMA ) < 0 )
         _WorldSystem.incrChaseDistance(50*dt);
+#endif
 
     if( _buttonTextureManager.buttonClicked(&_buttonTestTexture))
         _WorldSystem.nextView();
