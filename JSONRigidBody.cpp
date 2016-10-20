@@ -86,6 +86,7 @@ MeshModel* JSONRigidBody::loadMeshModel(std::string sMeshName, MassChannel &mc)
 void JSONRigidBody::onInitialise(WorldSystem* pWorldSystem)
 {
 	_mesh_pivot_vector.clear();
+    _windTunnel.onInitialise(pWorldSystem);
 
 	_massChannel.setMass(getMass());
 	if( _pMeshModel = loadMeshModel( getName(), _massChannel) )
