@@ -51,6 +51,11 @@ public:
     bool onAsyncKeyPress(IScreenMouseInfo* scrn, float dt) override;
     void updateCameraView() override;
 
+    void airResetPos() override;
+    void airResetApproachPos() override;
+    void airSpoilerToggle(bool bLeft) override;
+    void airFlapIncr(int incr) override;
+
     float getPower(int engine) override;
 	float getPowerOutput(int engine) override;
     void setPower(float value) override;

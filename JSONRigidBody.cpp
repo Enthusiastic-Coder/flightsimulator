@@ -561,6 +561,26 @@ std::string JSONRigidBody::getCameraDescription() const
     return _cameraPositionProvider.getCameraDescription();
 }
 
+void JSONRigidBody::airResetPos()
+{
+
+}
+
+void JSONRigidBody::airResetApproachPos()
+{
+
+}
+
+void JSONRigidBody::airSpoilerToggle(bool bLeft)
+{
+
+}
+
+void JSONRigidBody::airFlapIncr(int incr)
+{
+
+}
+
 bool JSONRigidBody::getHeightFromPosition(const GPSLocation &position, HeightData &heightData) const
 {
     return false;

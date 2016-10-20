@@ -626,6 +626,8 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
         if( e.key.keysym.scancode == SDL_SCANCODE_F7)
             _WorldSystem.RigidBody().resetApproach();*/
 
+    JSONRigidBody *pBody = _WorldSystem.focusedRigidBody();
+
     if( ::GetKeyState(VK_F5) < 0 )
     {
         /*_towTruck.initSpefile:///C:/Project/Code/Qt/FlightSimulator/Release/lastGPSpos.binedAndPos();
@@ -642,7 +644,6 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
             _audiA8.setPosition(GPSLocation(51.46731605,-0.47542586,0.5 ) + VectorD(0,0,250) );
             _audiA8.setOrientation(0,0,0);*/
 
-        GSRigidBody *pBody = _WorldSystem.focusedRigidBody();
 
         if( pBody )
         {
@@ -651,6 +652,34 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
         }
     }
 
+    if(pBody)
+    {
+        if( ::GetKeyState(VK_F5) < 0)
+            pBody->airResetPos();
+
+        if( GetKeyState(VK_F7) < 0)
+            pBody->airResetApproachPos();
+
+        if( GetKeyState(VK_F3) <  0)
+            pBody->airSpoilerToggle(true);
+
+        if( GetKeyState(VK_F4) <  0)
+            pBody->airSpoilerToggle(false);
+
+        if( GetKeyState(VK_F1) < 0)
+            pBody->airFlapIncr( -1 );
+
+        if( GetKeyState(VK_F2) < 0)
+            pBody->airFlapIncr( 1 );
+    }
+
+    if( ::GetKeyState('F') < 0)
+    {
+        if (GetAsyncKeyState(VK_SHIFT) < 0)
+            _WorldSystem.prevFocusedRigidBody();
+        else
+            _WorldSystem.nextFocusedRigidBody();
+    }
 
     if( _WorldSystem.onSyncKeyPress())
         return;

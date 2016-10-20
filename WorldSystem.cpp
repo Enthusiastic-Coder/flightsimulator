@@ -445,6 +445,16 @@ JSONRigidBody *WorldSystem::focusedRigidBody()
     return _rigidBodyCollection.focusedRigidBody();
 }
 
+void WorldSystem::prevFocusedRigidBody()
+{
+    _rigidBodyCollection.prevFocusedRigidBody();
+}
+
+void WorldSystem::nextFocusedRigidBody()
+{
+    _rigidBodyCollection.nextFocusedRigidBody();
+}
+
 void WorldSystem::setLightFraction(float f)
 {
     _fLightingFraction = f;

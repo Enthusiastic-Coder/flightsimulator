@@ -53,6 +53,9 @@ public:
 	void loadBodyRecorderedData();
     JSONRigidBody* focusedRigidBody();
 
+    void prevFocusedRigidBody();
+    void nextFocusedRigidBody();
+
 	void setLightFraction(float f);
     void incrLightFraction(float incr);
 

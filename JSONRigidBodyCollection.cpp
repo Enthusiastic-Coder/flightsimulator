@@ -223,16 +223,6 @@ bool JSONRigidBodyCollection::onSyncKeyPress()
         return true;
     }
 
-    if( ::GetKeyState('F') < 0)
-    {
-        if (GetAsyncKeyState(VK_SHIFT) < 0)
-            prevFocusedRigidBody();
-        else
-            nextFocusedRigidBody();
-        return true;
-    }
-
-
 	return false;
 }
 

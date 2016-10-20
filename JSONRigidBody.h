@@ -125,6 +125,11 @@ public:
     void updateCameraView() override;
     std::string getCameraDescription() const override;
 
+    virtual void airResetPos();
+    virtual void airResetApproachPos();
+    virtual void airSpoilerToggle(bool bLeft);
+    virtual void airFlapIncr(int incr);
+
 // ICameraChaseable
     void incrChaseAngle(float fDiff) override;
     void incrChaseDistance(float fDiff) override;
