@@ -1,6 +1,10 @@
 #include "SDLMainWindow.h"
 #include <SDL_image.h>
 
+#ifdef ANDROID
+#include <unistd.h>
+#endif
+
 int main(int, char *[])
 {
     SDL_Init(SDL_INIT_EVERYTHING);

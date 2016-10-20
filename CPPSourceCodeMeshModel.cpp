@@ -240,7 +240,7 @@ std::pair<unsigned int, unsigned int> CPPSourceCodeMeshModel::GetCountOffSet(con
     return std::make_pair(subStrToLong(sLine, p1 + 1, p2 - p1 - 1), subStrToLong(sLine, p3 + 1, p4 - p3 - 1));
 }
 
-void CPPSourceCodeMeshModel::onReceiveData(DATA_TYPE token, float data[3], LPVOID pData)
+void CPPSourceCodeMeshModel::onReceiveData(DATA_TYPE token, float data[3], void* pData)
 {
     if (token == VECTOR_DATA_TYPE)
         reinterpret_cast<meshData*>(pData)->addVertex(data[0], data[1], data[2]);
@@ -258,7 +258,7 @@ void CPPSourceCodeMeshModel::onReceiveData(DATA_TYPE token, float data[3], LPVOI
         reinterpret_cast<meshData *>(pData)->addIndex(data[0]);
 }
 
-void CPPSourceCodeMeshModel::ReadVertexData(std::ifstream &stream, int dataCount, DATA_TYPE dataType, LPVOID data)
+void CPPSourceCodeMeshModel::ReadVertexData(std::ifstream &stream, int dataCount, DATA_TYPE dataType, void* data)
 {
     std::string sLine;
     sLine.reserve(1000);
@@ -397,11 +397,11 @@ void SimpleRunwayMeshModel::setTextureName(std::string strName)
 }
 
 /////////////////
-void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, COLORREF color, float fHdg)
+void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsigned char r, unsigned char g, unsigned char b, float fHdg)
 {
     std::stringstream ss;
     ss << "SimplePlaneMeshModel|width:" << iWidth << "|height:" << iHeight << "|fInterval:" << fInterval;
-    ss << "|Color:" << GetRValue(color) << "," << GetGValue(color) << "," << GetBValue(color);
+    ss << "|Color:" << r << "," << g << "," << b;
 
     setName(ss.str());
 
@@ -434,7 +434,7 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, COLOR
 
     MeshSurfaceObject* surface = group->addSurface();
 
-    surface->setDiffuse(Vector3F(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f, GetBValue(color) / 255.0f));
+    surface->setDiffuse(Vector3F(r / 255.0f, g/ 255.0f, b / 255.0f));
     surface->setSpecular(Vector3F(0.5, 0.5, 0.5));
     surface->setShininess(32);
 

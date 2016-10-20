@@ -13,6 +13,7 @@ LOCAL_SRC_FILES := sdl2/src/main/android/SDL_android_main.c \
            SDLMainWindow.cpp \
            TextureLoader.cpp \
             SDLSurfaceHelper.cpp \
+            SDLTimer.cpp \
 		AeroControlSurface.cpp \
 		AeroControlSurfaceBoundary.cpp \
 		AeroForceGenerator.cpp \
