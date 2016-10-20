@@ -653,12 +653,7 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
 
     if( _WorldSystem.onSyncKeyPress())
-    {
-        if( ::GetKeyState('F') <0)
-            _camera.setRemoteViewPtr( _WorldSystem.getCameraView());
-
         return;
-    }
 
     if( ::GetKeyState(VK_F11) < 0 )
         _WorldSystem.incrLightFraction(-0.01f);
@@ -702,8 +697,6 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
             _WorldSystem.prevView();
         else
             _WorldSystem.nextView();
-
-        _camera.setRemoteViewPtr( _WorldSystem.getCameraView());
 
         if (_WorldSystem.focusedRigidBody() && _WorldSystem.focusedRigidBody()->getID() == "A320_A_GIB")
         {
