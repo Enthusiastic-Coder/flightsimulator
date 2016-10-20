@@ -80,31 +80,31 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
 
         if (sLine.find("VertexData[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 3, VECTOR_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 3, VECTOR_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setVertexFlag();
         }
 
         if (sLine.find("ColorData[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 3, COLOR_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 3, COLOR_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setColorFag();
         }
 
         if (sLine.find("NormalData[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 3, NORMAL_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 3, NORMAL_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setNormalFlag();
         }
 
         if (sLine.find("TexCoordData[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 2, TEXTURE_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 2, TEXTURE_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setTexCoordFlag();
         }
 
         if (sLine.find("Indices[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 1, INDEX_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 1, INDEX_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setIndexFlag();
         }
 

@@ -103,7 +103,7 @@ void MeshObject::calcMomentOfInertiaPtEnum(void *pVoid, size_t i, Vector3F pts[3
 
 void MeshObject::calcMomentOfInertia(MassChannel &mc, const float *VertexData, const unsigned short *Indices)
 {
-    enumeratePoints(VertexData, Indices, &MeshObject::calcMomentOfInertiaPtEnum, reinterpret_cast<LPVOID>(&mc));
+    enumeratePoints(VertexData, Indices, &MeshObject::calcMomentOfInertiaPtEnum, reinterpret_cast<void*>(&mc));
 }
 
 void MeshObject::Render(Renderer* r)
