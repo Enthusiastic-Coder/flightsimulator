@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "JSONRigidBodyBuilder.h"
 #include <iostream>
+#include <limits>
 
 void JSONRigidBodyBuilder::trim2(std::string& str)
 {
@@ -107,7 +108,7 @@ void JSONRigidBodyBuilder::build( const std::string & sfilename )
 				continue;
 			}
 
-			if (max_thrust < FLT_EPSILON)
+			if (max_thrust < std::numeric_limits<float>::epsilon())
 			{
 				throwError(sline, "max engine thrust is not positive.");
 				continue;
