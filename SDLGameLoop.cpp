@@ -158,14 +158,10 @@ bool SDLGameLoop::run(std::string strTitle)
     _glContext = SDL_GL_CreateContext(_sdlWindow);
     _running = true;
 
-    if(SDL_GetWindowWMInfo(_sdlWindow, &info))
-    {
-        _hWnd = info.info.win.window;
-        int w, h;
-        SDL_GetWindowSize(_sdlWindow, &w,&h);
-        onSize(w,h);
-        onInitialise();
-    }
+    int w, h;
+    SDL_GetWindowSize(_sdlWindow, &w,&h);
+    onSize(w,h);
+    onInitialise();
 
     SDL_Log( "Current Video Driver : %s",  SDL_GetCurrentVideoDriver());
 

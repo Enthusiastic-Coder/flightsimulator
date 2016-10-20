@@ -818,9 +818,10 @@ void SDLMainWindow::onUpdate()
     _nUVOffset += g_WaterFlow * dt;
 #endif
 
-#ifdef WIN32
-    if (GetFocus() == _hWnd)
+    if(SDL_GetWindowFlags(getWindow()) & SDL_WINDOW_INPUT_FOCUS)
         processInputsForCamera();
+
+#ifdef WIN32
 
     if( GetAsyncKeyState( 'C' ) < 0 )
         _WorldSystem.incrChaseAngle(-50*dt);
@@ -1444,16 +1445,15 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
 
     }
 
-    POINT pt = {};
-    GetCursorPos(&pt);
-    ScreenToClient(_hWnd, &pt);
+    int x, y;
+    SDL_GetMouseState(&x, &y);
 
     {
         float vertices[] = {
-            pt.x - 5, pt.y - 5, 0,
-            pt.x + 5, pt.y - 5, 0,
-            pt.x + 5, pt.y + 5, 0,
-            pt.x - 5, pt.y + 5, 0
+            x - 5, y - 5, 0,
+            x + 5, y - 5, 0,
+            x + 5, y + 5, 0,
+            x - 5, y + 5, 0
         };
 
         float colors[] = {

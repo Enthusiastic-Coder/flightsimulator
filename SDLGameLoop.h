@@ -59,8 +59,6 @@ private:
     bool _running;
 
 protected:
-    HWND _hWnd = 0;
-
     SDL_Window *getWindow();
 };
 
