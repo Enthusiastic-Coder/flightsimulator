@@ -2,7 +2,7 @@
 #define __SDLGAMELOOP_H__
 
 #include <SDL.h>
-#include <HRTimer.h>
+#include <SDLTimer.h>
 #include "interfaces.h"
 #include <include_gl.h>
 #include <string>
@@ -53,7 +53,7 @@ private:
     SDL_GLContext _glContext;
     Uint32 _updateEventType;
 
-    HRTimer _timer;
+    SDLTimer _timer;
     float _fInverseFPS;
     float _dt;
     bool _running;
