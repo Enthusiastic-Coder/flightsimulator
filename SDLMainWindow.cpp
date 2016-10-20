@@ -347,23 +347,7 @@ bool SDLMainWindow::onInitialise()
 
         _WorldSystem.loadBodyRecorderedData();
 
-        FILE *fPersistFile = NULL;
-        fopen_s(&fPersistFile, persistFilename(), "rb");
-        if (fPersistFile)
-        {
-            fread(&_bUserPolygonLineView, sizeof(_bUserPolygonLineView), 1, fPersistFile);
-
-            bool bIsRunning(false);
-            fread(&bIsRunning, sizeof(bIsRunning), 1, fPersistFile);
-            setRunning(bIsRunning);
-            fread(&global_fg_debug, sizeof(global_fg_debug), 1, fPersistFile);
-            fread(&global_info, sizeof(global_info), 1, fPersistFile);
-            fread(&global_force_lines_debug, sizeof(global_force_lines_debug), 1, fPersistFile);
-
-            _WorldSystem.persistReadState(fPersistFile);
-
-            fclose(fPersistFile);
-        }
+        persistSettings(false);
 
         _camera.setRemoteViewPtr( _WorldSystem.getCameraView());
         _camera.fastForwardLocalView();
@@ -603,11 +587,6 @@ void SDLMainWindow::OnUnitSound()
 #endif
 }
 
-const char* SDLMainWindow::persistFilename() const
-{
-    return "lastGPSpos.bin";
-}
-
 void SDLMainWindow::ensureCameraAboveGround()
 {
     HeightData data;
@@ -625,22 +604,7 @@ void SDLMainWindow::ensureCameraAboveGround()
 
 void SDLMainWindow::onUnInitialise()
 {
-    FILE *fPersistFile = NULL;
-    fopen_s( &fPersistFile, persistFilename(), "wb" );
-    if(fPersistFile)
-    {
-        fwrite( &_bUserPolygonLineView, sizeof(_bUserPolygonLineView),1 , fPersistFile );
-        bool bIsRunning = isRunning();
-        fwrite( &bIsRunning, sizeof(bIsRunning), 1, fPersistFile );
-        fwrite( &global_fg_debug, sizeof(global_fg_debug),1, fPersistFile );
-        fwrite( &global_info, sizeof(global_info),1, fPersistFile );
-        fwrite( &global_force_lines_debug, sizeof(global_force_lines_debug), 1, fPersistFile );
-
-        _WorldSystem.persistWriteState( fPersistFile );
-
-        fclose(fPersistFile);
-    }
-
+    persistSettings(true);
     _WorldSystem.onUnintialise();
     OnUnitSound();
 }
@@ -648,6 +612,7 @@ void SDLMainWindow::onUnInitialise()
 
 void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 {
+#ifdef WIN32
     SDL_UNUSED(e);
     /*    if( e.key.keysym.scancode == SDL_SCANCODE_F11 )
             _WorldSystem.environment().incrLightFraction(-0.01f);
@@ -661,6 +626,10 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
         if( e.key.keysym.scancode == SDL_SCANCODE_F7)
             _WorldSystem.RigidBody().resetApproach();*/
+
+    JSONRigidBody *pBody = _WorldSystem.focusedRigidBody();
+    bool bShiftPressed = (GetAsyncKeyState(VK_SHIFT) < 0);
+    bool bAltPressed = GetAsyncKeyState(VK_MENU) & 0x8000;
 
     if( ::GetKeyState(VK_F5) < 0 )
     {
@@ -678,7 +647,6 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
             _audiA8.setPosition(GPSLocation(51.46731605,-0.47542586,0.5 ) + VectorD(0,0,250) );
             _audiA8.setOrientation(0,0,0);*/
 
-        GSRigidBody *pBody = _WorldSystem.focusedRigidBody();
 
         if( pBody )
         {
@@ -687,14 +655,45 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
         }
     }
 
+    if(pBody)
+    {
+        if( ::GetKeyState(VK_F5) < 0)
+            pBody->airResetPos();
+
+        if( GetKeyState(VK_F7) < 0)
+            pBody->airResetApproachPos();
+
+        if( GetKeyState(VK_F3) <  0)
+            pBody->airSpoilerToggle(true);
+
+        if( GetKeyState(VK_F4) <  0)
+            pBody->airSpoilerToggle(false);
+
+        if( GetKeyState(VK_F1) < 0)
+            pBody->airFlapIncr( -1 );
+
+        if( GetKeyState(VK_F2) < 0)
+            pBody->airFlapIncr( 1 );
+
+        if( ::GetKeyState('R') < 0)
+        {
+            if( bShiftPressed )
+                pBody->startRecording();
+            else if( bAltPressed )
+                pBody->togglePlayback();
+        }
+    }
+
+    if( ::GetKeyState('F') < 0)
+    {
+        if (GetAsyncKeyState(VK_SHIFT) < 0)
+            _WorldSystem.prevFocusedRigidBody();
+        else
+            _WorldSystem.nextFocusedRigidBody();
+    }
 
     if( _WorldSystem.onSyncKeyPress())
-    {
-        if( ::GetKeyState('F') <0)
-            _camera.setRemoteViewPtr( _WorldSystem.getCameraView());
-
         return;
-    }
 
     if( ::GetKeyState(VK_F11) < 0 )
         _WorldSystem.incrLightFraction(-0.01f);
@@ -704,10 +703,13 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
     if( ::GetKeyState('R') < 0 )
     {
-        setRunning(!isRunning());
+        if( !bShiftPressed && !bAltPressed)
+        {
+            setRunning(!isRunning());
 
-        if( !isRunning() )
-            update();
+            if( !isRunning() )
+                update();
+        }
     }
 
     if( ::GetKeyState('P') < 0 )
@@ -738,8 +740,6 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
             _WorldSystem.prevView();
         else
             _WorldSystem.nextView();
-
-        _camera.setRemoteViewPtr( _WorldSystem.getCameraView());
 
         if (_WorldSystem.focusedRigidBody() && _WorldSystem.focusedRigidBody()->getID() == "A320_A_GIB")
         {
@@ -787,9 +787,7 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
                 global_force_lines_debug = (__global_force_lines_debug)(int)(__global_force_lines_debug::force_lines_begin+1);
         }
     }
-
-    //		  if( key == VK_SHIFT )
-    //		  _camera.toggleShift();
+#endif
 }
 
 void SDLMainWindow::onUpdate()
@@ -820,6 +818,7 @@ void SDLMainWindow::onUpdate()
     _nUVOffset += g_WaterFlow * dt;
 #endif
 
+#ifdef WIN32
     if (GetFocus() == _hWnd)
         processInputsForCamera();
 
@@ -840,6 +839,7 @@ void SDLMainWindow::onUpdate()
 
     if( GetAsyncKeyState( VK_OEM_COMMA ) < 0 )
         _WorldSystem.incrChaseDistance(50*dt);
+#endif
 
     if( _buttonTextureManager.buttonClicked(&_buttonTestTexture))
         _WorldSystem.nextView();
@@ -1791,6 +1791,70 @@ void SDLMainWindow::processInputsForCamera()
 
     if (::GetAsyncKeyState(VK_OEM_PLUS) < 0)
         _camera.incrZoom( 0.1f);
+}
+
+void SDLMainWindow::persistSettings(bool bSerialise)
+{
+    using namespace rapidjson;
+
+    std::string strSettingsFilename = "lastpos.json";
+
+    Document doc;
+    Document::AllocatorType& a = doc.GetAllocator();
+
+    if( bSerialise)
+    {
+        FILE *fPersistFile = NULL;
+        fopen_s( &fPersistFile, strSettingsFilename.c_str(), "wb" );
+        if(fPersistFile)
+        {
+            doc.SetObject();
+            doc.AddMember("UserPolyLineView", Value(_bUserPolygonLineView), a);
+            doc.AddMember("IsRunning", Value(isRunning()), a);
+            doc.AddMember("global_fg_debug", Value(global_fg_debug), a);
+            doc.AddMember("global_info", Value(global_info), a);
+            doc.AddMember("global_force_lines_debug", Value((int)global_force_lines_debug), a);
+
+            _WorldSystem.persistWriteState( doc );
+
+            StringBuffer s;
+            PrettyWriter<StringBuffer> writer(s);
+            doc.Accept(writer);
+
+            fwrite(s.GetString(), s.GetSize(), 1, fPersistFile);
+
+            fclose(fPersistFile);
+        }
+    }
+    else
+    {
+        std::ifstream json;
+        json.open(strSettingsFilename);
+
+        if( json.is_open())
+        {
+            std::string ret;
+            char buffer[4096];
+            while (json.read(buffer, sizeof(buffer)))
+                ret.append(buffer, sizeof(buffer));
+            ret.append(buffer, json.gcount());
+
+            if( ret.length() > 0)
+            {
+
+                doc.Parse(ret.c_str());
+
+                _bUserPolygonLineView = doc["UserPolyLineView"].GetBool();
+                setRunning(doc["IsRunning"].GetBool());
+                global_fg_debug = doc["global_fg_debug"].GetBool();
+                global_info = doc["global_info"].GetBool();
+                global_force_lines_debug = (__global_force_lines_debug)doc["global_force_lines_debug"].GetInt();
+
+                _WorldSystem.persistReadState(doc);
+            }
+        }
+    }
+
 }
 
 void SDLMainWindow::OnInitPolyMode()

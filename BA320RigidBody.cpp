@@ -7,7 +7,8 @@
 BAAirbus320CustomForceGenerator::BAAirbus320CustomForceGenerator() {}
 
 void BAAirbus320CustomForceGenerator::onApplyForce(Particle *p, double dt)
-{	
+{
+#ifdef WIN32
     float goodForce = 200000.0f;
     JSONRigidBody& body = *reinterpret_cast<JSONRigidBody*>(p);
 
@@ -54,6 +55,7 @@ void BAAirbus320CustomForceGenerator::onApplyForce(Particle *p, double dt)
         body.applyForce( Vector3D(-3.74f,0,0.32f), Vector3D(0, 0, goodForce));
         body.applyForce( Vector3D(3.74f,0,0.32f), Vector3D(0, 0, goodForce));
     }
+#endif
 }
 
 
@@ -401,6 +403,7 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         }
     }
 
+#ifdef WIN32
     if( GetAsyncKeyState( '3' ) < 0 )
     {
         if( GetAsyncKeyState( VK_CONTROL ) == 0 )
@@ -551,7 +554,6 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
     if( GetAsyncKeyState( 'B' ) < 0 )
         applyBrakes(dt, GetAsyncKeyState( VK_SHIFT ) < 0);
 
-#ifdef WIN32
     if( isUsingMouse() )
     {
         //IMouse* mouse = InputHandler::getMouse();
@@ -661,33 +663,28 @@ void BAAirbus320JSONRigidBody::updateCameraView()
     }
 }
 
-bool BAAirbus320JSONRigidBody::onSyncKeyPress()
+void BAAirbus320JSONRigidBody::airResetPos()
 {
-    //if( key == Qt::Key_F5)//Reset position
-    if( GetKeyState(VK_F5) < 0)
-    {
-        reset();
-        initSpeedAndPos();
-        return true;
-    }
+    reset();
+    initSpeedAndPos();
+}
 
-    //if( key == Qt::Key_F7 ) // Reset for approach/landing
-    if( GetKeyState(VK_F7) < 0)
-    {
-        double fMilesOut = 3.5f;
-        reset();
+void BAAirbus320JSONRigidBody::airResetApproachPos()
+{
+    double fMilesOut = 3.5f;
+    reset();
 
-        setPosition(GPSLocation(51.4648,-0.4719087,fMilesOut * 350/3.2808) + Vector3D( -fMilesOut  * 5280 /3.2808f, 0, rand()%500-250));
-        setEuler( 0, 90, 0);
+    setPosition(GPSLocation(51.4648,-0.4719087,fMilesOut * 350/3.2808) + Vector3D( -fMilesOut  * 5280 /3.2808f, 0, rand()%500-250));
+    setEuler( 0, 90, 0);
 
-        double dSpeed = 160 * 1.15f * 1.609334f / 3600 * 1000 ;
-        setVelocity(toNonLocalFrame( Vector3D(0, 0, -dSpeed) ) );
-        setAngularVelocity( 0, 0, 0 );
-        return true;
-    }
+    double dSpeed = 160 * 1.15f * 1.609334f / 3600 * 1000 ;
+    setVelocity(toNonLocalFrame( Vector3D(0, 0, -dSpeed) ) );
+    setAngularVelocity( 0, 0, 0 );
+}
 
-    //if( key == Qt::Key_F3 ) //Left Spoilers
-    if( GetKeyState(VK_F3) <  0)
+void BAAirbus320JSONRigidBody::airSpoilerToggle(bool bLeft)
+{
+    if( bLeft)
     {
         AeroControlSurface *pML = _left_wing.element(0)->controlSurfaceN(2);
         AeroControlSurface *pInnerML = _left_wing.element(1)->controlSurfaceN(1);
@@ -709,11 +706,8 @@ bool BAAirbus320JSONRigidBody::onSyncKeyPress()
         {
             hydraulics().setDeflection( pInnerML, 0.0f );
         }
-        return true;
     }
-
-    //if( key == Qt::Key_F4 ) //Right Spoilers
-    if( GetKeyState( VK_F4) < 0)
+    else
     {
         AeroControlSurface *pMR = _right_wing.element(0)->controlSurfaceN(2);
         AeroControlSurface *pInnerML = _right_wing.element(1)->controlSurfaceN(1);
@@ -735,55 +729,54 @@ bool BAAirbus320JSONRigidBody::onSyncKeyPress()
         {
             hydraulics().setDeflection( pInnerML, 0.0f );
         }
-        return true;
     }
+}
 
-    //if( key == Qt::Key_F1 || key == Qt::Key_F2 ) //Flaps
-    if( GetKeyState(VK_F1) < 0 || GetKeyState(VK_F2) < 0)
+void BAAirbus320JSONRigidBody::airFlapIncr(int incr)
+{
+    AeroControlSurface* pML = _left_wing.element(0)->controlSurfaceN(1);
+    AeroControlSurface* pMR = _right_wing.element(0)->controlSurfaceN(1);
+
+    AeroControlSurface* pInnerML = _left_wing.element(1)->controlSurfaceN(0);
+    AeroControlSurface* pInnerMR = _right_wing.element(1)->controlSurfaceN(0);
+
+    float fDeflection = hydraulics().getDeflection(pML);
+
+    if(incr > 0)
     {
-        AeroControlSurface* pML = _left_wing.element(0)->controlSurfaceN(1);
-        AeroControlSurface* pMR = _right_wing.element(0)->controlSurfaceN(1);
-
-        AeroControlSurface* pInnerML = _left_wing.element(1)->controlSurfaceN(0);
-        AeroControlSurface* pInnerMR = _right_wing.element(1)->controlSurfaceN(0);
-
-        float fDeflection = hydraulics().getDeflection(pML);
-
-        if( GetKeyState(VK_F1) < 0 )
-        {
-            if( fDeflection == 40.0f )
-                fDeflection = 20.0f;
-            else if( fDeflection == 20.0f )
-                fDeflection = 10.0f;
-            else if( fDeflection == 10.0f )
-                fDeflection = 5.0f;
-            else if( fDeflection == 5.0f )
-                fDeflection = 1.0f;
-            else
-                fDeflection = 0.0f;
-        }
+        if( fDeflection == 0.0f )
+            fDeflection = 1.0f;
+        else if( fDeflection == 1.0f )
+            fDeflection = 5.0f;
+        else if( fDeflection == 5.0f )
+            fDeflection = 10.0f;
+        else if( fDeflection == 10.0f )
+            fDeflection = 20.0f;
         else
-        {
-            if( fDeflection == 0.0f )
-                fDeflection = 1.0f;
-            else if( fDeflection == 1.0f )
-                fDeflection = 5.0f;
-            else if( fDeflection == 5.0f )
-                fDeflection = 10.0f;
-            else if( fDeflection == 10.0f )
-                fDeflection = 20.0f;
-            else
-                fDeflection = 40.0f;
-        }
-
-        hydraulics().setDeflection( pML, fDeflection  );
-        hydraulics().setDeflection( pMR, fDeflection  );
-        hydraulics().setDeflection( pInnerML, fDeflection  );
-        hydraulics().setDeflection( pInnerMR, fDeflection  );
-
-        return true;
+            fDeflection = 40.0f;
+    }
+    else
+    {
+        if( fDeflection == 40.0f )
+            fDeflection = 20.0f;
+        else if( fDeflection == 20.0f )
+            fDeflection = 10.0f;
+        else if( fDeflection == 10.0f )
+            fDeflection = 5.0f;
+        else if( fDeflection == 5.0f )
+            fDeflection = 1.0f;
+        else
+            fDeflection = 0.0f;
     }
 
+    hydraulics().setDeflection( pML, fDeflection  );
+    hydraulics().setDeflection( pMR, fDeflection  );
+    hydraulics().setDeflection( pInnerML, fDeflection  );
+    hydraulics().setDeflection( pInnerMR, fDeflection  );
+}
+
+bool BAAirbus320JSONRigidBody::onSyncKeyPress()
+{
     return false;
 }
 

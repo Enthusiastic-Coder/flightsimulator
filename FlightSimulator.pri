@@ -61,29 +61,29 @@ SOURCES += AeroControlSurface.cpp \
     OpenGLVertexBuffer.cpp \
     OpenGLPipeline.cpp \
     OpenGLTexture2D.cpp \
-    $$PWD/WindTunnelForceGenerator.cpp \
-    $$PWD/MeshGroupObject.cpp \
-    $$PWD/OpenGLRenderer.cpp \
-    $$PWD/GPSTerrainData.cpp \
-    $$PWD/MeshObject.cpp \
-    $$PWD/MeshData.cpp \
-    $$PWD/MeshSurfaceObject.cpp \
-    $$PWD/TerrainGroupObject.cpp \
-    $$PWD/PerlinNoise.cpp \
+    WindTunnelForceGenerator.cpp \
+    MeshGroupObject.cpp \
+    OpenGLRenderer.cpp \
+    GPSTerrainData.cpp \
+    MeshObject.cpp \
+    MeshData.cpp \
+    MeshSurfaceObject.cpp \
+    TerrainGroupObject.cpp \
+    PerlinNoise.cpp \
     SkyDome.cpp \
-    $$PWD/CameraView.cpp \
-    $$PWD/CameraViewProvider.cpp \
-    $$PWD/TurnDirection.cpp \
-    $$PWD/OpenGLFontMeshBuilder.cpp \
-    $$PWD/OpenGLFontRenderer2D.cpp \
-    $$PWD/OpenGLFontTexture.cpp \
-    $$PWD/OpenGLButtonTexture.cpp \
-    $$PWD/OpenGLButtonTextureManager.cpp \
-    $$PWD/OpenGLTextureRenderer2D.cpp \
-    $$PWD/OpenGLSliderControl.cpp \
-    $$PWD/SDLJoystickSystem.cpp \
-    $$PWD/HeathrowRadar.cpp \
-    $$PWD/OpenGLPainter.cpp
+    CameraView.cpp \
+    CameraViewProvider.cpp \
+    TurnDirection.cpp \
+    OpenGLFontMeshBuilder.cpp \
+    OpenGLFontRenderer2D.cpp \
+    OpenGLFontTexture.cpp \
+    OpenGLButtonTexture.cpp \
+    OpenGLButtonTextureManager.cpp \
+    OpenGLTextureRenderer2D.cpp \
+    OpenGLSliderControl.cpp \
+    SDLJoystickSystem.cpp \
+    HeathrowRadar.cpp \
+    OpenGLPainter.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
     AeroControlSurface.h \
@@ -165,34 +165,32 @@ HEADERS  += CompositeListForceGenerator.inl \
     WorldSystem.h \
     OpenGLVertexBuffer.h \
     OpenGLTexture2D.h \
-    $$PROJECT/include/MathSupport.h \
     OpenGLPipeline.h \
     OpenGLTexture2D.h \
-    $$PROJECT/include/include_gl.h \
-    $$PWD/WindTunnelForceGenerator.h \
-    $$PWD/MeshGroupObject.h \
-    $$PWD/OpenGLRenderer.h \
-    $$PWD/GPSTerrainData.h \
-    $$PWD/MeshObject.h \
-    $$PWD/MeshData.h \
-    $$PWD/MeshSurfaceObject.h \
-    $$PWD/TerrainGroupObject.h \
-    $$PWD/SkyDome.h \
+    WindTunnelForceGenerator.h \
+    MeshGroupObject.h \
+    OpenGLRenderer.h \
+    GPSTerrainData.h \
+    MeshObject.h \
+    MeshData.h \
+    MeshSurfaceObject.h \
+    TerrainGroupObject.h \
+    SkyDome.h \
     MeshModelsArg.h \
     Paths.h \
-    $$PWD/CameraView.h \
-    $$PWD/CameraViewProvider.h \
-    $$PWD/TurnDirection.h \
-    $$PWD/OpenGLFontMeshBuilder.h \
-    $$PWD/OpenGLFontRenderer2D.h \
-    $$PWD/OpenGLFontTexture.h \
-    $$PWD/OpenGLButtonTexture.h \
-    $$PWD/OpenGLButtonTextureManager.h \
-    $$PWD/OpenGLTextureRenderer2D.h \
-    $$PWD/OpenGLSliderControl.h \
-    $$PWD/HeathrowRadar.h \
-    $$PWD/Win32JoystickSystem.h \
-    $$PWD/SDLJoystickSystem.h \
-    $$PWD/OpenGLPainter.h
+    CameraView.h \
+    CameraViewProvider.h \
+    TurnDirection.h \
+    OpenGLFontMeshBuilder.h \
+    OpenGLFontRenderer2D.h \
+    OpenGLFontTexture.h \
+    OpenGLButtonTexture.h \
+    OpenGLButtonTextureManager.h \
+    OpenGLTextureRenderer2D.h \
+    OpenGLSliderControl.h \
+    HeathrowRadar.h \
+    Win32JoystickSystem.h \
+    SDLJoystickSystem.h \
+    OpenGLPainter.h
 
 

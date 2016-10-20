@@ -89,7 +89,12 @@ bool Particle::isParticle()
 void RigidBody::setInertiaMatrix(const Matrix3x3D& inertia)
 {
 	_inertia = inertia;
-	_inverse_inertia = _inertia.Inverse();
+    _inverse_inertia = _inertia.Inverse();
+}
+
+void RigidBody::setAngularVelocity(const Vector3D &v)
+{
+    setAngularVelocity(v.x, v.y, v.z);
 }
 
 void RigidBody::setAngularVelocity( double x, double y, double z)

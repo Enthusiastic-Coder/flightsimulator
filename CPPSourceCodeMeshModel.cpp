@@ -3,6 +3,7 @@
 #include "MeshModel.h"
 #include "MeshGroupObject.h"
 #include "MipMapTerrainMeshModelCollection.h"
+#include <iostream>
 
 bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuffer)
 {
@@ -200,6 +201,32 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
         _bHasLoaded &= BuildVertexBuffers();
 
     return _bHasLoaded = true;
+}
+
+bool CPPSourceCodeMeshModel::saveMesh(std::string strFilename)
+{
+    std::ofstream outFile(strFilename, std::ios::ate | std::ios::binary );
+    if( !outFile.is_open() )
+        return false;
+
+    BinaryWriteStream outStoreFile( outFile );
+    Write(&outStoreFile);
+    std::cout << "Mesh : " << strFilename << " saved to obj file" << std::endl;
+    return true;
+}
+
+bool CPPSourceCodeMeshModel::loadMesh(std::string strFilename)
+{
+    std::ifstream inFile(strFilename, std::ios::binary );
+    if( !inFile.is_open() )
+        return false;
+
+    BinaryReadStream inStoreFile( inFile );
+    Read(&inStoreFile);
+
+    std::cout << "Mesh : " << strFilename << " loaded from obj file" << std::endl;
+
+    return true;
 }
 
 std::pair<unsigned int, unsigned int> CPPSourceCodeMeshModel::GetCountOffSet(const std::string& sLine)

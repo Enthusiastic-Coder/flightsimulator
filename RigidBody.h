@@ -44,6 +44,7 @@ public:
 
 /// Initial Conditions
 	void setInertiaMatrix(const Matrix3x3D& inertia);
+    void setAngularVelocity( const Vector3D& v);
 	void setAngularVelocity( double x, double y, double z);
 	void setTorque( const Vector3D &rhs );
 

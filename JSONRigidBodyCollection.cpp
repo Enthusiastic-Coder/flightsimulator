@@ -182,65 +182,15 @@ bool JSONRigidBodyCollection::onSyncKeyPress()
     if( BODY_FOCUS_OK(onSyncKeyPress() ) )
 		return true;
 
-    if( ::GetKeyState('R') < 0)
-    {
-        bool bShiftPressed = (GetAsyncKeyState(VK_SHIFT) < 0);
-        bool bAltPressed = GetAsyncKeyState(VK_MENU) & 0x8000;
-        if( !bAltPressed && !bShiftPressed )
-            return false;
-
-        //for( auto& it : _bodyList )
-        auto* it = focusedRigidBody();
-        if (it != nullptr)
-        {
-            JSONRigidBody::STATE state = it->getState();
-
-            if( bShiftPressed )
-            {
-                it->setState( JSONRigidBody::STATE::RECORDING );
-            }
-            else
-            {
-                if( it->getState() == JSONRigidBody::STATE::RECORDING )
-                    it->setState( JSONRigidBody::STATE::NORMAL );
-
-                if( state == JSONRigidBody::STATE::NORMAL )
-                    it->setState( JSONRigidBody::STATE::PLAYBACK );
-                else
-                {
-                    it->setState( JSONRigidBody::STATE::NORMAL );
-
-                    //int i(0);
-                    //for( auto& it : _bodyList )
-                    {
-                        char filename[256]={};
-                        sprintf_s(filename, _countof(filename), "flightrecorded_%s.bin", it->getID().c_str() );
-                        it->saveRecorder(filename);
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    if( ::GetKeyState('F') < 0)
-    {
-        if (GetAsyncKeyState(VK_SHIFT) < 0)
-            prevFocusedRigidBody();
-        else
-            nextFocusedRigidBody();
-        return true;
-    }
-
-
 	return false;
 }
 
 bool JSONRigidBodyCollection::toggleUsingMouse()
 {
-    if(focusedRigidBody())
+    auto* focus = focusedRigidBody();
+    if(focus != 0)
     {
-        focusedRigidBody()->setUsingMouse( !focusedRigidBody()->isUsingMouse() );
+        focus->setUsingMouse( !focusedRigidBody()->isUsingMouse() );
         return true;
     }
 
@@ -360,14 +310,16 @@ void JSONRigidBodyCollection::persistWriteState(FILE* fPersistFile)
     }
 }
 
-void JSONRigidBodyCollection::persistReadState(rapidjson::Document *doc)
+void JSONRigidBodyCollection::persistReadState(rapidjson::Document &doc)
 {
-
+    for (JSONRigidBody* it : _bodyList)
+        it->persistReadState(doc);
 }
 
-void JSONRigidBodyCollection::persistWriteState(rapidjson::Document *doc)
+void JSONRigidBodyCollection::persistWriteState(rapidjson::Document &doc)
 {
-
+    for (JSONRigidBody* it : _bodyList)
+        it->persistWriteState(doc);
 }
 
 void JSONRigidBodyCollection::loadBodyRecorderedData()

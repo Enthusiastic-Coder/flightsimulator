@@ -238,14 +238,6 @@ void WindTunnelForceGenerator::drawWindTunnelLines(GSRigidBody* pBody, Renderer 
             + pBody->toLocalGroundFrame(
                 getWorld()->getWeather()->getWindFromPosition(Vector3D())).Magnitude();
 
-    if( !_bPitchRate )
-    {
-        glLineWidth(2.0f);
-        glBegin(GL_LINES);
-    }
-
-    glColor3f(1,1,1);
-
     if( _bPitchRate  )
     {
         int iSample = 20;
@@ -271,16 +263,19 @@ void WindTunnelForceGenerator::drawWindTunnelLines(GSRigidBody* pBody, Renderer 
             Vector3D vNorml = vel ^ vPerp1.Unit();
             vNorml.Normalize();
 
-            for( int y= -split/2; y <= split/2; y++ )
+            for( int y = -split/2; y <= split/2; y++ )
             {
                 for( int x= -split/2; x <= split/2; x++ )
                 {
                     Vector3D position = position0 + x * fFactor * vPerp1 + y * fFactor * vNorml * 0.75;
                     Vector3D downwash;
 
-                    glBegin(GL_LINE_STRIP);
+                    std::vector<Vector3F> vertices;
+                    std::vector<Vector4F> colors;
 
-                    glVertex3dv( &position.x );
+                    vertices.push_back(position.toFloat());
+                    colors.push_back({1,1,1,1});
+
                     bool bDownWashed = false;
 
                     for( int i=0; i < iSample; i++ )
@@ -308,18 +303,29 @@ void WindTunnelForceGenerator::drawWindTunnelLines(GSRigidBody* pBody, Renderer 
                         GLubyte r = rgbColor.R;
                         GLubyte g = rgbColor.G;
                         GLubyte b = rgbColor.B;
-                        glColor3ub( r,g,b);
 
                         position -= vel * dtPath;
-                        glVertex3dv( &position.x );
+                        colors.push_back({r/255.0f,g/255.0f,b/255.0f,1});
+
+                        vertices.push_back(position.toFloat());
                     }
-                    glEnd();
+
+                    r->bindVertex(Renderer::Vertex, 3, &vertices[0].x);
+                    r->bindVertex(Renderer::Color, 4, &colors[0].x);
+                    r->setPrimitiveType(GL_LINE_STRIP);
+                    r->setUseIndex(false);
+                    r->setVertexCountOffset(vertices.size());
+                    r->Render();
                 }
             }
         }
     }
     else
     {
+        glLineWidth(2.0f);
+        std::vector<Vector3F> vertices;
+        std::vector<Vector4F> colors;
+
         for( int y= 0; y < split; y++ )
         {
             for( int x= 0; x < split; x++ )
@@ -342,26 +348,37 @@ void WindTunnelForceGenerator::drawWindTunnelLines(GSRigidBody* pBody, Renderer 
                     GLubyte r = rgbColor.R;
                     GLubyte g = rgbColor.G;
                     GLubyte b = rgbColor.B;
-                    glColor3ub( r,g,b);
 
                     Vector3D result = position + vel.Unit() * angularVelocity.Magnitude()/10.0;
 
-                    glVertex3dv(&position.x);
-                    glVertex3dv(&result.x);
+                    vertices.push_back(position.toFloat());
+                    colors.push_back({r/255.0f,g/255.0f,b/255.0f,1});
+
+                    vertices.push_back(result.toFloat());
+                    colors.push_back({r/255.0f,g/255.0f,b/255.0f,1});
 
                     Vector3D out[2];
                     GenerateArrowHead(position, result, out);
-                    glVertex3dv(&out[0].x);
-                    glVertex3dv(&result.x);
-                    glVertex3dv(&out[1].x);
+
+                    vertices.push_back(out[0].toFloat());
+                    colors.push_back({r/255.0f,g/255.0f,b/255.0f,1});
+
+                    vertices.push_back(result.toFloat());
+                    colors.push_back({r/255.0f,g/255.0f,b/255.0f,1});
+
+                    vertices.push_back(out[1].toFloat());
+                    colors.push_back({r/255.0f,g/255.0f,b/255.0f,1});
                 }
             }
         }
-    }
 
-    if( !_bPitchRate )
-    {
-        glEnd();
+        r->bindVertex(Renderer::Vertex, 3, &vertices[0].x);
+        r->bindVertex(Renderer::Color, 4, &colors[0].x);
+        r->setPrimitiveType(GL_LINES);
+        r->setUseIndex(false);
+        r->setVertexCountOffset(vertices.size());
+        r->Render();
+
         glLineWidth(1.0f);
     }
 }

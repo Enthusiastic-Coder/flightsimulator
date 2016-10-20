@@ -53,6 +53,9 @@ public:
 	void loadBodyRecorderedData();
     JSONRigidBody* focusedRigidBody();
 
+    void prevFocusedRigidBody();
+    void nextFocusedRigidBody();
+
 	void setLightFraction(float f);
     void incrLightFraction(float incr);
 
@@ -80,8 +83,8 @@ public:
     void persistWriteState(FILE* fPersistFile) override;
 
 // IRapidJsonPersist
-    void persistReadState(rapidjson::Document* doc) override;
-    void persistWriteState(rapidjson::Document* doc) override;
+    void persistReadState(rapidjson::Document& doc) override;
+    void persistWriteState(rapidjson::Document& doc) override;
 
 // ISceneryEnvironment
     bool getHeightFromPosition(const GPSLocation& position, HeightData& heightData) const override;

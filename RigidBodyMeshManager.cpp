@@ -32,8 +32,13 @@ MeshModel* RigidBodyMeshManager::loadModel(std::string sMeshName, MassChannel &m
 {
 	std::unique_ptr<CPPSourceCodeMeshModel> cppMeshModel(new CPPSourceCodeMeshModel);
 
-	if (!cppMeshModel->Build("Models\\" + sMeshName, true))
-		return 0;
+    std::string meshObj("model.obj");
+
+    if (!cppMeshModel->loadMesh("Models\\" + sMeshName + "\\" + meshObj))
+        if (!cppMeshModel->Build("Models\\" + sMeshName, true))
+            return 0;
+        else
+            cppMeshModel->saveMesh("Models\\" + sMeshName + "\\" + meshObj);
 
 	MeshModel* model = cppMeshModel.release();
 

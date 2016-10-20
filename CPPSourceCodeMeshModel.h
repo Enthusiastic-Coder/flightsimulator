@@ -26,6 +26,8 @@ public:
 
 	bool hasLoaded() { return _bHasLoaded; }
 	bool Build(std::string cppSourceFilename, bool bDelayBuffer = false);
+    bool saveMesh(std::string strFilename);
+    bool loadMesh(std::string strFilename);
 
 private:
 

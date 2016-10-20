@@ -149,14 +149,39 @@ void CameraView::persistWriteState(FILE *fPersistFile)
     fwrite(&_zoom,sizeof(double), 1, fPersistFile);
 }
 
-void CameraView::persistReadState(rapidjson::Document *doc)
+void CameraView::persistReadState(rapidjson::Document &doc)
 {
+    using namespace rapidjson;
+    Document::AllocatorType& a = doc.GetAllocator();
+    std::stringstream ss;
+    ss << "CameraView:" << _description;
 
+    if( !doc.HasMember(ss.str()))
+        return;
+
+    Value& v = doc[ss.str()];
+
+    _location = GPSLocation(v["CameraViewLocation"].GetString());
+    _orientation = Vector3F(v["CameraViewOrientation"].GetString());
+    _zoom = v["CameraViewZoom"].GetFloat();
 }
 
-void CameraView::persistWriteState(rapidjson::Document *doc)
+void CameraView::persistWriteState(rapidjson::Document &doc)
 {
+    using namespace rapidjson;
 
+    Document::AllocatorType& a = doc.GetAllocator();
+
+    std::stringstream ss;
+    ss << "CameraView:" << _description;
+     Value v(ss.str(), a);
+
+    v.SetObject();
+
+    v.AddMember("CameraViewLocation", Value(_location.toString(),a), a);
+    v.AddMember("CameraViewOrientation", Value(_orientation.toString(),a), a);
+    v.AddMember("CameraViewZoom", Value(_zoom), a);
+    doc.AddMember(Value(ss.str(),a), v, a);
 }
 
 

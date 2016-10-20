@@ -38,8 +38,6 @@ public:
     SDLMainWindow();
     ~SDLMainWindow();
 
-    const char* persistFilename() const;
-
 protected:
     bool onInitialise() override;
     void onUnInitialise() override;
@@ -57,7 +55,6 @@ protected:
     void onFingerUp(SDL_TouchFingerEvent* e) override;
     void onSize(int width, int height) override;
     void onMove(int x, int y) override;
-
 
     bool createFrameBufferAndShaders();
     void OnInitPolyMode();
@@ -79,6 +76,8 @@ protected:
     void setupCameraOrientation();
     void setupCameraPosition(bool bReflection=false);
     void processInputsForCamera();
+
+    void persistSettings(bool bSerialise);
 
 private:
     bool _showCursor;

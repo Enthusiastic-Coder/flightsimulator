@@ -6,6 +6,8 @@
 
 TARGET = FlightSimulator
 
+DEFINES += "RAPIDJSON_HAS_STDSTRING=1"
+
 include(sdk/qMake/qImportNonQtApp.pri)
 include(sdk/qMake/qMakeDestination.pri)
 include(sdl2_image/sdl2image.pri)
@@ -14,6 +16,11 @@ include(openal/openal.pri)
 INCLUDEPATH += rapidjson/include
 
 INCLUDEPATH += sdk/include
+
+win32 {
+    HEADERS += sdk/include/*
+}
+
 include(FlightSimulator.pri)
 
 win32 {

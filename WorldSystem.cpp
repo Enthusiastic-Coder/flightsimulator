@@ -44,6 +44,12 @@ WorldSystem::WorldSystem() :
     _cameraProvider(ViewPosition::ViewPositionEnd-1)
 {
     _cameraProvider.nextView();//GO to first view
+   _cameraProvider.getCameraView(FreeLooking)->setDescription("World:FreeLooking");
+   _cameraProvider.getCameraView(FreeLooking)->setShakingMode(true);
+
+   _cameraProvider.getCameraView(Free)->setDescription("World:Free");
+   _cameraProvider.getCameraView(Free)->setShakingMode(false);
+
 }
 
 void WorldSystem::update( double dt )
@@ -182,18 +188,13 @@ void WorldSystem::updateCameraView()
         {
             Vector3F lookAt = view->getPosition().offSetTo(pBody->getGPSLocation() + pBody->cg());
 
-            view->setShakingMode(true);
             view->setOrientation( MathSupport<float>::MakeEulerFromLookAt(lookAt));
-            view->setDescription("World:FreeLooking");
 
             CameraView* otherView = _cameraProvider.getCameraView(Free);
             otherView->setPosition(view->getPosition());
         }
         else if( pos == Free)
         {
-            view->setDescription("World:Free");
-            view->setShakingMode(false);
-
             CameraView* otherView = _cameraProvider.getCameraView(FreeLooking);
             otherView->setPosition(view->getPosition());
         }
@@ -425,19 +426,33 @@ void WorldSystem::persistWriteState(FILE* fPersistFile)
     _cameraProvider.persistWriteState(fPersistFile);
 }
 
-void WorldSystem::persistReadState(rapidjson::Document *doc)
+void WorldSystem::persistReadState(rapidjson::Document& doc)
 {
-
+    _fLightingFraction = doc["LightingFraction"].GetFloat();
+    _rigidBodyCollection.persistReadState(doc);
+    _cameraProvider.persistReadState(doc);
 }
 
-void WorldSystem::persistWriteState(rapidjson::Document *doc)
+void WorldSystem::persistWriteState(rapidjson::Document& doc)
 {
-
+    doc.AddMember("LightingFraction", rapidjson::Value(_fLightingFraction), doc.GetAllocator());
+    _rigidBodyCollection.persistWriteState(doc);
+    _cameraProvider.persistWriteState(doc);
 }
 
 JSONRigidBody *WorldSystem::focusedRigidBody()
 {
     return _rigidBodyCollection.focusedRigidBody();
+}
+
+void WorldSystem::prevFocusedRigidBody()
+{
+    _rigidBodyCollection.prevFocusedRigidBody();
+}
+
+void WorldSystem::nextFocusedRigidBody()
+{
+    _rigidBodyCollection.nextFocusedRigidBody();
 }
 
 void WorldSystem::setLightFraction(float f)

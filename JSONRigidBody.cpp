@@ -86,6 +86,7 @@ MeshModel* JSONRigidBody::loadMeshModel(std::string sMeshName, MassChannel &mc)
 void JSONRigidBody::onInitialise(WorldSystem* pWorldSystem)
 {
 	_mesh_pivot_vector.clear();
+    _windTunnel.onInitialise(pWorldSystem);
 
 	_massChannel.setMass(getMass());
 	if( _pMeshModel = loadMeshModel( getName(), _massChannel) )
@@ -561,6 +562,51 @@ std::string JSONRigidBody::getCameraDescription() const
     return _cameraPositionProvider.getCameraDescription();
 }
 
+void JSONRigidBody::airResetPos()
+{
+
+}
+
+void JSONRigidBody::airResetApproachPos()
+{
+
+}
+
+void JSONRigidBody::airSpoilerToggle(bool bLeft)
+{
+
+}
+
+void JSONRigidBody::airFlapIncr(int incr)
+{
+
+}
+
+void JSONRigidBody::startRecording()
+{
+    setState( JSONRigidBody::STATE::RECORDING );
+}
+
+void JSONRigidBody::togglePlayback()
+{
+    JSONRigidBody::STATE state = getState();
+
+    if( getState() == JSONRigidBody::STATE::RECORDING )
+        setState( JSONRigidBody::STATE::NORMAL );
+
+    if( state == JSONRigidBody::STATE::NORMAL )
+        setState( JSONRigidBody::STATE::PLAYBACK );
+    else
+    {
+        setState( JSONRigidBody::STATE::NORMAL );
+
+        char filename[256]={};
+        sprintf_s(filename, _countof(filename), "flightrecorded_%s.bin", getID().c_str() );
+        saveRecorder(filename);
+    }
+
+}
+
 bool JSONRigidBody::getHeightFromPosition(const GPSLocation &position, HeightData &heightData) const
 {
     return false;
@@ -584,14 +630,37 @@ void JSONRigidBody::persistWriteState(FILE* fPersistFile)
     fwrite((void*) &angularVelocity(), sizeof(angularVelocity()), 1, fPersistFile );
 }
 
-void JSONRigidBody::persistReadState(rapidjson::Document *doc)
+void JSONRigidBody::persistReadState(rapidjson::Document &doc)
 {
+    using namespace rapidjson;
+    Document::AllocatorType& a = doc.GetAllocator();
+    if( !doc.HasMember(Value(getID(), a)))
+        return;
 
+    Value& obj = doc[Value(getID(),a)];
+    setState((STATE)obj["State"].GetInt());
+    setPosition(GPSLocation(obj["GPSLocation"].GetString()));
+    setEuler( Vector3D(obj["Euler"].GetString()) );
+    setVelocity(Vector3D(obj["Velocity"].GetString()));
+    setAngularVelocity(Vector3D(obj["AngularVelocity"].GetString()));
 }
 
-void JSONRigidBody::persistWriteState(rapidjson::Document *doc)
+void JSONRigidBody::persistWriteState(rapidjson::Document &doc)
 {
+    using namespace rapidjson;
+    Document::AllocatorType& a = doc.GetAllocator();
 
+    Value obj;
+    obj.SetObject();
+
+    JSONRigidBody::STATE state = getState();
+    obj.AddMember("State", Value((int)state), a);
+    obj.AddMember("GPSLocation", Value( getGPSLocation().toString(),a), a);
+    obj.AddMember("Euler", Value(getEuler().toString(),a), a);
+    obj.AddMember("Velocity", Value(velocity().toString(),a), a );
+    obj.AddMember("AngularVelocity", Value(angularVelocity().toString(),a), a );
+
+    doc.AddMember(Value(getID(), a), obj, a);
 }
 
 bool JSONRigidBody::typeMask(Type t)

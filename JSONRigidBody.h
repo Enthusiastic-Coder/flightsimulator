@@ -125,6 +125,14 @@ public:
     void updateCameraView() override;
     std::string getCameraDescription() const override;
 
+    virtual void airResetPos();
+    virtual void airResetApproachPos();
+    virtual void airSpoilerToggle(bool bLeft);
+    virtual void airFlapIncr(int incr);
+
+    void startRecording();
+    void togglePlayback();
+
 // ICameraChaseable
     void incrChaseAngle(float fDiff) override;
     void incrChaseDistance(float fDiff) override;
@@ -135,8 +143,8 @@ public:
     void persistWriteState(FILE* fPersistFile ) override;
 
 // IRapidJsonPersist
-    void persistReadState(rapidjson::Document* doc) override;
-    void persistWriteState(rapidjson::Document* doc) override;
+    void persistReadState(rapidjson::Document &doc) override;
+    void persistWriteState(rapidjson::Document& doc) override;
 
 protected:
 /// IMeshModel
