@@ -627,6 +627,8 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
             _WorldSystem.RigidBody().resetApproach();*/
 
     JSONRigidBody *pBody = _WorldSystem.focusedRigidBody();
+    bool bShiftPressed = (GetAsyncKeyState(VK_SHIFT) < 0);
+    bool bAltPressed = GetAsyncKeyState(VK_MENU) & 0x8000;
 
     if( ::GetKeyState(VK_F5) < 0 )
     {
@@ -671,6 +673,14 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
         if( GetKeyState(VK_F2) < 0)
             pBody->airFlapIncr( 1 );
+
+        if( ::GetKeyState('R') < 0)
+        {
+            if( bShiftPressed )
+                pBody->startRecording();
+            else if( bAltPressed )
+                pBody->togglePlayback();
+        }
     }
 
     if( ::GetKeyState('F') < 0)
@@ -692,10 +702,13 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 
     if( ::GetKeyState('R') < 0 )
     {
-        setRunning(!isRunning());
+        if( !bShiftPressed && !bAltPressed)
+        {
+            setRunning(!isRunning());
 
-        if( !isRunning() )
-            update();
+            if( !isRunning() )
+                update();
+        }
     }
 
     if( ::GetKeyState('P') < 0 )

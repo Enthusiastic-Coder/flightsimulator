@@ -182,47 +182,6 @@ bool JSONRigidBodyCollection::onSyncKeyPress()
     if( BODY_FOCUS_OK(onSyncKeyPress() ) )
 		return true;
 
-    if( ::GetKeyState('R') < 0)
-    {
-        bool bShiftPressed = (GetAsyncKeyState(VK_SHIFT) < 0);
-        bool bAltPressed = GetAsyncKeyState(VK_MENU) & 0x8000;
-        if( !bAltPressed && !bShiftPressed )
-            return false;
-
-        //for( auto& it : _bodyList )
-        auto* it = focusedRigidBody();
-        if (it != nullptr)
-        {
-            JSONRigidBody::STATE state = it->getState();
-
-            if( bShiftPressed )
-            {
-                it->setState( JSONRigidBody::STATE::RECORDING );
-            }
-            else
-            {
-                if( it->getState() == JSONRigidBody::STATE::RECORDING )
-                    it->setState( JSONRigidBody::STATE::NORMAL );
-
-                if( state == JSONRigidBody::STATE::NORMAL )
-                    it->setState( JSONRigidBody::STATE::PLAYBACK );
-                else
-                {
-                    it->setState( JSONRigidBody::STATE::NORMAL );
-
-                    //int i(0);
-                    //for( auto& it : _bodyList )
-                    {
-                        char filename[256]={};
-                        sprintf_s(filename, _countof(filename), "flightrecorded_%s.bin", it->getID().c_str() );
-                        it->saveRecorder(filename);
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
 	return false;
 }
 

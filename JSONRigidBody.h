@@ -130,6 +130,9 @@ public:
     virtual void airSpoilerToggle(bool bLeft);
     virtual void airFlapIncr(int incr);
 
+    void startRecording();
+    void togglePlayback();
+
 // ICameraChaseable
     void incrChaseAngle(float fDiff) override;
     void incrChaseDistance(float fDiff) override;

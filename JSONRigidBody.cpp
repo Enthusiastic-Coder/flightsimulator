@@ -581,6 +581,31 @@ void JSONRigidBody::airFlapIncr(int incr)
 
 }
 
+void JSONRigidBody::startRecording()
+{
+    setState( JSONRigidBody::STATE::RECORDING );
+}
+
+void JSONRigidBody::togglePlayback()
+{
+    JSONRigidBody::STATE state = getState();
+
+    if( getState() == JSONRigidBody::STATE::RECORDING )
+        setState( JSONRigidBody::STATE::NORMAL );
+
+    if( state == JSONRigidBody::STATE::NORMAL )
+        setState( JSONRigidBody::STATE::PLAYBACK );
+    else
+    {
+        setState( JSONRigidBody::STATE::NORMAL );
+
+        char filename[256]={};
+        sprintf_s(filename, _countof(filename), "flightrecorded_%s.bin", getID().c_str() );
+        saveRecorder(filename);
+    }
+
+}
+
 bool JSONRigidBody::getHeightFromPosition(const GPSLocation &position, HeightData &heightData) const
 {
     return false;
