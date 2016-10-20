@@ -601,7 +601,7 @@ void JSONRigidBody::togglePlayback()
         setState( JSONRigidBody::STATE::NORMAL );
 
         char filename[256]={};
-        sprintf_s(filename, _countof(filename), "flightrecorded_%s.bin", getID().c_str() );
+        sprintf(filename, "flightrecorded_%s.bin", getID().c_str() );
         saveRecorder(filename);
     }
 

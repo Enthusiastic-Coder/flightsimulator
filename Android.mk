@@ -34,7 +34,6 @@ LOCAL_SRC_FILES := sdl2/src/main/android/SDL_android_main.c \
 		GravityForceGenerator.cpp \
 		GSForceGenerator.cpp \
 		GSRigidBody.cpp \
-		HarrierRigidBody.cpp \
 		HeightTerrainData.cpp \
 		Hydraulics.cpp \
 		JSONRigidBody.cpp \
