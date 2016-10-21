@@ -21,6 +21,7 @@ LOCAL_SRC_FILES := sdl2/src/main/android/SDL_android_main.c \
 		AeroSectionForceGenerator.cpp \
 		AeroSectionSubElementForceGenerator.cpp \
 		AeroWheelSpringForceGenerator.cpp \
+		AircraftEngineForceGenerator.cpp \
 		AirProperties.cpp \
 		AoaClData.cpp \
 		BA320RigidBody.cpp \

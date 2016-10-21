@@ -113,7 +113,7 @@ void OpenGLSliderControl::update(float dt)
 
     float dRateValue = _rateOfValue * dt;
     float dValue = _value - _currentValue;
-    float dFinalRateValue = std::min(fabs(dValue), dRateValue);
+    float dFinalRateValue = std::min(std::fabs(dValue), dRateValue);
     if( dValue < 0.0f)  dFinalRateValue = -dFinalRateValue;
     _currentValue += dFinalRateValue;
 }

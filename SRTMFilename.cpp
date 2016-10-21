@@ -41,7 +41,7 @@ std::string SRTMFilename::GetSRTM30(double fNS, double fWE)
 	}
 
 	char str_SRTM30[128] = {};
-	sprintf_s(str_SRTM30, _countof(str_SRTM30), "%s%03d%s%02d.dem", sWE.c_str(), iWE, sNS.c_str(), iNS);
+	sprintf(str_SRTM30, "%s%03d%s%02d.dem", sWE.c_str(), iWE, sNS.c_str(), iNS);
 	return str_SRTM30;
 }
 
