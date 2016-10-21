@@ -204,6 +204,7 @@ void OpenGLPipeline::ApplyLightBPMV(OpenGLShaderProgram& progID)
     progID.sendUniform(buf, GetBMVP().toFloat());
 }
 
+#ifdef WIN32
 void OpenGLPipeline::bindLegacyMatrices()
 {
     Matrix4x4D MV = GetModelView();
@@ -219,6 +220,7 @@ void OpenGLPipeline::bindLegacyMatrices()
     glMatrixMode(GL_MODELVIEW);
     glLoadTransposeMatrixd(MV.ptr());
 }
+#endif
 
 void OpenGLPipeline::Pop()
 {

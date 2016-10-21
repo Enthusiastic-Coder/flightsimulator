@@ -7,7 +7,7 @@ std::string SRTMFilename::GetSRTM3(double fNS, double fWE)
 {
 	char str_SRTM3[128] = {};
 
-	sprintf_s(str_SRTM3, _countof(str_SRTM3), "%c%02.0f%c%03.0f.hgt",
+	sprintf(str_SRTM3, "%c%02.0f%c%03.0f.hgt",
 		fNS < 0 ? 's' : 'n', fabs(floor(fNS)),
 		fWE < 0 ? 'w' : 'e', fabs(floor(fWE)));
 

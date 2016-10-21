@@ -308,6 +308,7 @@ void JSONRigidBody::pop()
 
 void JSONRigidBody::Render(Renderer *r, bool bReflection, unsigned int shadowMapCount)
 {
+#ifdef WIN32
 	if (getMeshModel() == 0)
 	{
         OpenGLShaderProgram& progID = r->progId();
@@ -324,6 +325,7 @@ void JSONRigidBody::Render(Renderer *r, bool bReflection, unsigned int shadowMap
         r->useProgram(progID);
         return;
 	}
+#endif
 
     OpenGLPipeline& mat = OpenGLPipeline::Get(r->camID);
 	mat.Push();

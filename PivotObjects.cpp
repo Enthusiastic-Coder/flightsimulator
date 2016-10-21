@@ -45,7 +45,7 @@ void PivotObjects::startLog(bool bStart, std::string sFileName)
 		if (_debugMapFile)
 			fclose(_debugMapFile);
 
-		fopen_s(&_debugMapFile, sFileName.c_str(), "wt");
+		_debugMapFile = fopen(sFileName.c_str(), "wt");
 	}
 	else if (_debugMapFile)
 	{

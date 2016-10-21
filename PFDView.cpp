@@ -15,7 +15,7 @@
 #include <math.h>
 
 #define PRIMITIVE2D(data) \
-    data##.vertex2Ptr(), data##.vertex2Size()
+    data.vertex2Ptr(), data.vertex2Size()
 
 template<class T> std::string format(std::string str, T val)
 {

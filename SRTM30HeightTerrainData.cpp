@@ -35,8 +35,8 @@ bool SRTM30HeightTerrainData::Load(std::string strFilename)
 		{
 			int idx = _dims.toArrayPos(x, z);
 
-            b1 = unsigned char(_heightData[idx] >> 8);
-            b2 = unsigned char(_heightData[idx]);
+            b1 = (unsigned char) (_heightData[idx] >> 8);
+            b2 = (unsigned char)(_heightData[idx]);
 
 			short height = (b2 << 8) | b1;
 

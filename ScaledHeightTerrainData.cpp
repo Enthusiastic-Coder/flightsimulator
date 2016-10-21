@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ScaledHeightTerrainData.h"
-
+#include <limits>
 
 void ScaledHeightTerrainData::Load(const HeightTerrainData & heightData, unsigned short tileDims)
 {
@@ -223,11 +223,11 @@ bool ScaledHeightTerrainData::GetPlane(const GPSLocation& location, PlaneF& plan
 	double dU = (dMatrixPos.first - lMatrixPos.first);
 	double dV = (dMatrixPos.second - lMatrixPos.second);
 
-	if (fabs(dV) < FLT_EPSILON)
+	if (fabs(dV) < std::numeric_limits<float>::epsilon())
 		if (dV < 0.0)
-			dV = -FLT_EPSILON;
+			dV = -std::numeric_limits<float>::epsilon();
 		else
-			dV = FLT_EPSILON;
+			dV = std::numeric_limits<float>::epsilon();
 
 	bool bEvenNode = (lMatrixPos.first + lMatrixPos.second) % 2 == 0;
 	double dGradUV = (bEvenNode ? dU : 1.0 - dU) / dV;
