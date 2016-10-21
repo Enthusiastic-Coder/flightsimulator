@@ -304,7 +304,7 @@ std::string::size_type CPPSourceCodeMeshModel::ParseVector(std::ifstream & strea
 
     float data[3] = {};
 
-    for (int i = 0; i < _countof(data); ++i)
+    for (int i = 0; i < 3; ++i)
     {
         pos = sLine.find(",", pos + 1);
         data[i] = subStrToFloat(sLine, oldPos + 1, pos - oldPos - 1);
