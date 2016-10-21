@@ -260,7 +260,7 @@ protected:
 
 	virtual void updateEuler() override
 	{
-		_gpsLocation = GPSLocation(_pT->position());
+        _gpsLocation = _pT->position();
         _gpsOrientation = _gpsLocation.makeQ();
         _localOrientation = ~_gpsOrientation * getOrientation();
 		_euler = MathSupport<double>::MakeEuler(_localOrientation);
