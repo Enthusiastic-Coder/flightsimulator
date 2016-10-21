@@ -172,7 +172,7 @@ void JSONRigidBody::onUpdateFinal(double dt)
 	_hydraulics.update(dt);
 }
 
-void JSONRigidBody::onUpdateHelper(std::map<int, std::vector<GSForceGenerator*>>::iterator &it, double dt )
+void JSONRigidBody::onUpdateHelper(const std::map<int, std::vector<GSForceGenerator*>>::iterator &it, double dt )
 {
 	if( it == _cookedMapList.end() )
 	{
@@ -188,12 +188,12 @@ void JSONRigidBody::onUpdateHelper(std::map<int, std::vector<GSForceGenerator*>>
 	{
 		push();
 
-		for( auto& it2 : currentit->second )
+        for( auto& it2 : it->second )
 			it2->onApplyForce( this, dt );
 	
-		++(it = currentit);
+        ++(currentit = it);
 
-		if( it == _cookedMapList.end() )
+        if( currentit == _cookedMapList.end() )
 		{
 			onUpdateFinal(dt);
 			
@@ -204,7 +204,7 @@ void JSONRigidBody::onUpdateHelper(std::map<int, std::vector<GSForceGenerator*>>
 			}
 		}
 		else
-			onUpdateHelper(it, dt);
+            onUpdateHelper(currentit, dt);
 
 		pop();
 	}
