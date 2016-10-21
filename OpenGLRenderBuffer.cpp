@@ -57,7 +57,7 @@ bool OpenGLRenderBuffer::generateStencil(int width, int height, GLenum target)
     _target = target;
 
     bind();
-    glRenderbufferStorage(_target, GL_DEPTH24_STENCIL8, width, height);
+    glRenderbufferStorage(_target, GL_STENCIL_INDEX8, width, height);
     unbind();
 
     return _id != 0;
@@ -75,7 +75,7 @@ bool OpenGLRenderBuffer::generateDepthStencil(int width, int height, GLenum targ
     _target = target;
 
     bind();
-    glRenderbufferStorage(_target, GL_DEPTH_STENCIL, width, height);
+    glRenderbufferStorage(_target, GL_DEPTH24_STENCIL8, width, height);
     unbind();
 
     return _id != 0;
