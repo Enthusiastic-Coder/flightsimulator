@@ -5,6 +5,10 @@
 #include "AeroForceGenerator.h"
 #include "WorldSystem.h"
 
+#ifdef WIN32
+typedef unsigned char uint;
+#endif
+
 #ifdef RGB
 #undef RGB
 #endif
