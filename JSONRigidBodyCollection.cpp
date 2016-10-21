@@ -327,7 +327,7 @@ void JSONRigidBodyCollection::loadBodyRecorderedData()
     for (JSONRigidBody* it : _bodyList)
 	{
 		char filename[256] = {};
-		sprintf_s(filename, _countof(filename), "flightrecorded_%s.bin", it->getID().c_str());
+		sprintf(filename, "flightrecorded_%s.bin", it->getID().c_str());
 		it->loadRecorder(filename);
 	}
 }

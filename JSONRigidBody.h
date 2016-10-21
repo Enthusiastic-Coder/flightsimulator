@@ -62,7 +62,7 @@ public:
 	Hydraulics& hydraulics();
 	PivotObjects& pivots();
 
-	GSForceGenerator* forceGenerator(std::string& sName);
+	GSForceGenerator* forceGenerator(const std::string& sName);
 	std::map<std::string, GSForceGenerator*>& forceGeneratorMap();
 
 	enum class STATE : short

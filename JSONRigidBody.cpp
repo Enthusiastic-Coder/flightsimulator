@@ -699,7 +699,7 @@ PivotObjects& JSONRigidBody::pivots()
 	return _pivots;
 }
 
-GSForceGenerator* JSONRigidBody::forceGenerator(std::string& sName)
+GSForceGenerator* JSONRigidBody::forceGenerator(const std::string& sName)
 {
 	return _force_generator_map[sName];
 }
