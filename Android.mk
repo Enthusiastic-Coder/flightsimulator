@@ -39,7 +39,6 @@ LOCAL_SRC_FILES := sdl2/src/main/android/SDL_android_main.c \
 		JSONRigidBody.cpp \
 		JSONRigidBodyBuilder.cpp \
 		JSONRigidBodyCollection.cpp \
-		LondonGroundTile.cpp \
 		MeshModel.cpp \
 		MipMapTerrainMeshModel.cpp \
 		MipMapTerrainMeshModelCollection.cpp \
