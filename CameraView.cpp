@@ -154,12 +154,17 @@ void CameraView::persistReadState(rapidjson::Document &doc)
     using namespace rapidjson;
     Document::AllocatorType& a = doc.GetAllocator();
     std::stringstream ss;
-    ss << "CameraView:" << _description;
+    ss << "cameraView";
 
     if( !doc.HasMember(ss.str()))
         return;
 
-    Value& v = doc[ss.str()];
+    Value& topLevel = doc[ss.str()];
+
+    if( !topLevel.HasMember(_description))
+        return;
+
+    Value& v = topLevel[_description];
 
     _location = GPSLocation(v["CameraViewLocation"].GetString());
     _orientation = Vector3F(v["CameraViewOrientation"].GetString());
@@ -172,16 +177,27 @@ void CameraView::persistWriteState(rapidjson::Document &doc)
 
     Document::AllocatorType& a = doc.GetAllocator();
 
+    std::string strCameraView("cameraView");
+
+    if( !doc.HasMember(strCameraView))
+    {
+        Value v(strCameraView, a);
+        v.SetObject();
+        doc.AddMember(Value(strCameraView,a), v, a);
+    }
+
+    Value& topLevel = doc[strCameraView];
+
     std::stringstream ss;
-    ss << "CameraView:" << _description;
-     Value v(ss.str(), a);
+    ss << _description;
+    Value v(ss.str(), a);
 
     v.SetObject();
 
     v.AddMember("CameraViewLocation", Value(_location.toString(),a), a);
     v.AddMember("CameraViewOrientation", Value(_orientation.toString(),a), a);
     v.AddMember("CameraViewZoom", Value(_zoom), a);
-    doc.AddMember(Value(ss.str(),a), v, a);
+    topLevel.AddMember(Value(ss.str(),a), v, a);
 }
 
 
