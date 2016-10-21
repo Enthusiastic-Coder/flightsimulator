@@ -43,17 +43,17 @@ void CameraView::setDescription(std::string str)
     _description = str;
 }
 
-void CameraView::setPosition(Vector3D &loc)
+void CameraView::setPosition(const Vector3D &loc)
 {
     _location = loc;
 }
 
-void CameraView::setPosition(GPSLocation &loc)
+void CameraView::setPosition(const GPSLocation &loc)
 {
     _location = loc;
 }
 
-void CameraView::setOrientation(Vector3F &orientation)
+void CameraView::setOrientation(const Vector3F &orientation)
 {
     _orientation = orientation;
 }
@@ -130,7 +130,7 @@ void CameraView::incrZoom(double diff)
     _zoom += diff;
 }
 
-void CameraView::incrOrientation(Vector3F &v)
+void CameraView::incrOrientation(const Vector3F &v)
 {
     incrOrientation(v.x, v.y, v.z);
 }

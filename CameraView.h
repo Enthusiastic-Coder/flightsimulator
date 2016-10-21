@@ -36,9 +36,9 @@ public:
     };
 
     void setDescription(std::string str);
-    void setPosition(Vector3D& loc);
-    void setPosition(GPSLocation& loc);
-    void setOrientation(Vector3F& orientation);
+    void setPosition(const Vector3D& loc);
+    void setPosition(const GPSLocation& loc);
+    void setOrientation(const Vector3F& orientation);
     void setZoom(double zoom);
     void setSmoothMode(bool bSmoothTransition);
     void setShakingMode(bool bShaking);
@@ -47,7 +47,7 @@ public:
     void setZOrientation(float z);
 
     void incrZoom(double diff);
-    void incrOrientation(Vector3F &v);
+    void incrOrientation(const Vector3F &v);
     void incrOrientation(float dx, float dy, float dz);
 
     std::string getDescription() const;
