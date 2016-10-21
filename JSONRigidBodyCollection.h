@@ -36,6 +36,8 @@ public:
     void Render(Renderer *args, bool bReflection, unsigned int shadowMapCount, double dt);
     void RenderForceGenerators(Renderer *r);
 
+    const JSONRigidBody* activeRigidBody() const;
+    JSONRigidBody* activeRigidBody();
     JSONRigidBody* focusedRigidBody();
     const JSONRigidBody* focusedRigidBody() const;
     void nextFocusedRigidBody();
