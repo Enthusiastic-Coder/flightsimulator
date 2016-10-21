@@ -94,7 +94,7 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 void PFDView::BuildAltTape(char buffer[][32], int line_count, int centralAlt, bool bIncreasing)
 {
     char altBuf[16];
-    sprintf_s( altBuf, 16, "%5d", abs(centralAlt) );
+    sprintf( altBuf, "%5d", abs(centralAlt) );
 
     if( altBuf[3] == ' ' ) altBuf[3]= '0';
 
@@ -105,11 +105,11 @@ void PFDView::BuildAltTape(char buffer[][32], int line_count, int centralAlt, bo
     else
         altJump = -20;
 
-    strcpy_s(buffer[0], sizeof(buffer[0])/sizeof(char), altBuf );
+    strcpy(buffer[0], altBuf );
 
     for( int i = 1; i < line_count; i++ )
     {
-        strcpy_s( buffer[i], sizeof(buffer[i])/sizeof(char), buffer[i-1] );
+        strcpy( buffer[i], buffer[i-1] );
 
         bool bAltPositive = (centralAlt + altJump * i) >= 0;
 
@@ -305,7 +305,6 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
             fLine = dy + 80.0*PIXEL_PER_PITCH3;
             _horizNeg30ToNeg10.addVertex( -40, fLine );
             _horizNeg30ToNeg10.addVertex( 40, fLine );
-            glEnd();
         }
 
         painter->beginPrimitive();
