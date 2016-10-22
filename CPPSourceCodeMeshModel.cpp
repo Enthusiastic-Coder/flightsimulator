@@ -417,6 +417,9 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsig
         {
             group->_meshData.addIndex((iHeight + 1)*z + x);
             group->_meshData.addIndex((iHeight + 1)*z + x + 1);
+            group->_meshData.addIndex((iHeight + 1)*(z + 1) + x);
+
+            group->_meshData.addIndex((iHeight + 1)*z + x + 1);
             group->_meshData.addIndex((iHeight + 1)*(z + 1) + x + 1);
             group->_meshData.addIndex((iHeight + 1)*(z + 1) + x);
         }
@@ -429,7 +432,7 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsig
     surface->setShininess(32);
 
     MeshObject* mesh = surface->addMesh();
-    mesh->setPrimitveType(GL_QUADS);
+    mesh->setPrimitveType(GL_TRIANGLES);
     mesh->setCountOffset(group->_meshData.indexSize(), 0);
 
     calcBoundingBox();
