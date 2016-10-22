@@ -15,11 +15,6 @@ public:
 	virtual void reset() override;
 	virtual void update(double dt) override;
 
-    double Height() const override
-    {
-        return getGPSLocation()._height;
-    }
-
 	const Vector3D& gravityBody() const;
 	const Vector3D& velocityBody() const;
 	Vector3D getTotalBodyVelocity(const Vector3D& pt) const;
@@ -53,14 +48,21 @@ public:
         return toTranslateFrame( false, v );
     }
 
+//  GPSReferenceFrame
+    double Height() const override
+    {
+        return getGPSLocation()._height;
+    }
+
 protected:
     void updateGravity();
+
+//  GPSReferenceFrame
 
     void resetFrame() override
     {
         GPSReferenceFrame::resetFrame();
         _gpsLocation = GPSLocation();
-
     }
 
     void setOrientationHelper(double x, double y, double z) override
@@ -76,7 +78,6 @@ protected:
         _euler = MathSupport<double>::MakeEuler(_localOrientation);
     }
 
-protected:
     Vector3D toTranslateFrame(bool bToLocal, const Vector3D &v ) const
     {
         const QuarternionD& qLocal = getGroundOrientation();
@@ -89,11 +90,11 @@ protected:
     }
 
 private:
-        GPSLocation _gpsLocation;
+    GPSLocation _gpsLocation;
 
-	Vector3D _gravity_body;
-	Vector3D _velocity_body;
-	Vector3D _gravity;
+    Vector3D _gravity_body;
+    Vector3D _velocity_body;
+    Vector3D _gravity;
 };
 
 
