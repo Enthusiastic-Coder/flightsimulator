@@ -58,7 +58,7 @@ public:
 		updateEuler();
 	}
 
-    void setEuler(const Vector3D v )
+    void setEuler(const Vector3D& v )
     {
         setEuler( v.x, v.y, v.z);
     }
@@ -156,26 +156,23 @@ public:
 		return _cg;
 	}
 
-	virtual void toggleFrame() override
-	{
-		ReferenceFrame::toggleFrame();
-		_pT->onToggleFrame( getOrientationInLocalFrame(isLocalFrame()) );
-	}
+    virtual void toggleFrame() override
+    {
+        ReferenceFrame::toggleFrame();
+        _pT->onToggleFrame( getOrientationInLocalFrame(isLocalFrame()) );
+    }
 
 	virtual Vector3D toLocalTranslateFrame( const Vector3D &v) const 
 	{
-		return toFrame(getOrientationInLocalFrame(true), v - _pT->cg() - _pT->position(), _pT->cg() );
+        return toFrame(getOrientationInLocalFrame(true), v - cg() - _pT->position(), cg() );
 	}
 
 	virtual Vector3D toNonLocalTranslateFrame( const Vector3D &v ) const 
 	{
-		return toFrame(getOrientationInLocalFrame(false), v-_pT->cg(), _pT->cg() + _pT->position() );
+        return toFrame(getOrientationInLocalFrame(false), v-cg(), cg() + _pT->position() );
 	}
 
-	virtual double Height() const
-	{
-		return _pT->position().y;
-	}
+    virtual double Height() const = 0;
 
 private:
 	Vector3D _cg;
@@ -228,10 +225,7 @@ public:
 		return toTranslateFrame( false, v );
 	}
 
-	virtual double Height() const override
-	{
-		return _gpsLocation._height;
-	}
+    virtual double Height() const = 0;
 
 	Vector3D toLocalGroundFrame( const Vector3D &v) const
 	{

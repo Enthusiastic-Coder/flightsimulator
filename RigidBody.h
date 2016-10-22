@@ -54,6 +54,11 @@ public:
 	virtual void update(double dt);
 ////////////////////////////
 
+    double Height() const override
+    {
+        return position().y;
+    }
+
 /// State of Body
 	const Vector3D& angularVelocity() const;
 	virtual const Vector3D& getTorque() const;
