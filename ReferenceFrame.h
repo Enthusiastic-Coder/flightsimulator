@@ -140,103 +140,50 @@ private:
 
 /////////////////////////////////////////
 
-template<class T, class Base>
-class GPSRigidBodyReferenceFrame : public Base
+class GPSRigidBodyReferenceFrame : public virtual ReferenceFrame
 {
 public:
-    GPSRigidBodyReferenceFrame()
-	{
-		_pT = static_cast<T*>(this);
-	}
 
-	void setPosition( double x, double y, double z)
-	{
-		_gpsLocation.setFromPosition( Vector3D(x,y,z) );
-		Base::setPosition( x,y,z );
-	}
+////////////////////////////////////////////
 
-	void setPosition( const GPSLocation& gpsLocation )
-	{
-		_gpsLocation = gpsLocation;
-		Base::setPosition( _gpsLocation.position() );
-	}
+    Vector3D toLocalGroundFrame( const Vector3D &v) const
+    {
+        return toFrame( ~_localOrientation, v );
+    }
 
-	const GPSLocation& getGPSLocation() const
-	{
-		return _gpsLocation;
-	}
+    Vector3D toNonLocalGroundFrame( const Vector3D &v) const
+    {
+        return toFrame( _localOrientation, v );
+    }
 
-	const QuarternionD& getGroundOrientation() const
-	{
-		return _localOrientation;
-	}
+    const QuarternionD& getGroundOrientation() const
+    {
+        return _localOrientation;
+    }
 
-	const QuarternionD& getQGps() const
-	{
+    const QuarternionD& getQGps() const
+    {
         return _gpsOrientation;
-	}
+    }
+/////////////////////////////////////////////////////
 
-	virtual Vector3D toLocalTranslateFrame( const Vector3D &v) const override
-	{
-		return toTranslateFrame( true, v );
-	}
-
-	virtual Vector3D toNonLocalTranslateFrame( const Vector3D &v ) const override
-	{
-		return toTranslateFrame( false, v );
-	}
-
-    virtual double Height() const = 0;
-
-	Vector3D toLocalGroundFrame( const Vector3D &v) const
-	{
-		return toFrame( ~_localOrientation, v );
-	}
-
-	Vector3D toNonLocalGroundFrame( const Vector3D &v) const
-	{
-		return toFrame( _localOrientation, v );
-	}
 
 protected:
 
 	virtual void resetFrame() override
 	{
-		Base::resetFrame();
-		_gpsLocation = GPSLocation();
-		_localOrientation = QuarternionD();
+        ReferenceFrame::resetFrame();
+        _localOrientation = QuarternionD();
         _gpsOrientation = QuarternionD();
 	}
 
-	virtual void setOrientationHelper(double x, double y, double z) override
-	{
-		_orientation = getGPSLocation().makeQ( x, y, z );
-	}
 
-	virtual void updateEuler() override
-	{
-        _gpsLocation = _pT->position();
-        _gpsOrientation = _gpsLocation.makeQ();
-        _localOrientation = ~_gpsOrientation * getOrientation();
-		_euler = MathSupport<double>::MakeEuler(_localOrientation);
-	}
-
-	Vector3D toTranslateFrame(bool bToLocal, const Vector3D &v ) const
-	{
-		const QuarternionD& qLocal = getGroundOrientation();
-		const QuarternionD& qGps = getQGps();
-
-		if( bToLocal )
-			return toFrame( ~qLocal, toFrame( ~qGps, v - _pT->position(), - _pT->cg() ),  _pT->cg() );
-		else
-			return toFrame( qGps, toFrame( qLocal, v - _pT->cg(), _pT->cg() ), _pT->position() );
-	}
+    QuarternionD _localOrientation;
+    QuarternionD _gpsOrientation;
 
 private:
-	GPSLocation _gpsLocation;
-	QuarternionD _localOrientation;
-    QuarternionD _gpsOrientation;
-	T* _pT;
+
+
 };
 
 ///////////////////////////////////////////
