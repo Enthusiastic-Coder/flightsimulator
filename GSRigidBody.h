@@ -4,11 +4,9 @@
 #include "Interfaces.h"
 #include "RigidBody.h"
 
-class GSRigidBody : 
-    public RigidBody,
-    public GPSRigidBodyReferenceFrame,
+class GSRigidBody :
+        public RigidBody, public GPSReferenceFrame, public IDataRecordable<FlightRecorder>
 	//public IRigidBodyAttachable,
-    public IDataRecordable<FlightRecorder>
 {
 public:
 	GSRigidBody();
@@ -58,21 +56,19 @@ public:
 protected:
     void updateGravity();
 
-    virtual void resetFrame() override
+    void resetFrame() override
     {
-        GPSRigidBodyReferenceFrame::resetFrame();
+        GPSReferenceFrame::resetFrame();
         _gpsLocation = GPSLocation();
 
     }
 
-
-
-    virtual void setOrientationHelper(double x, double y, double z) override
+    void setOrientationHelper(double x, double y, double z) override
     {
         _orientation = getGPSLocation().makeQ( x, y, z );
     }
 
-    virtual void updateEuler() override
+    void updateEuler() override
     {
         _gpsLocation = position();
         _gpsOrientation = _gpsLocation.makeQ();

@@ -140,12 +140,9 @@ private:
 
 /////////////////////////////////////////
 
-class GPSRigidBodyReferenceFrame : public virtual ReferenceFrame
+class GPSReferenceFrame : public virtual ReferenceFrame
 {
 public:
-
-////////////////////////////////////////////
-
     Vector3D toLocalGroundFrame( const Vector3D &v) const
     {
         return toFrame( ~_localOrientation, v );
@@ -165,11 +162,8 @@ public:
     {
         return _gpsOrientation;
     }
-/////////////////////////////////////////////////////
-
 
 protected:
-
 	virtual void resetFrame() override
 	{
         ReferenceFrame::resetFrame();
@@ -180,10 +174,6 @@ protected:
 
     QuarternionD _localOrientation;
     QuarternionD _gpsOrientation;
-
-private:
-
-
 };
 
 ///////////////////////////////////////////
