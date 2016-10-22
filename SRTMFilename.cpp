@@ -47,11 +47,10 @@ std::string SRTMFilename::GetSRTM30(double fNS, double fWE)
 
 GPSLocation SRTMFilename::GetGPSFromSRTM3(std::string strSRTM3FullPath)
 {
-	char fname[_MAX_FNAME] = {};
-	_splitpath_s(strSRTM3FullPath.c_str(), NULL, 0, NULL, 0, fname, _countof(fname), NULL, 0);
-	std::string strSRTM3 = fname;
+    std::string strSRTM3 = strSRTM3FullPath.substr(strSRTM3FullPath.find_last_of("/\\") +1 );
+    strSRTM3 = strSRTM3.substr(0, strSRTM3.find_last_of(".")  );
 
-	std::transform(strSRTM3.begin(), strSRTM3.end(), strSRTM3.begin(), ::tolower);
+    std::transform(strSRTM3.begin(), strSRTM3.end(), strSRTM3.begin(), ::tolower);
 	GPSLocation gpsLocation;
 
 	gpsLocation._lat = atof((strSRTM3.substr(1, 2).c_str()));

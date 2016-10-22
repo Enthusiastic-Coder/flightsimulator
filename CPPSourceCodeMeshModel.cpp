@@ -7,7 +7,7 @@
 
 bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuffer)
 {
-    std::string rootDir = cppSourceFilename.substr(0, cppSourceFilename.find_last_of(".")-1);
+    std::string rootDir = cppSourceFilename.substr(0, cppSourceFilename.find_last_of("."));
 
     std::string fname = rootDir.substr(rootDir.find_last_of("/\\") +1);
 
