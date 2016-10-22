@@ -36,9 +36,7 @@ protected:
 
 #include "ReferenceFrame.h"
 
-class RigidBody : 
-	public Particle, 
-    public ReferenceFrame
+class RigidBody : public Particle, public ReferenceFrame
 {
 public:
 
@@ -75,12 +73,12 @@ public:
         onToggleFrame( getOrientationInLocalFrame(isLocalFrame()) );
     }
 
-    virtual Vector3D toLocalTranslateFrame( const Vector3D &v) const
+    virtual Vector3D toLocalTranslateFrame( const Vector3D &v) const override
     {
         return toFrame(getOrientationInLocalFrame(true), v - cg() - position(), cg() );
     }
 
-    virtual Vector3D toNonLocalTranslateFrame( const Vector3D &v ) const
+    virtual Vector3D toNonLocalTranslateFrame( const Vector3D &v ) const override
     {
         return toFrame(getOrientationInLocalFrame(false), v-cg(), cg() + position() );
     }

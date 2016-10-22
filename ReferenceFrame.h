@@ -106,6 +106,9 @@ public:
 		return toFrame( getOrientationInLocalFrame(false), v );
 	}
 
+    virtual Vector3D toLocalTranslateFrame( const Vector3D &v) const =0;
+    virtual Vector3D toNonLocalTranslateFrame( const Vector3D &v ) const=0;
+
 protected:
 
 	virtual void updateEuler()
