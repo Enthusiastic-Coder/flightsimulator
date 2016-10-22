@@ -151,12 +151,7 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
             std::string::size_type p2 = sLine.find("\"", p1 + 1);
             std::string textureName = sLine.substr(p1 + 1, p2 - p1 - 1);
 
-            char fname[_MAX_FNAME] = {};
-            char ext[_MAX_EXT] = {};
-            _splitpath_s(textureName.c_str(), NULL, 0, NULL, 0, fname, _countof(fname), ext, _countof(ext));
-
-            textureName = fname;
-            textureName.append(ext);
+            textureName = textureName.substr(textureName.find_last_of("/\\") + 1);
 
             if (textureName.length()) surface->setTextureIdx(getTextureIdx(rootDir, textureName));
 
