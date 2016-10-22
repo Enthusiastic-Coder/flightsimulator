@@ -79,6 +79,7 @@ public:
 
 protected:
     virtual void resetFrame() override;
+    virtual void updateEuler() override;
 
     QuarternionD _localOrientation;
     QuarternionD _gpsOrientation;

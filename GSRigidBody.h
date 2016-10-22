@@ -74,8 +74,7 @@ protected:
     {
         _gpsLocation = position();
         _gpsOrientation = _gpsLocation.makeQ();
-        _localOrientation = ~_gpsOrientation * getOrientation();
-        _euler = MathSupport<double>::MakeEuler(_localOrientation);
+        GPSReferenceFrame::updateEuler();
     }
 
     Vector3D toTranslateFrame(bool bToLocal, const Vector3D &v ) const

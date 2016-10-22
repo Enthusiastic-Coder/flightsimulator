@@ -119,3 +119,9 @@ void GPSReferenceFrame::resetFrame()
     _localOrientation = QuarternionD();
     _gpsOrientation = QuarternionD();
 }
+
+void GPSReferenceFrame::updateEuler()
+{
+    _localOrientation = ~_gpsOrientation * getOrientation();
+    _euler = MathSupport<double>::MakeEuler(_localOrientation);
+}
