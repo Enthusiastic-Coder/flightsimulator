@@ -38,7 +38,7 @@ protected:
 
 class RigidBody : 
 	public Particle, 
-	public RigidBodyReferenceFrame<RigidBody>
+    public ReferenceFrame
 {
 public:
 
@@ -71,7 +71,7 @@ public:
 
     virtual void toggleFrame() override
     {
-        RigidBodyReferenceFrame<RigidBody>::toggleFrame();
+        ReferenceFrame::toggleFrame();
         onToggleFrame( getOrientationInLocalFrame(isLocalFrame()) );
     }
 

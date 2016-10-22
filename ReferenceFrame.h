@@ -135,23 +135,7 @@ private:
 	bool _isLocal;
 };
 
-//////////////////////////////////////////////////////
-
-template<class T>
-class RigidBodyReferenceFrame : public ReferenceFrame
-{
-public:
-	RigidBodyReferenceFrame()
-	{
-        //_pT = static_cast<T*>(this);
-	}
-
-    virtual double Height() const = 0;
-
-private:
-//	Vector3D _cg;
-    //T* _pT;
-};
+/////////////////////////////////////////
 
 template<class T, class Base>
 class GPSRigidBodyReferenceFrame : public Base
@@ -255,7 +239,7 @@ private:
 ///////////////////////////////////////////
 
 template<class T>
-class VirtualRigidBodyReferenceFrame : public RigidBodyReferenceFrame<T>
+class VirtualRigidBodyReferenceFrame : public ReferenceFrame
 {
 public:
 	VirtualRigidBodyReferenceFrame()
