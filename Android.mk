@@ -90,7 +90,8 @@ LOCAL_SRC_FILES := sdl2/src/main/android/SDL_android_main.c \
 		OpenGLSliderControl.cpp \
 		SDLJoystickSystem.cpp \
 		HeathrowRadar.cpp \
-		OpenGLPainter.cpp
+		OpenGLPainter.cpp \
+		ReferenceFrame.cpp
 		
 LOCAL_SHARED_LIBRARIES := SDL2 SDL2_image
 LOCAL_LDLIBS := -lGLESv2 -lGLESv1_CM -llog
