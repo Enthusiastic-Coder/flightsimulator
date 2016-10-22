@@ -143,40 +143,14 @@ class RigidBodyReferenceFrame : public ReferenceFrame
 public:
 	RigidBodyReferenceFrame()
 	{
-		_pT = static_cast<T*>(this);
-	}
-
-	void setCG(const Vector3D& cg)
-	{
-		_cg = cg;
-	}
-
-	const Vector3D& cg() const
-	{
-		return _cg;
-	}
-
-    virtual void toggleFrame() override
-    {
-        ReferenceFrame::toggleFrame();
-        _pT->onToggleFrame( getOrientationInLocalFrame(isLocalFrame()) );
-    }
-
-	virtual Vector3D toLocalTranslateFrame( const Vector3D &v) const 
-	{
-        return toFrame(getOrientationInLocalFrame(true), v - cg() - _pT->position(), cg() );
-	}
-
-	virtual Vector3D toNonLocalTranslateFrame( const Vector3D &v ) const 
-	{
-        return toFrame(getOrientationInLocalFrame(false), v-cg(), cg() + _pT->position() );
+        //_pT = static_cast<T*>(this);
 	}
 
     virtual double Height() const = 0;
 
 private:
-	Vector3D _cg;
-	T* _pT;
+//	Vector3D _cg;
+    //T* _pT;
 };
 
 template<class T, class Base>
