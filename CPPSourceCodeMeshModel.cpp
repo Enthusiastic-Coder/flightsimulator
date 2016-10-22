@@ -7,21 +7,16 @@
 
 bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuffer)
 {
-    char drive[_MAX_DRIVE] = {};
-    char dir[_MAX_DIR] = {};
-    char fname[_MAX_FNAME] = {};
+    std::string rootDir = cppSourceFilename.substr(0, cppSourceFilename.find_last_of(".")-1);
 
-    _splitpath_s(cppSourceFilename.c_str(), drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _countof(fname), NULL, 0);
-    std::string rootDir(drive);
-    rootDir.append(dir);
-    rootDir.append(fname);
+    std::string fname = rootDir.substr(rootDir.find_last_of("/\\") +1);
 
     std::ifstream inputSourceFile(rootDir + "\\model.c");
 
     if (!inputSourceFile.is_open())
         return _bHasLoaded = false;
 
-    for (size_t i = 0; i < strlen(fname); ++i)
+    for (size_t i = 0; i < fname.length(); ++i)
         fname[i] = tolower(fname[i]);
 
     setName(fname);
