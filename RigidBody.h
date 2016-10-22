@@ -36,7 +36,7 @@ protected:
 
 #include "ReferenceFrame.h"
 
-class RigidBody : public Particle, public ReferenceFrame
+class RigidBody : public Particle, public virtual ReferenceFrame
 {
 public:
 
