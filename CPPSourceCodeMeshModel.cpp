@@ -11,8 +11,7 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
 
     std::string fname = rootDir.substr(rootDir.find_last_of("/\\") +1);
 
-    std::ifstream inputSourceFile(rootDir + "\\model.c");
-
+    std::ifstream inputSourceFile(rootDir + "/model.c");
     if (!inputSourceFile.is_open())
         return _bHasLoaded = false;
 
