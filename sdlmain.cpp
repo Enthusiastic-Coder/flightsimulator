@@ -11,6 +11,7 @@ int main(int, char *[])
 
 #ifdef ANDROID
     chdir( SDL_AndroidGetInternalStoragePath());
+    SDL_Log( "InternalStoragePath : %s", SDL_AndroidGetInternalStoragePath());
 #endif
 
     IMG_Init(IMG_INIT_PNG);

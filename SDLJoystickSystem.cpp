@@ -16,7 +16,7 @@ void SDLJoystickSystem::joyInit(char* id)
     for (int i = 0; i < SDL_NumJoysticks(); ++i)
         SDL_Log( "[%d -> %s", i, SDL_JoystickNameForIndex(i));
 
-    _accelerometer = SDL_JoystickOpen(0);
+    _accelerometer = SDL_JoystickOpen(SDL_NumJoysticks()-1);
 }
 
 void SDLJoystickSystem::joyUpdate()
