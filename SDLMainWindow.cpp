@@ -1054,7 +1054,6 @@ void SDLMainWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, O
     glGetIntegerv(GL_VIEWPORT, viewport);
 
     _openGLFrameBuffer.bind();
-    _openGLFrameBuffer.attachDepthTexture2D(shadowMap);
     _openGLFrameBuffer.attachColorTexture2D(0, colorMap);
 
     if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
@@ -1558,8 +1557,8 @@ void SDLMainWindow::RenderInfo()
     p.GetModel().Translate(0, 30,0);
 
     _fontRenderer.selectFont(&_myFontTexture);
-    _fontRenderer.setFontColor(Vector4F(1,1,1,1));
     _fontRenderer.beginRender();
+    _fontRenderer.setFontColor(Vector4F(1,1,1,1));
 
     _fontRenderer.renderText( 15, 15, "3D Virtual World by Mo" );
     _fontRenderer.renderText( 15, 30, "------------------------------------------" );
