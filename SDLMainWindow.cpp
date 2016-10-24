@@ -978,7 +978,7 @@ void SDLMainWindow::RenderReflection()
 
     if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
     {
-        std::cout << "checkFrameBufferStatusComplete failed - RenderReflection" << std::endl;
+    	SDL_Log("[%s,%d] - checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__ );
         postQuit();
         return;
     }
@@ -1057,7 +1057,7 @@ void SDLMainWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, O
 
     if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
     {
-        std::cout << "checkFrameBufferStatusComplete failed : RenderDepthTextures" << std::endl;
+        SDL_Log("[%s,%d] - checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__ );
         postQuit();
         return;
     }
@@ -1263,7 +1263,7 @@ void SDLMainWindow::onRender()
 
         if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
         {
-            std::cout << "checkFrameBufferStatusComplete failed : RenderDepthTextures" << std::endl;
+            SDL_Log("[%s,%d] checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__);
             postQuit();
             return;
         }
