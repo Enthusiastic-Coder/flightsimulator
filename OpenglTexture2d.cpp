@@ -3,6 +3,7 @@
 #include "OpenGLTexture2D.h"
 #include "TextureLoader.h"
 #include <SDL_surface.h>
+#include <SDL_log.h>
 
 OpenGLTexture2D::OpenGLTexture2D()
 {
@@ -78,22 +79,6 @@ unsigned int OpenGLTexture2D::createTexture(int w,int h,bool isDepth, int minTex
     if ( isDepth)
     {
 #ifdef ANDROID
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-#else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-#endif
-
-#ifdef ANDROID
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-#endif
-
-#ifdef ANDROID
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
 #else
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
@@ -102,11 +87,6 @@ unsigned int OpenGLTexture2D::createTexture(int w,int h,bool isDepth, int minTex
     }
     else
     {
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,maxTex);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,minTex);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
-
 #ifdef ANDROID
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_HALF_FLOAT_OES, 0);
 #else
@@ -114,10 +94,21 @@ unsigned int OpenGLTexture2D::createTexture(int w,int h,bool isDepth, int minTex
 #endif
     }
 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+
+    #ifdef ANDROID
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    #else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    #endif
+
     int i = glGetError();
     if(i!=0)
     {
-        std::cout << "Error happened while loading the texture: " << i << std::endl;
+        SDL_Log( "(%s,%d) [%d]- Error happened while loading the texture: ", __FUNCTION__, __LINE__, i );
     }
     glBindTexture(GL_TEXTURE_2D,0);
     return textureId;
