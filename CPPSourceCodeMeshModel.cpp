@@ -386,7 +386,7 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
     surface->setDiffuse(Vector3F(0.85f, 0.85f, 0.85f));
     surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
     surface->setShininess(32);
-    surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_LINEAR));
+    surface->setTextureIdx(getTextureIdx(ROOT_APP_TEXTURES_DIRECTORY, _textureName, GL_LINEAR));
 
     MeshObject* mesh = surface->addMesh();
     mesh->setPrimitveType(GL_TRIANGLES);
