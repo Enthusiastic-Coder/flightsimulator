@@ -61,7 +61,6 @@ void PFDView::render(OpenGLPainter *painter, int cx, int cy)
     _CEN_X = cx/2;
     _CEN_Y = cy/2;
 
-    glDisable(GL_TEXTURE_2D );
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
 
