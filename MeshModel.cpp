@@ -30,7 +30,7 @@ int MeshModel::getTextureIdx(std::string sRootDir, std::string sFilename, int mi
 {
     std::transform(sFilename.begin(), sFilename.end(), sFilename.begin(), tolower);
 
-    OpenGLTexture2D* texture = OpenGLTextureManager::get().getImage(sRootDir + sFilename, minification);
+    OpenGLTexture2D* texture = OpenGLTextureManager::get().getImage(sRootDir + "/Textures/" + sFilename, minification);
 
     std::map< std::string, int>::iterator it = _textureMapNames.find(sFilename);
 
