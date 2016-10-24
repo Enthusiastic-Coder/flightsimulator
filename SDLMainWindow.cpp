@@ -1054,6 +1054,7 @@ void SDLMainWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, O
     glGetIntegerv(GL_VIEWPORT, viewport);
 
     _openGLFrameBuffer.bind();
+    _openGLFrameBuffer.attachDepthTexture2D(shadowMap);
     _openGLFrameBuffer.attachColorTexture2D(0, colorMap);
 
     if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
