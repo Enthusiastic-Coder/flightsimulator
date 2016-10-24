@@ -306,6 +306,8 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     }
 #endif
 
+    SDL_Log("(%s, %d) - createFrameBufferAndShaders OK", __FUNCTION__, __LINE__);
+
     return true;
 }
 
