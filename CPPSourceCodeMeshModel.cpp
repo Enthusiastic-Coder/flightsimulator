@@ -42,6 +42,11 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
     while (!inputSourceFile.eof())
     {
         std::getline(inputSourceFile, sLine);
+
+        #ifdef ANDROID
+		if( sLine.length() != 0)
+			sLine.erase(sLine.length()-1);
+#endif
         trim2(sLine);
 
         bool doContinue(false);
@@ -67,6 +72,11 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
         if (sLine.find("void") != std::string::npos)
         {
             std::getline(inputSourceFile, sLine);
+
+#ifdef ANDROID
+		if( sLine.length() != 0)
+			sLine.erase(sLine.length()-1);
+#endif
 
             std::string objectName = sLine.substr(0, sLine.find("("));
             group = addGroup(objectName);
@@ -254,6 +264,11 @@ void CPPSourceCodeMeshModel::ReadVertexData(std::ifstream &stream, int dataCount
 
     while (std::getline(stream, sLine))
     {
+#ifdef ANDROID
+		if( sLine.length() != 0)
+			sLine.erase(sLine.length()-1);
+#endif
+
         trim2(sLine);
 
         if (sLine.find("}") != std::string::npos)
