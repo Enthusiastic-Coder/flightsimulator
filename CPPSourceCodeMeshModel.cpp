@@ -3,7 +3,7 @@
 #include "MeshModel.h"
 #include "MeshGroupObject.h"
 #include "MipMapTerrainMeshModelCollection.h"
-#include <iostream>
+#include <SDL_log.h>
 
 bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuffer)
 {
@@ -200,7 +200,7 @@ bool CPPSourceCodeMeshModel::saveMesh(std::string strFilename)
 
     BinaryWriteStream outStoreFile( outFile );
     Write(&outStoreFile);
-    std::cout << "Mesh : " << strFilename << " saved to obj file" << std::endl;
+    SDL_Log( "Mesh :%s: saved to obj file", strFilename.c_str());
     return true;
 }
 
@@ -213,7 +213,7 @@ bool CPPSourceCodeMeshModel::loadMesh(std::string strFilename)
     BinaryReadStream inStoreFile( inFile );
     Read(&inStoreFile);
 
-    std::cout << "Mesh : " << strFilename << " loaded from obj file" << std::endl;
+    SDL_Log( "Mesh :%s: loaded from obj file", strFilename.c_str());
 
     return true;
 }
