@@ -36,9 +36,10 @@ bool OpenGLRenderBuffer::generateDepth(int width, int height, GLenum target)
 
 	bind();
     glRenderbufferStorage(_target, GL_DEPTH_COMPONENT, width, height);
+    GLenum lastError = glGetError();
 	unbind();
 
-    return _id != 0;
+    return _id != 0 && lastError == GL_NO_ERROR;;
 }
 
 bool OpenGLRenderBuffer::generateStencil(int width, int height, GLenum target)
@@ -60,9 +61,11 @@ bool OpenGLRenderBuffer::generateStencil(int width, int height, GLenum target)
     glRenderbufferStorage(_target, GL_STENCIL_INDEX8, width, height);
 #endif
 
+    GLenum lastError = glGetError();
+
     unbind();
 
-    return _id != 0;
+    return _id != 0 && lastError == GL_NO_ERROR;
 }
 
 bool OpenGLRenderBuffer::generateDepthStencil(int width, int height, GLenum target)
@@ -82,9 +85,11 @@ bool OpenGLRenderBuffer::generateDepthStencil(int width, int height, GLenum targ
 #else
     glRenderbufferStorage(_target, GL_DEPTH24_STENCIL8, width, height);
 #endif
+    GLenum lastError = glGetError();
+
     unbind();
 
-    return _id != 0;
+    return _id != 0 && lastError == GL_NO_ERROR;
 }
 
 void OpenGLRenderBuffer::bind()

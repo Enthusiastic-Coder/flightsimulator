@@ -265,6 +265,9 @@ bool SDLGameLoop::onDispatchMessage(SDL_Event& event)
             case SDL_SCANCODE_ESCAPE:
                 postQuit();
                 break;
+            case SDL_SCANCODE_AC_BACK:
+            	postQuit();
+            	break;
             default:
                 break;
             }
