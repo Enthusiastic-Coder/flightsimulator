@@ -54,7 +54,7 @@ void PFDView::initialise()
 
 void PFDView::render(OpenGLPainter *painter, int cx, int cy)
 {
-    glClear(GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT| GL_STENCIL_BUFFER_BIT);
 
     _CX = 100;
     _CY = 100;
