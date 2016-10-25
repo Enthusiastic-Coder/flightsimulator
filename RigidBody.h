@@ -36,9 +36,7 @@ protected:
 
 #include "ReferenceFrame.h"
 
-class RigidBody : 
-	public Particle, 
-	public RigidBodyReferenceFrame<RigidBody>
+class RigidBody : public Particle, public virtual ReferenceFrame
 {
 public:
 
@@ -54,6 +52,39 @@ public:
 	virtual void update(double dt);
 ////////////////////////////
 
+    virtual double Height() const
+    {
+        return position().y;
+    }
+
+    void setCG(const Vector3D& cg)
+    {
+        _cg = cg;
+    }
+
+    const Vector3D& cg() const
+    {
+        return _cg;
+    }
+
+//// ReferenceFrame
+    virtual void toggleFrame() override
+    {
+        ReferenceFrame::toggleFrame();
+        onToggleFrame( getOrientationInLocalFrame(isLocalFrame()) );
+    }
+
+    virtual Vector3D toLocalTranslateFrame( const Vector3D &v) const override
+    {
+        return toFrame(getOrientationInLocalFrame(true), v - cg() - position(), cg() );
+    }
+
+    virtual Vector3D toNonLocalTranslateFrame( const Vector3D &v ) const override
+    {
+        return toFrame(getOrientationInLocalFrame(false), v-cg(), cg() + position() );
+    }
+
+
 /// State of Body
 	const Vector3D& angularVelocity() const;
 	virtual const Vector3D& getTorque() const;
@@ -64,6 +95,7 @@ public:
 private:
 	Matrix3x3D _inertia;
 	Matrix3x3D _inverse_inertia;
+    Vector3D _cg;
 
 protected:
 	Vector3D _torque;

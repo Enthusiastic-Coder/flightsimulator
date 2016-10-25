@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include "AoaClData.h"
+#include <cstdlib>
 
 using namespace std;
 
@@ -13,8 +14,7 @@ void AoaClData::reset()
 bool AoaClData::load( std::string filename )
 {
 	reset();
-	FILE *file = NULL;
-	fopen_s( &file, filename.c_str(), "rt" );
+	FILE *file = fopen( filename.c_str(), "rt" );
 	
 	if( file == NULL )
 		return false;
@@ -36,7 +36,7 @@ bool AoaClData::load( std::string filename )
 		char *token = NULL;
 		char *next_token = NULL;
 		bool bEnd = false;
-		token = strtok_s( line, " ", &next_token );
+		token = strtok( line, " " );
 
 		if( atof( token ?token :"0") == 180.0f )	
 			bEnd = true;
@@ -47,8 +47,8 @@ bool AoaClData::load( std::string filename )
 
 		while( token )
 		{	
-			( arg==0 ? aoa : arg==1 ? data.cl : arg==2 ? data.cd : data.cm ) = atof(token);
-			token = strtok_s( NULL, " ", &next_token );
+			( arg==0 ? aoa : arg==1 ? data.cl : arg==2 ? data.cd : data.cm ) = std::atof(token);
+			token = strtok( NULL, " " );
 			arg++;
 		}
 

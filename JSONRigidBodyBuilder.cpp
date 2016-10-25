@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "JSONRigidBodyBuilder.h"
 #include <iostream>
+#include <limits>
 
 void JSONRigidBodyBuilder::trim2(std::string& str)
 {
@@ -107,7 +108,7 @@ void JSONRigidBodyBuilder::build( const std::string & sfilename )
 				continue;
 			}
 
-			if (max_thrust < FLT_EPSILON)
+			if (max_thrust < std::numeric_limits<float>::epsilon())
 			{
 				throwError(sline, "max engine thrust is not positive.");
 				continue;
@@ -599,6 +600,12 @@ std::string JSONRigidBodyBuilder::parseLine()
 	while (!_input_file.eof())
 	{
 		getline(_input_file, sline);
+
+#ifdef ANDROID
+		if( sline.length() != 0)
+			sline.erase(sline.length()-1);
+#endif
+
 		trim2(sline);
 		_line_count++;
 

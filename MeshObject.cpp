@@ -97,13 +97,13 @@ void MeshObject::calcBoundingBox(MeshModelArgs* args, const float* VertexData, c
 
 void MeshObject::calcMomentOfInertiaPtEnum(void *pVoid, size_t i, Vector3F pts[3])
 {
-    Vector3F vVol = Vector3F(1.0f, 1.0f, 1.0f) * sqrt(MeshHelper::CalcArea(pts[0], pts[1], pts[2]));
+    Vector3F vVol = Vector3F(1.0f, 1.0f, 1.0f) * sqrtf(MeshHelper::CalcArea(pts[0], pts[1], pts[2]));
     reinterpret_cast<MassChannel*>(pVoid)->AddPoint((pts[0] + pts[1] + pts[2]) / 3.0f, vVol);
 }
 
 void MeshObject::calcMomentOfInertia(MassChannel &mc, const float *VertexData, const unsigned short *Indices)
 {
-    enumeratePoints(VertexData, Indices, &MeshObject::calcMomentOfInertiaPtEnum, reinterpret_cast<LPVOID>(&mc));
+    enumeratePoints(VertexData, Indices, &MeshObject::calcMomentOfInertiaPtEnum, reinterpret_cast<void*>(&mc));
 }
 
 void MeshObject::Render(Renderer* r)

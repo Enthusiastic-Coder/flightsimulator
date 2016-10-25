@@ -43,17 +43,17 @@ void CameraView::setDescription(std::string str)
     _description = str;
 }
 
-void CameraView::setPosition(Vector3D &loc)
+void CameraView::setPosition(const Vector3D &loc)
 {
     _location = loc;
 }
 
-void CameraView::setPosition(GPSLocation &loc)
+void CameraView::setPosition(const GPSLocation &loc)
 {
     _location = loc;
 }
 
-void CameraView::setOrientation(Vector3F &orientation)
+void CameraView::setOrientation(const Vector3F &orientation)
 {
     _orientation = orientation;
 }
@@ -130,7 +130,7 @@ void CameraView::incrZoom(double diff)
     _zoom += diff;
 }
 
-void CameraView::incrOrientation(Vector3F &v)
+void CameraView::incrOrientation(const Vector3F &v)
 {
     incrOrientation(v.x, v.y, v.z);
 }
@@ -154,12 +154,17 @@ void CameraView::persistReadState(rapidjson::Document &doc)
     using namespace rapidjson;
     Document::AllocatorType& a = doc.GetAllocator();
     std::stringstream ss;
-    ss << "CameraView:" << _description;
+    ss << "cameraView";
 
     if( !doc.HasMember(ss.str()))
         return;
 
-    Value& v = doc[ss.str()];
+    Value& topLevel = doc[ss.str()];
+
+    if( !topLevel.HasMember(_description))
+        return;
+
+    Value& v = topLevel[_description];
 
     _location = GPSLocation(v["CameraViewLocation"].GetString());
     _orientation = Vector3F(v["CameraViewOrientation"].GetString());
@@ -172,16 +177,27 @@ void CameraView::persistWriteState(rapidjson::Document &doc)
 
     Document::AllocatorType& a = doc.GetAllocator();
 
+    std::string strCameraView("cameraView");
+
+    if( !doc.HasMember(strCameraView))
+    {
+        Value v(strCameraView, a);
+        v.SetObject();
+        doc.AddMember(Value(strCameraView,a), v, a);
+    }
+
+    Value& topLevel = doc[strCameraView];
+
     std::stringstream ss;
-    ss << "CameraView:" << _description;
-     Value v(ss.str(), a);
+    ss << _description;
+    Value v(ss.str(), a);
 
     v.SetObject();
 
     v.AddMember("CameraViewLocation", Value(_location.toString(),a), a);
     v.AddMember("CameraViewOrientation", Value(_orientation.toString(),a), a);
     v.AddMember("CameraViewZoom", Value(_zoom), a);
-    doc.AddMember(Value(ss.str(),a), v, a);
+    topLevel.AddMember(Value(ss.str(),a), v, a);
 }
 
 

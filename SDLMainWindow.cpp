@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "SDLMainWindow.h"
+#include <limits>
+#include <string>
 //
 //#include "RunwayLites.h"
 //#include "LondonGroundTile.h"
@@ -41,9 +43,6 @@
 
 void SDLMainWindow::onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float dt)
 {
-    SDL_UNUSED(keys);
-    SDL_UNUSED(mod);
-    SDL_UNUSED(dt);
 //    bool bShiftPressed = KMOD_SHIFT & mod;
 //    bool bCtrlPressed = KMOD_CTRL & mod;
 //    bool bAltPressed = KMOD_ALT & mod;
@@ -59,7 +58,7 @@ void SDLMainWindow::onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float d
 }
 
 void SDLMainWindow::onKeyUp(SDL_KeyboardEvent* e)
-{ SDL_UNUSED(e); }
+{  }
 
 void SDLMainWindow::onMouseUp(SDL_MouseButtonEvent* e)
 {
@@ -98,11 +97,11 @@ void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
 }
 
 void SDLMainWindow::onFingerDown(SDL_TouchFingerEvent* e)
-{ SDL_UNUSED(e); }
+{  }
 void SDLMainWindow::onFingerMotion(SDL_TouchFingerEvent* e)
-{ SDL_UNUSED(e); }
+{ }
 void SDLMainWindow::onFingerUp(SDL_TouchFingerEvent* e)
-{ SDL_UNUSED(e); }
+{ }
 
 void SDLMainWindow::onSize(int width, int height)
 {
@@ -121,8 +120,6 @@ void SDLMainWindow::onSize(int width, int height)
 
 void SDLMainWindow::onMove(int x, int y)
 {
-    SDL_UNUSED(x);
-    SDL_UNUSED(y);
 }
 
 SDLMainWindow::SDLMainWindow() :
@@ -308,6 +305,8 @@ bool SDLMainWindow::createFrameBufferAndShaders()
         return false;
     }
 #endif
+
+    SDL_Log("(%s, %d) - createFrameBufferAndShaders OK", __FUNCTION__, __LINE__);
 
     return true;
 }
@@ -613,7 +612,6 @@ void SDLMainWindow::onUnInitialise()
 void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 {
 #ifdef WIN32
-    SDL_UNUSED(e);
     /*    if( e.key.keysym.scancode == SDL_SCANCODE_F11 )
             _WorldSystem.environment().incrLightFraction(-0.01f);
 
@@ -794,7 +792,7 @@ void SDLMainWindow::onUpdate()
 {
     float dt = frameTime();
 
-    if( dt >= FLT_EPSILON)
+    if( dt >= std::numeric_limits<float>::epsilon())
         _framerate[_framecount++] = 1/dt;
 
     if( _framecount >= FPS_RESOLUTION )
@@ -818,9 +816,10 @@ void SDLMainWindow::onUpdate()
     _nUVOffset += g_WaterFlow * dt;
 #endif
 
-#ifdef WIN32
-    if (GetFocus() == _hWnd)
+    if(SDL_GetWindowFlags(getWindow()) & SDL_WINDOW_INPUT_FOCUS)
         processInputsForCamera();
+
+#ifdef WIN32
 
     if( GetAsyncKeyState( 'C' ) < 0 )
         _WorldSystem.incrChaseAngle(-50*dt);
@@ -981,7 +980,7 @@ void SDLMainWindow::RenderReflection()
 
     if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
     {
-        std::cout << "checkFrameBufferStatusComplete failed - RenderReflection" << std::endl;
+    	SDL_Log("[%s,%d] - checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__ );
         postQuit();
         return;
     }
@@ -1060,7 +1059,7 @@ void SDLMainWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, O
 
     if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
     {
-        std::cout << "checkFrameBufferStatusComplete failed : RenderDepthTextures" << std::endl;
+        SDL_Log("[%s,%d] - checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__ );
         postQuit();
         return;
     }
@@ -1266,7 +1265,7 @@ void SDLMainWindow::onRender()
 
         if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
         {
-            std::cout << "checkFrameBufferStatusComplete failed : RenderDepthTextures" << std::endl;
+            SDL_Log("[%s,%d] checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__);
             postQuit();
             return;
         }
@@ -1444,16 +1443,15 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
 
     }
 
-    POINT pt = {};
-    GetCursorPos(&pt);
-    ScreenToClient(_hWnd, &pt);
+    int x, y;
+    SDL_GetMouseState(&x, &y);
 
     {
         float vertices[] = {
-            pt.x - 5, pt.y - 5, 0,
-            pt.x + 5, pt.y - 5, 0,
-            pt.x + 5, pt.y + 5, 0,
-            pt.x - 5, pt.y + 5, 0
+            x - 5, y - 5, 0,
+            x + 5, y - 5, 0,
+            x + 5, y + 5, 0,
+            x - 5, y + 5, 0
         };
 
         float colors[] = {
@@ -1529,7 +1527,7 @@ void SDLMainWindow::RenderFPS()
         fps += _framerate[i];
 
     char text[256]="";
-    sprintf_s( text, _countof(text), "%.0f", fps / FPS_RESOLUTION);
+    sprintf( text, "%.0f", fps / FPS_RESOLUTION);
     _fontRenderer.renderText( 15, 5, text );
 
     _fontRenderer.endRender();
@@ -1560,15 +1558,14 @@ void SDLMainWindow::RenderInfo()
     p.GetModel().Translate(0, 30,0);
 
     _fontRenderer.selectFont(&_myFontTexture);
-    _fontRenderer.setFontColor(Vector4F(1,1,1,1));
     _fontRenderer.beginRender();
+    _fontRenderer.setFontColor(Vector4F(1,1,1,1));
 
     _fontRenderer.renderText( 15, 15, "3D Virtual World by Mo" );
     _fontRenderer.renderText( 15, 30, "------------------------------------------" );
 
     static char *Version = (char*)glGetString(GL_VERSION);
     static char *Extensions = (char*)glGetString(GL_EXTENSIONS);
-    static char *WglExtensionsExt = (char*)wglGetExtensionsStringEXT();
     static char *Renderer = (char*)glGetString(GL_RENDERER);
     static char *Vendor = (char*)glGetString(GL_VENDOR);
     static char Extensions2[51200];
@@ -1576,7 +1573,7 @@ void SDLMainWindow::RenderInfo()
     char text[1024]= {};
     JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
 
-    sprintf_s( text, _countof(text), "OpenGL [%s], Vendor [%s], Renderer[%s]", Version, Vendor, Renderer );
+    sprintf( text, "OpenGL [%s], Vendor [%s], Renderer[%s]", Version, Vendor, Renderer );
     _fontRenderer.renderText( 15, 45, text );
 
     std::string strFocus;
@@ -1585,20 +1582,20 @@ void SDLMainWindow::RenderInfo()
     else
         strFocus = "##NONE##";
 
-    sprintf_s( text, _countof(text), "Object [%s], Running [%d]", strFocus.c_str(), isRunning() );
+    sprintf( text, "Object [%s], Running [%d]", strFocus.c_str(), isRunning() );
     _fontRenderer.renderText( 15, 60, text );
 
     GPSLocation cameraGPS(_camera.localView()->getPosition());
     Vector3F orientation = _camera.localView()->getOrientation();
 
-    sprintf_s( text, _countof(text), "FPS :%d: Q: [%.2f,%.2f,%.2f]",
+    sprintf( text, "FPS :%d: Q: [%.2f,%.2f,%.2f]",
                         int(fps / FPS_RESOLUTION),
                         orientation.x,
                         orientation.y,
                         orientation.z);
     _fontRenderer.renderText( 15, 75, text );
 
-    sprintf_s( text, _countof(text), "CameraPosition: [%.8f N, %.8f E] (%.2f)", cameraGPS._lat, cameraGPS._lng, cameraGPS._height );
+    sprintf( text, "CameraPosition: [%.8f N, %.8f E] (%.2f)", cameraGPS._lat, cameraGPS._lng, cameraGPS._height );
     _fontRenderer.renderText( 15, 90, text );
 
     if( pRigidBody )
@@ -1611,13 +1608,13 @@ void SDLMainWindow::RenderInfo()
 
         GPSLocation gpsLocation(pRigidBody->position());
 
-        sprintf_s( text, _countof(text), "ModelPosition: [%.8f N, %.8f E] (%.2f)", gpsLocation._lat, gpsLocation._lng, gpsLocation._height );
+        sprintf( text, "ModelPosition: [%.8f N, %.8f E] (%.2f)", gpsLocation._lat, gpsLocation._lng, gpsLocation._height );
 
         _fontRenderer.renderText( 15, 105, text );
 
         double velMag = vel.Magnitude();
 
-        sprintf_s( text, _countof(text), "Vel: [%.2f,%.2f,%.2f] (Kts:%.2f)(Mph:%.2f)", vel.x, vel.y, vel.z, MS_TO_KTS(velMag), MS_TO_MPH(velMag) );
+        sprintf( text, "Vel: [%.2f,%.2f,%.2f] (Kts:%.2f)(Mph:%.2f)", vel.x, vel.y, vel.z, MS_TO_KTS(velMag), MS_TO_MPH(velMag) );
         _fontRenderer.renderText( 15, 120, text );
 
         //MOJ_JEB
@@ -1652,7 +1649,7 @@ void SDLMainWindow::RenderInfo()
         const Vector3D& angVel = pRigidBody->angularVelocity();
         const Vector3D& cg = pRigidBody->cg();
 
-        sprintf_s( text, _countof(text), "Ang V[%.2f,%.2f,%.2f] CG[%.2f,%.2f,%.2f]", angVel.x, angVel.y, angVel.z, cg.x, cg.y, cg.z );
+        sprintf( text, "Ang V[%.2f,%.2f,%.2f] CG[%.2f,%.2f,%.2f]", angVel.x, angVel.y, angVel.z, cg.x, cg.y, cg.z );
         _fontRenderer.renderText( 15, 135, text );
 
 
@@ -1663,14 +1660,14 @@ void SDLMainWindow::RenderInfo()
         if( _WorldSystem.getHeightFromPosition(cameraGPS, data ) )
         {
             Vector3F euler = MathSupport<float>::MakeEuler( data.qNormal() ) ;
-            sprintf_s( text, _countof(text), "HeightAbovePlane :[%.8f], Euler : [%.2f,%.2f,%.2f]", data.Height(),euler.x, euler.y, euler.z );
+            sprintf( text, "HeightAbovePlane :[%.8f], Euler : [%.2f,%.2f,%.2f]", data.Height(),euler.x, euler.y, euler.z );
         }
         else
-            sprintf_s( text, _countof(text), "HeightAbovePlane :[NOT AVAILABLE]");
+            sprintf( text, "HeightAbovePlane :[NOT AVAILABLE]");
 
         _fontRenderer.renderText( 15, 150, text );
 
-        sprintf_s(text, _countof(text), "View [%d]:%s: Zoom :%.2f:", _WorldSystem.curViewIdx(), _WorldSystem.getCameraDescription().c_str(), _camera.localView()->getZoom());
+        sprintf(text, "View [%d]:%s: Zoom :%.2f:", _WorldSystem.curViewIdx(), _WorldSystem.getCameraDescription().c_str(), _camera.localView()->getZoom());
         _fontRenderer.renderText( 15, 165, text );
 
         Vector3D acceleration = pRigidBody->getForce() / pRigidBody->getMass();
@@ -1679,16 +1676,16 @@ void SDLMainWindow::RenderInfo()
         JSONRigidBody::STATE state = JSONRigidBody::STATE::NORMAL;
         state = pRigidBody->getState();
 
-        sprintf_s(text, _countof(text), "G :[%.2f], FlightRec [%s]", gForce,
+        sprintf(text, "G :[%.2f], FlightRec [%s]", gForce,
             state ==JSONRigidBody::STATE::NORMAL ? "Normal": (state ==JSONRigidBody::STATE::RECORDING ? "Recording": "Playback" ) );
         _fontRenderer.renderText( 15, 180, text );
 
-        sprintf_s( text, _countof(text), "Camera-Object distance :%.2f: miles", _WorldSystem.focusedRigidBody()->getGPSLocation().distanceTo( _camera.localView()->getPosition() )*3.2808/5280 );
+        sprintf( text, "Camera-Object distance :%.2f: miles", _WorldSystem.focusedRigidBody()->getGPSLocation().distanceTo( _camera.localView()->getPosition() )*3.2808/5280 );
         _fontRenderer.renderText( 15, 195, text );
 
         if (state == JSONRigidBody::STATE::PLAYBACK)
         {
-            sprintf_s(text, _countof(text), "Playback-> %3.2f/%3.0fsecs",
+            sprintf(text, "Playback-> %3.2f/%3.0fsecs",
                                         pRigidBody->getFlightRecorder().timeSoFar(),
                                         pRigidBody->getFlightRecorder().totalTime()
                                             );
@@ -1739,6 +1736,7 @@ void SDLMainWindow::setupCameraPosition(bool bReflection)
 
 void SDLMainWindow::processInputsForCamera()
 {
+#ifdef WIN32
     bool bShiftOn = GetAsyncKeyState(VK_SHIFT) < 0;
     bool bControlOn = GetAsyncKeyState(VK_CONTROL) < 0;
 
@@ -1791,6 +1789,7 @@ void SDLMainWindow::processInputsForCamera()
 
     if (::GetAsyncKeyState(VK_OEM_PLUS) < 0)
         _camera.incrZoom( 0.1f);
+#endif
 }
 
 void SDLMainWindow::persistSettings(bool bSerialise)
@@ -1804,8 +1803,7 @@ void SDLMainWindow::persistSettings(bool bSerialise)
 
     if( bSerialise)
     {
-        FILE *fPersistFile = NULL;
-        fopen_s( &fPersistFile, strSettingsFilename.c_str(), "wb" );
+        FILE *fPersistFile = fopen( strSettingsFilename.c_str(), "wb" );
         if(fPersistFile)
         {
             doc.SetObject();
@@ -1859,10 +1857,12 @@ void SDLMainWindow::persistSettings(bool bSerialise)
 
 void SDLMainWindow::OnInitPolyMode()
 {
+#ifdef WIN32
     if( _bUserPolygonLineView )
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE );
     else
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL );
+#endif
 }
 
 void SDLMainWindow::OnRenderSkyBox()

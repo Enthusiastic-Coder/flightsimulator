@@ -10,7 +10,7 @@ struct TriangleFanQuadNode
 {
 	~TriangleFanQuadNode();
 
-	static TriangleFanQuadNode * newRootNode(ChunkNode *pChunk, std::pair<Vector2I, Vector2I >& rect);
+	static TriangleFanQuadNode * newRootNode(ChunkNode *pChunk, const std::pair<Vector2I, Vector2I >& rect);
 	static TriangleFanQuadNode * newChildNode(TriangleFanQuadNode *pParent, int quadNo);
 
 	std::pair<Vector2I, Vector2I> getBoundaryIDX() const;
@@ -38,5 +38,5 @@ struct TriangleFanQuadNode
 	Vector2I _bottomRightIDX;
 
 private:
-	TriangleFanQuadNode(ChunkNode *pChunk, TriangleFanQuadNode *pParent, std::pair<Vector2I, Vector2I >& rect, int quadNo);
+	TriangleFanQuadNode(ChunkNode *pChunk, TriangleFanQuadNode *pParent, const std::pair<Vector2I, Vector2I >& rect, int quadNo);
 };

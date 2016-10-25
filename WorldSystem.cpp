@@ -9,6 +9,7 @@
 #include "MipMapTerrainMeshModelCollection.h"
 
 #include "OpenGLRenderer.h"
+#include <limits>
 
 #define TOWTRUCK_MASS_PROP	 7000, \
 	Matrix3x3D(78523.6,      1708.93,         -28344.3, \
@@ -56,7 +57,7 @@ void WorldSystem::update( double dt )
 {
     // Check key presses here?
     // -----------------------
-    if( fabs(dt) <= FLT_EPSILON)
+    if( fabs(dt) <= std::numeric_limits<float>::epsilon())
         return;
 
     _Joy->joyUpdate();

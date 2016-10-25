@@ -4,9 +4,6 @@
 #include "RigidBodyMeshManager.h"
 #include "OpenGLRenderer.h"
 
-#define BODY_FOCUS_OK(funcCall) \
-    (_focusRigidBody != _bodyList.end() && *_focusRigidBody && (*_focusRigidBody)->getShowState() ? (*_focusRigidBody)->##funcCall : 0)
-
 JSONRigidBodyCollection::JSONRigidBodyCollection()
 {
 	_focusRigidBody = _bodyList.begin();
@@ -171,18 +168,16 @@ void JSONRigidBodyCollection::RenderForceGenerators(Renderer* r)
 
 bool JSONRigidBodyCollection::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
 {
-    if( BODY_FOCUS_OK(onAsyncKeyPress(scrn, dt) ) )
-        return true;
-
-    return false;
+	JSONRigidBody* body = activeRigidBody();
+	if(body ==0) return false;
+	return body->onAsyncKeyPress(scrn, dt);
 }
 
 bool JSONRigidBodyCollection::onSyncKeyPress()
 {
-    if( BODY_FOCUS_OK(onSyncKeyPress() ) )
-		return true;
-
-	return false;
+	JSONRigidBody* body = activeRigidBody();
+	if(body ==0) return false;
+	return body->onSyncKeyPress();
 }
 
 bool JSONRigidBodyCollection::toggleUsingMouse()
@@ -199,28 +194,30 @@ bool JSONRigidBodyCollection::toggleUsingMouse()
 
 bool JSONRigidBodyCollection::onMouseMove( int x, int y)
 {
-    if( BODY_FOCUS_OK( onMouseMove(x, y ) ) )
-		return true;
-
-	return false;
+	JSONRigidBody* body = activeRigidBody();
+	if( body == 0) return false;
+    return body->onMouseMove(x, y );
 }
 
 bool JSONRigidBodyCollection::onMouseWheel(int wheelDelta)
 {
-    if( BODY_FOCUS_OK(onMouseWheel( wheelDelta ) ) )
-		return true;
-
-    return false;
+	JSONRigidBody* body = activeRigidBody();
+	if( body == 0) return false;
+    return body->onMouseWheel( wheelDelta );
 }
 
 bool JSONRigidBodyCollection::nextView()
 {
-    return BODY_FOCUS_OK(nextView());
+	JSONRigidBody* body = activeRigidBody();
+	if( body == 0) return false;
+    return body->nextView();
 }
 
 bool JSONRigidBodyCollection::prevView()
 {
-    return BODY_FOCUS_OK(prevView());
+	JSONRigidBody* body = activeRigidBody();
+	if( body == 0) return false;
+	return body->prevView();
 }
 
 void JSONRigidBodyCollection::incrChaseAngle(float fDiff)
@@ -246,7 +243,9 @@ void JSONRigidBodyCollection::incrChaseHeight(float fDiff)
 
 int JSONRigidBodyCollection::curViewIdx() const
 {
-    return BODY_FOCUS_OK(curViewIdx());
+	const JSONRigidBody* body = activeRigidBody();
+	if( body == 0) return -1;
+	return body->curViewIdx();
 }
 
 void JSONRigidBodyCollection::updateCameraView()
@@ -327,9 +326,28 @@ void JSONRigidBodyCollection::loadBodyRecorderedData()
     for (JSONRigidBody* it : _bodyList)
 	{
 		char filename[256] = {};
-		sprintf_s(filename, _countof(filename), "flightrecorded_%s.bin", it->getID().c_str());
+		sprintf(filename, "flightrecorded_%s.bin", it->getID().c_str());
 		it->loadRecorder(filename);
 	}
+}
+
+const JSONRigidBody* JSONRigidBodyCollection::activeRigidBody() const
+{
+	if(_focusRigidBody == _bodyList.end() )
+			 return 0;
+
+	 if( *_focusRigidBody == 0)
+		 return 0;
+
+	 if( !(*_focusRigidBody)->getShowState() )
+		 return 0;
+
+	 return *_focusRigidBody;
+}
+
+JSONRigidBody* JSONRigidBodyCollection::activeRigidBody()
+{
+	 return const_cast<JSONRigidBody*>(static_cast<const JSONRigidBodyCollection*>(this)->activeRigidBody());
 }
 
 JSONRigidBody *JSONRigidBodyCollection::focusedRigidBody()

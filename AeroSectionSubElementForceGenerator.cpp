@@ -1,5 +1,5 @@
 #include "stdafx.h"
-
+#include <limits>
 #include "GSRigidBody.h"
 #include "AeroControlSurfaceBoundary.h"
 #include "AeroSectionElementForceGenerator.h"
@@ -116,7 +116,7 @@ void AeroSectionSubElementForceGenerator::onApplyForce( Particle *p, double dt )
 	double spdOfSoundFactor = sqrt(1 - pow(fVelSpdSoundRatio, 2 ));
 	double factor = M_PI * dAspectRatio * dEfficiency * ((cl > 0) ? 1 : -1);
 
-	if( fabs(spdOfSoundFactor) >DBL_EPSILON)
+	if( fabs(spdOfSoundFactor) > std::numeric_limits<double>::epsilon())
 	{
 		cl = cl/ ( 1.0 + cl/factor ) / spdOfSoundFactor;
 		cd = cd/ ( 1.0 + cd/factor ) / spdOfSoundFactor;

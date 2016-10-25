@@ -19,18 +19,18 @@ public:
 	void clear();
 	bool loadFiles(std::string vertex, std::string fragment);
 
-	void sendUniform(std::string name, int value);
-	void sendUniform(std::string name, float value);
-    void sendUniform(std::string name, float x, float y);
-	void sendUniform(std::string name, float x, float y, float z);
-    void sendUniform(std::string name, float x, float y, float z, float w);
-    void sendUniform(std::string name, Vector3F& v);
-    void sendUniform(std::string name, Vector4F& v);
-    void sendUniform(std::string name, Matrix3x3F& m);
-    void sendUniform(std::string name, Matrix4x4F& m);
+	void sendUniform(const std::string& name, int value);
+	void sendUniform(const std::string& name, float value);
+    void sendUniform(const std::string& name, float x, float y);
+	void sendUniform(const std::string& name, float x, float y, float z);
+    void sendUniform(const std::string& name, float x, float y, float z, float w);
+    void sendUniform(const std::string& name, const Vector3F& v);
+    void sendUniform(const std::string& name, const Vector4F& v);
+    void sendUniform(const std::string& name, const Matrix3x3F& m);
+    void sendUniform(const std::string& name, const Matrix4x4F& m);
 
-	GLint getUniformLocation(std::string name);
-    GLint getAttribLocation(std::string name);
+	GLint getUniformLocation(const std::string& name);
+    GLint getAttribLocation(const std::string& name);
 
     unsigned int getProgramID();
     unsigned int getVertexShaderID();

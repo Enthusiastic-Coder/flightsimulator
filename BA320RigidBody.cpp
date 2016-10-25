@@ -346,8 +346,14 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 
         fAileron = joy->joyGetX();
         fPitch = joy->joyGetY();
+#ifdef ANDROID
+        fYaw = fAileron;
+        fPitch -= 0.707f;
+#else
         fYaw = joy->joyGetZ();
+
         fThrust = std::fabs(joy->joyGetV()) > 0.2f ? joy->joyGetV() : 0.0f;
+#endif
         _right_engine._thrust_percent -= fThrust;
 
         fThrust = _right_engine._thrust_percent;
@@ -379,7 +385,7 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 
         if( joy->numberofButtonsPressed())
         {
-            DWORD dwWord = joy->buttonFlagPressed();
+            int dwWord = joy->buttonFlagPressed();
 
             //128(down) - 32 (up)
             if( dwWord & 8 || dwWord & 4 )

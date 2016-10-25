@@ -3,25 +3,19 @@
 #include "MeshModel.h"
 #include "MeshGroupObject.h"
 #include "MipMapTerrainMeshModelCollection.h"
-#include <iostream>
+#include <SDL_log.h>
 
 bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuffer)
 {
-    char drive[_MAX_DRIVE] = {};
-    char dir[_MAX_DIR] = {};
-    char fname[_MAX_FNAME] = {};
+    std::string rootDir = cppSourceFilename.substr(0, cppSourceFilename.find_last_of("."));
 
-    _splitpath_s(cppSourceFilename.c_str(), drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _countof(fname), NULL, 0);
-    std::string rootDir(drive);
-    rootDir.append(dir);
-    rootDir.append(fname);
+    std::string fname = rootDir.substr(rootDir.find_last_of("/\\") +1);
 
-    std::ifstream inputSourceFile(rootDir + "\\model.c");
-
+    std::ifstream inputSourceFile(rootDir + "/model.c");
     if (!inputSourceFile.is_open())
         return _bHasLoaded = false;
 
-    for (size_t i = 0; i < strlen(fname); ++i)
+    for (size_t i = 0; i < fname.length(); ++i)
         fname[i] = tolower(fname[i]);
 
     setName(fname);
@@ -48,6 +42,11 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
     while (!inputSourceFile.eof())
     {
         std::getline(inputSourceFile, sLine);
+
+        #ifdef ANDROID
+		if( sLine.length() != 0)
+			sLine.erase(sLine.length()-1);
+#endif
         trim2(sLine);
 
         bool doContinue(false);
@@ -74,37 +73,42 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
         {
             std::getline(inputSourceFile, sLine);
 
+#ifdef ANDROID
+		if( sLine.length() != 0)
+			sLine.erase(sLine.length()-1);
+#endif
+
             std::string objectName = sLine.substr(0, sLine.find("("));
             group = addGroup(objectName);
         }
 
         if (sLine.find("VertexData[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 3, VECTOR_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 3, VECTOR_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setVertexFlag();
         }
 
         if (sLine.find("ColorData[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 3, COLOR_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 3, COLOR_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setColorFag();
         }
 
         if (sLine.find("NormalData[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 3, NORMAL_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 3, NORMAL_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setNormalFlag();
         }
 
         if (sLine.find("TexCoordData[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 2, TEXTURE_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 2, TEXTURE_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setTexCoordFlag();
         }
 
         if (sLine.find("Indices[]") != std::string::npos)
         {
-            ReadVertexData(inputSourceFile, 1, INDEX_DATA_TYPE, reinterpret_cast<LPVOID>(&group->_meshData));
+            ReadVertexData(inputSourceFile, 1, INDEX_DATA_TYPE, reinterpret_cast<void*>(&group->_meshData));
             group->setIndexFlag();
         }
 
@@ -151,12 +155,7 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
             std::string::size_type p2 = sLine.find("\"", p1 + 1);
             std::string textureName = sLine.substr(p1 + 1, p2 - p1 - 1);
 
-            char fname[_MAX_FNAME] = {};
-            char ext[_MAX_EXT] = {};
-            _splitpath_s(textureName.c_str(), NULL, 0, NULL, 0, fname, _countof(fname), ext, _countof(ext));
-
-            textureName = fname;
-            textureName.append(ext);
+            textureName = textureName.substr(textureName.find_last_of("/\\") + 1);
 
             if (textureName.length()) surface->setTextureIdx(getTextureIdx(rootDir, textureName));
 
@@ -166,7 +165,7 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
         if (sLine.find("glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, &Indices") != std::string::npos)
         {
             bHasMaterials = false;
-            auto& countOffset = GetCountOffSet(sLine);
+            const auto& countOffset = GetCountOffSet(sLine);
 
             if (!bOnTriangle)
             {
@@ -187,7 +186,7 @@ bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuf
 
         if (sLine.find("glDrawElements(GL_TRIANGLE_STRIP") != std::string::npos)
         {
-            auto& countOffset = GetCountOffSet(sLine);
+             const auto& countOffset = GetCountOffSet(sLine);
 
             mesh = surface->addMesh();
             mesh->setPrimitveType(GL_TRIANGLE_STRIP);
@@ -211,7 +210,7 @@ bool CPPSourceCodeMeshModel::saveMesh(std::string strFilename)
 
     BinaryWriteStream outStoreFile( outFile );
     Write(&outStoreFile);
-    std::cout << "Mesh : " << strFilename << " saved to obj file" << std::endl;
+    SDL_Log( "Mesh :%s: saved to obj file", strFilename.c_str());
     return true;
 }
 
@@ -224,7 +223,7 @@ bool CPPSourceCodeMeshModel::loadMesh(std::string strFilename)
     BinaryReadStream inStoreFile( inFile );
     Read(&inStoreFile);
 
-    std::cout << "Mesh : " << strFilename << " loaded from obj file" << std::endl;
+    SDL_Log( "Mesh :%s: loaded from obj file", strFilename.c_str());
 
     return true;
 }
@@ -240,7 +239,7 @@ std::pair<unsigned int, unsigned int> CPPSourceCodeMeshModel::GetCountOffSet(con
     return std::make_pair(subStrToLong(sLine, p1 + 1, p2 - p1 - 1), subStrToLong(sLine, p3 + 1, p4 - p3 - 1));
 }
 
-void CPPSourceCodeMeshModel::onReceiveData(DATA_TYPE token, float data[3], LPVOID pData)
+void CPPSourceCodeMeshModel::onReceiveData(DATA_TYPE token, float data[3], void* pData)
 {
     if (token == VECTOR_DATA_TYPE)
         reinterpret_cast<meshData*>(pData)->addVertex(data[0], data[1], data[2]);
@@ -258,13 +257,18 @@ void CPPSourceCodeMeshModel::onReceiveData(DATA_TYPE token, float data[3], LPVOI
         reinterpret_cast<meshData *>(pData)->addIndex(data[0]);
 }
 
-void CPPSourceCodeMeshModel::ReadVertexData(std::ifstream &stream, int dataCount, DATA_TYPE dataType, LPVOID data)
+void CPPSourceCodeMeshModel::ReadVertexData(std::ifstream &stream, int dataCount, DATA_TYPE dataType, void* data)
 {
     std::string sLine;
     sLine.reserve(1000);
 
     while (std::getline(stream, sLine))
     {
+#ifdef ANDROID
+		if( sLine.length() != 0)
+			sLine.erase(sLine.length()-1);
+#endif
+
         trim2(sLine);
 
         if (sLine.find("}") != std::string::npos)
@@ -304,7 +308,7 @@ std::string::size_type CPPSourceCodeMeshModel::ParseVector(std::ifstream & strea
 
     float data[3] = {};
 
-    for (int i = 0; i < _countof(data); ++i)
+    for (int i = 0; i < 3; ++i)
     {
         pos = sLine.find(",", pos + 1);
         data[i] = subStrToFloat(sLine, oldPos + 1, pos - oldPos - 1);
@@ -397,11 +401,11 @@ void SimpleRunwayMeshModel::setTextureName(std::string strName)
 }
 
 /////////////////
-void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, COLORREF color, float fHdg)
+void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsigned char r, unsigned char g, unsigned char b, float fHdg)
 {
     std::stringstream ss;
     ss << "SimplePlaneMeshModel|width:" << iWidth << "|height:" << iHeight << "|fInterval:" << fInterval;
-    ss << "|Color:" << GetRValue(color) << "," << GetGValue(color) << "," << GetBValue(color);
+    ss << "|Color:" << r << "," << g << "," << b;
 
     setName(ss.str());
 
@@ -427,6 +431,9 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, COLOR
         {
             group->_meshData.addIndex((iHeight + 1)*z + x);
             group->_meshData.addIndex((iHeight + 1)*z + x + 1);
+            group->_meshData.addIndex((iHeight + 1)*(z + 1) + x);
+
+            group->_meshData.addIndex((iHeight + 1)*z + x + 1);
             group->_meshData.addIndex((iHeight + 1)*(z + 1) + x + 1);
             group->_meshData.addIndex((iHeight + 1)*(z + 1) + x);
         }
@@ -434,12 +441,12 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, COLOR
 
     MeshSurfaceObject* surface = group->addSurface();
 
-    surface->setDiffuse(Vector3F(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f, GetBValue(color) / 255.0f));
+    surface->setDiffuse(Vector3F(r / 255.0f, g/ 255.0f, b / 255.0f));
     surface->setSpecular(Vector3F(0.5, 0.5, 0.5));
     surface->setShininess(32);
 
     MeshObject* mesh = surface->addMesh();
-    mesh->setPrimitveType(GL_QUADS);
+    mesh->setPrimitveType(GL_TRIANGLES);
     mesh->setCountOffset(group->_meshData.indexSize(), 0);
 
     calcBoundingBox();

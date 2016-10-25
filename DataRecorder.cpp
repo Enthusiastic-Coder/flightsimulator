@@ -176,8 +176,7 @@ bool DataRecorder::save(std::string sfilename)
 	if( _data_iterator_ready == false)
 		return false;
 
-	FILE *fOut = NULL;
-	fopen_s( &fOut, sfilename.c_str(), "wb" );
+	FILE *fOut = fopen( sfilename.c_str(), "wb" );
 	if( fOut == NULL )
 		return false;
 
@@ -199,8 +198,7 @@ bool DataRecorder::save(std::string sfilename)
 
 bool DataRecorder::load(std::string sfilename)
 {
-	FILE *fIn = NULL;
-	fopen_s( &fIn, sfilename.c_str(), "rb" );
+	FILE *fIn = fopen( sfilename.c_str(), "rb" );
 	if( fIn == NULL )
 		return false;
 

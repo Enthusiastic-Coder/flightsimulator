@@ -152,20 +152,13 @@ bool SDLGameLoop::run(std::string strTitle)
         return false;
     }
 
-    SDL_SysWMinfo info;
-    SDL_VERSION(&info.version); // initialize info structure with SDL version info
-
     _glContext = SDL_GL_CreateContext(_sdlWindow);
     _running = true;
 
-    if(SDL_GetWindowWMInfo(_sdlWindow, &info))
-    {
-        _hWnd = info.info.win.window;
-        int w, h;
-        SDL_GetWindowSize(_sdlWindow, &w,&h);
-        onSize(w,h);
-        onInitialise();
-    }
+    int w, h;
+    SDL_GetWindowSize(_sdlWindow, &w,&h);
+    onSize(w,h);
+    onInitialise();
 
     SDL_Log( "Current Video Driver : %s",  SDL_GetCurrentVideoDriver());
 
@@ -272,6 +265,9 @@ bool SDLGameLoop::onDispatchMessage(SDL_Event& event)
             case SDL_SCANCODE_ESCAPE:
                 postQuit();
                 break;
+            case SDL_SCANCODE_AC_BACK:
+            	postQuit();
+            	break;
             default:
                 break;
             }

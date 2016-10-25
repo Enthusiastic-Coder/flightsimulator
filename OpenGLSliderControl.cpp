@@ -15,7 +15,7 @@ void OpenGLSliderControl::onSize(int cx, int cy)
 void OpenGLSliderControl::setDimensions(OpenGLSliderControl::Orientation o, float U, float V, float dU, float dV)
 {
     _orientation = o;
-    _U = U;
+    _u = U;
     _V = V;
     _dU = dU;
     _dV = dV;
@@ -113,7 +113,7 @@ void OpenGLSliderControl::update(float dt)
 
     float dRateValue = _rateOfValue * dt;
     float dValue = _value - _currentValue;
-    float dFinalRateValue = std::min(fabs(dValue), dRateValue);
+    float dFinalRateValue = std::min(std::fabs(dValue), dRateValue);
     if( dValue < 0.0f)  dFinalRateValue = -dFinalRateValue;
     _currentValue += dFinalRateValue;
 }
@@ -121,8 +121,8 @@ void OpenGLSliderControl::update(float dt)
 void OpenGLSliderControl::updateLayout()
 {
     // use all state to decide how to position control
-    _position = toScrn(_U, _V);
-    MathSupport<int>::point pos = toScrn(_U +_dU, _V + _dV);
+    _position = toScrn(_u, _V);
+    MathSupport<int>::point pos = toScrn(_u +_dU, _V + _dV);
     _size.width = pos.x - _position.x;
     _size.height = pos.y - _position.y;
 

@@ -34,15 +34,12 @@ bool OpenGLRenderBuffer::generateDepth(int width, int height, GLenum target)
 
     _target = target;
 
-    GL_DEPTH_STENCIL_ATTACHMENT;
-    GL_DEPTH_ATTACHMENT;
-    GL_STENCIL_ATTACHMENT;
-
 	bind();
     glRenderbufferStorage(_target, GL_DEPTH_COMPONENT, width, height);
+    GLenum lastError = glGetError();
 	unbind();
 
-    return _id != 0;
+    return _id != 0 && lastError == GL_NO_ERROR;;
 }
 
 bool OpenGLRenderBuffer::generateStencil(int width, int height, GLenum target)
@@ -57,10 +54,18 @@ bool OpenGLRenderBuffer::generateStencil(int width, int height, GLenum target)
     _target = target;
 
     bind();
-    glRenderbufferStorage(_target, GL_DEPTH24_STENCIL8, width, height);
+
+#ifdef ANDROID
+    glRenderbufferStorage(_target, GL_STENCIL_INDEX8, width, height);
+#else
+    glRenderbufferStorage(_target, GL_STENCIL_INDEX8, width, height);
+#endif
+
+    GLenum lastError = glGetError();
+
     unbind();
 
-    return _id != 0;
+    return _id != 0 && lastError == GL_NO_ERROR;
 }
 
 bool OpenGLRenderBuffer::generateDepthStencil(int width, int height, GLenum target)
@@ -75,10 +80,16 @@ bool OpenGLRenderBuffer::generateDepthStencil(int width, int height, GLenum targ
     _target = target;
 
     bind();
-    glRenderbufferStorage(_target, GL_DEPTH_STENCIL, width, height);
+#ifdef ANDROID
+    glRenderbufferStorage(_target, GL_DEPTH_STENCIL_OES, width, height);
+#else
+    glRenderbufferStorage(_target, GL_DEPTH24_STENCIL8, width, height);
+#endif
+    GLenum lastError = glGetError();
+
     unbind();
 
-    return _id != 0;
+    return _id != 0 && lastError == GL_NO_ERROR;
 }
 
 void OpenGLRenderBuffer::bind()

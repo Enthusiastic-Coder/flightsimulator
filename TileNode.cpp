@@ -3,6 +3,7 @@
 #include "ChunkNode.h"
 #include "TriangleFanQuadNode.h"
 #include "GPSTerrainData.h"
+#include <limits>
 
 TileNode::TileNode(GPSTerrainData &meshObject) :
 	_GPSMeshObject(meshObject),
@@ -120,7 +121,7 @@ void TileNode::BuildHelper(TriangleFanQuadNode *pParentNode)
 		float fAverageHeight = CalcAverageHeight(pParentNode, i);
 		float fDiff = fabs(fCenterHeight - fAverageHeight);
 
-		if (fDiff > FLT_EPSILON || pParentNode->_level == _maxLevel)
+		if (fDiff > std::numeric_limits<float>::epsilon() || pParentNode->_level == _maxLevel)
 			BuildHelper(BuildQuad(pParentNode, i));
 	}
 }
@@ -364,7 +365,7 @@ float TileNode::CalcAverageHeight(TriangleFanQuadNode *pNode, int quadNo) const
 	int count = 0;
 	float fTotalHeight = 0.0f;
 
-	auto& vertexPair = pNode->getChildIDX(quadNo);
+	const auto& vertexPair = pNode->getChildIDX(quadNo);
 
 	Vector2I leftTopIDX = vertexPair.first;
 	Vector2I bottomRightIDX = vertexPair.second;

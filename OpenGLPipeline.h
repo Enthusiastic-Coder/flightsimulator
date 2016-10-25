@@ -72,7 +72,9 @@ public:
     static int GetNormalAttribId(OpenGLShaderProgram& progID);
     static int GetTextureAttribId(OpenGLShaderProgram& progID);
 
+#ifdef WIN32
     void bindLegacyMatrices();
+#endif
     void bindMatrices(OpenGLShaderProgram& progID);
     void ApplyLightBPMV(OpenGLShaderProgram &progID);
 

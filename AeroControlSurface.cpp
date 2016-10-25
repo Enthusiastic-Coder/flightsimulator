@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <limits>
 #include "BoundaryHelperT.h"
 #include "FlightRecorder.h"
 #include "AeroSectionSubElementForceGenerator.h"
@@ -59,7 +60,7 @@ void AeroControlSurface::setRecorderHook(FlightRecorder& a)
 
 void AeroControlSurface::onDeflectionChange()
 {
-	bool bIsFlap = fabs(_distance_per_deflection) > FLT_EPSILON;
+	bool bIsFlap = fabs(_distance_per_deflection) > std::numeric_limits<float>::epsilon();
 
 	if( parent() == nullptr && !bIsFlap)
 		_qDeflectionRotAxis = onDeflectionChange(0.0f, 1.0f );

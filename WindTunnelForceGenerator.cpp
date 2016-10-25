@@ -5,7 +5,9 @@
 #include "AeroForceGenerator.h"
 #include "WorldSystem.h"
 
+#ifdef WIN32
 typedef unsigned char uint;
+#endif
 
 #ifdef RGB
 #undef RGB
@@ -37,75 +39,6 @@ void HSLtoRGB_Subfunction(uint& c, const double& temp1, const double& temp2, con
     return;
 }
 
-// This function extracts the hue, saturation, and luminance from "color"
-// and places these values in h, s, and l respectively.
-void RGBtoHSL(const COLORREF& color,uint& h, uint& s, uint& l)
-{
-    uint r = (uint)GetRValue(color);
-    uint g = (uint)GetGValue(color);
-    uint b = (uint)GetBValue(color);
-
-    double r_percent = ((double)r)/255;
-    double g_percent = ((double)g)/255;
-    double b_percent = ((double)b)/255;
-
-    double max_color = 0;
-    if((r_percent >= g_percent) && (r_percent >= b_percent))
-        max_color = r_percent;
-    if((g_percent >= r_percent) && (g_percent >= b_percent))
-        max_color = g_percent;
-    if((b_percent >= r_percent) && (b_percent >= g_percent))
-        max_color = b_percent;
-
-    double min_color = 0;
-    if((r_percent <= g_percent) && (r_percent <= b_percent))
-        min_color = r_percent;
-    if((g_percent <= r_percent) && (g_percent <= b_percent))
-        min_color = g_percent;
-    if((b_percent <= r_percent) && (b_percent <= g_percent))
-        min_color = b_percent;
-
-    double L = 0;
-    double S = 0;
-    double H = 0;
-
-    L = (max_color + min_color)/2;
-
-    if(max_color == min_color)
-    {
-        S = 0;
-        H = 0;
-    }
-    else
-    {
-        if(L < .50)
-        {
-            S = (max_color - min_color)/(max_color + min_color);
-        }
-        else
-        {
-            S = (max_color - min_color)/(2 - max_color - min_color);
-        }
-        if(max_color == r_percent)
-        {
-            H = (g_percent - b_percent)/(max_color - min_color);
-        }
-        if(max_color == g_percent)
-        {
-            H = 2 + (b_percent - r_percent)/(max_color - min_color);
-        }
-        if(max_color == b_percent)
-        {
-            H = 4 + (r_percent - g_percent)/(max_color - min_color);
-        }
-    }
-    s = (uint)(S*100);
-    l = (uint)(L*100);
-    H = H*60;
-    if(H < 0)
-        H += 360;
-    h = (uint)H;
-}
 
 // This function converts the "color" object to the equivalent RGB values of
 // the hue, saturation, and luminance passed as h, s, and l respectively

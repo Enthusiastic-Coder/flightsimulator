@@ -60,6 +60,8 @@ bool MipMapTerrainMeshModel::Load(std::string strTitleName)
 	if (!_GroundTexture.Load(OUTPUT_IMAGE_ROOT_FOLDER + strTitleName + ".png"))
 		return false;
 
+	std::transform(strTitleName.begin(), strTitleName.end(), strTitleName.begin(), ::toupper);
+
 	if (!srtm30heightData.Load(OUTPUT_SRTM3_ROOT_FOLDER + strTitleName + ".hgt"))
 		return false;
 

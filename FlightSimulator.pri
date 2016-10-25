@@ -83,7 +83,9 @@ SOURCES += AeroControlSurface.cpp \
     OpenGLSliderControl.cpp \
     SDLJoystickSystem.cpp \
     HeathrowRadar.cpp \
-    OpenGLPainter.cpp
+    OpenGLPainter.cpp \
+    SDLTimer.cpp \
+    $$PWD/ReferenceFrame.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
     AeroControlSurface.h \
@@ -191,6 +193,7 @@ HEADERS  += CompositeListForceGenerator.inl \
     HeathrowRadar.h \
     Win32JoystickSystem.h \
     SDLJoystickSystem.h \
-    OpenGLPainter.h
+    OpenGLPainter.h \
+    SDLTimer.h
 
 

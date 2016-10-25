@@ -172,7 +172,7 @@ void JSONRigidBody::onUpdateFinal(double dt)
 	_hydraulics.update(dt);
 }
 
-void JSONRigidBody::onUpdateHelper(std::map<int, std::vector<GSForceGenerator*>>::iterator &it, double dt )
+void JSONRigidBody::onUpdateHelper(const std::map<int, std::vector<GSForceGenerator*>>::iterator &it, double dt )
 {
 	if( it == _cookedMapList.end() )
 	{
@@ -188,12 +188,12 @@ void JSONRigidBody::onUpdateHelper(std::map<int, std::vector<GSForceGenerator*>>
 	{
 		push();
 
-		for( auto& it2 : currentit->second )
+        for( auto& it2 : it->second )
 			it2->onApplyForce( this, dt );
 	
-		++(it = currentit);
+        ++(currentit = it);
 
-		if( it == _cookedMapList.end() )
+        if( currentit == _cookedMapList.end() )
 		{
 			onUpdateFinal(dt);
 			
@@ -204,7 +204,7 @@ void JSONRigidBody::onUpdateHelper(std::map<int, std::vector<GSForceGenerator*>>
 			}
 		}
 		else
-			onUpdateHelper(it, dt);
+            onUpdateHelper(currentit, dt);
 
 		pop();
 	}
@@ -308,6 +308,7 @@ void JSONRigidBody::pop()
 
 void JSONRigidBody::Render(Renderer *r, bool bReflection, unsigned int shadowMapCount)
 {
+#ifdef WIN32
 	if (getMeshModel() == 0)
 	{
         OpenGLShaderProgram& progID = r->progId();
@@ -324,6 +325,7 @@ void JSONRigidBody::Render(Renderer *r, bool bReflection, unsigned int shadowMap
         r->useProgram(progID);
         return;
 	}
+#endif
 
     OpenGLPipeline& mat = OpenGLPipeline::Get(r->camID);
 	mat.Push();
@@ -601,7 +603,7 @@ void JSONRigidBody::togglePlayback()
         setState( JSONRigidBody::STATE::NORMAL );
 
         char filename[256]={};
-        sprintf_s(filename, _countof(filename), "flightrecorded_%s.bin", getID().c_str() );
+        sprintf(filename, "flightrecorded_%s.bin", getID().c_str() );
         saveRecorder(filename);
     }
 
@@ -699,7 +701,7 @@ PivotObjects& JSONRigidBody::pivots()
 	return _pivots;
 }
 
-GSForceGenerator* JSONRigidBody::forceGenerator(std::string& sName)
+GSForceGenerator* JSONRigidBody::forceGenerator(const std::string& sName)
 {
 	return _force_generator_map[sName];
 }

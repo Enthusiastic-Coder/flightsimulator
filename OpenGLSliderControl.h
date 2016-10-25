@@ -54,7 +54,7 @@ protected:
 private:
     int _cx = 1;
     int _cy = 1;
-    float _U = 0;
+    float _u = 0;
     float _V = 0;
     float _dU = 0.1f;
     float _dV = 0.1f;

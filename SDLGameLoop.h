@@ -2,7 +2,7 @@
 #define __SDLGAMELOOP_H__
 
 #include <SDL.h>
-#include <HRTimer.h>
+#include <SDLTimer.h>
 #include "interfaces.h"
 #include <include_gl.h>
 #include <string>
@@ -26,7 +26,7 @@ public:
     virtual void onUpdate() {}
     virtual void onRender() {}
     virtual void onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float dt)
-    {SDL_UNUSED(keys);SDL_UNUSED(mod);SDL_UNUSED(dt);}
+    {}
 
     virtual void onKeyDown(SDL_KeyboardEvent* ) {}
     virtual void onKeyUp(SDL_KeyboardEvent* ) {}
@@ -38,7 +38,7 @@ public:
     virtual void onFingerMotion(SDL_TouchFingerEvent* ) {}
     virtual void onFingerUp(SDL_TouchFingerEvent* ) {}
     virtual void onSize(int width, int height) { glViewport( 0, 0, width, height ); }
-    virtual void onMove(int x, int y) {SDL_UNUSED(x);SDL_UNUSED(y);}
+    virtual void onMove(int x, int y) {}
 
     virtual void GetMousePos(int& x, int& y) const override;
     virtual void GetScreenDims(int& w, int &h) const override;
@@ -53,14 +53,12 @@ private:
     SDL_GLContext _glContext;
     Uint32 _updateEventType;
 
-    HRTimer _timer;
+    SDLTimer _timer;
     float _fInverseFPS;
     float _dt;
     bool _running;
 
 protected:
-    HWND _hWnd = 0;
-
     SDL_Window *getWindow();
 };
 

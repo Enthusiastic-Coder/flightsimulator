@@ -101,7 +101,7 @@ bool MeshGroupObject::hasIndexFlag() const
 
 bool MeshGroupObject::BuildVertexBuffers(GLenum usage, bool bClearMesh)
 {
-    std::cout << "Building OpenGL Buffers : " << _sParentName << ":" << _sName << std::endl;
+    //std::cout << "Building OpenGL Buffers : " << _sParentName << ":" << _sName << std::endl;
 
     if (_BufferFlags & BufferFlags_Vertex && _meshData.vertexSize() == 0)
 		return false;

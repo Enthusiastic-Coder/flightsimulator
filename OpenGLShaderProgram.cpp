@@ -95,52 +95,52 @@ bool OpenGLShaderProgram::loadFiles(std::string vertexFilename, std::string frag
     return link_ok;
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, int value)
+void OpenGLShaderProgram::sendUniform(const std::string& name, int value)
 {
     glUniform1i(getUniformLocation(name), value);
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, float value)
+void OpenGLShaderProgram::sendUniform(const std::string& name, float value)
 {
     glUniform1f(getUniformLocation(name), value);
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, float x, float y)
+void OpenGLShaderProgram::sendUniform(const std::string& name, float x, float y)
 {
     glUniform2f(getUniformLocation(name), x, y);
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, float x, float y, float z)
+void OpenGLShaderProgram::sendUniform(const std::string& name, float x, float y, float z)
 {
     glUniform3f(getUniformLocation(name), x, y, z);
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, float x, float y, float z, float w)
+void OpenGLShaderProgram::sendUniform(const std::string& name, float x, float y, float z, float w)
 {
     glUniform4f(getUniformLocation(name), x, y, z, w);
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, Vector3F &v)
+void OpenGLShaderProgram::sendUniform(const std::string& name, const Vector3F &v)
 {
     glUniform3fv(getUniformLocation(name), 1, v.ptr());
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, Vector4F &v)
+void OpenGLShaderProgram::sendUniform(const std::string& name, const Vector4F &v)
 {
     glUniform4fv(getUniformLocation(name), 1, v.ptr());
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, Matrix3x3F &m)
+void OpenGLShaderProgram::sendUniform(const std::string& name, const Matrix3x3F &m)
 {
     glUniformMatrix3fv(getUniformLocation(name),1, GL_TRUE, m.ptr());
 }
 
-void OpenGLShaderProgram::sendUniform(std::string name, Matrix4x4F &m)
+void OpenGLShaderProgram::sendUniform(const std::string& name, const Matrix4x4F &m)
 {
     glUniformMatrix4fv(getUniformLocation(name), 1, GL_TRUE, m.ptr());
 }
 
-GLint OpenGLShaderProgram::getUniformLocation(std::string name)
+GLint OpenGLShaderProgram::getUniformLocation(const std::string& name)
 {
     std::map<std::string, GLint>::iterator it = _uniforms.find(name);
 
@@ -156,7 +156,7 @@ GLint OpenGLShaderProgram::getUniformLocation(std::string name)
     return id;
 }
 
-GLint OpenGLShaderProgram::getAttribLocation(std::string name)
+GLint OpenGLShaderProgram::getAttribLocation(const std::string& name)
 {
     std::map<std::string, GLint>::iterator it = _attribs.find(name);
 

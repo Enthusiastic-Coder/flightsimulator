@@ -1,14 +1,15 @@
 #include "stdafx.h"
 #include "TriangleFanQuadNode.h"
+#include <cstring>
 
-TriangleFanQuadNode::TriangleFanQuadNode(ChunkNode *pChunk, TriangleFanQuadNode *pParent, std::pair<Vector2I, Vector2I >& rect, int quadNo) :
+TriangleFanQuadNode::TriangleFanQuadNode(ChunkNode *pChunk, TriangleFanQuadNode *pParent, const std::pair<Vector2I, Vector2I >& rect, int quadNo) :
 	_pParent(pParent),
 	_pChunk(pChunk),
 	_topLeftIDX(rect.first),
 	_bottomRightIDX(rect.second),
 	_quadNo(quadNo)
 {
-	memset(_pChild, 0, sizeof(_pChild));
+	std::memset(_pChild, 0, sizeof(_pChild));
 	_leftIdxActive = false;
 	_rightIdxActive = false;
 	_topIdxActive = false;
@@ -30,9 +31,9 @@ TriangleFanQuadNode::~TriangleFanQuadNode()
 		}
 }
 
-TriangleFanQuadNode * TriangleFanQuadNode::newRootNode(ChunkNode *pChunk, std::pair<Vector2I, Vector2I >& rect)
+TriangleFanQuadNode * TriangleFanQuadNode::newRootNode(ChunkNode *pChunk, const std::pair<Vector2I, Vector2I >& rect)
 {
-	return new TriangleFanQuadNode(pChunk, NULL, rect, -1);
+	return new TriangleFanQuadNode(pChunk, 0, rect, -1);
 }
 
 TriangleFanQuadNode * TriangleFanQuadNode::newChildNode(TriangleFanQuadNode *pParent, int quadNo)

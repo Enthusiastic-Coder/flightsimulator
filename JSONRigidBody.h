@@ -62,7 +62,7 @@ public:
 	Hydraulics& hydraulics();
 	PivotObjects& pivots();
 
-	GSForceGenerator* forceGenerator(std::string& sName);
+	GSForceGenerator* forceGenerator(const std::string& sName);
 	std::map<std::string, GSForceGenerator*>& forceGeneratorMap();
 
 	enum class STATE : short
@@ -154,7 +154,7 @@ protected:
 
 	void onUpdateFinal(double dt);
 	void onForceGeneratorAction( void (GSForceGenerator::*pActor)(Particle*,double), double dt );
-	void onUpdateHelper(std::map<int, std::vector<GSForceGenerator*>>::iterator &it, double dt );
+    void onUpdateHelper(const std::map<int, std::vector<GSForceGenerator*>>::iterator &it, double dt );
 	void applyModelMatrix(OpenGLMatrixStack& mv);
 	
 	void buildMapList();
