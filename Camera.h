@@ -25,6 +25,8 @@ public:
     CameraView* remoteView();
     void fastForwardLocalView();
 
+    bool inTraverseMode() const;
+
 private:
     CameraView* _remoteView;
     CameraView _localView;
@@ -33,5 +35,5 @@ private:
     Vector3F _acceleration;
     Vector3F _cameraFocusOffsetVel;
     Vector3F _cameraFocusOffsetAccl;
-
+    bool _bInTraverse = false;
 };

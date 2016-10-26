@@ -589,15 +589,14 @@ void SDLMainWindow::OnUnitSound()
 void SDLMainWindow::ensureCameraAboveGround()
 {
     HeightData data;
-    _WorldSystem.getHeightFromPosition( _camera.remoteView()->getPosition(), data );
-    float fMinHeight = 2.0f;
+    _WorldSystem.getHeightFromPosition( _camera.localView()->getPosition(), data );
+    float fMinHeight = _camera.inTraverseMode() ? 5.0f : 0.5f;
 
     if( data.Height() < fMinHeight )
     {
-        GPSLocation loc = _camera.remoteView()->getPosition();
+        GPSLocation loc = _camera.localView()->getPosition();
         loc._height = loc._height - data.Height() + fMinHeight;
-        _camera.remoteView()->setPosition(loc);
-        _camera.fastForwardLocalView();
+        _camera.localView()->setPosition(loc);
     }
 }
 
