@@ -347,8 +347,9 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         fAileron = joy->joyGetX();
         fPitch = joy->joyGetY();
 #ifdef ANDROID
-        fYaw = fAileron;
-        fPitch -= 0.707f;
+        fYaw = fAileron/8.0f;
+        fPitch -= cos(60.0f/180 * M_PI);
+        fPitch *= 4.0f;
 #else
         fYaw = joy->joyGetZ();
 
@@ -804,7 +805,7 @@ void BAAirbus320JSONRigidBody::initSpeedAndPos()
 
     setPosition(GPSLocation(51.4648,-0.4719087,22));
     setVelocity(0,0,0);
-    setEuler( 5,90,-0.1);
+    setEuler( 5,270,-0.1);
 
 #if defined LOCATED_AT_GIBRALTER
     setEuler(0, 270, 0);

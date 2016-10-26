@@ -590,7 +590,7 @@ void SDLMainWindow::ensureCameraAboveGround()
 {
     HeightData data;
     _WorldSystem.getHeightFromPosition( _camera.remoteView()->getPosition(), data );
-    float fMinHeight = 0.05f;
+    float fMinHeight = 2.0f;
 
     if( data.Height() < fMinHeight )
     {
@@ -848,12 +848,11 @@ void SDLMainWindow::onUpdate()
 
     if( isRunning() )
     {
-        ensureCameraAboveGround();
         _WorldSystem.onAsyncKeyPress(this, dt);
         _WorldSystem.update(dt);
         _camera.setRemoteViewPtr(_WorldSystem.getCameraView());
         _camera.onUpdate(dt);
-
+        ensureCameraAboveGround();
     }
 
     bool bPlaneActive = _WorldSystem.focusedRigidBody()
