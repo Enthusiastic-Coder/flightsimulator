@@ -35,7 +35,7 @@ int GPSTerrainData::GetIndex(int x, int z) const
 	return _dims.toArrayPos(x, z);
 }
 
-inline GPSLocation GPSTerrainData::GetLocation() const
+GPSLocation GPSTerrainData::GetLocation() const
 {
 	return _HeightData.GetLocation();
 }
