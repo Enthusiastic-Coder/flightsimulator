@@ -179,8 +179,14 @@ private:
     OpenGLFontTexture _myFontTexture;
     OpenGLTextureRenderer2D _textureRenderer;
     OpenGLButtonTextureManager _buttonTextureManager;
-    OpenGLButtonTexture _buttonTestTexture;
+    OpenGLButtonTexture _buttonNextCamera;
     OpenGLButtonTexture _buttonJoystick;
+    OpenGLButtonTexture _buttonBrakes;
+    OpenGLButtonTexture _buttonPlayback;
+    OpenGLButtonTexture _buttonResetPos;
+    OpenGLButtonTexture _buttonResetApproach;
+    OpenGLButtonTexture _buttonToggleInfo;
+
     OpenGLSliderControl _powerSliderControl;
 };
 

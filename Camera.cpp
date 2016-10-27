@@ -93,9 +93,9 @@ void Camera::onUpdate(double dt)
     Vector3F localOrientation = localView()->getOrientation();
 
     Vector3F diffOrient;
-    bool bInTraverseMode = distance > 1.0F;
+    bool _bInTraverse = distance > 1.0F;
 
-    if( bInTraverseMode ) //Keep orientation in direction of travel
+    if( _bInTraverse ) //Keep orientation in direction of travel
     {
         float bearing = _localView.getPosition().bearingTo( _remoteView->getPosition());
         diffOrient = Vector3F(0,bearing, 0) - localOrientation;
@@ -115,7 +115,7 @@ void Camera::onUpdate(double dt)
 //        float vX = *(&diffOrient.x +i);
 //        float orX = std::min( std::abs( vX)* 10*dt, dOr * dt);
 
-        if( !bInTraverseMode && _remoteView->getShakingMode())
+        if( !_bInTraverse && _remoteView->getShakingMode())
         {
             cfra[i] += (std::rand() % (focusRange*2) - focusRange )/4.0f;
 
@@ -153,7 +153,7 @@ void Camera::onUpdate(double dt)
 
     _localView.setOrientation(localOrientation);
 
-    if( bInTraverseMode )
+    if( _bInTraverse )
     {
         float velocity = std::min(distance*dt, 1000*dt);
 
@@ -178,7 +178,7 @@ void Camera::onUpdate(double dt)
 
     float diffZoom = 0;
 
-    if( bInTraverseMode )
+    if( _bInTraverse )
         diffZoom = 1 - _localView.getZoom();
     else
         diffZoom = _remoteView->getZoom() - _localView.getZoom();
@@ -210,5 +210,10 @@ void Camera::fastForwardLocalView()
 {
     if( _remoteView != 0)
         _localView = *_remoteView;
+}
+
+bool Camera::inTraverseMode() const
+{
+    return _bInTraverse;
 }
 

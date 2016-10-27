@@ -91,7 +91,7 @@ void AeroSectionForceGenerator::addControlSurface(AeroControlSurface *pControlSu
     _controlSurfaces.push_back(pControlSurface);
 }
 
-inline AeroControlSurface* AeroSectionForceGenerator::controlSurfaceN(int index)
+AeroControlSurface* AeroSectionForceGenerator::controlSurfaceN(int index)
 {
     return _controlSurfaces[index];
 }
