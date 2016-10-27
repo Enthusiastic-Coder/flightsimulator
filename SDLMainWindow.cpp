@@ -1324,50 +1324,25 @@ void SDLMainWindow::RenderDrivingPower()
 
 void SDLMainWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, float R, float G, float B, float A)
 {
-    OpenGLPipeline& pipeline = OpenGLPipeline::Get(0);
-    pipeline.Push();
-    pipeline.GetView().LoadIdentity();
-    pipeline.GetModel().LoadIdentity();
-    pipeline.GetProjection().LoadIdentity();
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+
+    OpenGLPainter painter;
+    painter.selectFontRenderer(&_fontRenderer);
+    painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
+
+    OpenGLPipeline& p = OpenGLPipeline::Get(painter.renderer()->camID);
     int w, h;
     GetScreenDims(w, h);
-    pipeline.GetProjection().SetOrthographic(0, w, h, 0, -1, 1);
 
-    glDisable(GL_DEPTH_TEST);
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, w, h);
 
-    glEnable(GL_BLEND);
-    _renderer->useProgram(_simplePrimitiveShaderProgram);
-    pipeline.bindMatrices(_renderer->progId());
+    painter.beginPrimitive();
 
-    float vertices[] = {
-        x, y, 0,
-        x+cx, y, 0,
-        x+cx, y+cy, 0,
-        x, y + cy, 0
-    };
+    painter.setPrimitiveColor({R, G, B, A});
+    painter.fillRect(x, y, cx, cy);
 
-
-    float colors[] = {
-        R, G, B, A,
-        R, G, B, A,
-        R, G, B, A,
-        R, G, B, A
-    };
-
-    _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-    _renderer->bindVertex(Renderer::Color, 4, colors);
-
-    _renderer->setVertexCountOffset( indicesCount(vertices,3));
-    _renderer->setPrimitiveType(GL_TRIANGLE_FAN);
-
-    _renderer->Render();
-    _renderer->unBindBuffers();
-
-    pipeline.Pop();
-
-    glDisable(GL_BLEND);
-
-    OpenGLShaderProgram::useDefault();
+    painter.endPrimitive();
 
     glEnable(GL_DEPTH_TEST);
 }
@@ -1376,99 +1351,30 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
 {
     glDisable(GL_DEPTH_TEST);
 
-    _renderer->dt = frameTime();
-    _renderer->camID = 0;
-    _renderer->useProgram( _simplePrimitiveShaderProgram);
-
-    OpenGLPipeline& pipeline = OpenGLPipeline::Get(_renderer->camID);
-
-    pipeline.Push();
-    pipeline.GetProjection().LoadIdentity();
-    pipeline.GetProjection().SetOrthographic(0, cx, cy, 0, -1, 1);
-    pipeline.GetModel().LoadIdentity();
-    pipeline.GetView().LoadIdentity();
-
-    pipeline.bindMatrices(_renderer->progId());
-
     float divide = 10.0f;
 
-    {
-        float vertices[] = {
-            cx / 2 - cx / divide, cy / 2 - cy / divide, 0,
-            cx / 2 + cx / divide, cy / 2 - cy / divide, 0,
-            cx / 2 + cx / divide, cy / 2 + cy / divide, 0,
-            cx / 2 - cx / divide, cy / 2 + cy / divide, 0
-        };
+    OpenGLPainter painter;
+    painter.selectFontRenderer(&_fontRenderer);
+    painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
 
-        float colors[] = {
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-        };
+    OpenGLPipeline& p = OpenGLPipeline::Get(painter.renderer()->camID);
+    p.GetModel().Push();
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
 
-        _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-        _renderer->bindVertex(Renderer::Color, 4, colors);
-        _renderer->setPrimitiveType(GL_LINE_LOOP);
-        _renderer->setUseIndex(false);
-        _renderer->setVertexCountOffset(indicesCount(vertices,3));
+    painter.beginPrimitive();
 
-        _renderer->Render();
+    painter.setPrimitiveColor({1,1,1,1});
+    painter.drawRect(cx/2 - cx/divide, cy/2 - cy/divide, 2 * cx/divide, 2 * cy/divide);
 
-    }
-
-    {
-        float vertices[] = {
-            cx / 2 - 10, cy / 2, 0,
-            cx / 2 + 10, cy / 2, 0,
-            cx / 2, cy / 2 - 10, 0,
-            cx / 2, cy / 2 + 10, 0,
-        };
-
-        float colors[] = {
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-        };
-
-        _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-        _renderer->bindVertex(Renderer::Color, 4, colors);
-        _renderer->setPrimitiveType(GL_LINES);
-        _renderer->setUseIndex(false);
-        _renderer->setVertexCountOffset(indicesCount(vertices,3));
-        _renderer->Render();
-
-    }
+    painter.drawRect(cx/2- 10, cy/2 - 10, 20, 20);
 
     int x, y;
     SDL_GetMouseState(&x, &y);
 
-    {
-        float vertices[] = {
-            x - 5, y - 5, 0,
-            x + 5, y - 5, 0,
-            x + 5, y + 5, 0,
-            x - 5, y + 5, 0
-        };
+    painter.drawRect(x-5, y-5, 10, 10);
 
-        float colors[] = {
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-        };
-
-        _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-        _renderer->bindVertex(Renderer::Color, 4, colors);
-        _renderer->setPrimitiveType(GL_LINE_LOOP);
-        _renderer->setUseIndex(false);
-        _renderer->setVertexCountOffset(indicesCount(vertices,3));
-        _renderer->Render();
-
-    }
-
-    pipeline.Pop();
+    painter.endPrimitive();
+    p.GetModel().Pop();
     glEnable(GL_DEPTH_TEST);
 }
 
