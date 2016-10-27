@@ -348,6 +348,7 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         fPitch = joy->joyGetY();
 #ifdef ANDROID
         fYaw = fAileron/8.0f;
+        fAileron *= 4.0f;
         fPitch -= cos(60.0f/180 * M_PI);
         fPitch *= 4.0f;
 #else
