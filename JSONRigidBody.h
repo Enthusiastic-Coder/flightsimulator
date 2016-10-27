@@ -129,6 +129,7 @@ public:
     virtual void airResetApproachPos();
     virtual void airSpoilerToggle(bool bLeft);
     virtual void airFlapIncr(int incr);
+    virtual void applyBrakes(bool bApply);
 
     void startRecording();
     void togglePlayback();

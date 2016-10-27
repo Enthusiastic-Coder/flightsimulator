@@ -464,10 +464,37 @@ bool SDLMainWindow::onInitialise()
         //_skyDomeTexture.Load("images/skygradient.png");
 
         //OnInitSound();
-        _buttonTestTexture.load("images/ideal_colors.png");
-        _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.5f, 0.0f, 0.1f, 0.1f);
-        _buttonTestTexture.setHAlignment(OpenGLButtonTexture::Align_Middle);
-        _buttonTestTexture.setVAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonNextCamera.load("images/buttons/next_camera.png");
+        _buttonNextCamera.setHAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonNextCamera.setVAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonNextCamera.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonNextCamera, 0.5f, 0.0f, 0.1f, 0.1f);
+
+        _buttonBrakes.load("images/buttons/brakes.png");
+        _buttonBrakes.setHAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonBrakes.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonBrakes.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonToggle(&_buttonBrakes, true);
+        _buttonTextureManager.setButtonPos(&_buttonBrakes, 0.5f, 1.0f, 0.1f, 0.1f);
+
+        _buttonPlayback.load("images/buttons/playback.png");
+        _buttonPlayback.setHAlignment(OpenGLButtonTexture::Align_High);
+        _buttonPlayback.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonPlayback.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonPlayback, 1.0f, 1.0f, 0.1f, 0.1f);
+
+        _buttonResetPos.load("images/buttons/reset_pos.png");
+        _buttonResetPos.setHAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonResetPos.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonResetPos.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonResetPos, 0.0f, 1.0f, 0.1f, 0.1f);
+
+        _buttonResetApproach.load("images/buttons/reset_appr.png");
+        _buttonResetApproach.setHAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonResetApproach.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonResetApproach.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonResetApproach, 0.15f, 1.0f, 0.1f, 0.1f);
+
 
         _buttonJoystick.load("images/buttons/joystick.png");
         _buttonTextureManager.setButtonToggle(&_buttonJoystick, true);
@@ -839,11 +866,39 @@ void SDLMainWindow::onUpdate()
         _WorldSystem.incrChaseDistance(50*dt);
 #endif
 
-    if( _buttonTextureManager.buttonClicked(&_buttonTestTexture))
+    if( _buttonTextureManager.buttonClicked(&_buttonNextCamera))
         _WorldSystem.nextView();
 
     if( _buttonTextureManager.buttonClicked(&_buttonJoystick))
         _WorldSystem.rigidBodyToggleUsingMouse();
+
+    if( _buttonTextureManager.buttonClicked(&_buttonBrakes))
+    {
+        JSONRigidBody* f = _WorldSystem.focusedRigidBody();
+        if( f != 0)
+            f->applyBrakes(_buttonBrakes.isButtonDown());
+    }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonPlayback))
+    {
+        JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+        if( pBody != 0)
+            pBody->togglePlayback();
+    }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonResetPos))
+    {
+        JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+        if( pBody != 0)
+            pBody->airResetPos();
+    }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonResetApproach))
+    {
+        JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+        if( pBody != 0)
+            pBody->airResetApproachPos();
+    }
 
     if( isRunning() )
     {
@@ -1324,50 +1379,25 @@ void SDLMainWindow::RenderDrivingPower()
 
 void SDLMainWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, float R, float G, float B, float A)
 {
-    OpenGLPipeline& pipeline = OpenGLPipeline::Get(0);
-    pipeline.Push();
-    pipeline.GetView().LoadIdentity();
-    pipeline.GetModel().LoadIdentity();
-    pipeline.GetProjection().LoadIdentity();
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+
+    OpenGLPainter painter;
+    painter.selectFontRenderer(&_fontRenderer);
+    painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
+
+    OpenGLPipeline& p = OpenGLPipeline::Get(painter.renderer()->camID);
     int w, h;
     GetScreenDims(w, h);
-    pipeline.GetProjection().SetOrthographic(0, w, h, 0, -1, 1);
 
-    glDisable(GL_DEPTH_TEST);
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, w, h);
 
-    glEnable(GL_BLEND);
-    _renderer->useProgram(_simplePrimitiveShaderProgram);
-    pipeline.bindMatrices(_renderer->progId());
+    painter.beginPrimitive();
 
-    float vertices[] = {
-        x, y, 0,
-        x+cx, y, 0,
-        x+cx, y+cy, 0,
-        x, y + cy, 0
-    };
+    painter.setPrimitiveColor({R, G, B, A});
+    painter.fillRect(x, y, cx, cy);
 
-
-    float colors[] = {
-        R, G, B, A,
-        R, G, B, A,
-        R, G, B, A,
-        R, G, B, A
-    };
-
-    _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-    _renderer->bindVertex(Renderer::Color, 4, colors);
-
-    _renderer->setVertexCountOffset( indicesCount(vertices,3));
-    _renderer->setPrimitiveType(GL_TRIANGLE_FAN);
-
-    _renderer->Render();
-    _renderer->unBindBuffers();
-
-    pipeline.Pop();
-
-    glDisable(GL_BLEND);
-
-    OpenGLShaderProgram::useDefault();
+    painter.endPrimitive();
 
     glEnable(GL_DEPTH_TEST);
 }
@@ -1376,99 +1406,30 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
 {
     glDisable(GL_DEPTH_TEST);
 
-    _renderer->dt = frameTime();
-    _renderer->camID = 0;
-    _renderer->useProgram( _simplePrimitiveShaderProgram);
-
-    OpenGLPipeline& pipeline = OpenGLPipeline::Get(_renderer->camID);
-
-    pipeline.Push();
-    pipeline.GetProjection().LoadIdentity();
-    pipeline.GetProjection().SetOrthographic(0, cx, cy, 0, -1, 1);
-    pipeline.GetModel().LoadIdentity();
-    pipeline.GetView().LoadIdentity();
-
-    pipeline.bindMatrices(_renderer->progId());
-
     float divide = 10.0f;
 
-    {
-        float vertices[] = {
-            cx / 2 - cx / divide, cy / 2 - cy / divide, 0,
-            cx / 2 + cx / divide, cy / 2 - cy / divide, 0,
-            cx / 2 + cx / divide, cy / 2 + cy / divide, 0,
-            cx / 2 - cx / divide, cy / 2 + cy / divide, 0
-        };
+    OpenGLPainter painter;
+    painter.selectFontRenderer(&_fontRenderer);
+    painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
 
-        float colors[] = {
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-        };
+    OpenGLPipeline& p = OpenGLPipeline::Get(painter.renderer()->camID);
+    p.GetModel().Push();
+    OpenGLPipeline::applyScreenProjection(p, 0, 0, cx, cy);
 
-        _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-        _renderer->bindVertex(Renderer::Color, 4, colors);
-        _renderer->setPrimitiveType(GL_LINE_LOOP);
-        _renderer->setUseIndex(false);
-        _renderer->setVertexCountOffset(indicesCount(vertices,3));
+    painter.beginPrimitive();
 
-        _renderer->Render();
+    painter.setPrimitiveColor({1,1,1,1});
+    painter.drawRect(cx/2 - cx/divide, cy/2 - cy/divide, 2 * cx/divide, 2 * cy/divide);
 
-    }
-
-    {
-        float vertices[] = {
-            cx / 2 - 10, cy / 2, 0,
-            cx / 2 + 10, cy / 2, 0,
-            cx / 2, cy / 2 - 10, 0,
-            cx / 2, cy / 2 + 10, 0,
-        };
-
-        float colors[] = {
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-        };
-
-        _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-        _renderer->bindVertex(Renderer::Color, 4, colors);
-        _renderer->setPrimitiveType(GL_LINES);
-        _renderer->setUseIndex(false);
-        _renderer->setVertexCountOffset(indicesCount(vertices,3));
-        _renderer->Render();
-
-    }
+    painter.drawRect(cx/2- 10, cy/2 - 10, 20, 20);
 
     int x, y;
     SDL_GetMouseState(&x, &y);
 
-    {
-        float vertices[] = {
-            x - 5, y - 5, 0,
-            x + 5, y - 5, 0,
-            x + 5, y + 5, 0,
-            x - 5, y + 5, 0
-        };
+    painter.drawRect(x-5, y-5, 10, 10);
 
-        float colors[] = {
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-            1,1,1,1,
-        };
-
-        _renderer->bindVertex(Renderer::Vertex, 3, vertices);
-        _renderer->bindVertex(Renderer::Color, 4, colors);
-        _renderer->setPrimitiveType(GL_LINE_LOOP);
-        _renderer->setUseIndex(false);
-        _renderer->setVertexCountOffset(indicesCount(vertices,3));
-        _renderer->Render();
-
-    }
-
-    pipeline.Pop();
+    painter.endPrimitive();
+    p.GetModel().Pop();
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -1563,10 +1524,8 @@ void SDLMainWindow::RenderInfo()
     _fontRenderer.renderText( 15, 30, "------------------------------------------" );
 
     static char *Version = (char*)glGetString(GL_VERSION);
-    static char *Extensions = (char*)glGetString(GL_EXTENSIONS);
     static char *Renderer = (char*)glGetString(GL_RENDERER);
     static char *Vendor = (char*)glGetString(GL_VENDOR);
-    static char Extensions2[51200];
 
     char text[1024]= {};
     JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
