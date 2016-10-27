@@ -495,6 +495,11 @@ bool SDLMainWindow::onInitialise()
         _buttonResetApproach.setColor(Vector4F(1,1,1,0.15));
         _buttonTextureManager.setButtonPos(&_buttonResetApproach, 0.15f, 1.0f, 0.1f, 0.1f);
 
+        _buttonToggleInfo.load("images/buttons/toggle_info.png");
+        _buttonToggleInfo.setHAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonToggleInfo.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonToggleInfo.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonToggleInfo, 0.3f, 1.0f, 0.1f, 0.1f);
 
         _buttonJoystick.load("images/buttons/joystick.png");
         _buttonTextureManager.setButtonToggle(&_buttonJoystick, true);
@@ -899,6 +904,9 @@ void SDLMainWindow::onUpdate()
         if( pBody != 0)
             pBody->airResetApproachPos();
     }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonToggleInfo))
+        global_info = !global_info;
 
     if( isRunning() )
     {
