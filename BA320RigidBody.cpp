@@ -347,8 +347,14 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         fAileron = joy->joyGetX();
         fPitch = joy->joyGetY();
 #ifdef ANDROID
-        fAileron *= 2.0f;
-        fYaw = fAileron/4.0f;
+
+        HeightData hd;
+        _custom_fg.getWorld()->getHeightFromPosition(getGPSLocation(), hd);
+
+        if( hd.Height() < 5.0)
+        	fYaw = fAileron * 2.0f;
+        else
+        	fAileron *= 2.0f;
 
         fPitch -= sin( 40/180.0f * M_PI);
         fPitch *= 2.0f;
