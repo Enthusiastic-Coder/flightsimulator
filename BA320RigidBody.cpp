@@ -347,10 +347,11 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         fAileron = joy->joyGetX();
         fPitch = joy->joyGetY();
 #ifdef ANDROID
-        fYaw = fAileron/8.0f;
-        fAileron *= 4.0f;
-        fPitch -= cos(60.0f/180 * M_PI);
-        fPitch *= 4.0f;
+        fAileron *= 2.0f;
+        fYaw = fAileron/4.0f;
+
+        fPitch -= sin( 40/180.0f * M_PI);
+        fPitch *= 2.0f;
 #else
         fYaw = joy->joyGetZ();
 
@@ -371,7 +372,12 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         hydraulics().setDeflection( _right_tail_wing.element(0)->controlSurfaceN(0), -fPitch * 20.0f );
 
         float deflection_l = _left_tail_wing.controlSurface0()->getDeflection();
+
+#ifdef ANDROID
+        deflection_l = 0;
+#else
         deflection_l -= dt * fPitch;
+#endif
 
         float MAX_DEFL = 10;
         if( deflection_l < -MAX_DEFL )
