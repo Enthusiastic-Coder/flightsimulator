@@ -584,6 +584,11 @@ void JSONRigidBody::airFlapIncr(int incr)
 
 }
 
+void JSONRigidBody::applyBrakes(bool bApply)
+{
+
+}
+
 void JSONRigidBody::startRecording()
 {
     setState( JSONRigidBody::STATE::RECORDING );

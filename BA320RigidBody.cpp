@@ -654,7 +654,7 @@ void BAAirbus320JSONRigidBody::updateCameraView()
     switch((ViewPosition)getCameraProvider()->curViewIdx())
     {
     case CockpitForwards :
-        view->setPosition(toNonLocalTranslateFrame(Vector3D(-0.45, 4.80, -14.5)));
+        view->setPosition(toNonLocalTranslateFrame(Vector3D(-0.45, 4.80, -15.0)));
         break;
     case PassengerLeftMiddle :
     {
@@ -780,6 +780,20 @@ void BAAirbus320JSONRigidBody::airFlapIncr(int incr)
     hydraulics().setDeflection( pMR, fDeflection  );
     hydraulics().setDeflection( pInnerML, fDeflection  );
     hydraulics().setDeflection( pInnerMR, fDeflection  );
+}
+
+void BAAirbus320JSONRigidBody::applyBrakes(bool bApply)
+{
+    if( bApply)
+    {
+        _left_wheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
+        _right_wheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
+    }
+    else
+    {
+        _left_wheel.spring().setDrivingState( SpringModel::DrivingState::NEUTRAL );
+        _right_wheel.spring().setDrivingState( SpringModel::DrivingState::NEUTRAL );
+    }
 }
 
 bool BAAirbus320JSONRigidBody::onSyncKeyPress()

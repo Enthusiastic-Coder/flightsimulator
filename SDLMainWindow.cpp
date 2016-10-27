@@ -464,10 +464,37 @@ bool SDLMainWindow::onInitialise()
         //_skyDomeTexture.Load("images/skygradient.png");
 
         //OnInitSound();
-        _buttonTestTexture.load("images/ideal_colors.png");
-        _buttonTextureManager.setButtonPos(&_buttonTestTexture, 0.5f, 0.0f, 0.1f, 0.1f);
-        _buttonTestTexture.setHAlignment(OpenGLButtonTexture::Align_Middle);
-        _buttonTestTexture.setVAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonNextCamera.load("images/buttons/next_camera.png");
+        _buttonNextCamera.setHAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonNextCamera.setVAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonNextCamera.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonNextCamera, 0.5f, 0.0f, 0.1f, 0.1f);
+
+        _buttonBrakes.load("images/buttons/brakes.png");
+        _buttonBrakes.setHAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonBrakes.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonBrakes.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonToggle(&_buttonBrakes, true);
+        _buttonTextureManager.setButtonPos(&_buttonBrakes, 0.5f, 1.0f, 0.1f, 0.1f);
+
+        _buttonPlayback.load("images/buttons/playback.png");
+        _buttonPlayback.setHAlignment(OpenGLButtonTexture::Align_High);
+        _buttonPlayback.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonPlayback.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonPlayback, 1.0f, 1.0f, 0.1f, 0.1f);
+
+        _buttonResetPos.load("images/buttons/reset_pos.png");
+        _buttonResetPos.setHAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonResetPos.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonResetPos.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonResetPos, 0.0f, 1.0f, 0.1f, 0.1f);
+
+        _buttonResetApproach.load("images/buttons/reset_appr.png");
+        _buttonResetApproach.setHAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonResetApproach.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonResetApproach.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonResetApproach, 0.15f, 1.0f, 0.1f, 0.1f);
+
 
         _buttonJoystick.load("images/buttons/joystick.png");
         _buttonTextureManager.setButtonToggle(&_buttonJoystick, true);
@@ -839,11 +866,39 @@ void SDLMainWindow::onUpdate()
         _WorldSystem.incrChaseDistance(50*dt);
 #endif
 
-    if( _buttonTextureManager.buttonClicked(&_buttonTestTexture))
+    if( _buttonTextureManager.buttonClicked(&_buttonNextCamera))
         _WorldSystem.nextView();
 
     if( _buttonTextureManager.buttonClicked(&_buttonJoystick))
         _WorldSystem.rigidBodyToggleUsingMouse();
+
+    if( _buttonTextureManager.buttonClicked(&_buttonBrakes))
+    {
+        JSONRigidBody* f = _WorldSystem.focusedRigidBody();
+        if( f != 0)
+            f->applyBrakes(_buttonBrakes.isButtonDown());
+    }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonPlayback))
+    {
+        JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+        if( pBody != 0)
+            pBody->togglePlayback();
+    }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonResetPos))
+    {
+        JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+        if( pBody != 0)
+            pBody->airResetPos();
+    }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonResetApproach))
+    {
+        JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+        if( pBody != 0)
+            pBody->airResetApproachPos();
+    }
 
     if( isRunning() )
     {
@@ -1469,10 +1524,8 @@ void SDLMainWindow::RenderInfo()
     _fontRenderer.renderText( 15, 30, "------------------------------------------" );
 
     static char *Version = (char*)glGetString(GL_VERSION);
-    static char *Extensions = (char*)glGetString(GL_EXTENSIONS);
     static char *Renderer = (char*)glGetString(GL_RENDERER);
     static char *Vendor = (char*)glGetString(GL_VENDOR);
-    static char Extensions2[51200];
 
     char text[1024]= {};
     JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
