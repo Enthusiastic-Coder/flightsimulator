@@ -80,7 +80,12 @@ void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
 void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
 {
     _buttonTextureManager.handleMouseMove({e->x, e->y});
-    _powerSliderControl.handleMouseMove({e->x, e->y});
+    if( _powerSliderControl.handleMouseMove({e->x, e->y}))
+    {
+        JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
+        if (focus)
+            focus->setPower(_powerSliderControl.getValue());
+    }
 }
 
 void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
@@ -90,9 +95,7 @@ void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
     {
         JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
         if (focus)
-        {
             focus->setPower(_powerSliderControl.getValue());
-        }
     }
 }
 
@@ -464,8 +467,15 @@ bool SDLMainWindow::onInitialise()
         //_skyDomeTexture.Load("images/skygradient.png");
 
         //OnInitSound();
+
+        _buttonPrevCamera.load("images/buttons/prev_camera.png");
+        _buttonPrevCamera.setHAlignment(OpenGLButtonTexture::Align_High);
+        _buttonPrevCamera.setVAlignment(OpenGLButtonTexture::Align_Low);
+        _buttonPrevCamera.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonPrevCamera, 0.5f, 0.0f, 0.1f, 0.1f);
+
         _buttonNextCamera.load("images/buttons/next_camera.png");
-        _buttonNextCamera.setHAlignment(OpenGLButtonTexture::Align_Middle);
+        _buttonNextCamera.setHAlignment(OpenGLButtonTexture::Align_Low);
         _buttonNextCamera.setVAlignment(OpenGLButtonTexture::Align_Low);
         _buttonNextCamera.setColor(Vector4F(1,1,1,0.15));
         _buttonTextureManager.setButtonPos(&_buttonNextCamera, 0.5f, 0.0f, 0.1f, 0.1f);
@@ -512,7 +522,7 @@ bool SDLMainWindow::onInitialise()
         _powerSliderControl.setRange(0, 100);
         _powerSliderControl.setTickValue(5);
         _powerSliderControl.setRateValue(50);
-        _powerSliderControl.setDimensions(OpenGLSliderControl::Orient_Vertical, 0.95, 0.5, 0.02, 0.8);
+        _powerSliderControl.setDimensions(OpenGLSliderControl::Orient_Vertical, 0.95, 0.5, 0.05, 0.7);
         _powerSliderControl.setVAlignment(OpenGLSliderControl::Align_Middle);
         _powerSliderControl.setHAlignment(OpenGLSliderControl::Align_High);
     }
@@ -870,6 +880,9 @@ void SDLMainWindow::onUpdate()
     if( GetAsyncKeyState( VK_OEM_COMMA ) < 0 )
         _WorldSystem.incrChaseDistance(50*dt);
 #endif
+
+    if( _buttonTextureManager.buttonClicked(&_buttonPrevCamera))
+        _WorldSystem.prevView();
 
     if( _buttonTextureManager.buttonClicked(&_buttonNextCamera))
         _WorldSystem.nextView();
