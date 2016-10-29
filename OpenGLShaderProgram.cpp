@@ -75,6 +75,8 @@ GLuint OpenGLShaderProgram::createShader(GLenum type, std::string filename)
 
 bool OpenGLShaderProgram::loadFiles(std::string vertexFilename, std::string fragmentFilename)
 {
+	_vertexName = vertexFilename;
+	_fragmentName = fragmentFilename;
 	_vertexShaderID = createShader(GL_VERTEX_SHADER, vertexFilename);
 	_fragmentShaderID = createShader(GL_FRAGMENT_SHADER, fragmentFilename);
     _programShaderID = glCreateProgram();
@@ -197,7 +199,17 @@ void OpenGLShaderProgram::useDefault()
     glUseProgram(0);
 }
 
-std::string OpenGLShaderProgram::getError()
+std::string OpenGLShaderProgram::getError() const
 {
 	return _error;
+}
+
+std::string OpenGLShaderProgram::getVertexName() const
+{
+	return _vertexName;
+}
+
+std::string OpenGLShaderProgram::getFragmentName() const
+{
+	return _fragmentName;
 }
