@@ -11,6 +11,7 @@ class SDLGameLoop : public IScreenMouseInfo
 {
 public:
     SDLGameLoop();
+    ~SDLGameLoop();
 
     bool run(std::string strTitle);
 

@@ -81,7 +81,7 @@ BAAirbus320JSONRigidBody::BAAirbus320JSONRigidBody(std::string name) :
 
     _front_wheel.spring().setSpringFriction( 35000.0f );
     _front_wheel.spring().setSpringMass( 300.0f );
-    _front_wheel.spring().setContactFrictionCoefficient(25.0);
+    _front_wheel.spring().setContactFrictionCoefficient(15.0);
     _front_wheel.spring().calculateSpringConstant();
     _front_wheel.spring().setWheelRadius( 0.4f );
     _front_wheel.spring().setWheelRadius( 0.518347f );
@@ -95,7 +95,7 @@ BAAirbus320JSONRigidBody::BAAirbus320JSONRigidBody(std::string name) :
     _left_wheel.spring().setRestitution( 0.1f );
     _left_wheel.spring().setSpringFriction( 35000.0f );
     _left_wheel.spring().setSpringMass( 300.0f );
-    _left_wheel.spring().setContactFrictionCoefficient(25.0);
+    _left_wheel.spring().setContactFrictionCoefficient(15.0);
 
     _left_wheel.spring().setRestitution( 0.8f );
 
@@ -110,7 +110,7 @@ BAAirbus320JSONRigidBody::BAAirbus320JSONRigidBody(std::string name) :
     _right_wheel.spring().setRestitution( 0.1f );
     _right_wheel.spring().setSpringFriction( 35000.0f );
     _right_wheel.spring().setSpringMass( 300.0f );
-    _right_wheel.spring().setContactFrictionCoefficient(25.0);
+    _right_wheel.spring().setContactFrictionCoefficient(15.0);
     _right_wheel.spring().setRestitution( 0.8f );
 
     _right_wheel.spring().calculateSpringConstant();
@@ -288,6 +288,8 @@ void BAAirbus320JSONRigidBody::applyBrakes(float dt, bool bShift)
     double max_decel = 6.0f;
     double max_accel = 6.0f;
    // max_decel = 12.0f;
+
+    max_decel = 3.0f;
 
     if( bShift )
     {

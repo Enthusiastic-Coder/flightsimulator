@@ -50,7 +50,7 @@ void OpenGLShaderProgram::clear()
 	_error = "";
 }
 
-void OpenGLShaderProgram::use()
+void OpenGLShaderProgram::use() const
 {
     glUseProgram(_programShaderID);
 }
@@ -75,6 +75,8 @@ GLuint OpenGLShaderProgram::createShader(GLenum type, std::string filename)
 
 bool OpenGLShaderProgram::loadFiles(std::string vertexFilename, std::string fragmentFilename)
 {
+	_vertexName = vertexFilename;
+	_fragmentName = fragmentFilename;
 	_vertexShaderID = createShader(GL_VERTEX_SHADER, vertexFilename);
 	_fragmentShaderID = createShader(GL_FRAGMENT_SHADER, fragmentFilename);
     _programShaderID = glCreateProgram();
@@ -132,12 +134,20 @@ void OpenGLShaderProgram::sendUniform(const std::string& name, const Vector4F &v
 
 void OpenGLShaderProgram::sendUniform(const std::string& name, const Matrix3x3F &m)
 {
+#ifdef WIN32
     glUniformMatrix3fv(getUniformLocation(name),1, GL_TRUE, m.ptr());
+#else
+    glUniformMatrix3fv(getUniformLocation(name),1, GL_FALSE, m.Transpose().ptr());
+#endif
 }
 
 void OpenGLShaderProgram::sendUniform(const std::string& name, const Matrix4x4F &m)
 {
+#ifdef WIN32
     glUniformMatrix4fv(getUniformLocation(name), 1, GL_TRUE, m.ptr());
+#else
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, m.Transpose().ptr());
+#endif
 }
 
 GLint OpenGLShaderProgram::getUniformLocation(const std::string& name)
@@ -197,7 +207,17 @@ void OpenGLShaderProgram::useDefault()
     glUseProgram(0);
 }
 
-std::string OpenGLShaderProgram::getError()
+std::string OpenGLShaderProgram::getError() const
 {
 	return _error;
+}
+
+std::string OpenGLShaderProgram::getVertexName() const
+{
+	return _vertexName;
+}
+
+std::string OpenGLShaderProgram::getFragmentName() const
+{
+	return _fragmentName;
 }

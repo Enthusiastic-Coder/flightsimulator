@@ -38,10 +38,12 @@ public:
 
 	operator GLuint();
 
-	void use();
+	void use() const;
 	static void useDefault();
 
-	std::string getError();
+	std::string getError() const;
+	std::string getVertexName() const;
+	std::string getFragmentName() const;
 protected:
 	GLuint createShader(GLenum type, std::string filename);
 
@@ -50,6 +52,8 @@ private:
     GLuint _vertexShaderID;
     GLuint _fragmentShaderID;
 	std::string _error;
+	std::string _vertexName;
+	std::string _fragmentName;
     std::map<std::string, GLint> _uniforms;
     std::map<std::string, GLint> _attribs;
 };

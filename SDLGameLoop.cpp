@@ -3,8 +3,13 @@
 #include <include_gl.h>
 #include <string>
 #include <vector>
-#include "SDL_syswm.h"
+#include <SDL_image.h>
+
 #include <algorithm>
+#ifdef ANDROID
+#include <unistd.h>
+#endif
+
 
 void SDLGameLoop::onTimeOut()
 {
@@ -28,6 +33,32 @@ SDLGameLoop::SDLGameLoop() :
     _sdlWindow(0)
 {
     _updateEventType = SDL_RegisterEvents(1);
+
+    SDL_Init(SDL_INIT_EVERYTHING);
+
+#ifdef ANDROID
+    chdir( SDL_AndroidGetInternalStoragePath());
+    SDL_Log( "InternalStoragePath : %s", SDL_AndroidGetInternalStoragePath());
+#endif
+
+    IMG_Init(IMG_INIT_PNG);
+    IMG_Init(IMG_INIT_JPG);
+
+    SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8);
+    SDL_GL_SetAttribute( SDL_GL_BUFFER_SIZE, 32);
+    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 8 );
+
+    SDL_GL_SetSwapInterval(1);
+}
+
+SDLGameLoop::~SDLGameLoop()
+{
+    IMG_Quit();
+    SDL_Quit();
 }
 
 std::vector<std::string> split(const std::string& s, char seperator)

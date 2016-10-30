@@ -19,7 +19,7 @@ public:
 
     static OpenGLShaderProgram nullShader;
     //Shader Variables
-    void useProgram(OpenGLShaderProgram &progId );
+    void useProgram(const OpenGLShaderProgram& progId );
     OpenGLShaderProgram& progId();
 
     //Mesh
