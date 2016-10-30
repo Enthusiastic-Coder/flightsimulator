@@ -353,15 +353,14 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         HeightData hd;
         _custom_fg.getWorld()->getHeightFromPosition(getGPSLocation(), hd);
 
+        fAileron *= 2.0f;
         if( hd.Height() < 5.0)
-        	fYaw = fAileron * 2.0f;
-        else
-        	fAileron *= 2.0f;
+        	fYaw = fAileron;
 
         fPitch -= sin( 40/180.0f * M_PI);
         fPitch *= 2.0f;
 #else
-        fYaw = joy->joyGetZ();
+        fYaw = joy->joyGetZ() * 2.0f;
 
         fThrust = std::fabs(joy->joyGetV()) > 0.2f ? joy->joyGetV() : 0.0f;
 #endif
@@ -381,15 +380,16 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 
         float deflection_l = _left_tail_wing.controlSurface0()->getDeflection();
 
-#ifdef ANDROID
-        deflection_l = 0;
-#else
-        deflection_l -= dt * fPitch;
-#endif
+        if( hd.Height() < 1.5)
+        	deflection_l = 0;
+        else
+        	deflection_l -= dt * fPitch;
 
         float MAX_DEFL = 10;
         if( deflection_l < -MAX_DEFL )
             deflection_l = -MAX_DEFL;
+        if( deflection_l > MAX_DEFL )
+            deflection_l = MAX_DEFL;
 
         _left_tail_wing.controlSurface0()->setDeflection(deflection_l);
         _right_tail_wing.controlSurface0()->setDeflection(deflection_l);

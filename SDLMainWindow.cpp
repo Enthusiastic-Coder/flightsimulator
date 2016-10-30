@@ -1450,7 +1450,28 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
     if( pRigidBody)
     {
     	float x = pRigidBody->airGetAileron() * cx / 120 +cx/2;
-    	float y = pRigidBody->airGetPitch() * cy / 120 + cy/2;
+    	float y = -pRigidBody->airGetPitch() * cy / 120 + cy/2;
+
+#define ACCEL_SAMPLE_COUNT 10
+    	static float samples[ACCEL_SAMPLE_COUNT*2] = {};
+    	static int samplesIdx = 0;
+
+    	samples[samplesIdx*2] = x;
+    	samples[samplesIdx*2+1] = y;
+    	samplesIdx ++;
+    	if( samplesIdx == ACCEL_SAMPLE_COUNT)
+    		samplesIdx = 0;
+
+    	x = 0.0f;
+    	y = 0.0f;
+    	for( int i=0; i < ACCEL_SAMPLE_COUNT; ++i)
+    	{
+    		x += samples[i*2];
+    		y += samples[i*2+1];
+    	}
+    	x /= ACCEL_SAMPLE_COUNT;
+    	y /= ACCEL_SAMPLE_COUNT;
+
 		painter.drawRect(x-5, y-5, 10, 10);
     }
 #else
