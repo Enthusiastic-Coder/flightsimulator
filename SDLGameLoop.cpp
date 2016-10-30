@@ -3,10 +3,13 @@
 #include <include_gl.h>
 #include <string>
 #include <vector>
-#include "SDL_syswm.h"
 #include <SDL_image.h>
 
 #include <algorithm>
+#ifdef ANDROID
+#include <unistd.h>
+#endif
+
 
 void SDLGameLoop::onTimeOut()
 {
