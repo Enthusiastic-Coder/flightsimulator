@@ -134,12 +134,20 @@ void OpenGLShaderProgram::sendUniform(const std::string& name, const Vector4F &v
 
 void OpenGLShaderProgram::sendUniform(const std::string& name, const Matrix3x3F &m)
 {
+#ifdef WIN32
     glUniformMatrix3fv(getUniformLocation(name),1, GL_TRUE, m.ptr());
+#else
+    glUniformMatrix3fv(getUniformLocation(name),1, GL_FALSE, m.Transpose().ptr());
+#endif
 }
 
 void OpenGLShaderProgram::sendUniform(const std::string& name, const Matrix4x4F &m)
 {
+#ifdef WIN32
     glUniformMatrix4fv(getUniformLocation(name), 1, GL_TRUE, m.ptr());
+#else
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, m.Transpose().ptr());
+#endif
 }
 
 GLint OpenGLShaderProgram::getUniformLocation(const std::string& name)
