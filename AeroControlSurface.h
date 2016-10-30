@@ -18,9 +18,9 @@ public:
 
 	void add( AeroSectionSubElementForceGenerator* s );
 	void setDeflection(float deflection);
-	float getDeflection();
+	float getDeflection() const;
     const Vector3F& getShiftTranslation();
-    const Vector3F& getRotAxis();
+    const Vector3F& getRotAxis() const;
 	void setRecorderHook(FlightRecorder& a) override;
 
 private:

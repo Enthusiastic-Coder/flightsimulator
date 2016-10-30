@@ -38,7 +38,7 @@ void AeroControlSurface::setDeflection(float deflection)
 	onDeflectionChange();
 }
 
-float AeroControlSurface::getDeflection()
+float AeroControlSurface::getDeflection() const
 {
 	return _deflection;
 }
@@ -48,7 +48,7 @@ const Vector3F& AeroControlSurface::getShiftTranslation()
 	return _vDistDeflection;
 }
 
-const Vector3F& AeroControlSurface::getRotAxis()
+const Vector3F& AeroControlSurface::getRotAxis() const
 {
 	return _vRotAxis;
 }

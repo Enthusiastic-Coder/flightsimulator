@@ -12,6 +12,7 @@ public:
 	ParentT* parent();
 	ContainerT* add(std::string id);
 	ContainerT* element(size_t i);
+	const ContainerT* element(size_t i) const;
 	size_t size() const;
 	
 	void onInitialise(WorldSystem* pWorldSystem) override;

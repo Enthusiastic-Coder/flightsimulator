@@ -80,6 +80,15 @@ ContainerT* CompositeListForceGenerator<ParentContainerT,ContainerT,ParentT>::el
 }
 
 template<class ParentContainerT, class ContainerT, class ParentT>
+const ContainerT* CompositeListForceGenerator<ParentContainerT,ContainerT,ParentT>::element(size_t i) const
+{
+	if( i < _elements.size() )
+		return _elements[i];
+
+	return _pNull;
+}
+
+template<class ParentContainerT, class ContainerT, class ParentT>
 size_t CompositeListForceGenerator<ParentContainerT,ContainerT,ParentT>::size() const
 {
 	return _elements.size();

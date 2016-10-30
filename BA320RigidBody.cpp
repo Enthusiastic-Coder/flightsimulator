@@ -982,6 +982,15 @@ void BAAirbus320JSONRigidBody::addForceGenerators()
     }
 }
 
+float BAAirbus320JSONRigidBody::airGetAileron() const
+{
+	return _left_wing.element(0)->controlSurfaceN(0)->getDeflection();
+}
+
+float BAAirbus320JSONRigidBody::airGetPitch() const
+{
+	return _left_tail_wing.element(0)->controlSurfaceN(0)->getDeflection();
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

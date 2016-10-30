@@ -1444,10 +1444,21 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
 
     painter.drawRect(cx/2- 10, cy/2 - 10, 20, 20);
 
+
+#ifdef ANDROID
+    JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
+    if( pRigidBody)
+    {
+    	float x = pRigidBody->airGetAileron() * cx / 120 +cx/2;
+    	float y = pRigidBody->airGetPitch() * cy / 120 + cy/2;
+		painter.drawRect(x-5, y-5, 10, 10);
+    }
+#else
     int x, y;
     SDL_GetMouseState(&x, &y);
 
     painter.drawRect(x-5, y-5, 10, 10);
+#endif
 
     painter.endPrimitive();
     p.GetModel().Pop();

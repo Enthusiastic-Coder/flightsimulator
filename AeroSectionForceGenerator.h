@@ -22,6 +22,7 @@ public:
 
 	void addControlSurface(AeroControlSurface *pControlSurface);
 	AeroControlSurface* controlSurfaceN(int index);
+	const AeroControlSurface* controlSurfaceN(int index) const;
 	size_t controlSurfaceCount();
 	double getEfficiency();
 
