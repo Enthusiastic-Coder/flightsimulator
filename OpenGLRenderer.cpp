@@ -10,10 +10,10 @@ Renderer::Renderer() :  _progId(&nullShader)
 {
 }
 
-void Renderer::useProgram(OpenGLShaderProgram& progId)
+void Renderer::useProgram(const OpenGLShaderProgram& progId)
 {
-    OpenGLShaderProgram* pOldProg = _progId;
-    (_progId = &progId)->use();
+	progId.use();
+    _progId = const_cast<OpenGLShaderProgram*>(&progId);
 }
 
 OpenGLShaderProgram& Renderer::progId()
