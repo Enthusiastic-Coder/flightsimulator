@@ -50,7 +50,7 @@ void OpenGLShaderProgram::clear()
 	_error = "";
 }
 
-void OpenGLShaderProgram::use()
+void OpenGLShaderProgram::use() const
 {
     glUseProgram(_programShaderID);
 }

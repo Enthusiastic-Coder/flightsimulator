@@ -38,7 +38,7 @@ public:
 
 	operator GLuint();
 
-	void use();
+	void use() const;
 	static void useDefault();
 
 	std::string getError() const;
