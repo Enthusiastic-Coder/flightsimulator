@@ -43,6 +43,8 @@ public:
     void fillRect(float x, float y, float w, float h);
     void fillQuad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
     void fillQuads(const float *pts, int count);
+    void drawElipse(float x, float y, float cx, float cy, float steps=10.0f);
+    void fillElipse(float x, float y, float cx, float cy, float steps=10.0f);
     void endPrimitive();
 
 private:

@@ -273,11 +273,17 @@ void WorldSystem::loadTerrain()
 
     {
         //27L
+//        std::unique_ptr<RunwayMeshObject> obj(new 51.464951RunwayMeshObject);
+//        obj->location = GPSLocation(51.464951, -0.434115);
+//        obj->meshModel.setTextureName("runway_strip.png");
+//        obj->meshModel.Build(-90, 60, 2664, fRunwayMaxDiff);
+
+//        _runwayList.push_back(std::move(obj));
+
         std::unique_ptr<RunwayMeshObject> obj(new RunwayMeshObject);
         obj->location = GPSLocation(51.464951, -0.434115);
-        obj->meshModel.setTextureName("runway_strip.png");
-        obj->meshModel.Build(-90, 60, 2664, fRunwayMaxDiff);
-
+        obj->meshModel.setTextureName("airport_layout.png");
+        obj->meshModel.Build(-90, width, height, fRunwayMaxDiff);
         _runwayList.push_back(std::move(obj));
     }
 
@@ -495,7 +501,11 @@ void WorldSystem::RenderTerrain(Renderer* r, bool bLand, bool bReflection, unsig
     _TerrainCollection.Render(r, bLand, bReflection, shadowMapCount, cameraPos);
 
 	if(bLand)	
+    {
+        glEnable(GL_BLEND);
         _TerrainCollection.RenderChildren(r, shadowMapCount, cameraPos);
+        glDisable(GL_BLEND);
+    }
 }
 
 void WorldSystem::RenderModels(Renderer* r, bool bReflection, unsigned int shadowMapCount, double dt)

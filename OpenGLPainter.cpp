@@ -228,6 +228,41 @@ void OpenGLPainter::fillQuads(const float *pts, int count)
     }
 }
 
+void OpenGLPainter::drawElipse(float x, float y, float cx, float cy, float steps)
+{
+    std::vector<std::pair<float,float>> pts;
+    pts.resize((360.0f+steps)/steps);
+    for( int i=0; i < pts.size(); ++i)
+    {
+        pts[i].first = x + cx * sin(steps * i / 180.0 * M_PI);
+        pts[i].second = y + cy * cos(steps * i / 180.0 * M_PI);
+    }
+
+    Renderer*r = renderer();
+    r->setPrimitiveType(GL_LINE_LOOP);
+    r->bindVertex(Renderer::Vertex, 2, &pts[0].first);
+    r->setVertexCountOffset(pts.size());
+    r->Render();
+}
+
+void OpenGLPainter::fillElipse(float x, float y, float cx, float cy, float steps)
+{
+    std::vector<std::pair<float,float>> pts;
+    pts.resize((360.0f+steps)/steps+1);
+    pts[0] = {x, y};
+    for( int i=1; i < pts.size(); ++i)
+    {
+        pts[i].first = x + cx * sin(steps * (i-1) / 180.0f * M_PI);
+        pts[i].second = y + cy * cos(steps * (i-1) / 180.0f * M_PI);
+    }
+
+    Renderer*r = renderer();
+    r->setPrimitiveType(GL_TRIANGLE_FAN);
+    r->bindVertex(Renderer::Vertex, 2, &pts[0].first);
+    r->setVertexCountOffset(pts.size());
+    r->Render();
+}
+
 void OpenGLPainter::endPrimitive()
 {
     renderer()->unBindBuffers();

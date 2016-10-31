@@ -63,6 +63,7 @@ protected:
     void RenderDepthTextures(int camID, OpenGLTexture2D &shadowMap, OpenGLTexture2D& colorMap, int offset, int size);
     void RenderMouseFlying(float cx, float cy);
     void RenderDrivingPower();
+    void RenderPlaybackRecordingGrafix();
     void RenderTransparentRectangle( int x, int y, int cx, int cy, float R, float G, float B, float A);
     void RenderFPS();
     void RenderInfo();
@@ -78,10 +79,13 @@ protected:
     void processInputsForCamera();
 
     void persistSettings(bool bSerialise);
+    std::pair<float,float> UVtoScreen( float U, float V);
+    void UVsToScreen(float*pts, int count);
 
 private:
     bool _showCursor;
     //bool _paused;
+    std::pair<int, int> _currentDims;
     bool _bUserPolygonLineView;
     float _framerate[FPS_RESOLUTION];
     int _framecount;
@@ -187,8 +191,13 @@ private:
     OpenGLButtonTexture _buttonResetPos;
     OpenGLButtonTexture _buttonResetApproach;
     OpenGLButtonTexture _buttonToggleInfo;
+    OpenGLButtonTexture _buttonStartRecorder;
 
     OpenGLSliderControl _powerSliderControl;
+
+    Uint32 _playRecordFlashLastTickTime = 0;
+    Uint32 _playRecordFlashTickTime = 500;
+    bool _bPlayBackFlashOn = false;
 };
 
 

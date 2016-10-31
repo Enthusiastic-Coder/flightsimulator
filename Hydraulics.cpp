@@ -1,9 +1,13 @@
 #include "stdafx.h"
 #include "Hydraulics.h"
 
-float Hydraulics::getDeflection( AeroControlSurface* pAfg )
+float Hydraulics::getDeflection( AeroControlSurface* pAfg ) const
 {
-	return _controlSurfaces[pAfg];
+	std::map<AeroControlSurface*,float>::const_iterator it = _controlSurfaces.find(pAfg);
+	if( it == _controlSurfaces.end())
+		return 0.0f;
+
+	return it->second;
 }
 
 void Hydraulics::setResponseRate( AeroControlSurface* pAfg, float fRate)

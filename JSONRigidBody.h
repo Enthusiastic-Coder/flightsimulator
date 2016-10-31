@@ -129,6 +129,8 @@ public:
     virtual void airResetApproachPos();
     virtual void airSpoilerToggle(bool bLeft);
     virtual void airFlapIncr(int incr);
+    virtual float airGetAileron() const;
+    virtual float airGetPitch() const;
     virtual void applyBrakes(bool bApply);
 
     void startRecording();

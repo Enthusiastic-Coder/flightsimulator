@@ -49,8 +49,8 @@ void main()
     if( useTex == 0)
         textureColor = vec4(1,1,1,1);
 
-    if( textureColor.a < 0.00001)
-        discard;
+    //if( textureColor.a < 0.00001)
+      //  discard;
 
     if( debug == 0 )
     {

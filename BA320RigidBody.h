@@ -55,6 +55,8 @@ public:
     void airResetApproachPos() override;
     void airSpoilerToggle(bool bLeft) override;
     void airFlapIncr(int incr) override;
+    float airGetAileron() const override;
+    float airGetPitch() const override;
     void applyBrakes(bool bApply) override;
 
     float getPower(int engine) override;

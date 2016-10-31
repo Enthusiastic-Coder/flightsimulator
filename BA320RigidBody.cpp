@@ -348,20 +348,19 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
 
         fAileron = joy->joyGetX();
         fPitch = joy->joyGetY();
-#ifdef ANDROID
 
+#ifdef ANDROID
         HeightData hd;
         _custom_fg.getWorld()->getHeightFromPosition(getGPSLocation(), hd);
 
+        fAileron *= 2.0f;
         if( hd.Height() < 5.0)
-        	fYaw = fAileron * 2.0f;
-        else
-        	fAileron *= 2.0f;
+        	fYaw = fAileron;
 
         fPitch -= sin( 40/180.0f * M_PI);
         fPitch *= 2.0f;
 #else
-        fYaw = joy->joyGetZ();
+        fYaw = joy->joyGetZ() * 2.0f;
 
         fThrust = std::fabs(joy->joyGetV()) > 0.2f ? joy->joyGetV() : 0.0f;
 #endif
@@ -382,14 +381,17 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         float deflection_l = _left_tail_wing.controlSurface0()->getDeflection();
 
 #ifdef ANDROID
-        deflection_l = 0;
-#else
-        deflection_l -= dt * fPitch;
+        if( hd.Height() < 1.5)
+        	deflection_l = 0;
+        else
 #endif
+        	deflection_l -= dt * fPitch;
 
         float MAX_DEFL = 10;
         if( deflection_l < -MAX_DEFL )
             deflection_l = -MAX_DEFL;
+        if( deflection_l > MAX_DEFL )
+            deflection_l = MAX_DEFL;
 
         _left_tail_wing.controlSurface0()->setDeflection(deflection_l);
         _right_tail_wing.controlSurface0()->setDeflection(deflection_l);
@@ -597,8 +599,8 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         if( dy < -35 ) dy = -35;
         if( dy > 35 ) dy = 35;
 
-        hydraulics().setDeflection( _left_wing.element(0)->controlSurfaceN(2), 0);
-        hydraulics().setDeflection( _right_wing.element(0)->controlSurfaceN(2), 0);
+        //hydraulics().setDeflection( _left_wing.element(0)->controlSurfaceN(2), 0);
+        //hydraulics().setDeflection( _right_wing.element(0)->controlSurfaceN(2), 0);
 
         if( Height() < 2.0f )
         {
@@ -714,18 +716,11 @@ void BAAirbus320JSONRigidBody::airSpoilerToggle(bool bLeft)
         if( hydraulics().getDeflection( pML ) == 0 )
         {
             hydraulics().setDeflection( pML, -50.0f );
-        }
-        else
-        {
-            hydraulics().setDeflection( pML, 0.0f );
-        }
-
-        if( hydraulics().getDeflection( pInnerML ) == 0 )
-        {
             hydraulics().setDeflection( pInnerML, -50.0f );
         }
         else
         {
+            hydraulics().setDeflection( pML, 0.0f );
             hydraulics().setDeflection( pInnerML, 0.0f );
         }
     }
@@ -737,18 +732,11 @@ void BAAirbus320JSONRigidBody::airSpoilerToggle(bool bLeft)
         if( hydraulics().getDeflection( pMR ) == 0 )
         {
             hydraulics().setDeflection( pMR, -50.0f );
-        }
-        else
-        {
-            hydraulics().setDeflection( pMR, 0.0f );
-        }
-
-        if( hydraulics().getDeflection( pInnerML ) == 0 )
-        {
             hydraulics().setDeflection( pInnerML, -50.0f );
         }
         else
         {
+            hydraulics().setDeflection( pMR, 0.0f );
             hydraulics().setDeflection( pInnerML, 0.0f );
         }
     }
@@ -791,10 +779,11 @@ void BAAirbus320JSONRigidBody::airFlapIncr(int incr)
             fDeflection = 0.0f;
     }
 
-    hydraulics().setDeflection( pML, fDeflection  );
-    hydraulics().setDeflection( pMR, fDeflection  );
-    hydraulics().setDeflection( pInnerML, fDeflection  );
-    hydraulics().setDeflection( pInnerMR, fDeflection  );
+    float fFlapFactor = 4.0f;
+    hydraulics().setDeflection( pML, fDeflection /fFlapFactor  );
+    hydraulics().setDeflection( pMR, fDeflection /fFlapFactor );
+    hydraulics().setDeflection( pInnerML, fDeflection/fFlapFactor  );
+    hydraulics().setDeflection( pInnerMR, fDeflection /fFlapFactor );
 }
 
 void BAAirbus320JSONRigidBody::applyBrakes(bool bApply)
@@ -982,6 +971,15 @@ void BAAirbus320JSONRigidBody::addForceGenerators()
     }
 }
 
+float BAAirbus320JSONRigidBody::airGetAileron() const
+{
+	return _left_wing.element(0)->controlSurfaceN(0)->getDeflection();
+}
+
+float BAAirbus320JSONRigidBody::airGetPitch() const
+{
+	return _left_tail_wing.element(0)->controlSurfaceN(0)->getDeflection();
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

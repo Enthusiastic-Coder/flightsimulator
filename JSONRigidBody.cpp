@@ -584,6 +584,16 @@ void JSONRigidBody::airFlapIncr(int incr)
 
 }
 
+float JSONRigidBody::airGetAileron() const
+{
+	return 0.0f;
+}
+
+float JSONRigidBody::airGetPitch() const
+{
+	return 0.0f;
+}
+
 void JSONRigidBody::applyBrakes(bool bApply)
 {
 

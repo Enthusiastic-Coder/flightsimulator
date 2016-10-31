@@ -96,6 +96,11 @@ AeroControlSurface* AeroSectionForceGenerator::controlSurfaceN(int index)
     return _controlSurfaces[index];
 }
 
+const AeroControlSurface* AeroSectionForceGenerator::controlSurfaceN(int index) const
+{
+    return _controlSurfaces[index];
+}
+
 size_t AeroSectionForceGenerator::controlSurfaceCount()
 {
     return _controlSurfaces.size();

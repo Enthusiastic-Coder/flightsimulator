@@ -7,7 +7,7 @@
 class Hydraulics
 {
 public:
-	float getDeflection(AeroControlSurface* pAfg);
+	float getDeflection(AeroControlSurface* pAfg) const;
 	void setResponseRate(AeroControlSurface* pAfg, float fRate);
 	void setDeflection(AeroControlSurface* pAfg, float fDeflection);
 	void update(float dt);

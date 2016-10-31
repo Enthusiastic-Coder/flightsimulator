@@ -108,6 +108,7 @@ void SDLMainWindow::onFingerUp(SDL_TouchFingerEvent* e)
 
 void SDLMainWindow::onSize(int width, int height)
 {
+    _currentDims = { width, height };
     SDLGameLoop::onSize(width, height);
     _textureRenderer.onSize(0,0, width, height);
     _powerSliderControl.onSize(width, height);
@@ -143,6 +144,7 @@ SDLMainWindow::SDLMainWindow() :
 
 SDLMainWindow::~SDLMainWindow()
 {
+    delete _skyDome;
     delete _renderer;
 }
 
@@ -492,6 +494,12 @@ bool SDLMainWindow::onInitialise()
         _buttonPlayback.setVAlignment(OpenGLButtonTexture::Align_High);
         _buttonPlayback.setColor(Vector4F(1,1,1,0.15));
         _buttonTextureManager.setButtonPos(&_buttonPlayback, 1.0f, 1.0f, 0.1f, 0.1f);
+
+        _buttonStartRecorder.load("images/buttons/start_recorder.png");
+        _buttonStartRecorder.setHAlignment(OpenGLButtonTexture::Align_High);
+        _buttonStartRecorder.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonStartRecorder.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonStartRecorder, 0.85f, 1.0f, 0.1f, 0.1f);
 
         _buttonResetPos.load("images/buttons/reset_pos.png");
         _buttonResetPos.setHAlignment(OpenGLButtonTexture::Align_Low);
@@ -902,6 +910,13 @@ void SDLMainWindow::onUpdate()
         JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
         if( pBody != 0)
             pBody->togglePlayback();
+    }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonStartRecorder))
+    {
+        JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+        if( pBody != 0)
+            pBody->startRecording();
     }
 
     if( _buttonTextureManager.buttonClicked(&_buttonResetPos))
@@ -1380,6 +1395,8 @@ void SDLMainWindow::onRender()
 #endif
     }
 
+    RenderPlaybackRecordingGrafix();
+
     pipeline.Pop();
 }
 
@@ -1396,6 +1413,80 @@ void SDLMainWindow::RenderDrivingPower()
 
     OpenGLShaderProgram::useDefault();
     glDisable(GL_BLEND);
+}
+
+void SDLMainWindow::RenderPlaybackRecordingGrafix()
+{
+    JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+
+    if( pBody != 0 && pBody->getState() != JSONRigidBody::STATE::NORMAL )
+    {
+        Uint32 currentTicks = SDL_GetTicks();
+        Uint32 diff = currentTicks - _playRecordFlashLastTickTime;
+
+        if(diff > _playRecordFlashTickTime )
+        {
+            _playRecordFlashLastTickTime = currentTicks;
+            _bPlayBackFlashOn = !_bPlayBackFlashOn;
+        }
+
+        OpenGLPainter painter;
+        painter.selectFontRenderer(&_fontRenderer);
+        painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
+        painter.beginPrimitive();
+        float fAspectRatio = _currentDims.first*1.0f/_currentDims.second;
+
+
+        if( pBody->getState() == JSONRigidBody::STATE::PLAYBACK)
+        {
+            painter.setPrimitiveColor(Vector4F(1,1,1,0.25f));
+
+            float pts[] = {  0.25f, 0.15f, 0.0f, 0.03f };
+            pts[2] = 1.0f - 2 * pts[0];
+
+            float fProgressFraction = pBody->getFlightRecorder().timeSoFar()
+                    /pBody->getFlightRecorder().totalTime();
+
+            float pts2[4];
+            pts2[0] = pts[0] + fProgressFraction * pts[2];
+            pts2[1] = pts[1];
+            pts2[2] = 0.01f;
+            pts2[3] = pts[3];
+
+            UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
+            painter.drawRect(pts[0], pts[1], pts[2], pts[3]);
+
+            UVsToScreen(pts2,sizeof(pts2)/sizeof(pts2[0]) );
+            painter.fillRect(pts2[0], pts2[1], pts2[2], pts2[3]);
+        }
+
+        if( _bPlayBackFlashOn )
+        {
+            if( pBody->getState() == JSONRigidBody::STATE::PLAYBACK)
+            {
+                painter.setPrimitiveColor(Vector4F(0,1,0,1));
+
+                float pts[] = { 0.8f, 0.25f,
+                                0.85f, 0.2f,
+                                0.8f, 0.15f };
+
+                UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
+                painter.fillTriangles(pts, 3);
+            }
+            else
+            {
+                float width = 0.04f;
+                float pts[] = {0.825f, 0.2f, width/fAspectRatio, width};
+
+                UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
+
+                painter.setPrimitiveColor(Vector4F(1,0,0,1));
+                painter.fillElipse(pts[0], pts[1], pts[2], pts[3]);
+            }
+
+            painter.endPrimitive();
+        }
+    }
 }
 
 void SDLMainWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, float R, float G, float B, float A)
@@ -1444,10 +1535,42 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
 
     painter.drawRect(cx/2- 10, cy/2 - 10, 20, 20);
 
+
+#ifdef ANDROID
+    JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
+    if( pRigidBody)
+    {
+    	float x = pRigidBody->airGetAileron() * cx / 120 +cx/2;
+    	float y = -pRigidBody->airGetPitch() * cy / 120 + cy/2;
+
+#define ACCEL_SAMPLE_COUNT 10
+    	static float samples[ACCEL_SAMPLE_COUNT*2] = {};
+    	static int samplesIdx = 0;
+
+    	samples[samplesIdx*2] = x;
+    	samples[samplesIdx*2+1] = y;
+    	samplesIdx ++;
+    	if( samplesIdx == ACCEL_SAMPLE_COUNT)
+    		samplesIdx = 0;
+
+    	x = 0.0f;
+    	y = 0.0f;
+    	for( int i=0; i < ACCEL_SAMPLE_COUNT; ++i)
+    	{
+    		x += samples[i*2];
+    		y += samples[i*2+1];
+    	}
+    	x /= ACCEL_SAMPLE_COUNT;
+    	y /= ACCEL_SAMPLE_COUNT;
+
+		painter.drawRect(x-5, y-5, 10, 10);
+    }
+#else
     int x, y;
     SDL_GetMouseState(&x, &y);
 
     painter.drawRect(x-5, y-5, 10, 10);
+#endif
 
     painter.endPrimitive();
     p.GetModel().Pop();
@@ -1831,6 +1954,21 @@ void SDLMainWindow::persistSettings(bool bSerialise)
         }
     }
 
+}
+
+std::pair<float, float> SDLMainWindow::UVtoScreen(float U, float V)
+{
+    return { _currentDims.first *U , _currentDims.second * V};
+}
+
+void SDLMainWindow::UVsToScreen(float *pts, int count)
+{
+    for(int i = 0; i < count; i+=2)
+    {
+        auto screenPt = UVtoScreen(pts[i], pts[i+1]);
+        pts[i] = screenPt.first;
+        pts[i+1] = screenPt.second;
+    }
 }
 
 void SDLMainWindow::OnInitPolyMode()
