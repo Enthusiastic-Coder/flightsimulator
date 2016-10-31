@@ -501,7 +501,11 @@ void WorldSystem::RenderTerrain(Renderer* r, bool bLand, bool bReflection, unsig
     _TerrainCollection.Render(r, bLand, bReflection, shadowMapCount, cameraPos);
 
 	if(bLand)	
+    {
+        glEnable(GL_BLEND);
         _TerrainCollection.RenderChildren(r, shadowMapCount, cameraPos);
+        glDisable(GL_BLEND);
+    }
 }
 
 void WorldSystem::RenderModels(Renderer* r, bool bReflection, unsigned int shadowMapCount, double dt)
