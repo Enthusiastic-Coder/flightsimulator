@@ -716,18 +716,11 @@ void BAAirbus320JSONRigidBody::airSpoilerToggle(bool bLeft)
         if( hydraulics().getDeflection( pML ) == 0 )
         {
             hydraulics().setDeflection( pML, -50.0f );
-        }
-        else
-        {
-            hydraulics().setDeflection( pML, 0.0f );
-        }
-
-        if( hydraulics().getDeflection( pInnerML ) == 0 )
-        {
             hydraulics().setDeflection( pInnerML, -50.0f );
         }
         else
         {
+            hydraulics().setDeflection( pML, 0.0f );
             hydraulics().setDeflection( pInnerML, 0.0f );
         }
     }
@@ -739,18 +732,11 @@ void BAAirbus320JSONRigidBody::airSpoilerToggle(bool bLeft)
         if( hydraulics().getDeflection( pMR ) == 0 )
         {
             hydraulics().setDeflection( pMR, -50.0f );
-        }
-        else
-        {
-            hydraulics().setDeflection( pMR, 0.0f );
-        }
-
-        if( hydraulics().getDeflection( pInnerML ) == 0 )
-        {
             hydraulics().setDeflection( pInnerML, -50.0f );
         }
         else
         {
+            hydraulics().setDeflection( pMR, 0.0f );
             hydraulics().setDeflection( pInnerML, 0.0f );
         }
     }
@@ -793,10 +779,11 @@ void BAAirbus320JSONRigidBody::airFlapIncr(int incr)
             fDeflection = 0.0f;
     }
 
-    hydraulics().setDeflection( pML, fDeflection  );
-    hydraulics().setDeflection( pMR, fDeflection  );
-    hydraulics().setDeflection( pInnerML, fDeflection  );
-    hydraulics().setDeflection( pInnerMR, fDeflection  );
+    float fFlapFactor = 2.0f;
+    hydraulics().setDeflection( pML, fDeflection /fFlapFactor  );
+    hydraulics().setDeflection( pMR, fDeflection /fFlapFactor );
+    hydraulics().setDeflection( pInnerML, fDeflection/fFlapFactor  );
+    hydraulics().setDeflection( pInnerMR, fDeflection /fFlapFactor );
 }
 
 void BAAirbus320JSONRigidBody::applyBrakes(bool bApply)
