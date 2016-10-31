@@ -143,6 +143,7 @@ SDLMainWindow::SDLMainWindow() :
 
 SDLMainWindow::~SDLMainWindow()
 {
+    delete _skyDome;
     delete _renderer;
 }
 
