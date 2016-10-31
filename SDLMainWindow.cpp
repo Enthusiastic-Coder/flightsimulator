@@ -1428,7 +1428,7 @@ void SDLMainWindow::RenderPlaybackRecordingGrafix()
         {
             painter.setPrimitiveColor(Vector4F(1,1,1,0.25f));
 
-            float pts[] = {  0.3f, 0.15f, 0.0f, 0.05f };
+            float pts[] = {  0.25f, 0.15f, 0.0f, 0.03f };
             pts[2] = 1.0f - 2 * pts[0];
 
             float fProgressFraction = pBody->getFlightRecorder().timeSoFar()
