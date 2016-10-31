@@ -191,6 +191,7 @@ private:
     OpenGLButtonTexture _buttonResetPos;
     OpenGLButtonTexture _buttonResetApproach;
     OpenGLButtonTexture _buttonToggleInfo;
+    OpenGLButtonTexture _buttonStartRecorder;
 
     OpenGLSliderControl _powerSliderControl;
 

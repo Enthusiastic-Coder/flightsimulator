@@ -495,6 +495,12 @@ bool SDLMainWindow::onInitialise()
         _buttonPlayback.setColor(Vector4F(1,1,1,0.15));
         _buttonTextureManager.setButtonPos(&_buttonPlayback, 1.0f, 1.0f, 0.1f, 0.1f);
 
+        _buttonStartRecorder.load("images/buttons/start_recorder.png");
+        _buttonStartRecorder.setHAlignment(OpenGLButtonTexture::Align_High);
+        _buttonStartRecorder.setVAlignment(OpenGLButtonTexture::Align_High);
+        _buttonStartRecorder.setColor(Vector4F(1,1,1,0.15));
+        _buttonTextureManager.setButtonPos(&_buttonStartRecorder, 0.85f, 1.0f, 0.1f, 0.1f);
+
         _buttonResetPos.load("images/buttons/reset_pos.png");
         _buttonResetPos.setHAlignment(OpenGLButtonTexture::Align_Low);
         _buttonResetPos.setVAlignment(OpenGLButtonTexture::Align_High);
@@ -904,6 +910,13 @@ void SDLMainWindow::onUpdate()
         JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
         if( pBody != 0)
             pBody->togglePlayback();
+    }
+
+    if( _buttonTextureManager.buttonClicked(&_buttonStartRecorder))
+    {
+        JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+        if( pBody != 0)
+            pBody->startRecording();
     }
 
     if( _buttonTextureManager.buttonClicked(&_buttonResetPos))
