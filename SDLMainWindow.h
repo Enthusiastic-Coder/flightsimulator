@@ -63,6 +63,7 @@ protected:
     void RenderDepthTextures(int camID, OpenGLTexture2D &shadowMap, OpenGLTexture2D& colorMap, int offset, int size);
     void RenderMouseFlying(float cx, float cy);
     void RenderDrivingPower();
+    void RenderPlaybackRecordingGrafix();
     void RenderTransparentRectangle( int x, int y, int cx, int cy, float R, float G, float B, float A);
     void RenderFPS();
     void RenderInfo();

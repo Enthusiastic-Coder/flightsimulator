@@ -1382,54 +1382,7 @@ void SDLMainWindow::onRender()
 #endif
     }
 
-    JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
-
-    if( pBody != 0 && pBody->getState() != JSONRigidBody::STATE::NORMAL )
-    {
-        Uint32 currentTicks = SDL_GetTicks();
-        Uint32 diff = currentTicks - _playRecordFlashLastTickTime;
-
-        if(diff > _playRecordFlashTickTime )
-        {
-            _playRecordFlashLastTickTime = currentTicks;
-            _bPlayBackFlashOn = !_bPlayBackFlashOn;
-        }
-
-        if( _bPlayBackFlashOn )
-        {
-            OpenGLPainter painter;
-            painter.selectFontRenderer(&_fontRenderer);
-            painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
-            painter.beginPrimitive();
-
-            if( pBody->getState() == JSONRigidBody::STATE::PLAYBACK)
-            {
-                painter.setPrimitiveColor(Vector4F(0,1,0,1));
-
-                float pts[] = { 0.8f, 0.25f,
-                                0.85f, 0.2f,
-                                0.8f, 0.15f };
-
-                UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
-                painter.fillTriangles(pts, 6);
-
-            }
-            else
-            {
-                float fAspectRatio = _currentDims.first*1.0f/_currentDims.second;
-
-                float width = 0.03f;
-                float pts[] = {0.825f, 0.2f, width/fAspectRatio, width};
-
-                UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
-
-                painter.setPrimitiveColor(Vector4F(1,0,0,1));
-                painter.fillElipse(pts[0], pts[1], pts[2], pts[3]);
-            }
-
-            painter.endPrimitive();
-        }
-    }
+    RenderPlaybackRecordingGrafix();
 
     pipeline.Pop();
 }
@@ -1447,6 +1400,80 @@ void SDLMainWindow::RenderDrivingPower()
 
     OpenGLShaderProgram::useDefault();
     glDisable(GL_BLEND);
+}
+
+void SDLMainWindow::RenderPlaybackRecordingGrafix()
+{
+    JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+
+    if( pBody != 0 && pBody->getState() != JSONRigidBody::STATE::NORMAL )
+    {
+        Uint32 currentTicks = SDL_GetTicks();
+        Uint32 diff = currentTicks - _playRecordFlashLastTickTime;
+
+        if(diff > _playRecordFlashTickTime )
+        {
+            _playRecordFlashLastTickTime = currentTicks;
+            _bPlayBackFlashOn = !_bPlayBackFlashOn;
+        }
+
+        OpenGLPainter painter;
+        painter.selectFontRenderer(&_fontRenderer);
+        painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
+        painter.beginPrimitive();
+        float fAspectRatio = _currentDims.first*1.0f/_currentDims.second;
+
+
+        if( pBody->getState() == JSONRigidBody::STATE::PLAYBACK)
+        {
+            painter.setPrimitiveColor(Vector4F(1,1,1,0.25f));
+
+            float pts[] = {  0.3f, 0.15f, 0.0f, 0.05f };
+            pts[2] = 1.0f - 2 * pts[0];
+
+            float fProgressFraction = pBody->getFlightRecorder().timeSoFar()
+                    /pBody->getFlightRecorder().totalTime();
+
+            float pts2[4];
+            pts2[0] = pts[0] + fProgressFraction * pts[2];
+            pts2[1] = pts[1];
+            pts2[2] = 0.01f;
+            pts2[3] = pts[3];
+
+            UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
+            painter.drawRect(pts[0], pts[1], pts[2], pts[3]);
+
+            UVsToScreen(pts2,sizeof(pts2)/sizeof(pts2[0]) );
+            painter.fillRect(pts2[0], pts2[1], pts2[2], pts2[3]);
+        }
+
+        if( _bPlayBackFlashOn )
+        {
+            if( pBody->getState() == JSONRigidBody::STATE::PLAYBACK)
+            {
+                painter.setPrimitiveColor(Vector4F(0,1,0,1));
+
+                float pts[] = { 0.8f, 0.25f,
+                                0.85f, 0.2f,
+                                0.8f, 0.15f };
+
+                UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
+                painter.fillTriangles(pts, 3);
+            }
+            else
+            {
+                float width = 0.04f;
+                float pts[] = {0.825f, 0.2f, width/fAspectRatio, width};
+
+                UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
+
+                painter.setPrimitiveColor(Vector4F(1,0,0,1));
+                painter.fillElipse(pts[0], pts[1], pts[2], pts[3]);
+            }
+
+            painter.endPrimitive();
+        }
+    }
 }
 
 void SDLMainWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, float R, float G, float B, float A)
