@@ -78,10 +78,13 @@ protected:
     void processInputsForCamera();
 
     void persistSettings(bool bSerialise);
+    std::pair<float,float> UVtoScreen( float U, float V);
+    void UVsToScreen(float*pts, int count);
 
 private:
     bool _showCursor;
     //bool _paused;
+    std::pair<int, int> _currentDims;
     bool _bUserPolygonLineView;
     float _framerate[FPS_RESOLUTION];
     int _framecount;
@@ -189,6 +192,10 @@ private:
     OpenGLButtonTexture _buttonToggleInfo;
 
     OpenGLSliderControl _powerSliderControl;
+
+    Uint32 _playRecordFlashLastTickTime = 0;
+    Uint32 _playRecordFlashTickTime = 500;
+    bool _bPlayBackFlashOn = false;
 };
 
 

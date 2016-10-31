@@ -108,6 +108,7 @@ void SDLMainWindow::onFingerUp(SDL_TouchFingerEvent* e)
 
 void SDLMainWindow::onSize(int width, int height)
 {
+    _currentDims = { width, height };
     SDLGameLoop::onSize(width, height);
     _textureRenderer.onSize(0,0, width, height);
     _powerSliderControl.onSize(width, height);
@@ -1381,6 +1382,52 @@ void SDLMainWindow::onRender()
 #endif
     }
 
+    JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
+
+    if( pBody != 0 && pBody->getState() != JSONRigidBody::STATE::NORMAL )
+    {
+        Uint32 currentTicks = SDL_GetTicks();
+        Uint32 diff = currentTicks - _playRecordFlashLastTickTime;
+
+        if(diff > _playRecordFlashTickTime )
+        {
+            _playRecordFlashLastTickTime = currentTicks;
+            _bPlayBackFlashOn = !_bPlayBackFlashOn;
+        }
+
+        if( _bPlayBackFlashOn )
+        {
+            OpenGLPainter painter;
+            painter.selectFontRenderer(&_fontRenderer);
+            painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
+            painter.beginPrimitive();
+
+            if( pBody->getState() == JSONRigidBody::STATE::PLAYBACK)
+            {
+                painter.setPrimitiveColor(Vector4F(0,1,0,1));
+
+                float pts[] = { 0.8f, 0.25f,
+                                0.85f, 0.2f,
+                                0.8f, 0.15f };
+
+                UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
+                painter.fillTriangles(pts, 6);
+
+            }
+            else
+            {
+                float pts[] = {0.825f, 0.2f, 0.025f, 0.025f};
+
+                UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
+
+                painter.setPrimitiveColor(Vector4F(1,0,0,1));
+                painter.fillElipse(pts[0], pts[1], pts[2], pts[3]);
+            }
+
+            painter.endPrimitive();
+        }
+    }
+
     pipeline.Pop();
 }
 
@@ -1864,6 +1911,21 @@ void SDLMainWindow::persistSettings(bool bSerialise)
         }
     }
 
+}
+
+std::pair<float, float> SDLMainWindow::UVtoScreen(float U, float V)
+{
+    return { _currentDims.first *U , _currentDims.second * V};
+}
+
+void SDLMainWindow::UVsToScreen(float *pts, int count)
+{
+    for(int i = 0; i < count; i+=2)
+    {
+        auto screenPt = UVtoScreen(pts[i], pts[i+1]);
+        pts[i] = screenPt.first;
+        pts[i+1] = screenPt.second;
+    }
 }
 
 void SDLMainWindow::OnInitPolyMode()
