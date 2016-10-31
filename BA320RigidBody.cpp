@@ -599,8 +599,8 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         if( dy < -35 ) dy = -35;
         if( dy > 35 ) dy = 35;
 
-        hydraulics().setDeflection( _left_wing.element(0)->controlSurfaceN(2), 0);
-        hydraulics().setDeflection( _right_wing.element(0)->controlSurfaceN(2), 0);
+        //hydraulics().setDeflection( _left_wing.element(0)->controlSurfaceN(2), 0);
+        //hydraulics().setDeflection( _right_wing.element(0)->controlSurfaceN(2), 0);
 
         if( Height() < 2.0f )
         {
@@ -779,7 +779,7 @@ void BAAirbus320JSONRigidBody::airFlapIncr(int incr)
             fDeflection = 0.0f;
     }
 
-    float fFlapFactor = 2.0f;
+    float fFlapFactor = 4.0f;
     hydraulics().setDeflection( pML, fDeflection /fFlapFactor  );
     hydraulics().setDeflection( pMR, fDeflection /fFlapFactor );
     hydraulics().setDeflection( pInnerML, fDeflection/fFlapFactor  );
