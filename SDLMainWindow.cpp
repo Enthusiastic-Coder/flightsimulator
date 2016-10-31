@@ -1416,7 +1416,10 @@ void SDLMainWindow::onRender()
             }
             else
             {
-                float pts[] = {0.825f, 0.2f, 0.025f, 0.025f};
+                float fAspectRatio = _currentDims.first*1.0f/_currentDims.second;
+
+                float width = 0.03f;
+                float pts[] = {0.825f, 0.2f, width/fAspectRatio, width};
 
                 UVsToScreen(pts,sizeof(pts)/sizeof(pts[0]) );
 
