@@ -255,6 +255,10 @@ bool SDLGameLoop::run(std::string strTitle)
     return true;
 }
 
+void SDLGameLoop::resetTimer()
+{
+    _timer.Start();
+}
 
 bool SDLGameLoop::onDispatchMessage(SDL_Event& event)
 {

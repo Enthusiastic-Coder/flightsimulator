@@ -727,7 +727,10 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
             if( bShiftPressed )
                 pBody->startRecording();
             else if( bAltPressed )
+            {
                 pBody->togglePlayback();
+                resetTimer();
+            }
         }
     }
 
@@ -909,7 +912,10 @@ void SDLMainWindow::onUpdate()
     {
         JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
         if( pBody != 0)
+        {
             pBody->togglePlayback();
+            resetTimer();
+        }
     }
 
     if( _buttonTextureManager.buttonClicked(&_buttonStartRecorder))
