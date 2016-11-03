@@ -675,8 +675,8 @@ void BAAirbus320JSONRigidBody::updateCameraView()
         break;
     case PassengerLeftMiddle :
     {
-        Vector3D e = getEuler();
-        e.y += 90;
+        QuarternionD q = MathSupport<double>::MakeQHeading(90);
+        Vector3D e = MathSupport<double>::MakeEuler(getGroundOrientation() * q);
         view->setPosition(toNonLocalTranslateFrame(Vector3D(1.7, 4.5, 3.4)));
         view->setOrientation(e.toFloat());
         view->setDescription("LeftSeat");
