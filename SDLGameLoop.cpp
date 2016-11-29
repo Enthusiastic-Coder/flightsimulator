@@ -158,6 +158,14 @@ void writeOutResult()
 
     for (int i = 0; i < SDL_NumJoysticks(); ++i)
         SDL_Log( "[%d -> %s", i, SDL_JoystickNameForIndex(i));
+
+    SDL_Log("-------------");
+
+    int displayIndex = 0;
+    float ddpi, hdpi, vdpi;
+    int dpiDisplay = SDL_GetDisplayDPI(displayIndex, &ddpi, &hdpi, &vdpi);
+
+    SDL_Log("%d -> DPI(%d, d:%.2f, h:%.2f v:%.2f", dpiDisplay, displayIndex, ddpi, hdpi, vdpi);
 }
 
 bool SDLGameLoop::run(std::string strTitle)
