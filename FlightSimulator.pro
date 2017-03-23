@@ -6,7 +6,7 @@
 
 TARGET = FlightSimulator
 
-DEFINES += "RAPIDJSON_HAS_STDSTRING=1"
+DEFINES += "RAPIDJSON_HAS_STDSTRING=1" WANT_SDL_SDL_SURFACE
 
 include(sdk/qMake/qImportNonQtApp.pri)
 include(sdk/qMake/qMakeDestination.pri)
