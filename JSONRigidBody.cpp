@@ -609,19 +609,16 @@ void JSONRigidBody::togglePlayback()
     JSONRigidBody::STATE state = getState();
 
     if( getState() == JSONRigidBody::STATE::RECORDING )
-        setState( JSONRigidBody::STATE::NORMAL );
-
-    if( state == JSONRigidBody::STATE::NORMAL )
-        setState( JSONRigidBody::STATE::PLAYBACK );
-    else
     {
-        setState( JSONRigidBody::STATE::NORMAL );
-
         char filename[256]={};
         sprintf(filename, "flightrecorded_%s.bin", getID().c_str() );
         saveRecorder(filename);
+        setState( JSONRigidBody::STATE::NORMAL );
     }
-
+    else if( state == JSONRigidBody::STATE::NORMAL )
+        setState( JSONRigidBody::STATE::PLAYBACK );
+    else
+        setState( JSONRigidBody::STATE::NORMAL );
 }
 
 bool JSONRigidBody::getHeightFromPosition(const GPSLocation &position, HeightData &heightData) const

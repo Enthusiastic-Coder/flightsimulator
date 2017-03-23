@@ -95,9 +95,14 @@ void MeshObject::calcBoundingBox(MeshModelArgs* args, const float* VertexData, c
     enumeratePoints(VertexData, Indices, &MeshObject::calcBoundingBoxPtEnum, args);
 }
 
+static float SignedVolumeOfTriangle(Vector3F p1, Vector3F p2, Vector3F p3)
+{
+    return p1 *(p2^p3) / 6.0f;
+}
+
 void MeshObject::calcMomentOfInertiaPtEnum(void *pVoid, size_t i, Vector3F pts[3])
 {
-    Vector3F vVol = Vector3F(1.0f, 1.0f, 1.0f) * sqrtf(MeshHelper::CalcArea(pts[0], pts[1], pts[2]));
+    Vector3F vVol = SignedVolumeOfTriangle(pts[0], pts[1], pts[2]) * Vector3F(1,1,1);
     reinterpret_cast<MassChannel*>(pVoid)->AddPoint((pts[0] + pts[1] + pts[2]) / 3.0f, vVol);
 }
 

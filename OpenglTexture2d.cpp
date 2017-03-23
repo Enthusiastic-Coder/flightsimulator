@@ -2,8 +2,6 @@
 #include <iostream>
 #include "OpenGLTexture2D.h"
 #include "TextureLoader.h"
-#include <SDL_surface.h>
-#include <SDL_log.h>
 
 OpenGLTexture2D::OpenGLTexture2D()
 {
@@ -61,15 +59,6 @@ unsigned int OpenGLTexture2D::loadTexture(std::string filename,int minTex, int m
     return num;
 }
 
-unsigned int OpenGLTexture2D::loadTexture(SDL_Surface* surface,int minTex, int maxTex, int wrap)
-{
-    unsigned int num = -1;
-    num = TextureLoader::loadTexture(surface, minTex, maxTex, wrap);
-    if( minTex != GL_LINEAR && minTex != GL_NEAREST)
-        glGenerateMipmap(GL_TEXTURE_2D);
-    return num;
-}
-
 unsigned int OpenGLTexture2D::createTexture(int w,int h,bool isDepth, int minTex, int maxTex, int wrap)
 {
    unsigned int textureId;
@@ -111,7 +100,7 @@ unsigned int OpenGLTexture2D::createTexture(int w,int h,bool isDepth, int minTex
     int i = glGetError();
     if(i!=0)
     {
-        SDL_Log( "(%s,%d) [%d]- Error happened while loading the texture: ", __FUNCTION__, __LINE__, i );
+        printf( "(%s,%d) [%d]- Error happened while loading the texture: ", __FUNCTION__, __LINE__, i );
     }
     glBindTexture(GL_TEXTURE_2D,0);
     return textureId;

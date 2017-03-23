@@ -13,13 +13,10 @@ bool readAll(std::string sFilename, std::string &text)
     if (inputFile.is_open() == false)
         return false;
 
-    std::string strLine;
-    while (inputFile.good())
-    {
-        std::getline(inputFile, strLine);
-        text += strLine + "\n";
-    }
+    std::stringstream ss;
 
+    ss << inputFile.rdbuf();
+    text = ss.str();
     return true;
 }
 

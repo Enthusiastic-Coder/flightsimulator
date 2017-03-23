@@ -15,6 +15,7 @@ public:
 
     bool run(std::string strTitle);
 
+    void resetTimer();
     void setFramePerSecond(float fps);
     void setRunning( bool bRunning );
     bool isRunning();
