@@ -1,1 +1,12 @@
 *.pro.user*
+.obj/*
+*.vcxproj.filters
+Debug/*
+.vs/*
+Release/*
+*.VC.VC.opendb
+*.VC.db
+Models/BAA320/model.obj
+Models/HeathrowRadar/model.obj
+Models/HeathrowTower/model.obj
+lastpos.json

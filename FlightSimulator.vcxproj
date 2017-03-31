@@ -1,0 +1,406 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{62B07541-9C22-35EB-A5C4-FD9656F2FBD5}</ProjectGuid>
+    <RootNamespace>FlightSimulator</RootNamespace>
+    <Keyword>Qt4VSv1.0</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <PlatformToolSet>v140</PlatformToolSet>
+    <OutputDirectory>Release\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>.obj\</IntermediateDirectory>
+    <PrimaryOutput>FlightSimulator</PrimaryOutput>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <PlatformToolSet>v140</PlatformToolSet>
+    <OutputDirectory>Debug\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>.obj\</IntermediateDirectory>
+    <PrimaryOutput>FlightSimulator</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.obj\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FlightSimulator</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.obj\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FlightSimulator</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.;sdl2_image\include;sdl2\include;openal\include;rapidjson\include;sdk\include;$(QTDIR)\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>.obj\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>.obj\</ObjectFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;RAPIDJSON_HAS_STDSTRING=1;WANT_SDL_SDL_SURFACE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>C:/Project/GIT/flightsimulator/sdl2_image/VisualC/Release/SDL2_image.lib;C:\Project\GIT\flightsimulator\sdl2\VisualC\win32\Release\SDL2main.lib;C:\Project\GIT\flightsimulator\sdl2\VisualC\win32\Release\SDL2.lib;C:\Project\GIT\flightsimulator\openal\libs\Win32\OpenAL32.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;C:\Project\GIT\flightsimulator\sdl2\VisualC\win32\Release;C:\Project\GIT\flightsimulator\openal\libs\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <LinkIncremental>false</LinkIncremental>
+      <OutputFile>$(OutDir)\FlightSimulator.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;RAPIDJSON_HAS_STDSTRING=1;WANT_SDL_SDL_SURFACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.;sdl2_image\include;sdl2\include;openal\include;rapidjson\include;sdk\include;$(QTDIR)\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>.obj\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>.obj\</ObjectFileName>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;RAPIDJSON_HAS_STDSTRING=1;WANT_SDL_SDL_SURFACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>C:/Project/GIT/flightsimulator/sdl2_image/VisualC/Debug/SDL2_image.lib;C:\Project\GIT\flightsimulator\sdl2\VisualC\win32\Debug\SDL2main.lib;C:\Project\GIT\flightsimulator\sdl2\VisualC\win32\Debug\SDL2.lib;C:\Project\GIT\flightsimulator\openal\libs\Win32\OpenAL32.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;C:\Project\GIT\flightsimulator\sdl2\VisualC\win32\Debug;C:\Project\GIT\flightsimulator\openal\libs\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <OutputFile>$(OutDir)\FlightSimulator.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;RAPIDJSON_HAS_STDSTRING=1;WANT_SDL_SDL_SURFACE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <PostBuildEvent />
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AeroControlSurface.cpp" />
+    <ClCompile Include="AeroControlSurfaceBoundary.cpp" />
+    <ClCompile Include="AeroForceGenerator.cpp" />
+    <ClCompile Include="AeroSectionElementForceGenerator.cpp" />
+    <ClCompile Include="AeroSectionForceGenerator.cpp" />
+    <ClCompile Include="AeroSectionSubElementForceGenerator.cpp" />
+    <ClCompile Include="AeroWheelSpringForceGenerator.cpp" />
+    <ClCompile Include="AirProperties.cpp" />
+    <ClCompile Include="AircraftCarrierRigidBody.cpp" />
+    <ClCompile Include="AircraftEngineForceGenerator.cpp" />
+    <ClCompile Include="AircraftEngineNozzleBleeder.cpp" />
+    <ClCompile Include="AircraftEngineNozzleFeeder.cpp" />
+    <ClCompile Include="AoaClData.cpp" />
+    <ClCompile Include="BA320RigidBody.cpp" />
+    <ClCompile Include="BA380RigidBody.cpp" />
+    <ClCompile Include="CPPSourceCodeMeshModel.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraView.cpp" />
+    <ClCompile Include="CameraViewProvider.cpp" />
+    <ClCompile Include="ConstrainedSpringForceGenerator.cpp" />
+    <ClCompile Include="DataRecorder.cpp" />
+    <ClCompile Include="FlightRecorder.cpp" />
+    <ClCompile Include="ForceGenerator.cpp" />
+    <ClCompile Include="GPSTerrainData.cpp" />
+    <ClCompile Include="GPSTileBoundary.cpp" />
+    <ClCompile Include="GSForceGenerator.cpp" />
+    <ClCompile Include="GSRigidBody.cpp" />
+    <ClCompile Include="GravityForceGenerator.cpp" />
+    <ClCompile Include="HarrierRigidBody.cpp" />
+    <ClCompile Include="HeathrowRadar.cpp" />
+    <ClCompile Include="HeightTerrainData.cpp" />
+    <ClCompile Include="Hydraulics.cpp" />
+    <ClCompile Include="JSONRigidBody.cpp" />
+    <ClCompile Include="JSONRigidBodyBuilder.cpp" />
+    <ClCompile Include="JSONRigidBodyCollection.cpp" />
+    <ClCompile Include="LondonGroundTile.cpp" />
+    <ClCompile Include="MeshData.cpp" />
+    <ClCompile Include="MeshGroupObject.cpp" />
+    <ClCompile Include="MeshModel.cpp" />
+    <ClCompile Include="MeshObject.cpp" />
+    <ClCompile Include="MeshSurfaceObject.cpp" />
+    <ClCompile Include="MipMapTerrainMeshModel.cpp" />
+    <ClCompile Include="MipMapTerrainMeshModelCollection.cpp" />
+    <ClCompile Include="OpenGLButtonTexture.cpp" />
+    <ClCompile Include="OpenGLButtonTextureManager.cpp" />
+    <ClCompile Include="OpenGLFontMeshBuilder.cpp" />
+    <ClCompile Include="OpenGLFontRenderer2D.cpp" />
+    <ClCompile Include="OpenGLFontTexture.cpp" />
+    <ClCompile Include="OpenGLFrameBuffer.cpp" />
+    <ClCompile Include="OpenGLPainter.cpp" />
+    <ClCompile Include="OpenGLPipeline.cpp" />
+    <ClCompile Include="OpenGLRenderBuffer.cpp" />
+    <ClCompile Include="OpenGLRenderer.cpp" />
+    <ClCompile Include="OpenGLShaderProgram.cpp" />
+    <ClCompile Include="OpenGLSliderControl.cpp" />
+    <ClCompile Include="OpenGLTexture2D.cpp" />
+    <ClCompile Include="OpenGLTextureRenderer2D.cpp" />
+    <ClCompile Include="OpenGLVertexBuffer.cpp" />
+    <ClCompile Include="PFDView.cpp" />
+    <ClCompile Include="PerlinNoise.cpp" />
+    <ClCompile Include="PivotObjects.cpp" />
+    <ClCompile Include="ReferenceFrame.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="RigidBodyMeshManager.cpp" />
+    <ClCompile Include="sdk\include\GLee.c" />
+    <ClCompile Include="SDLGameLoop.cpp" />
+    <ClCompile Include="SDLJoystickSystem.cpp" />
+    <ClCompile Include="SDLMainWindow.cpp" />
+    <ClCompile Include="SDLSurfaceHelper.cpp" />
+    <ClCompile Include="SDLTimer.cpp" />
+    <ClCompile Include="SRTM30HeightTerrainData.cpp" />
+    <ClCompile Include="SRTMFilename.cpp" />
+    <ClCompile Include="ScaledHeightTerrainData.cpp" />
+    <ClCompile Include="SceneryManager.cpp" />
+    <ClCompile Include="SimpleCloud.cpp" />
+    <ClCompile Include="SimpleSpringModel.cpp" />
+    <ClCompile Include="SkyDome.cpp" />
+    <ClCompile Include="SpringForceGenerator.cpp" />
+    <ClCompile Include="SpringModel.cpp" />
+    <ClCompile Include="TerrainGroupObject.cpp" />
+    <ClCompile Include="TerrainMeshModel.cpp" />
+    <ClCompile Include="TextureLoader.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TileNode.cpp" />
+    <ClCompile Include="TriangleFanQuadNode.cpp" />
+    <ClCompile Include="TurnDirection.cpp" />
+    <ClCompile Include="Weather.cpp" />
+    <ClCompile Include="WheelSpringForceGenerator.cpp" />
+    <ClCompile Include="WindTunnelForceGenerator.cpp" />
+    <ClCompile Include="WorldSystem.cpp" />
+    <ClCompile Include="loadWAV.cpp" />
+    <ClCompile Include="sdlmain.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sdk\include\AndroidAssetsTransfer.inl" />
+    <ClInclude Include="sdk\include\BezierEquation.h" />
+    <ClInclude Include="sdk\include\BoundaryHelperT.h" />
+    <ClInclude Include="sdk\include\BoundingBox.h" />
+    <ClInclude Include="sdk\include\degreesRadians.h" />
+    <ClInclude Include="sdk\include\euler.h" />
+    <ClInclude Include="sdk\include\Frustum.h" />
+    <ClInclude Include="sdk\include\GLee.h" />
+    <ClInclude Include="sdk\include\GPSLocation.h" />
+    <ClInclude Include="sdk\include\GPSModelTransform.h" />
+    <ClInclude Include="sdk\include\HeightData.h" />
+    <ClInclude Include="sdk\include\HRTimer.h" />
+    <ClInclude Include="sdk\include\include_gl.h" />
+    <ClInclude Include="sdk\include\JsonHelper.h" />
+    <ClInclude Include="sdk\include\MassChannel.h" />
+    <ClInclude Include="sdk\include\MathSupport.h" />
+    <ClInclude Include="sdk\include\matrices.cpp" />
+    <ClInclude Include="sdk\include\matrices.h" />
+    <ClInclude Include="sdk\include\Matrix3x3.h" />
+    <ClInclude Include="sdk\include\Matrix4x4.h" />
+    <ClInclude Include="sdk\include\MatrixArrayCoords.h" />
+    <ClInclude Include="sdk\include\MeshHelper.h" />
+    <ClInclude Include="sdk\include\OGLTexture2D.h" />
+    <ClInclude Include="sdk\include\OGLWtlWndImpl.h" />
+    <ClInclude Include="sdk\include\openglhwnd.h" />
+    <ClInclude Include="sdk\include\Plane.h" />
+    <ClInclude Include="sdk\include\Quarternion.h" />
+    <ClInclude Include="sdk\include\Serializable.h" />
+    <ClInclude Include="sdk\include\SerializableMacros.h" />
+    <ClInclude Include="sdk\include\SerializableStdStream.h" />
+    <ClInclude Include="sdk\include\shader.cpp" />
+    <ClInclude Include="sdk\include\shader.h" />
+    <ClInclude Include="sdk\include\vector2.h" />
+    <ClInclude Include="sdk\include\vector3.h" />
+    <ClInclude Include="sdk\include\vector4.h" />
+    <ClInclude Include="sdk\include\wglext.h" />
+    <ClInclude Include="sdk\include\Win32JoystickController.h" />
+    <ClInclude Include="AeroControlSurface.h" />
+    <ClInclude Include="AeroControlSurfaceBoundary.h" />
+    <ClInclude Include="AeroForceGenerator.h" />
+    <ClInclude Include="AeroSectionElementForceGenerator.h" />
+    <ClInclude Include="AeroSectionForceGenerator.h" />
+    <ClInclude Include="AeroSectionSubElementForceGenerator.h" />
+    <ClInclude Include="AeroWheelSpringForceGenerator.h" />
+    <ClInclude Include="AirProperties.h" />
+    <ClInclude Include="AircraftCarrierRigidBody.h" />
+    <ClInclude Include="AircraftEngineForceGenerator.h" />
+    <ClInclude Include="AircraftEngineNozzleBleeder.h" />
+    <ClInclude Include="AircraftEngineNozzleFeeder.h" />
+    <ClInclude Include="AoaClData.h" />
+    <ClInclude Include="AudiA8RigidBody.h" />
+    <ClInclude Include="BA320RigidBody.h" />
+    <ClInclude Include="BA380RigidBody.h" />
+    <ClInclude Include="CPPSourceCodeMeshModel.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraView.h" />
+    <ClInclude Include="CameraViewProvider.h" />
+    <ClInclude Include="ChunkNode.h" />
+    <ClInclude Include="CompositeListForceGenerator.h" />
+    <ClInclude Include="CompositeListForceGenerator.inl" />
+    <ClInclude Include="ConstrainedSpringForceGenerator.h" />
+    <ClInclude Include="DataRecorder.h" />
+    <ClInclude Include="FlatLifterRigidBody.h" />
+    <ClInclude Include="FlightRecorder.h" />
+    <ClInclude Include="ForceGenerator.h" />
+    <ClInclude Include="GPSTerrainData.h" />
+    <ClInclude Include="GPSTileBoundary.h" />
+    <ClInclude Include="GSForceGenerator.h" />
+    <ClInclude Include="GSRigidBody.h" />
+    <ClInclude Include="GravityForceGenerator.h" />
+    <ClInclude Include="HarrierRigidBody.h" />
+    <ClInclude Include="HeathrowRadar.h" />
+    <ClInclude Include="HeathrowTower.h" />
+    <ClInclude Include="HeightTerrainData.h" />
+    <ClInclude Include="Hydraulics.h" />
+    <ClInclude Include="JSONRigidBody.h" />
+    <ClInclude Include="JSONRigidBodyBuilder.h" />
+    <ClInclude Include="JSONRigidBodyCollection.h" />
+    <ClInclude Include="LondonGroundTile.h" />
+    <ClInclude Include="MeshData.h" />
+    <ClInclude Include="MeshGroupObject.h" />
+    <ClInclude Include="MeshModel.h" />
+    <ClInclude Include="MeshModelsArg.h" />
+    <ClInclude Include="MeshObject.h" />
+    <ClInclude Include="MeshSurfaceObject.h" />
+    <ClInclude Include="MipMapTerrainMeshModel.h" />
+    <ClInclude Include="MipMapTerrainMeshModelCollection.h" />
+    <ClInclude Include="OpenGLButtonTexture.h" />
+    <ClInclude Include="OpenGLButtonTextureManager.h" />
+    <ClInclude Include="OpenGLFontMeshBuilder.h" />
+    <ClInclude Include="OpenGLFontRenderer2D.h" />
+    <ClInclude Include="OpenGLFontTexture.h" />
+    <ClInclude Include="OpenGLFrameBuffer.h" />
+    <ClInclude Include="OpenGLPainter.h" />
+    <ClInclude Include="OpenGLPipeline.h" />
+    <ClInclude Include="OpenGLRenderBuffer.h" />
+    <ClInclude Include="OpenGLRenderer.h" />
+    <ClInclude Include="OpenGLShaderProgram.h" />
+    <ClInclude Include="OpenGLSliderControl.h" />
+    <ClInclude Include="OpenGLTexture2D.h" />
+    <ClInclude Include="OpenGLTextureRenderer2D.h" />
+    <ClInclude Include="OpenGLVertexBuffer.h" />
+    <ClInclude Include="PFDView.h" />
+    <ClInclude Include="Paths.h" />
+    <ClInclude Include="PerlinNoise.h" />
+    <ClInclude Include="PiccadillyLineTrainARigidBody.h" />
+    <ClInclude Include="PivotObjects.h" />
+    <ClInclude Include="ReferenceFrame.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="RigidBodyMeshManager.h" />
+    <ClInclude Include="RingRoad.h" />
+    <ClInclude Include="RunwayLites.h" />
+    <ClInclude Include="SDLGameLoop.h" />
+    <ClInclude Include="SDLJoystickSystem.h" />
+    <ClInclude Include="SDLMainWindow.h" />
+    <ClInclude Include="SDLSurfaceHelper.h" />
+    <ClInclude Include="SDLTimer.h" />
+    <ClInclude Include="SRTM30HeightTerrainData.h" />
+    <ClInclude Include="SRTMFilename.h" />
+    <ClInclude Include="ScaledHeightTerrainData.h" />
+    <ClInclude Include="SceneryManager.h" />
+    <ClInclude Include="SimpleCloud.h" />
+    <ClInclude Include="SimpleSpringModel.h" />
+    <ClInclude Include="SkyDome.h" />
+    <ClInclude Include="SpringForceGenerator.h" />
+    <ClInclude Include="SpringModel.h" />
+    <ClInclude Include="TerrainGroupObject.h" />
+    <ClInclude Include="TerrainMeshModel.h" />
+    <ClInclude Include="TextureLoader.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="TileNode.h" />
+    <ClInclude Include="TowBarOpenGL.h" />
+    <ClInclude Include="TowBarRigidBody.h" />
+    <ClInclude Include="TowTruckOpengl.h" />
+    <ClInclude Include="TowTruckRigidBody.h" />
+    <ClInclude Include="TriangleFanQuadNode.h" />
+    <ClInclude Include="TurnDirection.h" />
+    <ClInclude Include="WaterTile.h" />
+    <ClInclude Include="Weather.h" />
+    <ClInclude Include="WheelSpringForceGenerator.h" />
+    <ClInclude Include="Win32JoystickSystem.h" />
+    <ClInclude Include="WindTunnelForceGenerator.h" />
+    <ClInclude Include="WorldSystem.h" />
+    <ClInclude Include="interfaces.h" />
+    <ClInclude Include="loadWAV.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\*" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
