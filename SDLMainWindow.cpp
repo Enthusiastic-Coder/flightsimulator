@@ -343,7 +343,17 @@ bool SDLMainWindow::onInitialise()
 #endif
 #ifndef LOCATED_AT_GIBRALTER
 
-		
+		std::unique_ptr<CircularRunwayMeshModel> cirMesh(new CircularRunwayMeshModel);
+		cirMesh->setTextureName("runway_strip.png");
+		cirMesh->Build( 20, 1750, 200, 0, 50);
+
+		std::unique_ptr<JSONRigidBody> cirBody(new JSONRigidBody("cirrun"));
+		cirBody->setPosition(GPSLocation(51.471866, -0.465477));
+		cirBody->setEuler(0, 0, 0);
+		cirBody->setMass(100);
+		cirBody->setMeshModel(cirMesh.release());
+		_WorldSystem.addStaticJSONBody(cirBody.release());
+
         _WorldSystem.addStaticJSONBody(new HeathrowTowerRigidBody);
         _WorldSystem.addStaticJSONBody(new HeathrowRadarRigidBody);
 #endif

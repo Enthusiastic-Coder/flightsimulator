@@ -386,22 +386,7 @@ void WorldSystem::loadTerrain()
 #endif
 
     for (auto& it : _runwayList)
-		_TerrainCollection[0]->attachModel(it->meshModel, it->location, 0.01f);
-
-
-	std::unique_ptr<CircularRunwayMeshModel> cirMesh(new CircularRunwayMeshModel);
-	cirMesh->setTextureName("runway_strip.png");
-	cirMesh->Build(1, 1750, 200, 0, 50);
-
-	/*std::unique_ptr<JSONRigidBody> cirBody(new JSONRigidBody("cirrun"));
-	cirBody->setPosition(GPSLocation(51.471866, -0.465477));
-	cirBody->setEuler(0, 0, 0);
-	cirBody->setMass(100);
-	cirBody->setMeshModel(cirMesh.release());*/
-	///_WorldSystem.addStaticJSONBody(cirBody.release());
-
-
-	_TerrainCollection[0]->attachModel(*cirMesh.release(), GPSLocation(51.471866, -0.465477), 0.1f);
+		_TerrainCollection[0]->attachModel(it->meshModel, it->location, 0.1f);
 
 	_TerrainCollection.BuildVertexBuffers();
 }
