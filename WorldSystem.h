@@ -75,6 +75,8 @@ public:
 
 	MipMapTerrainMeshModelCollection _TerrainCollection;
 
+	void attachModel(int idx, MeshModel& m, const GPSLocation& loc);
+
 	void addJSONBody(JSONRigidBody* pRigidBody);
 	void addStaticJSONBody(JSONRigidBody* pRigidBody, MeshModel* model=nullptr);
 
