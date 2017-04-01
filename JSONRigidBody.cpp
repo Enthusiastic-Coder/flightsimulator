@@ -31,6 +31,35 @@ JSONRigidBody::JSONRigidBody(std::string sName, JSONRigidBody::Type typeFlags) :
     }
 }
 
+void JSONRigidBody::setMeshModel(MeshModel * model)
+{
+	_massChannel.setMass(getMass());
+	_pMeshModel = model;
+
+	if (_pMeshModel == nullptr)
+		_pMeshModel = loadMeshModel(getName(), _massChannel);
+	else
+		RigidBodyMeshManager::get().addModel(getName(), _pMeshModel, _massChannel);
+	
+	_mesh_pivot_vector.clear();
+
+	if (_pMeshModel != nullptr)
+	{
+		MeshModel& meshModel = *_pMeshModel;
+		_mesh_pivot_vector.resize(meshModel.size());
+
+		for (size_t i = 0; i < _mesh_pivot_vector.size(); ++i)
+			_mesh_pivot_vector[i] = _pivots[meshModel[i]->getName()];
+
+		setInertiaMatrix(_massChannel.MOI().toDouble());
+		setCG(_massChannel.CG().toDouble());
+	}
+	else
+		setInertiaMatrix(Matrix3x3D(getMass(), 0, 0,
+			0, getMass(), 0,
+			0, 0, getMass()));
+}
+
 MeshModel* JSONRigidBody::getMeshModel()
 {
 	return _pMeshModel;
@@ -75,7 +104,6 @@ void JSONRigidBody::onPlayRecording(double dt)
 
 MeshModel* JSONRigidBody::loadMeshModel(std::string sMeshName, MassChannel &mc)
 {
-	mc.setMass(getMass());
 	MeshModel* model = RigidBodyMeshManager::get().getModel(sMeshName, mc);
 
 	if (model == nullptr)
@@ -86,8 +114,28 @@ MeshModel* JSONRigidBody::loadMeshModel(std::string sMeshName, MassChannel &mc)
 
 void JSONRigidBody::onInitialise(WorldSystem* pWorldSystem)
 {
-	_pMeshModel = loadMeshModel(getName(), _massChannel);
-	onInitialiseHelper(pWorldSystem);
+	_windTunnel.onInitialise(pWorldSystem);
+
+	GPSLocation loc = getGPSLocation();
+	float fHeight = loc._height;
+	loc._height = 0.0f;
+
+	HeightData hd;
+	pWorldSystem->getHeightFromPosition(loc, hd);
+
+	loc._height = fHeight - hd.Height();
+	setPosition(loc);
+
+	setMeshModel(nullptr);
+
+	for (auto& it : _setList)
+		it.second->onInitialise(pWorldSystem);
+
+	for (auto& it : _endList)
+		it->onInitialise(pWorldSystem);
+
+	_flightRecorder.hookEuler(_euler);
+	setRecorderHook(_flightRecorder);
 }
 
 void JSONRigidBody::setRecorderHook(FlightRecorder& a)
@@ -401,47 +449,6 @@ void JSONRigidBody::renderMesh(Renderer* r, unsigned int shadowMapCount)
             mat.bindMatrices(r->progId());
 		}
 	}
-}
-
-void JSONRigidBody::onInitialiseHelper(WorldSystem * pWorldSystem)
-{
-	_mesh_pivot_vector.clear();
-	_windTunnel.onInitialise(pWorldSystem);
-
-	if (getMeshModel() != nullptr)
-	{
-		MeshModel& meshModel = *getMeshModel();
-		_mesh_pivot_vector.resize(meshModel.size());
-
-		for (size_t i = 0; i < _mesh_pivot_vector.size(); ++i)
-			_mesh_pivot_vector[i] = _pivots[meshModel[i]->getName()];
-
-		setInertiaMatrix(_massChannel.MOI().toDouble());
-		setCG(_massChannel.CG().toDouble());
-
-		GPSLocation loc = getGPSLocation();
-		float fHeight = loc._height;
-		loc._height = 0.0f;
-
-		HeightData hd;
-		pWorldSystem->getHeightFromPosition(loc, hd);
-
-		loc._height = fHeight - hd.Height();
-		setPosition(loc);
-	}
-	else
-		setInertiaMatrix(Matrix3x3D(getMass(), 0, 0,
-			0, getMass(), 0,
-			0, 0, getMass()));
-
-	for (auto& it : _setList)
-		it.second->onInitialise(pWorldSystem);
-
-	for (auto& it : _endList)
-		it->onInitialise(pWorldSystem);
-
-	_flightRecorder.hookEuler(_euler);
-	setRecorderHook(_flightRecorder);
 }
 
 void JSONRigidBody::applyModelMatrix(OpenGLMatrixStack& mv)

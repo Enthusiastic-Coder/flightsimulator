@@ -28,6 +28,15 @@ MeshModel* RigidBodyMeshManager::getModel(std::string sMeshName, MassChannel &mc
 	return model;
 }
 
+void RigidBodyMeshManager::addModel(std::string sMeshName, MeshModel* model, MassChannel &mc)
+{
+	MeshModel *oldmodel = _meshModelMap[sMeshName];
+	if (oldmodel != nullptr)
+		delete oldmodel;
+
+	referenceModel(sMeshName, model, mc);
+}
+
 MeshModel* RigidBodyMeshManager::loadModel(std::string sMeshName, MassChannel &mc)
 {
 	std::unique_ptr<CPPSourceCodeMeshModel> cppMeshModel(new CPPSourceCodeMeshModel);
@@ -41,25 +50,7 @@ MeshModel* RigidBodyMeshManager::loadModel(std::string sMeshName, MassChannel &m
             cppMeshModel->saveMesh("Models/" + sMeshName + "/" + meshObj);
 
 	MeshModel* model = cppMeshModel.release();
-
-	mc.setCGOffset(model->getCentroidPt());
-	model->calcMomentOfInertia(mc);
-	model->BuildVertexBuffers();
-    mc.setMOIFactor(3.0f);
-    Matrix3x3F moi = mc.MOI();
-
-    SDL_Log("Mesh :%s", sMeshName.c_str());
-    SDL_Log("MOI :\n [%.2f, %.2f, %.2f\n "
-                "[%.2f, %.2f, %.2f]\n "
-                "[%.2f, %.2f, %.2f]]",
-                moi.e11, moi.e12, moi.e13,
-                moi.e21, moi.e22, moi.e23,
-                moi.e31, moi.e32, moi.e33
-            );
-	
-	_massChannelMap[sMeshName] = mc;
-	_meshModelMap[sMeshName] = model;
-	
+	referenceModel(sMeshName, model, mc);
 	return model;
 }
 
@@ -74,4 +65,25 @@ void RigidBodyMeshManager::unLoadAll()
         delete it.second;
 
     _meshModelMap.clear();
+}
+
+void RigidBodyMeshManager::referenceModel(std::string sMeshName, MeshModel * model, MassChannel &mc)
+{
+	mc.setCGOffset(model->getCentroidPt());
+	model->calcMomentOfInertia(mc);
+	model->BuildVertexBuffers();
+	mc.setMOIFactor(3.0f);
+	Matrix3x3F moi = mc.MOI();
+
+	SDL_Log("Mesh :%s", sMeshName.c_str());
+	SDL_Log("MOI :\n [%.2f, %.2f, %.2f\n "
+		"[%.2f, %.2f, %.2f]\n "
+		"[%.2f, %.2f, %.2f]]",
+		moi.e11, moi.e12, moi.e13,
+		moi.e21, moi.e22, moi.e23,
+		moi.e31, moi.e32, moi.e33
+	);
+
+	_massChannelMap[sMeshName] = mc;
+	_meshModelMap[sMeshName] = model;
 }

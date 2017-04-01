@@ -53,6 +53,7 @@ public:
 	std::string getName();
     std::string getPath();
 
+	void setMeshModel(MeshModel* model);
 	MeshModel* getMeshModel();
 	const MassChannel& getMassChannel() const;
 
@@ -152,7 +153,6 @@ public:
 protected:
 /// IMeshModel
     void renderMesh(Renderer *r, unsigned int shadowMapCount) override;
-	void onInitialiseHelper(WorldSystem *pWorldSystem);
 	MeshModel* loadMeshModel(std::string sMeshName, MassChannel &mc);
 
 	void onUpdateFinal(double dt);
