@@ -452,10 +452,10 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsig
     calcBoundingBox();
 }
 
-void CircularRunwayMeshModel::Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank, float fMaxDim)
+void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, float fBank, float fMaxDim)
 {
 	std::stringstream ss;
-	ss << "CRMM->centerPt:" << centerPt.toString();
+	ss << "CRMM->";
 	ss << "|fHeight:" << fHeight;
 	ss << "|fRadius:" << fRadius;
 	ss << "|fWidth:" << fWidth;
