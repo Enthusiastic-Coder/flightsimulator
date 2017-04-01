@@ -467,20 +467,29 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 
 	float fLength = 2 * M_PI * fRadius;
 
-	float fHdg = 360/fMaxDim;
-	QuarternionF qHdg = MathSupport<float>::MakeQHeading(fHdg*0);
+	float fDiffHdg = 360/fMaxDim;
+	QuarternionF qHdg = MathSupport<float>::MakeQHeading(fDiffHdg*0);
 
 	int iWidthSteps = fWidth / fMaxDim;
 	int iHeightSteps = fLength / fMaxDim;
+	
+	Vector3F p(-fRadius, fHeight, 0);
+	Vector3F d(0, 0, -fMaxDim);
 
 	for (int z = 0; z < iHeightSteps; z++)
 	{
+		auto qSideWays = MathSupport<float>::MakeQHeading( 90);
+		Vector3F sideWaysShift = QVRotate(qSideWays, d);
+
 		for (int x = 0; x < iWidthSteps; x++)
-		{
-			group->_meshData.addVertex(QVRotate(qHdg, Vector3F(x * fMaxDim, 0, -z * fMaxDim)));
+		{			
+			group->_meshData.addVertex(p + float(x) * sideWaysShift );
 			group->_meshData.addNormal(0, 1, 0);
 			group->_meshData.addTexture(float(x) / (iWidthSteps - 1), float(z) / (iHeightSteps - 1));
 		}
+
+		d = QVRotate(MathSupport<float>::MakeQHeading(360.0f/iHeightSteps), d);
+		p += d;
 	}
 
 	for (int z = 0; z < iHeightSteps - 1; z++)
@@ -506,7 +515,7 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 
 	MeshSurfaceObject* surface = group->addSurface();
 
-	surface->setDiffuse(Vector3F(0.85f, 0.85f, 0.85f));
+	surface->setDiffuse(Vector3F(0.95f, 0.95f, 0.95f));
 	surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
 	surface->setShininess(32);
 	surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_LINEAR));
