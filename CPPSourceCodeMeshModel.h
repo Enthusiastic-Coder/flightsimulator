@@ -57,8 +57,11 @@ class SimpleRunwayMeshModel : public MeshModel
 public:
 	void Build(float fHdg, float fWidth, float fLength, float fMaxDim);
 	void setTextureName(std::string strName);
+	void setTextureMag(float u, float v);
 private:
 	std::string _textureName;
+	float _kU = 1.0f;
+	float _kV = 1.0f;
 };
 
 class SimplePlaneMeshModel : public MeshModel

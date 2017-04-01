@@ -353,7 +353,7 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
         {
             group->_meshData.addVertex(QVRotate(qHdg, Vector3F(x * fMaxDim, 0, -z * fMaxDim)));
             group->_meshData.addNormal(0, 1, 0);
-            group->_meshData.addTexture(float(x) / (iWidthSteps - 1), float(z) / (iHeightSteps - 1));
+            group->_meshData.addTexture(float(x) / (iWidthSteps - 1)*_kU, float(z) / (iHeightSteps - 1)*_kV);
         }
     }
 
@@ -386,7 +386,7 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
     surface->setDiffuse(Vector3F(0.85f, 0.85f, 0.85f));
     surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
     surface->setShininess(32);
-    surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_LINEAR));
+    surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_NEAREST_MIPMAP_NEAREST));
 
     MeshObject* mesh = surface->addMesh();
     mesh->setPrimitveType(GL_TRIANGLES);
@@ -398,6 +398,12 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
 void SimpleRunwayMeshModel::setTextureName(std::string strName)
 {
     _textureName = strName;
+}
+
+void SimpleRunwayMeshModel::setTextureMag(float u, float v)
+{
+	_kU = u;
+	_kV = v;
 }
 
 /////////////////
