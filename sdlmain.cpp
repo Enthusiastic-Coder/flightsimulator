@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SDLMainWindow.h"
 
 int main(int, char *[])

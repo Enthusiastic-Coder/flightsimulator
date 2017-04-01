@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "OpenGLFontRenderer2D.h"
 #include "OpenGLFontTexture.h"
 #include "OpenGLPipeline.h"

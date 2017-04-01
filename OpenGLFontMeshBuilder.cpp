@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "OpenGLFontMeshBuilder.h"
 #include "OpenGLFontTexture.h"
 #include "OpenGLRenderer.h"

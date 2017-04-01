@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "HeathrowRadar.h"
 
 HeathrowRadarRigidBody::HeathrowRadarRigidBody()

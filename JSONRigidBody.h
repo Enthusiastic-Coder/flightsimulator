@@ -152,7 +152,7 @@ public:
 protected:
 /// IMeshModel
     void renderMesh(Renderer *r, unsigned int shadowMapCount) override;
-
+	void onInitialiseHelper(WorldSystem *pWorldSystem);
 	MeshModel* loadMeshModel(std::string sMeshName, MassChannel &mc);
 
 	void onUpdateFinal(double dt);

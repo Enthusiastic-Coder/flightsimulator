@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SDLSurfaceHelper.h"
 
 #include <SDL_image.h>

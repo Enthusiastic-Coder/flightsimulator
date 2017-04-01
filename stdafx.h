@@ -8,6 +8,18 @@
 #define NOMINMAX
 //#include <vld.h>
 
+#include <mathsupport.h>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <set>
+#include <list>
+#include <cstdlib>
+#include <fstream>
+#include <include_gl.h>
+#include <MassChannel.h>
+
 
 #define LOCATED_AT_LONDON
 //#define LOCATED_AT_GIBRALTER

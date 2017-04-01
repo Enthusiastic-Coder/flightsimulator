@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <include_gl.h>
 #include <iostream>
 #include "OpenGLTexture2D.h"

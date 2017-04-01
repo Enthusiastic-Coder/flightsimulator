@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "CameraView.h"
 
 CameraView::GroupCameraView::~GroupCameraView()

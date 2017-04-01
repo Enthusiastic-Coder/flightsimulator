@@ -3,7 +3,7 @@
 /// used or released publicly to be used on any work or derivate work.
 /// Any copy's on your machine must be deleted.
 /// (C) Copyright 2014 Mohamed Jebara
-
+#include "stdafx.h"
 #include "DataRecorder.h"
 
 

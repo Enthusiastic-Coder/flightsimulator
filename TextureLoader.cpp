@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "TextureLoader.h"
 #include <include_gl.h>
 #include <iostream>

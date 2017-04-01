@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "OpenGLRenderer.h"
 #include "OpenGLPipeline.h"
 #include "OpenGLVertexBuffer.h"

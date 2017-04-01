@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "OpenGLButtonTextureManager.h"
 #include "OpenGLRenderer.h"
 #include "OpenGLButtonTexture.h"
