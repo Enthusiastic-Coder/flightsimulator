@@ -375,8 +375,9 @@ void WorldSystem::loadTerrain()
 	}
 #endif
 
-    for (auto& it : _runwayList)
-		_TerrainCollection[0]->attachModel(it->meshModel, it->location, 0.1f);
+	//Temporary removed simplerunway
+ //   for (auto& it : _runwayList)
+//		_TerrainCollection[0]->attachModel(it->meshModel, it->location, 0.1f);
 
 	_TerrainCollection.BuildVertexBuffers();
 }
