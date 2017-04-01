@@ -57,7 +57,8 @@ void JSONRigidBodyCollection::onUnInitialise()
 void JSONRigidBodyCollection::addJSONBody( WorldSystem* pWorldSystem, JSONRigidBody* pRigidBody )
 {
 	MeshModel* m = pRigidBody->getMeshModel();
-	pRigidBody->setMeshModel(m);
+	if( m == nullptr)
+		pRigidBody->setMeshModel(m);
     
 	pRigidBody->onInitialise(pWorldSystem);
 	_bodyList.push_back( pRigidBody );
@@ -71,7 +72,8 @@ void JSONRigidBodyCollection::addStaticJSONBody(WorldSystem *pWorldSystem, JSONR
 {
 	_staticBodyList.push_back( pRigidBody );
 	MeshModel* m = _staticBodyList.back()->getMeshModel();
-	_staticBodyList.back()->setMeshModel(model == nullptr? m : model);
+	if( m == nullptr)
+		_staticBodyList.back()->setMeshModel(model);
 
     _staticBodyList.back()->onInitialise(pWorldSystem);
 }
