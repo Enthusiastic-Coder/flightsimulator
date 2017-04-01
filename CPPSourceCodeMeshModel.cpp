@@ -452,22 +452,56 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsig
     calcBoundingBox();
 }
 
-void CircularRunwayMeshModel::Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank)
+void CircularRunwayMeshModel::Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank, float fStep)
 {
 	std::stringstream ss;
 	ss << "CRMM->centerPt:" << centerPt.toString();
 	ss << "|fHeight:" << fHeight;
 	ss << "|fRadius:" << fRadius;
 	ss << "|fWidth:" << fWidth;
-	ss << "fBank:" << fBank;
+	ss << "|fBank:" << fBank;
+	ss << "|fStep:" << fStep;
 
 	setName(ss.str());
 	MeshGroupObject* group = addGroup("CircularRunwayMeshGroup");
 
-	/*group->_meshData.addVertex(QVRotate(qHdg, Vector3F(x * fMaxDim, 0, -z * fMaxDim)));
-	group->_meshData.addNormal(0, 1, 0);
-	group->_meshData.addTexture(float(x) / (iWidthSteps - 1), float(z) / (iHeightSteps - 1));
-*/
+	float fLength = 2 * M_PI * fRadius;
+	float fMaxDim = fLength / fStep;
+
+	float fHdg = 0.0f;
+	QuarternionF qHdg = MathSupport<float>::MakeQHeading(fHdg);
+
+	int iWidthSteps = fWidth / fMaxDim;
+	int iHeightSteps = fLength / fMaxDim;
+
+	for (int z = 0; z < iHeightSteps; z++)
+	{
+		for (int x = 0; x < iWidthSteps; x++)
+		{
+			group->_meshData.addVertex(QVRotate(qHdg, Vector3F(x * fMaxDim, 0, -z * fMaxDim)));
+			group->_meshData.addNormal(0, 1, 0);
+			group->_meshData.addTexture(float(x) / (iWidthSteps - 1), float(z) / (iHeightSteps - 1));
+		}
+	}
+
+	for (int z = 0; z < iHeightSteps - 1; z++)
+	{
+		for (int x = 0; x < iWidthSteps - 1; x++)
+		{
+			group->_meshData.addIndex(iWidthSteps * (z + 1) + x);
+			group->_meshData.addIndex(iWidthSteps * z + x);
+			group->_meshData.addIndex(iWidthSteps  * z + x + 1);
+
+			group->_meshData.addIndex(iWidthSteps * (z + 1) + x);
+			group->_meshData.addIndex(iWidthSteps  * z + x + 1);
+			group->_meshData.addIndex(iWidthSteps  * (z + 1) + x + 1);
+		}
+	}
+
+	group->setVertexFlag();
+	group->setNormalFlag();
+	group->setTexCoordFlag();
+	group->setIndexFlag();
 
 	std::string rootFolder(ROOT_APP_DIRECTORY);
 

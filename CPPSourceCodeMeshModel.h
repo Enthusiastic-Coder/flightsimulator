@@ -71,7 +71,7 @@ public:
 class CircularRunwayMeshModel : public MeshModel
 {
 public:
-	void Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank);
+	void Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank, float fStep);
 	void setTextureName(std::string strName);
 
 private:
