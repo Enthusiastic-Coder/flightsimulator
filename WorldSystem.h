@@ -76,7 +76,7 @@ public:
 	MipMapTerrainMeshModelCollection _TerrainCollection;
 
 	void addJSONBody(JSONRigidBody* pRigidBody);
-	void addStaticJSONBody(JSONRigidBody* pRigidBody);
+	void addStaticJSONBody(JSONRigidBody* pRigidBody, MeshModel* model=nullptr);
 
 // IFilePersist
     void persistReadState(FILE* fPersistFile) override;

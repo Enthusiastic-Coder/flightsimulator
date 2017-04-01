@@ -525,9 +525,9 @@ void WorldSystem::addJSONBody(JSONRigidBody * pRigidBody)
     _rigidBodyCollection.addJSONBody(this, pRigidBody);
 }
 
-void WorldSystem::addStaticJSONBody(JSONRigidBody * pRigidBody)
+void WorldSystem::addStaticJSONBody(JSONRigidBody * pRigidBody, MeshModel* m)
 {
-    _rigidBodyCollection.addStaticJSONBody(this, pRigidBody);
+    _rigidBodyCollection.addStaticJSONBody(this, pRigidBody, m);
 }
 
 ISceneryEnvironment *  WorldSystem::getEnv()
