@@ -67,3 +67,13 @@ public:
 	void Build(int iWidth, int iHeight, float fInterval, unsigned char r,
 				unsigned char g, unsigned char b, float fHdg);
 };
+
+class CircularRunwayMeshModel : public MeshModel
+{
+public:
+	void Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank);
+	void setTextureName(std::string strName);
+
+private:
+	std::string _textureName;
+};

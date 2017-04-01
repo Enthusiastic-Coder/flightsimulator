@@ -452,3 +452,40 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsig
     calcBoundingBox();
 }
 
+void CircularRunwayMeshModel::Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank)
+{
+	std::stringstream ss;
+	ss << "CRMM->centerPt:" << centerPt.toString();
+	ss << "|fHeight:" << fHeight;
+	ss << "|fRadius:" << fRadius;
+	ss << "|fWidth:" << fWidth;
+	ss << "fBank:" << fBank;
+
+	setName(ss.str());
+	MeshGroupObject* group = addGroup("CircularRunwayMeshGroup");
+
+	/*group->_meshData.addVertex(QVRotate(qHdg, Vector3F(x * fMaxDim, 0, -z * fMaxDim)));
+	group->_meshData.addNormal(0, 1, 0);
+	group->_meshData.addTexture(float(x) / (iWidthSteps - 1), float(z) / (iHeightSteps - 1));
+*/
+
+	std::string rootFolder(ROOT_APP_DIRECTORY);
+
+	MeshSurfaceObject* surface = group->addSurface();
+
+	surface->setDiffuse(Vector3F(0.85f, 0.85f, 0.85f));
+	surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
+	surface->setShininess(32);
+	surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_LINEAR));
+
+	MeshObject* mesh = surface->addMesh();
+	mesh->setPrimitveType(GL_TRIANGLES);
+	mesh->setCountOffset(group->_meshData.indexSize(), 0);
+
+	calcBoundingBox();
+}
+
+void CircularRunwayMeshModel::setTextureName(std::string strName)
+{
+	_textureName = strName;
+}
