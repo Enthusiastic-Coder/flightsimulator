@@ -385,7 +385,7 @@ bool BAAirbus320JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo *scrn, float dt)
         	deflection_l = 0;
         else
 #endif
-        	deflection_l -= dt * fPitch;
+        	deflection_l -= dt * fPitch * 4;
 
         float MAX_DEFL = 10;
         if( deflection_l < -MAX_DEFL )
