@@ -475,20 +475,21 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	
 	Vector3F p(-fRadius, fHeight, 0);
 	Vector3F d(0, 0, -fMaxDim);
+	auto qSideWays = MathSupport<float>::MakeQHeading(90);
+	auto qForwards = MathSupport<float>::MakeQHeading(360.0f / iHeightSteps);
 
 	for (int z = 0; z < iHeightSteps; z++)
 	{
-		auto qSideWays = MathSupport<float>::MakeQHeading( 90);
 		Vector3F sideWaysShift = QVRotate(qSideWays, d);
 
 		for (int x = 0; x < iWidthSteps; x++)
 		{			
 			group->_meshData.addVertex(p + float(x) * sideWaysShift );
 			group->_meshData.addNormal(0, 1, 0);
-			group->_meshData.addTexture(float(x) / (iWidthSteps - 1), float(z) / (iHeightSteps - 1));
+			group->_meshData.addTexture(float(x) / (iWidthSteps - 1) * fWidth/100.0f, float(z) / (iHeightSteps - 1));
 		}
 
-		d = QVRotate(MathSupport<float>::MakeQHeading(360.0f/iHeightSteps), d);
+		d = QVRotate(qForwards, d);
 		p += d;
 	}
 
