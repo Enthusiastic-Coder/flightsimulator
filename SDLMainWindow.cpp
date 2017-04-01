@@ -342,6 +342,15 @@ bool SDLMainWindow::onInitialise()
         _WorldSystem.addJSONBody(new AircraftCarrierJSONRigidBody("AircraftCarrier:Carrier_A_GIB"));
 #endif
 #ifndef LOCATED_AT_GIBRALTER
+
+		std::unique_ptr<CircularRunwayMeshModel> cirMesh(new CircularRunwayMeshModel);
+		cirMesh->setTextureName("runway_strip.png");
+		cirMesh->Build(GPSLocation(51.471866, -0.465477, 2.0), 5, 1750, 100, 0, 50);
+
+		std::unique_ptr<JSONRigidBody> cirBody(new JSONRigidBody("cirrun"));
+		cirBody->setMeshModel(cirMesh.release());
+		_WorldSystem.addStaticJSONBody(cirBody.release());
+
         _WorldSystem.addStaticJSONBody(new HeathrowTowerRigidBody);
         _WorldSystem.addStaticJSONBody(new HeathrowRadarRigidBody);
 #endif

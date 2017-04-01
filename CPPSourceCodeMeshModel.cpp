@@ -452,7 +452,7 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsig
     calcBoundingBox();
 }
 
-void CircularRunwayMeshModel::Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank, float fStep)
+void CircularRunwayMeshModel::Build(GPSLocation centerPt, float fHeight, float fRadius, float fWidth, float fBank, float fMaxDim)
 {
 	std::stringstream ss;
 	ss << "CRMM->centerPt:" << centerPt.toString();
@@ -460,16 +460,15 @@ void CircularRunwayMeshModel::Build(GPSLocation centerPt, float fHeight, float f
 	ss << "|fRadius:" << fRadius;
 	ss << "|fWidth:" << fWidth;
 	ss << "|fBank:" << fBank;
-	ss << "|fStep:" << fStep;
+	ss << "|fMaxDim:" << fMaxDim;
 
 	setName(ss.str());
-	MeshGroupObject* group = addGroup("CircularRunwayMeshGroup");
+	MeshGroupObject* group = addGroup("Group");
 
 	float fLength = 2 * M_PI * fRadius;
-	float fMaxDim = fLength / fStep;
 
-	float fHdg = 0.0f;
-	QuarternionF qHdg = MathSupport<float>::MakeQHeading(fHdg);
+	float fHdg = 360/fMaxDim;
+	QuarternionF qHdg = MathSupport<float>::MakeQHeading(fHdg*0);
 
 	int iWidthSteps = fWidth / fMaxDim;
 	int iHeightSteps = fLength / fMaxDim;
