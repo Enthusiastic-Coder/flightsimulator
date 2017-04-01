@@ -23,7 +23,7 @@ public:
 	void onInitialise();
     void onUnInitialise();
     void addJSONBody(WorldSystem *pWorldSystem, JSONRigidBody* pRigidBody );
-    void addStaticJSONBody( WorldSystem *pWorldSystem, JSONRigidBody* pRigidBody );
+    void addStaticJSONBody( WorldSystem *pWorldSystem, JSONRigidBody* pRigidBody, MeshModel* model=nullptr );
 
     JSONRigidBody* createJSONBody(WorldSystem *pWorldSystem, std::string sName, JSONRigidBody::Type typeFlags = JSONRigidBody::Type::NORMAL);
     JSONRigidBody* createStaticJSONBody( WorldSystem *pWorldSystem, std::string sName, JSONRigidBody::Type typeFlags = JSONRigidBody::Type::NORMAL);

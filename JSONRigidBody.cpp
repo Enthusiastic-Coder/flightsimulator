@@ -126,8 +126,6 @@ void JSONRigidBody::onInitialise(WorldSystem* pWorldSystem)
 	loc._height = fHeight - hd.Height();
 	setPosition(loc);
 
-	setMeshModel(nullptr);
-
 	for (auto& it : _setList)
 		it.second->onInitialise(pWorldSystem);
 
