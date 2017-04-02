@@ -92,7 +92,7 @@ BAAirbus380JSONRigidBody::BAAirbus380JSONRigidBody(std::string name) :
 	_left_front_wheel.spring().setRestitution(0.85f);
 	_left_front_wheel.spring().setSpringFriction(springfricton);
 	_left_front_wheel.spring().setSpringMass(3000.0f);
-	_left_front_wheel.spring().setContactFrictionCoefficient(25.0);
+	_left_front_wheel.spring().setContactFrictionCoefficient(15);
 
 	_left_front_wheel.spring().setRestitution(0.1f);
 	_left_front_wheel.spring().setWheelRadius(0.62);
@@ -110,7 +110,7 @@ BAAirbus380JSONRigidBody::BAAirbus380JSONRigidBody(std::string name) :
 	_left_back_wheel.spring().setRestitution(0.85f);
 	_left_back_wheel.spring().setSpringFriction(springfricton);
 	_left_back_wheel.spring().setSpringMass(3000.0f);
-	_left_back_wheel.spring().setContactFrictionCoefficient(25.0);
+	_left_back_wheel.spring().setContactFrictionCoefficient(15);
 
 	_left_back_wheel.spring().setRestitution(0.1f);
 	_left_back_wheel.spring().setWheelRadius(0.62);
@@ -126,7 +126,7 @@ BAAirbus380JSONRigidBody::BAAirbus380JSONRigidBody(std::string name) :
 	_right_front_wheel.spring().setRestitution(0.85f);
 	_right_front_wheel.spring().setSpringFriction(springfricton);
 	_right_front_wheel.spring().setSpringMass(3000.0f);
-	_right_front_wheel.spring().setContactFrictionCoefficient(25.0);
+	_right_front_wheel.spring().setContactFrictionCoefficient(15);
 	_right_front_wheel.spring().setRestitution(0.1f);
 	_right_front_wheel.spring().setWheelRadius(0.62);
 	_right_front_wheel.spring().calculateSpringConstant();
@@ -141,7 +141,7 @@ BAAirbus380JSONRigidBody::BAAirbus380JSONRigidBody(std::string name) :
 	_right_back_wheel.spring().setRestitution(0.85f);
 	_right_back_wheel.spring().setSpringFriction(springfricton);
 	_right_back_wheel.spring().setSpringMass(3000.0f);
-	_right_back_wheel.spring().setContactFrictionCoefficient(25.0);
+	_right_back_wheel.spring().setContactFrictionCoefficient(15);
 	_right_back_wheel.spring().setRestitution(0.1f);
 	_right_back_wheel.spring().setWheelRadius(0.62);
 	_right_back_wheel.spring().calculateSpringConstant();
