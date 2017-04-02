@@ -5,7 +5,7 @@
 
 
 CircularRunwayRigidBody::CircularRunwayRigidBody(std::string name) :
-	JSONRigidBody(name)
+	JSONRigidBody(name, JSONRigidBody::Type::PLANE)
 {
 }
 
