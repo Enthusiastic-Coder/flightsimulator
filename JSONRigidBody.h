@@ -55,6 +55,7 @@ public:
 
 	void setMeshModel(MeshModel* model);
 	MeshModel* getMeshModel();
+	const MeshModel* getMeshModel() const;
 	const MassChannel& getMassChannel() const;
 
 	void clear();
