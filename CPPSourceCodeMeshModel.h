@@ -71,14 +71,17 @@ public:
 				unsigned char g, unsigned char b, float fHdg);
 };
 
-class CircularRunwayMeshModel : public MeshModel, public ISceneryEnvironment
+#include <BoundaryHelperT.h>
+
+class CircularRunwayMeshModel : public MeshModel
 {
 public:
 	void Build( float fHeight, float fRadius, float fWidth, float fBank, float fMaxDim);
 	void setTextureName(std::string strName);
 
-	bool getHeightFromPosition(const GPSLocation& gpsLocation, HeightData& heightData) const override;
+	const std::vector<QuadPlaneBoundaryT>& getBoundary() const;
 
 private:
 	std::string _textureName;
+	std::vector<QuadPlaneBoundaryT> _roadBoundaryLayout;
 };

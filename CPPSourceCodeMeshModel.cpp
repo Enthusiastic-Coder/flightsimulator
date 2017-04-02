@@ -468,6 +468,8 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	ss << "|fBank:" << fBank;
 	ss << "|fMaxDim:" << fMaxDim;
 
+	_roadBoundaryLayout.clear();
+
 	setName(ss.str());
 	MeshGroupObject* group = addGroup("Group");
 
@@ -499,17 +501,30 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 		p += d;
 	}
 
+	QuadPlaneBoundaryT boundary;
+
 	for (int z = 0; z < iHeightSteps - 1; z++)
 	{
 		for (int x = 0; x < iWidthSteps - 1; x++)
 		{
-			group->_meshData.addIndex(iWidthSteps * (z + 1) + x);
-			group->_meshData.addIndex(iWidthSteps * z + x);
-			group->_meshData.addIndex(iWidthSteps  * z + x + 1);
+			int idx[6];
+			idx[0] = iWidthSteps * (z + 1) + x;
+			idx[1] = iWidthSteps * z + x;
+			idx[2] = iWidthSteps  * z + x + 1;
 
-			group->_meshData.addIndex(iWidthSteps * (z + 1) + x);
-			group->_meshData.addIndex(iWidthSteps  * z + x + 1);
-			group->_meshData.addIndex(iWidthSteps  * (z + 1) + x + 1);
+			idx[3] = idx[0];
+			idx[4] = idx[2];
+			idx[5] = iWidthSteps  * (z + 1) + x + 1;
+
+			for (int i = 0; i < 6; ++i)
+				group->_meshData.addIndex(idx[i]);
+
+			boundary[0] = group->_meshData.getVertex(idx[0]);
+			boundary[1] = group->_meshData.getVertex(idx[1]);
+			boundary[2] = group->_meshData.getVertex(idx[2]);
+			boundary[3] = group->_meshData.getVertex(idx[5]);
+
+			_roadBoundaryLayout.push_back(boundary);
 		}
 	}
 
@@ -539,7 +554,7 @@ void CircularRunwayMeshModel::setTextureName(std::string strName)
 	_textureName = strName;
 }
 
-bool CircularRunwayMeshModel::getHeightFromPosition(const GPSLocation & gpsLocation, HeightData & heightData) const
+const std::vector<QuadPlaneBoundaryT>& CircularRunwayMeshModel::getBoundary() const
 {
-	return false;
+	return _roadBoundaryLayout;
 }
