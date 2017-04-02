@@ -478,12 +478,15 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	
 	Vector3F p(-fRadius, fHeight, 0);
 	Vector3F d(0, 0, -fMaxDim);
-	auto qSideWays = MathSupport<float>::MakeQHeading(90);
+	Vector3F dSide(fMaxDim,0,0);
 	auto qForwards = MathSupport<float>::MakeQHeading(360.0f / iHeightSteps);
-
+	auto qBank = MathSupport<float>::MakeQBank(fBank);
+	
 	for (int z = 0; z < iHeightSteps; z++)
 	{
-		Vector3F sideWaysShift = QVRotate(qSideWays, d);
+		auto qHdg = MathSupport<float>::MakeQHeading(z*360.0f / iHeightSteps);
+
+		Vector3F sideWaysShift = QVRotate(qHdg*qBank, dSide);
 
 		for (int x = 0; x < iWidthSteps; x++)
 		{			
