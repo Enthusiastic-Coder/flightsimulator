@@ -67,7 +67,7 @@ MeshGroupObject* MeshModel::operator[](int idx)
     return _objects[idx];
 }
 
-BoundingBox MeshModel::getBoundingBox()
+BoundingBox MeshModel::getBoundingBox() const
 {
     return _args._BoundingBox;
 }

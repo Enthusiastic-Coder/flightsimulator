@@ -59,7 +59,7 @@ public:
     void calcMomentOfInertia(MassChannel &mc);
     void calcBoundingBox();
 
-    BoundingBox getBoundingBox();
+    BoundingBox getBoundingBox() const;
     size_t getPolyCount();
     float getArea();
     float getVolume();
