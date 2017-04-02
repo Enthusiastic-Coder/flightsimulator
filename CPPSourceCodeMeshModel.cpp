@@ -472,10 +472,7 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	MeshGroupObject* group = addGroup("Group");
 
 	float fLength = 2 * M_PI * fRadius;
-
 	float fDiffHdg = 360/fMaxDim;
-	QuarternionF qHdg = MathSupport<float>::MakeQHeading(fDiffHdg*0);
-
 	int iWidthSteps = fWidth / fMaxDim;
 	int iHeightSteps = fLength / fMaxDim;
 	
