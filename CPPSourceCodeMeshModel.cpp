@@ -538,3 +538,8 @@ void CircularRunwayMeshModel::setTextureName(std::string strName)
 {
 	_textureName = strName;
 }
+
+bool CircularRunwayMeshModel::getHeightFromPosition(const GPSLocation & gpsLocation, HeightData & heightData) const
+{
+	return false;
+}

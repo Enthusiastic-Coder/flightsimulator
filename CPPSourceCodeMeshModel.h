@@ -71,11 +71,13 @@ public:
 				unsigned char g, unsigned char b, float fHdg);
 };
 
-class CircularRunwayMeshModel : public MeshModel
+class CircularRunwayMeshModel : public MeshModel, public ISceneryEnvironment
 {
 public:
 	void Build( float fHeight, float fRadius, float fWidth, float fBank, float fMaxDim);
 	void setTextureName(std::string strName);
+
+	bool getHeightFromPosition(const GPSLocation& gpsLocation, HeightData& heightData) const override;
 
 private:
 	std::string _textureName;

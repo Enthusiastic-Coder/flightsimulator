@@ -25,6 +25,7 @@
 #include "HarrierRigidBody.h"
 #include "AircraftCarrierRigidBody.h"
 #include "HeathrowRadar.h"
+#include "CircularRunwayRigidBody.h"
 #include <iostream>
 
 #include "OpenGLFontTexture.h"
@@ -345,9 +346,9 @@ bool SDLMainWindow::onInitialise()
 
 		std::unique_ptr<CircularRunwayMeshModel> cirMesh(new CircularRunwayMeshModel);
 		cirMesh->setTextureName("runway_strip.png");
-		cirMesh->Build( 30, 1750, 200, 15, 50);
+		cirMesh->Build( 40, 1750, 200, 15, 50);
 
-		std::unique_ptr<JSONRigidBody> cirBody(new JSONRigidBody("cirrun"));
+		std::unique_ptr<CircularRunwayRigidBody> cirBody(new CircularRunwayRigidBody("cirrun"));
 		cirBody->setPosition(GPSLocation(51.471866, -0.465477));
 		cirBody->setEuler(0, 0, 0);
 		cirBody->setMass(100);
