@@ -171,6 +171,7 @@
     <ClCompile Include="AoaClData.cpp" />
     <ClCompile Include="BA320RigidBody.cpp" />
     <ClCompile Include="BA380RigidBody.cpp" />
+    <ClCompile Include="CircularRunwayRigidBody.cpp" />
     <ClCompile Include="CPPSourceCodeMeshModel.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraView.cpp" />
@@ -254,6 +255,7 @@
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CircularRunwayRigidBody.h" />
     <ClInclude Include="sdk\include\AndroidAssetsTransfer.inl" />
     <ClInclude Include="sdk\include\BezierEquation.h" />
     <ClInclude Include="sdk\include\BoundaryHelperT.h" />
