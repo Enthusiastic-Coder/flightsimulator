@@ -65,6 +65,11 @@ MeshModel* JSONRigidBody::getMeshModel()
 	return _pMeshModel;
 }
 
+const MeshModel * JSONRigidBody::getMeshModel() const
+{
+	return _pMeshModel;
+}
+
 const MassChannel & JSONRigidBody::getMassChannel() const
 {
 	return _massChannel;
