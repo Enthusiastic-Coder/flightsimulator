@@ -336,6 +336,9 @@ bool SDLMainWindow::onInitialise()
         _WorldSystem.onInitialise();
 
         _WorldSystem.addJSONBody(new BAAirbus320JSONRigidBody("BAA320:A320_A_GIB"));
+#ifndef ANDROID
+		_WorldSystem.addJSONBody(new BAAirbus380JSONRigidBody("BAA380:A380_A_GIB"));
+#endif
 #ifndef LOCATED_AT_LONDON
         _WorldSystem.addJSONBody(new BAAirbus320JSONRigidBody("AirArabia:A320_B_GIB"));
         _WorldSystem.addJSONBody(new BAAirbus380JSONRigidBody("BAA380:A380_A_GIB"));
