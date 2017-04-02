@@ -56,6 +56,11 @@ void Camera::incrOrientation(float x, float y, float z)
         orientation.y = 360 - orientation.y;
         _remoteView->setOrientation(orientation);
     }
+
+	const Vector3F& locOrient = _localView.getOrientation();
+
+	if (fabs(locOrient.y - orientation.y) > 45.0f)
+		_localView.setOrientation(orientation);
 }
 
 void Camera::incrZoom(float fZoom)
