@@ -22,7 +22,7 @@ void OpenGLTextureManager::release(std::string filename)
 {
 }
 
-OpenGLTexture2D* OpenGLTextureManager::getImage(std::string filename, int minification)
+OpenGLTexture2D* OpenGLTextureManager::getImage(std::string filename, int minification, int wrapMode)
 {
     std::map<std::string, MapEntry*>::iterator it = _map.find(filename);
 
@@ -35,6 +35,7 @@ OpenGLTexture2D* OpenGLTextureManager::getImage(std::string filename, int minifi
 	{
 		std::unique_ptr<OpenGLTexture2D> tex(new OpenGLTexture2D);
 		tex->setMinification(minification);
+		tex->setWrapMode(wrapMode);
 
 		if (tex->Load(filename))
 		{
