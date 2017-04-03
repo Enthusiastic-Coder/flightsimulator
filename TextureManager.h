@@ -22,7 +22,7 @@ public:
 	};
 
 	void release(std::string filename);
-	OpenGLTexture2D* getImage(std::string filename, int minification=GL_LINEAR);
+	OpenGLTexture2D* getImage(std::string filename, int minification=GL_LINEAR, int wrapMode= GL_REPEAT);
 
 private:
 	OpenGLTextureManager();
