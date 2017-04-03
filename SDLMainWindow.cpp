@@ -348,7 +348,7 @@ bool SDLMainWindow::onInitialise()
 #ifndef LOCATED_AT_GIBRALTER
 
 		std::unique_ptr<CircularRunwayMeshModel> cirMesh(new CircularRunwayMeshModel);
-		cirMesh->setTextureName("runway_strip.png");
+		cirMesh->setTextureName("runway_strip-2.png");
 		cirMesh->Build( 40, 1750, 200, 15, 50);
 
 		std::unique_ptr<CircularRunwayRigidBody> cirBody(new CircularRunwayRigidBody("cirrun"));

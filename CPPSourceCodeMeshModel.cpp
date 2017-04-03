@@ -473,20 +473,21 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	setName(ss.str());
 	MeshGroupObject* group = addGroup("Group");
 
+	const float totalDeg = 360.0f;
 	float fLength = 2 * M_PI * fRadius;
-	float fDiffHdg = 360/fMaxDim;
+	float fDiffHdg = totalDeg /fMaxDim;
 	int iWidthSteps = fWidth / fMaxDim;
 	int iHeightSteps = fLength / fMaxDim;
 	
 	Vector3F p(-fRadius, fHeight, 0);
 	Vector3F d(0, 0, -fMaxDim);
 	Vector3F dSide(fMaxDim,0,0);
-	auto qForwards = MathSupport<float>::MakeQHeading(360.0f / iHeightSteps);
+	auto qForwards = MathSupport<float>::MakeQHeading(totalDeg / (iHeightSteps-1));
 	auto qBank = MathSupport<float>::MakeQBank(fBank);
 	
 	for (int z = 0; z < iHeightSteps; z++)
 	{
-		auto qHdg = MathSupport<float>::MakeQHeading(z*360.0f / iHeightSteps);
+		auto qHdg = MathSupport<float>::MakeQHeading(z*totalDeg / (iHeightSteps-1));
 
 		Vector3F sideWaysShift = QVRotate(qHdg*qBank, dSide);
 
@@ -494,7 +495,7 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 		{			
 			group->_meshData.addVertex(p + float(x) * sideWaysShift );
 			group->_meshData.addNormal(0, 1, 0);
-			group->_meshData.addTexture(float(x) / (iWidthSteps - 1) * fWidth/100.0f, float(z) / (iHeightSteps - 1));
+			group->_meshData.addTexture(float(x) / (iWidthSteps - 1) * fWidth/60.0f, float(z) / (iHeightSteps - 1) * fLength/2735);
 		}
 
 		d = QVRotate(qForwards, d);
@@ -540,7 +541,7 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	surface->setDiffuse(Vector3F(0.95f, 0.95f, 0.95f));
 	surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
 	surface->setShininess(32);
-	surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_LINEAR));
+	surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_NEAREST));
 
 	MeshObject* mesh = surface->addMesh();
 	mesh->setPrimitveType(GL_TRIANGLES);
