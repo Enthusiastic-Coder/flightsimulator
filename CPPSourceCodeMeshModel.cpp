@@ -473,29 +473,34 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	setName(ss.str());
 	MeshGroupObject* group = addGroup("Group");
 
+	const float fMaxWidth = fMaxDim / 4;
 	const float totalDeg = 360.0f;
 	float fLength = 2 * M_PI * fRadius;
 	float fDiffHdg = totalDeg /fMaxDim;
-	int iWidthSteps = fWidth / fMaxDim;
+	int iWidthSteps = fWidth / fMaxWidth;
 	int iHeightSteps = fLength / fMaxDim;
 	
 	Vector3F p(-fRadius, fHeight, 0);
 	Vector3F d(0, 0, -fMaxDim);
-	Vector3F dSide(fMaxDim,0,0);
+	Vector3F dSide(fMaxWidth,0,0);
 	auto qForwards = MathSupport<float>::MakeQHeading(totalDeg / (iHeightSteps-1));
-	auto qBank = MathSupport<float>::MakeQBank(fBank);
 	
 	for (int z = 0; z < iHeightSteps; z++)
 	{
 		auto qHdg = MathSupport<float>::MakeQHeading(z*totalDeg / (iHeightSteps-1));
 
-		Vector3F sideWaysShift = QVRotate(qHdg*qBank, dSide);
+		Vector3F pSide = p;
 
 		for (int x = 0; x < iWidthSteps; x++)
-		{			
-			group->_meshData.addVertex(p + float(x) * sideWaysShift );
+		{	
+			auto qBank = MathSupport<float>::MakeQBank(fBank* (1-float(x)/ (iWidthSteps-1)));
+			Vector3F sideWaysShift = QVRotate(qHdg*qBank, dSide);
+
+			group->_meshData.addVertex( pSide );
 			group->_meshData.addNormal(0, 1, 0);
 			group->_meshData.addTexture(float(x) / (iWidthSteps - 1) * fWidth/60.0f, float(z) / (iHeightSteps - 1) * fLength/2735);
+		
+			pSide += sideWaysShift;
 		}
 
 		d = QVRotate(qForwards, d);
