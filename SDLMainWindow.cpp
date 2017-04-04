@@ -217,7 +217,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
 #ifdef ANDROID
      2, 2, 4
 #else
-     4, 2 ,4
+     4, 4 ,4
 #endif
     };
 
