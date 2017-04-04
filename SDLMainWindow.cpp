@@ -349,7 +349,7 @@ bool SDLMainWindow::onInitialise()
 
 		std::unique_ptr<CircularRunwayMeshModel> cirMesh(new CircularRunwayMeshModel);
 		cirMesh->setTextureName("runway_strip-2.png");
-		cirMesh->Build( 40, 1750, 200, 15, 50);
+		cirMesh->Build( 40, 1750, 180, 20, 50);
 
 		std::unique_ptr<CircularRunwayRigidBody> cirBody(new CircularRunwayRigidBody("cirrun"));
 		cirBody->setPosition(GPSLocation(51.471866, -0.465477));
