@@ -7,6 +7,7 @@ LOCAL_MODULE := main
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/rapidjson/include $(LOCAL_PATH)/sdk/include 
 LOCAL_CFLAGS +=  -DRAPIDJSON_HAS_STDSTRING=1 
 LOCAL_CFLAGS += -DIS_SDL_ANDROID
+LOCAL_CFLAGS += -DWANT_SDL_SDL_SURFACE
 
 LOCAL_SRC_FILES := sdl2/src/main/android/SDL_android_main.c \
 			sdlmain.cpp \
