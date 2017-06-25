@@ -1,12 +1,36 @@
-#include "stdafx.h"
-#include "TextureLoader.h"
 #include <include_gl.h>
-#include <iostream>
+#include "TextureLoader.h"
+
+#ifdef WANT_TEXTURE_LOAD_QIMAGE
+#include <QImage>
+#endif
+
+#ifdef WANT_SDL_SDL_SURFACE
 #include "SDLSurfaceHelper.h"
+#endif
 
 namespace TextureLoader
 {
 #ifdef WANT_SDL_SDL_SURFACE
+	unsigned int loadTexture(SDL_Surface *surface, int minTex, int maxTex, int wrap)
+	{
+		if (surface == 0) return 0;
+
+		unsigned int num;
+		glGenTextures(1, &num);
+
+		glBindTexture(GL_TEXTURE_2D, num);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxTex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minTex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+
+		return num;
+	}
+
     unsigned int loadTexture(std::string filename,int minTex, int maxTex, int wrap, int* width, int* height)
     {
         SDL_Surface* surface = SDL_SurfaceHelper::loadSDLSurface(filename);
@@ -20,25 +44,6 @@ namespace TextureLoader
         unsigned int openglID = loadTexture( surface, minTex, maxTex, wrap);
         SDL_FreeSurface(surface);
         return openglID;
-    }
-
-    unsigned int loadTexture(SDL_Surface *surface,int minTex, int maxTex, int wrap)
-    {
-        if( surface ==0 ) return 0;
-
-        unsigned int num;
-        glGenTextures(1, &num);
-
-        glBindTexture(GL_TEXTURE_2D, num);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxTex);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minTex);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
-
-        return num;
     }
 #endif
 

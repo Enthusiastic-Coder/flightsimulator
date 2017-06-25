@@ -11,7 +11,7 @@ class meshData : public ISerializable
 {
 public:
     SERIALIZE_WRITE_BEGIN(1, 0)
-        SERIALIZE_WRITE_VECTOR(_vertex2Data);
+        SERIALIZE_WRITE_VECTOR(_vertex2Data)
         SERIALIZE_WRITE_VECTOR(_vertexData)
         SERIALIZE_WRITE_VECTOR(_colorData)
         SERIALIZE_WRITE_VECTOR(_normalData)
