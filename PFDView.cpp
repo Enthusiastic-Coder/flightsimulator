@@ -15,7 +15,7 @@
 #include <math.h>
 
 #define PRIMITIVE2D(data) \
-    data.vertex2Ptr(), data.vertex2Size()
+    data.vertexPtr(), data.vertexSize()
 
 template<class T> std::string format(std::string str, T val)
 {
@@ -170,7 +170,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
     glStencilFunc( GL_ALWAYS, 1, 0xFFFFFFFF );
     glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
 
-    if(_horizData.vertex2Size() == 0)
+    if(_horizData.vertexSize() == 0)
     {
         for( float fAng = 0; fAng <= 360; fAng += 2.0f )
         {
@@ -219,7 +219,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
     p.GetModel().Translate(0, dY, 0);
 
-    if( _horizDataSky.vertex2Size() == 0)
+    if( _horizDataSky.vertexSize() == 0)
     {
         _horizDataSky.addVertex(-100, -315);
         _horizDataSky.addVertex(100, -315);
@@ -227,7 +227,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         _horizDataSky.addVertex(-100, 0);
     }
 
-    if( _horizDataGround.vertex2Size() ==0)
+    if( _horizDataGround.vertexSize() ==0)
     {
         _horizDataGround.addVertex(-100, 0);
         _horizDataGround.addVertex(100, 0);
@@ -270,7 +270,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
         float dy = 10 * PIXEL_PER_PITCH+10;
         float fLine;
-        if( _horizNeg30ToNeg10.vertex2Size() == 0)
+        if( _horizNeg30ToNeg10.vertexSize() == 0)
         {
             fLine = dy + 5.0*PIXEL_PER_PITCH3;
             _horizNeg30ToNeg10.addVertex( -8, fLine );
@@ -309,13 +309,13 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
         painter->beginPrimitive();
         painter->setPrimitiveColor({1,1,1,1});
-        painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(0), 2);
+        painter->drawLines(_horizNeg30ToNeg10.vertexPtr(0), 2);
 
         painter->setPrimitiveColor({0.2f,0.9f,0.2f,1.0f});
-        painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(2), 8);
+        painter->drawLines(_horizNeg30ToNeg10.vertexPtr(2), 8);
 
         painter->setPrimitiveColor({1,1,1,1});
-        painter->drawLines(_horizNeg30ToNeg10.vertex2Ptr(8), 10);
+        painter->drawLines(_horizNeg30ToNeg10.vertexPtr(8), 10);
 
         painter->endPrimitive();
 
@@ -348,7 +348,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
     {// -10 to 20
 
-        if(_horizNeg10ToPos20.vertex2Size() ==0)
+        if(_horizNeg10ToPos20.vertexSize() ==0)
         {
             _horizNeg10ToPos20.addVertex( -100, 0 );
             _horizNeg10ToPos20.addVertex( 100, 0 );
@@ -415,7 +415,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
     {
         float fLine;
         float dy = -20 * PIXEL_PER_PITCH;
-        if( _horizPos20ToPos30.vertex2Size() == 0)
+        if( _horizPos20ToPos30.vertexSize() == 0)
         {
             fLine = dy - 2.5*PIXEL_PER_PITCH2;
             _horizPos20ToPos30.addVertex( -4, fLine ); //22.5
@@ -447,10 +447,10 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
         painter->beginPrimitive();
         painter->setPrimitiveColor({1,1,1,1});
-        painter->drawLines(_horizPos20ToPos30.vertex2Ptr(0), 8);
+        painter->drawLines(_horizPos20ToPos30.vertexPtr(0), 8);
 
         painter->setPrimitiveColor({0.2f,0.9f,0.2f,1});
-        painter->drawLines(_horizPos20ToPos30.vertex2Ptr(8), 8);
+        painter->drawLines(_horizPos20ToPos30.vertexPtr(8), 8);
         painter->endPrimitive();
 
         painter->beginFont(&_PfdHorizFreeFont);
@@ -465,7 +465,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         float fLine;
         float dy = -20 * PIXEL_PER_PITCH - 30*PIXEL_PER_PITCH2+10;
 
-        if( _horizPos50ToPos90.vertex2Size() == 0)
+        if( _horizPos50ToPos90.vertexSize() == 0)
         {
             fLine = dy;
             _horizPos50ToPos90.addVertex(-30, fLine );
@@ -502,7 +502,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
     {//magenta Fly Up warning arrows from deep dive
         _horizMagFlyUp.clear();
-        if( _horizMagFlyUp.vertex2Size() ==0)
+        if( _horizMagFlyUp.vertexSize() ==0)
         {
             painter->beginPrimitive();
             painter->setPrimitiveColor({1,0,1,1});
@@ -534,7 +534,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
     {//magenta Fly Down warning arrows from steep climb
         _horizMagFlyDown.clear();
-        if(_horizMagFlyDown.vertex2Size()==0)
+        if(_horizMagFlyDown.vertexSize()==0)
         {
             painter->beginPrimitive();
             painter->setPrimitiveColor({1,0,1,1});
@@ -570,7 +570,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
     {
         _horizDataSkyGround.clear();
-        if( _horizDataSkyGround.vertex2Size() == 0)
+        if( _horizDataSkyGround.vertexSize() == 0)
         {
             float fy;
             fy = std::max( _fPitch * PIXEL_PER_PITCH,
@@ -597,13 +597,13 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
         painter->beginPrimitive();
         painter->setPrimitiveColor({0.12f,0.55f,0.95f,1});
-        painter->fillQuads(_horizDataSkyGround.vertex2Ptr(0), 4);
+        painter->fillQuads(_horizDataSkyGround.vertexPtr(0), 4);
 
         painter->setPrimitiveColor({0.5f,0.35f,0.22f,1});
-        painter->fillQuads(_horizDataSkyGround.vertex2Ptr(4), 4);
+        painter->fillQuads(_horizDataSkyGround.vertexPtr(4), 4);
 
         painter->setPrimitiveColor({1,1,1,1});
-        painter->drawLines(_horizDataSkyGround.vertex2Ptr(8), 4);
+        painter->drawLines(_horizDataSkyGround.vertexPtr(8), 4);
 
         painter->endPrimitive();
 
@@ -618,7 +618,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 #define PIXEL_PER_HDG  2.6f
 
                     _horizData2.clear();
-                    if( _horizData2.vertex2Size() == 0)
+                    if( _horizData2.vertexSize() == 0)
                     {
                         int dH = (int)_fHdg % 10;
                         int minHdg = (_fHdg - dH - 40);
@@ -646,7 +646,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         int dy = 210;
-        if( _horizRudder.vertex2Size() == 0)
+        if( _horizRudder.vertexSize() == 0)
         {
             _horizRudder.addVertex( 0, -dy/2+5 );
             _horizRudder.addVertex( 4, -dy/2+11 );
@@ -660,14 +660,14 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         }
 
         painter->beginPrimitive();
-        painter->drawLineLoop(_horizRudder.vertex2Ptr(0), 3);
-        painter->drawLineLoop(_horizRudder.vertex2Ptr(3), 4);
+        painter->drawLineLoop(_horizRudder.vertexPtr(0), 3);
+        painter->drawLineLoop(_horizRudder.vertexPtr(3), 4);
         painter->endPrimitive();
 
         // When on ground show surrounding square and joystick position and ground tracking if ILS available
         if( _fAlt < 3.0f )
         {
-            if( _horizGroundBox.vertex2Size() == 0)
+            if( _horizGroundBox.vertexSize() == 0)
             {
                 _horizGroundBox.addVertex( -55, -45 );
                 _horizGroundBox.addVertex( -45, -45 );
@@ -756,7 +756,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
     { //Aircraft on Horizon
 
-        if( _horizAirOnHoriz.vertex2Size() == 0)
+        if( _horizAirOnHoriz.vertexSize() == 0)
         {
             //Outer center left yellow
             _horizAirOnHoriz.addVertex( -63, -3 );
@@ -816,9 +816,9 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
         painter->beginPrimitive();
         painter->setPrimitiveColor({1,1,0,1});
-        painter->fillQuads(_horizAirOnHoriz.vertex2Ptr(0), 20);
+        painter->fillQuads(_horizAirOnHoriz.vertexPtr(0), 20);
         painter->setPrimitiveColor({0,0,0,1});
-        painter->fillQuads(_horizAirOnHoriz.vertex2Ptr(20), 20);
+        painter->fillQuads(_horizAirOnHoriz.vertexPtr(20), 20);
         painter->endPrimitive();
 
         glStencilFunc( GL_ALWAYS, 2, 0xFFFFFFFF );
@@ -826,7 +826,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
         //Center Yellow marker at 0 degrees around perimter of horizon
 
-        if( _horizYellowMarker.vertex2Size() == 0)
+        if( _horizYellowMarker.vertexSize() == 0)
         {
             _horizYellowMarker.addVertex( -4, -84 - 25 );
             _horizYellowMarker.addVertex( 4, -84 - 25 );
@@ -838,7 +838,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         painter->drawLineLoop(PRIMITIVE2D(_horizYellowMarker));
         painter->endPrimitive();
 
-        if( _horizAirOnHoriz2.vertex2Size() == 0)
+        if( _horizAirOnHoriz2.vertexSize() == 0)
         {
             for( int iAng = -30; iAng <= 30; iAng ++ )
             {
@@ -854,7 +854,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         painter->drawLineStrip(PRIMITIVE2D(_horizAirOnHoriz2));
         painter->endPrimitive();
 
-        if( _horizMarkers.vertex2Size() == 0)
+        if( _horizMarkers.vertexSize() == 0)
         {
             // Markers around Horizon denoating 10, 20, 30, and 45 degrees.
             for( int iAng = -30; iAng < 0; iAng +=10 )
@@ -915,7 +915,7 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
         float x2 = fsin * (_CX+10);
         float y2 = fcos * (_CY+10);
 
-        if( _horiz45Markers.vertex2Size() ==0)
+        if( _horiz45Markers.vertexSize() ==0)
         {
             _horiz45Markers.addVertex(x1, y1 );
             _horiz45Markers.addVertex(x2, y2 );
@@ -938,7 +938,7 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
     glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
     { //Set stencil bits
 
-        if( _AltDataOne.vertex2Size() == 0)
+        if( _AltDataOne.vertexSize() == 0)
         {
             _AltDataOne.addVertex(125, -80);
             _AltDataOne.addVertex(65, -80);
@@ -959,10 +959,10 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
         painter->beginPrimitive();
         painter->setPrimitiveColor({0,0,0,1});
 
-        painter->fillQuads(_AltDataOne.vertex2Ptr(0), 4);
+        painter->fillQuads(_AltDataOne.vertexPtr(0), 4);
 
         glStencilFunc( GL_ALWAYS, 4, 0xFFFFFFFF );
-        painter->fillQuads(_AltDataOne.vertex2Ptr(4), 8);
+        painter->fillQuads(_AltDataOne.vertexPtr(4), 8);
         painter->endPrimitive();
     }
 
@@ -970,7 +970,7 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
 
     painter->beginPrimitive();
 
-    if( _AltDataTwo.vertex2Size() == 0)
+    if( _AltDataTwo.vertexSize() == 0)
     {
         _AltDataTwo.addVertex(85, -7);
         _AltDataTwo.addVertex(110, -7);
@@ -991,7 +991,7 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
     glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
 
     painter->setPrimitiveColor({1,1,0,1});
-    painter->drawLineStrip(_AltDataTwo.vertex2Ptr(0), 8);
+    painter->drawLineStrip(_AltDataTwo.vertexPtr(0), 8);
 
     glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
     glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
@@ -999,7 +999,7 @@ void PFDView::DrawAlt(OpenGLPainter *painter)
     //Altitude Bar
 
     painter->setPrimitiveColor({0.4f, 0.4f, 0.4f, 1.0});
-    painter->fillQuads(_AltDataTwo.vertex2Ptr(8), 4);
+    painter->fillQuads(_AltDataTwo.vertexPtr(8), 4);
 
     //Altitude
     {
@@ -1257,7 +1257,7 @@ void PFDView::DrawVSI(OpenGLPainter *painter)
         painter->beginPrimitive();
         painter->setPrimitiveColor({1,1,1,1});
 
-        if( _Vsi.vertex2Size()== 0)
+        if( _Vsi.vertexSize()== 0)
         {
             _Vsi.addVertex( 125, -25 );
             _Vsi.addVertex( 126, -25 );
@@ -1289,8 +1289,8 @@ void PFDView::DrawVSI(OpenGLPainter *painter)
             _Vsi.addVertex( 125, 1 );
         }
 
-        painter->drawLines(_Vsi.vertex2Ptr(0), 16);
-        painter->fillQuads(_Vsi.vertex2Ptr(16), 4);
+        painter->drawLines(_Vsi.vertexPtr(0), 16);
+        painter->fillQuads(_Vsi.vertexPtr(16), 4);
         painter->endPrimitive();
     }
 }
@@ -1383,7 +1383,7 @@ void PFDView::DrawSpd(OpenGLPainter *painter)
     glStencilFunc( GL_ALWAYS, 3, 0xFFFFFFFF );
     glStencilOp( GL_REPLACE, GL_REPLACE, GL_REPLACE );
 
-    if( _SpdMeshData.vertex2Size() == 0)
+    if( _SpdMeshData.vertexSize() == 0)
     {
         _SpdMeshData.addVertex(-110, -80);
         _SpdMeshData.addVertex(-65, -80);
@@ -1416,22 +1416,22 @@ void PFDView::DrawSpd(OpenGLPainter *painter)
 
     painter->beginPrimitive();
     painter->setPrimitiveColor({0,0,0,1});
-    painter->fillQuads(_SpdMeshData.vertex2Ptr(0), 4);
+    painter->fillQuads(_SpdMeshData.vertexPtr(0), 4);
 
     glStencilFunc( GL_EQUAL, 3, 0xFFFFFFFF );
     glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 
     painter->setPrimitiveColor({0.3f,0.3f,0.3f,1});
-    painter->fillQuads(_SpdMeshData.vertex2Ptr(4), 4);
+    painter->fillQuads(_SpdMeshData.vertexPtr(4), 4);
 
     painter->setPrimitiveColor({1,1,0,1});
-    painter->fillQuads(_SpdMeshData.vertex2Ptr(8), 8);
+    painter->fillQuads(_SpdMeshData.vertexPtr(8), 8);
 
     painter->setPrimitiveColor({1,1,1,1});
-    painter->fillQuads(_SpdMeshData.vertex2Ptr(16), 4);
+    painter->fillQuads(_SpdMeshData.vertexPtr(16), 4);
 
     painter->setPrimitiveColor({1,1,0,1});
-    painter->drawLines(_SpdMeshData.vertex2Ptr(20), 2);
+    painter->drawLines(_SpdMeshData.vertexPtr(20), 2);
 
 
 
@@ -1443,7 +1443,7 @@ void PFDView::DrawSpd(OpenGLPainter *painter)
     float tick_start = (fAirSpd - 30) * PIXEL_PER_KNOT;
 
     _SpdMeshData2.clear();
-    if( _SpdMeshData2.vertex2Size() == 0)
+    if( _SpdMeshData2.vertexSize() == 0)
     {
         for( int spdTick = 30; spdTick < 600; spdTick +=10 )
         {
@@ -1482,7 +1482,7 @@ void PFDView::DrawFlightModes(OpenGLPainter *painter)
 {
     float dy = 140;
 
-    if( _FlightModeData.vertex2Size() == 0)
+    if( _FlightModeData.vertexSize() == 0)
     {
         _FlightModeData.addVertex( -61, -dy+20);
         _FlightModeData.addVertex( -60, -dy+20);

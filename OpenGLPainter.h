@@ -25,7 +25,7 @@ public:
 
     void beginPrimitive();
     void setPrimitiveColor(Vector4F color);
-    void drawPoint(float x, float y);
+    void drawPoint(float x, float y, float z=0.0f);
     void drawPoints(float* pts, int count);
     void drawLine(float x1, float y1, float x2, float y2);
     void drawLines(const float *pts, int count);

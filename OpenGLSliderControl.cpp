@@ -195,6 +195,7 @@ void OpenGLSliderControl::renderThumb(Renderer *r, int primitiveType, float valu
 
 void OpenGLSliderControl::render(Renderer *r)
 {
+
     // draw outline rectangle of slider
     // draw solid transparent _color rectangle showing current value
     // draw outline rectangle showing final value
