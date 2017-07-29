@@ -11,7 +11,6 @@ class meshData : public ISerializable
 {
 public:
     SERIALIZE_WRITE_BEGIN(1, 0)
-        SERIALIZE_WRITE_VECTOR(_vertex2Data)
         SERIALIZE_WRITE_VECTOR(_vertexData)
         SERIALIZE_WRITE_VECTOR(_colorData)
         SERIALIZE_WRITE_VECTOR(_normalData)
@@ -20,7 +19,6 @@ public:
     SERIALIZE_WRITE_END()
 
     SERIALIZE_READ_BEGIN(1, 0)
-        SERIALIZE_READ_VECTOR(_vertex2Data)
         SERIALIZE_READ_VECTOR(_vertexData)
         SERIALIZE_READ_VECTOR(_colorData)
         SERIALIZE_READ_VECTOR(_normalData)
@@ -62,14 +60,12 @@ public:
     std::pair<float,float> getTexture(size_t idx) const;
     unsigned short getIndex(size_t idx) const;
 
-    const float* vertex2Ptr(size_t offset=0) const;
     const float* vertexPtr(size_t offset=0) const;
     const float* colorPtr(size_t offset=0) const;
     const float* normalPtr(size_t offset=0) const;
     const float* texturePtr(size_t offset=0) const;
     const unsigned short *indexPtr(size_t offset=0) const;
 
-    size_t vertex2Size() const;
     size_t vertexSize() const;
     size_t colorSize() const;
     size_t normalSize() const;
@@ -83,7 +79,6 @@ public:
     bool bufferIndex(OpenGLVertexBuffer& buffer, int usage);
 
 private:
-    std::vector<Vector2F> _vertex2Data;
     std::vector<Vector3F> _vertexData;
     std::vector<Vector4F> _colorData;
     std::vector<Vector3F> _normalData;
