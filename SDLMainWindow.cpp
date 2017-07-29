@@ -1635,8 +1635,7 @@ void SDLMainWindow::RenderFPS()
     _renderer->camID = 0;
 
     _fontRenderer.selectFont(&_myFontTexture);
-    _fontRenderer.setFontColor(Vector4F(1,1,1,1));
-
+    
     int w, h;
     GetScreenDims(w, h);
 
@@ -1646,6 +1645,7 @@ void SDLMainWindow::RenderFPS()
     p.GetModel().Translate(0, 30,0);
 
     _fontRenderer.beginRender();
+	_fontRenderer.setFontColor(Vector4F(1, 1, 1, 1));
 
     float fps = 0.0f;
     for( int i=0; i < FPS_RESOLUTION; i++ )
