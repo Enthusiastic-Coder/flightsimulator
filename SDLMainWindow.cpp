@@ -1594,7 +1594,7 @@ void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V)
 
     _renderer->useProgram(_fontShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
-    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.25);
+    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.5f);
 
     OpenGLTextureRenderer2D r(_renderer);
     r.onSize(0, 0, 200, 200);
