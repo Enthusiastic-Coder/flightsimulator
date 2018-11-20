@@ -19,7 +19,7 @@ public:
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
     void beginFont(OpenGLFontTexture* font);
-    void setFontColor(Vector4F color);
+    void setColor(Vector4F color);
     void renderText(int x, int y, std::string text);
     void renderText(int x, int y, char ch);
     void endFont();

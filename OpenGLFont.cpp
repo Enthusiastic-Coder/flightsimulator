@@ -20,15 +20,15 @@ OpenGLFontTexture *OpenGLFont::getFont()
     return  _fontMesh.getFontTexture();
 }
 
-void OpenGLFont::setFontColor( const Vector4F &color)
+void OpenGLFont::setColor( const Vector4F &color)
 {
-    _fontColor = color;
+    _color = color;
 }
 
 void OpenGLFont::beginRender(Renderer* r)
 {
     r->useProgram(*_shader);
-	r->progId().sendUniform("textColor", _fontColor);
+	r->progId().sendUniform("textColor", _color);
     OpenGLPipeline::Get(r->camID).bindMatrices(r->progId());
     _fontMesh.beginRender(r);
 }

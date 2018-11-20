@@ -31,9 +31,9 @@ void OpenGLPainter::beginFont(OpenGLFontTexture *font)
     _font->beginRender(_r);
 }
 
-void OpenGLPainter::setFontColor(Vector4F color)
+void OpenGLPainter::setColor(Vector4F color)
 {
-    _font->setFontColor(color);
+    _font->setColor(color);
 }
 
 void OpenGLPainter::renderText(int x, int y, std::string text)

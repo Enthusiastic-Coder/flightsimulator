@@ -14,13 +14,13 @@ public:
     void selectShader(OpenGLShaderProgram* p);
     void selectFont(OpenGLFontTexture* texture);
     OpenGLFontTexture* getFont();
-    void setFontColor( const Vector4F& color);
+    void setColor( const Vector4F& color);
     void beginRender(Renderer* r);
     void renderText(Renderer* r, int x, int y, std::string str);
     void renderText(Renderer* r, int x, int y, char ch);
     void endRender(Renderer* r);
 private:
     OpenGLFontMeshBuilder _fontMesh;
-    Vector4F _fontColor = {1,1,1,1};
+    Vector4F _color = {1,1,1,1};
     OpenGLShaderProgram* _shader = 0;
 };

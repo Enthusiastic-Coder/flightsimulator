@@ -1618,7 +1618,7 @@ void SDLMainWindow::RenderFPS()
     _renderer->camID = 0;
 
     _font.selectFont(&_myFontTexture);
-    _font.setFontColor(Vector4F(1,1,1,1));
+    _font.setColor(Vector4F(1,1,1,1));
 
     int w, h;
     GetScreenDims(w, h);
@@ -1666,7 +1666,7 @@ void SDLMainWindow::RenderInfo()
     p.GetModel().Translate(0, 30,0);
 
     _font.selectFont(&_myFontTexture);
-	_font.setFontColor(Vector4F(1, 1, 1, 1));
+	_font.setColor(Vector4F(1, 1, 1, 1));
 	_font.beginRender(_renderer);
     
     _font.renderText(_renderer, 15, 15, "3D Virtual World by Mo" );

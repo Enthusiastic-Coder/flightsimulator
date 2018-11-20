@@ -729,9 +729,9 @@ void PFDView::DrawHorizon(OpenGLPainter *painter)
 
             painter->beginFont(&_RadarAltBold);
             if( _fAlt <= 400 )
-                painter->setFontColor({ 0.9f, 0.9f, 0.2f, 1.0f});
+                painter->setColor({ 0.9f, 0.9f, 0.2f, 1.0f});
             else
-                painter->setFontColor({ 0.2f, 0.9f, 0.2f, 1.0f});
+                painter->setColor({ 0.2f, 0.9f, 0.2f, 1.0f});
 
             int yPos = 80;
 
@@ -1075,9 +1075,9 @@ void PFDView::DrawScrollAlt(OpenGLPainter *painter)
     painter->beginFont(&_AltSmallFreeFont);
 
     if( _fAlt <= 400 )
-        painter->setFontColor({ 0.9f, 0.9f, 0.2f, 1} );
+        painter->setColor({ 0.9f, 0.9f, 0.2f, 1} );
     else
-        painter->setFontColor({ 0.2f, 0.9f, 0.2f, 1} );
+        painter->setColor({ 0.2f, 0.9f, 0.2f, 1} );
 
     painter->renderText( 111, dPixel-40*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[2][3] );
     painter->renderText( 111, dPixel-20*SCROLL_TEXT_PIXEL_PER_ALT, &rotaryAltBuf1[1][3] );
@@ -1236,9 +1236,9 @@ void PFDView::DrawVSI(OpenGLPainter *painter)
         painter->beginFont(&_AltSmallFreeFont);
 
         if( fVsi > 6000 )
-            painter->setFontColor({0.9f, 0.9f, 0.2f, 1} );
+            painter->setColor({0.9f, 0.9f, 0.2f, 1} );
         else
-            painter->setFontColor({0.1f,0.9f,0.1f});
+            painter->setColor({0.1f,0.9f,0.1f});
 
         std::string strVSI;
         char buf[32];
@@ -1343,7 +1343,7 @@ void PFDView::DrawHdg(OpenGLPainter *painter)
     painter->endPrimitive();
 
 
-    painter->setFontColor({1,1,1,1});
+    painter->setColor({1,1,1,1});
     std::string strHdg;
     for( int h = minHdg; h <= maxHdg; h+= 10 )
     {
@@ -1466,7 +1466,7 @@ void PFDView::DrawSpd(OpenGLPainter *painter)
     painter->endPrimitive();
 
     painter->beginFont(&_PfdAirSpdFreeFont);
-    painter->setFontColor({1,1,1,1});
+    painter->setColor({1,1,1,1});
 
     std::string strSpd;
     for( int spdTick = 40; spdTick < 600; spdTick +=20 )
