@@ -1,23 +1,10 @@
 #include "stdafx.h"
 #include "TurnDirection.h"
-#include <limits>
-#include <cmath>
+#include <MathSupport.h>
 
 float TurnDirection::GetTurnDiff(float fHdg, float fBrg)
 {
-    while (fHdg > 360)
-        fHdg -= 360;
-
-    while (fHdg< 0)
-        fHdg += 360;
-
-    while (fBrg > 360)
-        fBrg -= 360;
-
-    while (fBrg< 0)
-        fBrg += 360;
-
-    float fDiff = fBrg - fHdg;
+    float fDiff = MathSupport<float>::normAng(fBrg)-MathSupport<float>::normAng(fHdg);
 
     if (fDiff < -180)
         fDiff += 360;
@@ -32,7 +19,7 @@ TurnDirection::Dir TurnDirection::GetTurnDir(float fHdg, float fBrg)
 {
     float fDiff = GetTurnDiff(fHdg, fBrg);
 
-    if (fabs((std::fabs(fDiff) - 180)) < std::numeric_limits<float>::epsilon())
+    if (std::abs((std::fabs(fDiff) - 180)) < 0.1f)
 		return Dir::Free;
 
     if (fDiff < 0)

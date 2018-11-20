@@ -52,7 +52,6 @@ void OpenGLPainter::beginPrimitive()
     Renderer* r = renderer();
     r->useProgram(*_primitiveShader);
     OpenGLPipeline::Get(r->camID).bindMatrices(r->progId());
-    setPrimitiveColor(_primitiveColor);
     r->setUseIndex(false);
 }
 

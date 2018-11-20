@@ -1,5 +1,5 @@
-#ifndef SKYBOX_H
-#define SKYBOX_H
+#ifndef SKYDOME_H
+#define SKYDOME_H
 
 #include "MeshData.h"
 class Renderer;
@@ -24,4 +24,4 @@ private:
     properties _prop;
 };
 
-#endif // SKYBOX_H
+#endif // SKYDOME_H
