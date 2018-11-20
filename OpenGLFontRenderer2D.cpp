@@ -10,11 +10,6 @@ void OpenGLFontRenderer2D::selectShader(OpenGLShaderProgram *p)
     _shader = p;
 }
 
-void OpenGLFontRenderer2D::selectRenderer(Renderer *r)
-{
-    _renderer = r;
-}
-
 void OpenGLFontRenderer2D::selectFont(OpenGLFontTexture *texture)
 {
     _fontMesh.selectFont(texture);
@@ -25,58 +20,38 @@ OpenGLFontTexture *OpenGLFontRenderer2D::getFont()
     return  _fontMesh.getFontTexture();
 }
 
-void OpenGLFontRenderer2D::setFontColor(const Vector4F &color)
+void OpenGLFontRenderer2D::setFontColor( const Vector4F &color)
 {
     _fontColor = color;
-    _renderer->progId().sendUniform("textColor", _fontColor);
 }
 
-void OpenGLFontRenderer2D::beginRender()
+void OpenGLFontRenderer2D::beginRender(Renderer* r)
 {
-    if( _renderer == 0)
-        return;
-    if( _shader == 0)
-        return;
-
-    _renderer->useProgram(*_shader);
-    OpenGLPipeline::Get(_renderer->camID).bindMatrices(_renderer->progId());
-    setFontColor(_fontColor);
-    _fontMesh.beginRender(_renderer);
+    r->useProgram(*_shader);
+	r->progId().sendUniform("textColor", _fontColor);
+    OpenGLPipeline::Get(r->camID).bindMatrices(r->progId());
+    _fontMesh.beginRender(r);
 }
 
-void OpenGLFontRenderer2D::renderText( int x, int y, std::string str)
+void OpenGLFontRenderer2D::renderText(Renderer* r, int x, int y, std::string str)
 {
-    if( _renderer ==0)
-        return;
-
     _fontMesh.clear();
     _fontMesh.add( x, y, str);
-    _fontMesh.render(_renderer);
+    _fontMesh.render(r);
 }
 
-void OpenGLFontRenderer2D::renderText(int x, int y, char ch)
+void OpenGLFontRenderer2D::renderText(Renderer* r, int x, int y, char ch)
 {
-    if( _renderer ==0)
-        return;
-
     std::string str = " ";
     str[0] = ch;
     _fontMesh.clear();
     _fontMesh.add( x, y, str);
-    _fontMesh.render(_renderer);
+    _fontMesh.render(r);
 
 }
 
-void OpenGLFontRenderer2D::endRender()
+void OpenGLFontRenderer2D::endRender(Renderer* r)
 {
-    if( _renderer ==0)
-        return;
-
-    _fontMesh.endRender(_renderer);
+    _fontMesh.endRender(r);
     OpenGLShaderProgram::useDefault();
-}
-
-Renderer *OpenGLFontRenderer2D::renderer()
-{
-    return _renderer;
 }

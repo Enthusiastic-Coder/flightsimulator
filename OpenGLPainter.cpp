@@ -6,12 +6,16 @@
 #include "OpenGLRenderer.h"
 #include "OpenGLPipeline.h"
 
-Renderer *OpenGLPainter::renderer()
+OpenGLPainter::OpenGLPainter(Renderer * r) :_r(r)
 {
-    return _fontRenderer->renderer();
 }
 
-void OpenGLPainter::selectFontRenderer(OpenGLFontRenderer2D *f)
+Renderer *OpenGLPainter::renderer()
+{
+	return _r;
+}
+
+void OpenGLPainter::selectFont(OpenGLFontRenderer2D *f)
 {
     _fontRenderer = f;
 }
@@ -24,7 +28,7 @@ void OpenGLPainter::selectPrimitiveShader(OpenGLShaderProgram *shader)
 void OpenGLPainter::beginFont(OpenGLFontTexture *font)
 {
     _fontRenderer->selectFont(font);
-    _fontRenderer->beginRender();
+    _fontRenderer->beginRender(_r);
 }
 
 void OpenGLPainter::setFontColor(Vector4F color)
@@ -34,17 +38,17 @@ void OpenGLPainter::setFontColor(Vector4F color)
 
 void OpenGLPainter::renderText(int x, int y, std::string text)
 {
-    _fontRenderer->renderText(x, y, text);
+    _fontRenderer->renderText(_r, x, y, text);
 }
 
 void OpenGLPainter::renderText(int x, int y, char ch)
 {
-    _fontRenderer->renderText(x, y, ch);
+    _fontRenderer->renderText(_r, x, y, ch);
 }
 
 void OpenGLPainter::endFont()
 {
-    _fontRenderer->endRender();
+    _fontRenderer->endRender(_r);
 }
 
 void OpenGLPainter::beginPrimitive()

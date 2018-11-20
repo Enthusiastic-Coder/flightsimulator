@@ -12,9 +12,10 @@ class Renderer;
 class OpenGLPainter
 {
 public:
+	OpenGLPainter(Renderer* r);
     Renderer *renderer();
 
-    void selectFontRenderer(OpenGLFontRenderer2D *f);
+    void selectFont(OpenGLFontRenderer2D *f);
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
     void beginFont(OpenGLFontTexture* font);
@@ -51,6 +52,7 @@ private:
     void drawPrimitive(const float* pts, int count, int primType);
 
 private:
+	Renderer* _r = nullptr;
     OpenGLFontRenderer2D* _fontRenderer = 0 ;
     OpenGLShaderProgram* _primitiveShader = 0;
     Vector4F _primitiveColor = Vector4F(1,1,1,1);
