@@ -203,7 +203,7 @@
     <ClCompile Include="OpenGLButtonTexture.cpp" />
     <ClCompile Include="OpenGLButtonTextureManager.cpp" />
     <ClCompile Include="OpenGLFontMeshBuilder.cpp" />
-    <ClCompile Include="OpenGLFontRenderer2D.cpp" />
+    <ClCompile Include="OpenGLFont.cpp" />
     <ClCompile Include="OpenGLFontTexture.cpp" />
     <ClCompile Include="OpenGLFrameBuffer.cpp" />
     <ClCompile Include="OpenGLPainter.cpp" />
@@ -345,7 +345,7 @@
     <ClInclude Include="OpenGLButtonTexture.h" />
     <ClInclude Include="OpenGLButtonTextureManager.h" />
     <ClInclude Include="OpenGLFontMeshBuilder.h" />
-    <ClInclude Include="OpenGLFontRenderer2D.h" />
+    <ClInclude Include="OpenGLFont.h" />
     <ClInclude Include="OpenGLFontTexture.h" />
     <ClInclude Include="OpenGLFrameBuffer.h" />
     <ClInclude Include="OpenGLPainter.h" />

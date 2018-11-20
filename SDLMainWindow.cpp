@@ -28,7 +28,7 @@
 #include <iostream>
 
 #include "OpenGLFontTexture.h"
-#include "OpenGLFontRenderer2D.h"
+#include "OpenGLFont.h"
 #include "OpenGLTextureRenderer2D.h"
 #include "OpenGLPainter.h"
 

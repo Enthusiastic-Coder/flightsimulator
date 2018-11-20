@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <algorithm>
 #include "OpenGLPainter.h"
-#include "OpenGLFontRenderer2D.h"
+#include "OpenGLFont.h"
 #include "OpenGLPipeline.h"
 #include "OpenGLRenderer.h"
 

@@ -1,7 +1,7 @@
 #ifndef __OPENGL_PAINTER__H__
 #define __OPENGL_PAINTER__H__
 
-class OpenGLFontRenderer2D;
+class OpenGLFont;
 class OpenGLShaderProgram;
 class OpenGLFontTexture;
 class Renderer;
@@ -15,7 +15,7 @@ public:
 	OpenGLPainter(Renderer* r);
     Renderer *renderer();
 
-    void selectFont(OpenGLFontRenderer2D *f);
+    void selectFont(OpenGLFont *f);
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
     void beginFont(OpenGLFontTexture* font);
@@ -53,7 +53,7 @@ private:
 
 private:
 	Renderer* _r = nullptr;
-    OpenGLFontRenderer2D* _fontRenderer = 0 ;
+    OpenGLFont* _fontRenderer = 0 ;
     OpenGLShaderProgram* _primitiveShader = 0;
     Vector4F _primitiveColor = Vector4F(1,1,1,1);
 };

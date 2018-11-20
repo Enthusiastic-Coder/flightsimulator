@@ -8,7 +8,7 @@ class OpenGLShaderProgram;
 #include <string>
 #include "OpenGLFontMeshBuilder.h"
 
-class OpenGLFontRenderer2D
+class OpenGLFont
 {
 public:
     void selectShader(OpenGLShaderProgram* p);

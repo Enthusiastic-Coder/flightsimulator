@@ -20,7 +20,7 @@
 #include "OpenGLRenderer.h"
 
 #include "OpenGLFontTexture.h"
-#include "OpenGLFontRenderer2D.h"
+#include "OpenGLFont.h"
 #include "OpenGLButtonTextureManager.h"
 #include "OpenGLTextureRenderer2D.h"
 #include "OpenGLButtonTexture.h"
@@ -179,7 +179,7 @@ private:
     SkyDome* _skyDome = new SkyDome(2, 20, 25, true);
     OpenGLTexture2D _skyDomeTexture;
 
-    OpenGLFontRenderer2D _fontRenderer;
+    OpenGLFont _fontRenderer;
     OpenGLFontTexture _myFontTexture;
     OpenGLTextureRenderer2D _textureRenderer;
     OpenGLButtonTextureManager _buttonTextureManager;
