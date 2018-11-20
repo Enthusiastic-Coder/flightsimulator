@@ -15,11 +15,6 @@ void OpenGLFont::selectFont(OpenGLFontTexture *texture)
     _fontMesh.selectFont(texture);
 }
 
-OpenGLFontTexture *OpenGLFont::getFont()
-{
-    return  _fontMesh.getFontTexture();
-}
-
 void OpenGLFont::setColor( const Vector4F &color)
 {
     _color = color;

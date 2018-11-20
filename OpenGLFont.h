@@ -13,7 +13,6 @@ class OpenGLFont
 public:
     void selectShader(OpenGLShaderProgram* p);
     void selectFont(OpenGLFontTexture* texture);
-    OpenGLFontTexture* getFont();
     void setColor( const Vector4F& color);
     void beginRender(Renderer* r);
     void renderText(Renderer* r, int x, int y, std::string str);
