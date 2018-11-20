@@ -52,46 +52,55 @@ void OpenGLShaderProgram::use() const
     glUseProgram(_programShaderID);
 }
 
-GLuint OpenGLShaderProgram::createShader(GLenum type, std::string filename)
+GLuint OpenGLShaderProgram::createShader(GLenum type, const char* charSource)
 {
     char errBuffer[256] = {};
     GLuint shaderID = glCreateShader(type);
-	std::string strSource;
-	readAll(filename, strSource);
-#ifndef ANDROID
-    strSource = "#define highp\n#define mediump\n#define lowp\n" + strSource;
-#endif
-	const char* charSource = strSource.c_str();
     glShaderSource(shaderID, 1, &charSource, 0);
     glCompileShader(shaderID);
     glGetShaderInfoLog(shaderID, sizeof(errBuffer), 0, errBuffer);
 	_error.append(errBuffer);
-    if( _error.length())  _error = filename + " : " + _error;
+    if( _error.length())  _error = std::string(charSource) + " : " + _error;
 	return shaderID;
+}
+
+std::string OpenGLShaderProgram::loadCode(const std::string & filename)
+{
+	std::string strSource;
+	readAll(filename, strSource);
+#ifndef ANDROID
+	strSource = "#define highp\n#define mediump\n#define lowp\n" + strSource;
+#endif
+	return strSource;
 }
 
 bool OpenGLShaderProgram::loadFiles(std::string vertexFilename, std::string fragmentFilename)
 {
 	_vertexName = vertexFilename;
 	_fragmentName = fragmentFilename;
-	_vertexShaderID = createShader(GL_VERTEX_SHADER, vertexFilename);
-	_fragmentShaderID = createShader(GL_FRAGMENT_SHADER, fragmentFilename);
-    _programShaderID = glCreateProgram();
+	return loadSrc(loadCode(vertexFilename), loadCode(fragmentFilename));
+}
 
-    glAttachShader(_programShaderID, _vertexShaderID);
-    glAttachShader(_programShaderID, _fragmentShaderID);
-    glLinkProgram(_programShaderID);
+bool OpenGLShaderProgram::loadSrc(std::string vertex, std::string fragment)
+{
+	_vertexShaderID = createShader(GL_VERTEX_SHADER, vertex.c_str());
+	_fragmentShaderID = createShader(GL_FRAGMENT_SHADER, fragment.c_str());
+	_programShaderID = glCreateProgram();
 
-	GLint link_ok=true;
-    glGetProgramiv(_programShaderID, GL_LINK_STATUS, &link_ok);
+	glAttachShader(_programShaderID, _vertexShaderID);
+	glAttachShader(_programShaderID, _fragmentShaderID);
+	glLinkProgram(_programShaderID);
+
+	GLint link_ok = true;
+	glGetProgramiv(_programShaderID, GL_LINK_STATUS, &link_ok);
 	if (!link_ok)
 	{
 		char errBuffer[256] = {};
-        glGetProgramInfoLog(_programShaderID, sizeof(errBuffer), 0, errBuffer);
+		glGetProgramInfoLog(_programShaderID, sizeof(errBuffer), 0, errBuffer);
 		_error.append(errBuffer);
 	}
-	
-    return link_ok;
+
+	return link_ok;
 }
 
 void OpenGLShaderProgram::sendUniform(const std::string& name, int value)
@@ -149,7 +158,7 @@ void OpenGLShaderProgram::sendUniform(const std::string& name, const Matrix4x4F 
 
 GLint OpenGLShaderProgram::getUniformLocation(const std::string& name)
 {
-    std::map<std::string, GLint>::iterator it = _uniforms.find(name);
+    auto it = _uniforms.find(name);
 
     GLint id = -1;
     if( it == _uniforms.end())
@@ -165,7 +174,7 @@ GLint OpenGLShaderProgram::getUniformLocation(const std::string& name)
 
 GLint OpenGLShaderProgram::getAttribLocation(const std::string& name)
 {
-    std::map<std::string, GLint>::iterator it = _attribs.find(name);
+    auto it = _attribs.find(name);
 
     GLint id = -1;
     if( it == _attribs.end())

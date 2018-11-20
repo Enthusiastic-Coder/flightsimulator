@@ -18,6 +18,7 @@ public:
 
 	void clear();
 	bool loadFiles(std::string vertex, std::string fragment);
+	bool loadSrc(std::string vertex, std::string fragment);
 
 	void sendUniform(const std::string& name, int value);
 	void sendUniform(const std::string& name, float value);
@@ -45,7 +46,8 @@ public:
 	std::string getVertexName() const;
 	std::string getFragmentName() const;
 protected:
-	GLuint createShader(GLenum type, std::string filename);
+	GLuint createShader(GLenum type, const char* charSource);
+	std::string loadCode(const std::string& filename);
 
 private:
     GLuint _programShaderID;
