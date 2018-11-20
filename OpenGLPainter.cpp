@@ -28,7 +28,7 @@ void OpenGLPainter::selectPrimitiveShader(OpenGLShaderProgram *shader)
 void OpenGLPainter::beginFont(OpenGLFontTexture *font)
 {
     _font->selectFont(font);
-    _font->beginRender(_r);
+    _font->beginRender();
 }
 
 void OpenGLPainter::setColor(Vector4F color)
@@ -38,17 +38,17 @@ void OpenGLPainter::setColor(Vector4F color)
 
 void OpenGLPainter::renderText(int x, int y, std::string text)
 {
-    _font->renderText(_r, x, y, text);
+    _font->renderText( x, y, text);
 }
 
 void OpenGLPainter::renderText(int x, int y, char ch)
 {
-    _font->renderText(_r, x, y, ch);
+    _font->renderText( x, y, ch);
 }
 
 void OpenGLPainter::endFont()
 {
-    _font->endRender(_r);
+    _font->endRender();
 }
 
 void OpenGLPainter::beginPrimitive()
