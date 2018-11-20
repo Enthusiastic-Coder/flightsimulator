@@ -5,6 +5,7 @@
 #include "OpenGLFontTexture.h"
 #include "OpenGLRenderer.h"
 #include "OpenGLPipeline.h"
+#define indicesCount(arr,n)     (sizeof(arr)/sizeof(arr[0])/n)
 
 OpenGLPainter::OpenGLPainter(Renderer * r) :_r(r)
 {
@@ -235,7 +236,7 @@ void OpenGLPainter::drawElipse(float x, float y, float cx, float cy, float steps
 {
     std::vector<Vector3F> pts;
     pts.resize((360.0f+steps)/steps);
-    for( int i=0; i < pts.size(); ++i)
+    for( size_t i=0; i < pts.size(); ++i)
     {
         pts[i].x = x + cx * sin(steps * i / 180.0 * M_PI);
         pts[i].y = y + cy * cos(steps * i / 180.0 * M_PI);
@@ -253,7 +254,7 @@ void OpenGLPainter::fillElipse(float x, float y, float cx, float cy, float steps
     std::vector<Vector3F> pts;
     pts.resize((360.0f+steps)/steps+1);
     pts[0] = {x, y, 0};
-    for( int i=1; i < pts.size(); ++i)
+    for( size_t i=1; i < pts.size(); ++i)
     {
         pts[i].x = x + cx * sin(steps * (i-1) / 180.0f * M_PI);
         pts[i].y = y + cy * cos(steps * (i-1) / 180.0f * M_PI);
