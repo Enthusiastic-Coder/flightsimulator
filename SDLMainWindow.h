@@ -179,7 +179,7 @@ private:
     SkyDome* _skyDome = new SkyDome(2, 20, 25, true);
     OpenGLTexture2D _skyDomeTexture;
 
-    OpenGLFont _fontRenderer;
+    OpenGLFont _font;
     OpenGLFontTexture _myFontTexture;
     OpenGLTextureRenderer2D _textureRenderer;
     OpenGLButtonTextureManager _buttonTextureManager;

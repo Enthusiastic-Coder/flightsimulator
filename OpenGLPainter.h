@@ -53,7 +53,7 @@ private:
 
 private:
 	Renderer* _r = nullptr;
-    OpenGLFont* _fontRenderer = 0 ;
+    OpenGLFont* _font = 0 ;
     OpenGLShaderProgram* _primitiveShader = 0;
     Vector4F _primitiveColor = Vector4F(1,1,1,1);
 };
