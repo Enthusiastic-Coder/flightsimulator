@@ -11,7 +11,7 @@ class OpenGLFontMeshBuilder
 public:
     OpenGLFontMeshBuilder();
 
-    void selectFont(OpenGLFontTexture* texture);
+    void setFont(OpenGLFontTexture* texture);
     OpenGLFontTexture* getFontTexture();
 
     void clear();

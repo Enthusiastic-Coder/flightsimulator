@@ -15,7 +15,7 @@ public:
 	OpenGLPainter(Renderer* r);
     Renderer *renderer();
 
-    void selectFont(OpenGLFont *f);
+    void setFont(OpenGLFont *f);
     void selectPrimitiveShader(OpenGLShaderProgram* shader);
 
     void beginFont(OpenGLFontTexture* font);

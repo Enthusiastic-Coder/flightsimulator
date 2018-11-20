@@ -1368,7 +1368,7 @@ void SDLMainWindow::onRender()
         glViewport(0, 0, _pfdColorTexture.width(), _pfdColorTexture.height());
 
         OpenGLPainter painter(_renderer);
-        painter.selectFont(&_font);
+        painter.setFont(&_font);
         painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
 
         _pfdInstrument.render(&painter, _pfdColorTexture.width(), _pfdColorTexture.height());
@@ -1437,7 +1437,7 @@ void SDLMainWindow::RenderPlaybackRecordingGrafix()
         }
 
         OpenGLPainter painter(_renderer);
-        painter.selectFont(&_font);
+        painter.setFont(&_font);
         painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
         painter.beginPrimitive();
         float fAspectRatio = _currentDims.first*1.0f/_currentDims.second;
@@ -1501,7 +1501,7 @@ void SDLMainWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, flo
     glEnable(GL_BLEND);
 
     OpenGLPainter painter(_renderer);
-    painter.selectFont(&_font);
+    painter.setFont(&_font);
     painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
 
     OpenGLPipeline& p = OpenGLPipeline::Get(painter.renderer()->camID);
@@ -1527,7 +1527,7 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
     float divide = 10.0f;
 
     OpenGLPainter painter(_renderer);
-    painter.selectFont(&_font);
+    painter.setFont(&_font);
     painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
 
     OpenGLPipeline& p = OpenGLPipeline::Get(painter.renderer()->camID);

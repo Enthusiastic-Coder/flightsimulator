@@ -59,7 +59,7 @@ void OpenGLFontMeshBuilder::add(int x, int y, int dx, int dy, char ch)
     _meshData.addTexture(uvs[3].first, uvs[3].second);
 }
 
-void OpenGLFontMeshBuilder::selectFont(OpenGLFontTexture *texture)
+void OpenGLFontMeshBuilder::setFont(OpenGLFontTexture *texture)
 {
     _fontTexture = texture;
 }

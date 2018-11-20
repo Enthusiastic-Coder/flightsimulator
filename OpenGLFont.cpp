@@ -16,7 +16,7 @@ void OpenGLFont::selectShader(OpenGLShaderProgram *p)
 
 void OpenGLFont::selectFont(OpenGLFontTexture *texture)
 {
-    _fontMesh.selectFont(texture);
+    _fontMesh.setFont(texture);
 }
 
 void OpenGLFont::setColor( const Vector4F &color)
