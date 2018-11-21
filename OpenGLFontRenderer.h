@@ -8,10 +8,10 @@ class OpenGLShaderProgram;
 #include <string>
 #include "OpenGLFontMeshBuilder.h"
 
-class OpenGLFont
+class OpenGLFontRenderer
 {
 public:
-	OpenGLFont(Renderer* r);
+	OpenGLFontRenderer(Renderer* r);
     void selectShader(OpenGLShaderProgram* p);
     void selectFont(OpenGLFontTexture* texture);
     void setColor( const Vector4F& color);

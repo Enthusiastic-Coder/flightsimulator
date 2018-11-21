@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "OpenGLPainter.h"
-#include "OpenGLFont.h"
+#include "OpenGLFontRenderer.h"
 #include "OpenGLShaderProgram.h"
 #include "OpenGLFontTexture.h"
 #include "OpenGLRenderer.h"
@@ -16,7 +16,7 @@ Renderer *OpenGLPainter::renderer()
 	return _r;
 }
 
-void OpenGLPainter::setFont(OpenGLFont *f)
+void OpenGLPainter::setFont(OpenGLFontRenderer *f)
 {
     _font = f;
 }

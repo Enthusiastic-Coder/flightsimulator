@@ -1,30 +1,30 @@
 #include "stdafx.h"
-#include "OpenGLFont.h"
+#include "OpenGLFontRenderer.h"
 #include "OpenGLFontTexture.h"
 #include "OpenGLPipeline.h"
 #include "OpenGLRenderer.h"
 #include "OpenGLShaderProgram.h"
 
-OpenGLFont::OpenGLFont(Renderer * r) : _r(r)
+OpenGLFontRenderer::OpenGLFontRenderer(Renderer * r) : _r(r)
 {
 }
 
-void OpenGLFont::selectShader(OpenGLShaderProgram *p)
+void OpenGLFontRenderer::selectShader(OpenGLShaderProgram *p)
 {
     _shader = p;
 }
 
-void OpenGLFont::selectFont(OpenGLFontTexture *texture)
+void OpenGLFontRenderer::selectFont(OpenGLFontTexture *texture)
 {
     _fontMesh.setFont(texture);
 }
 
-void OpenGLFont::setColor( const Vector4F &color)
+void OpenGLFontRenderer::setColor( const Vector4F &color)
 {
     _color = color;
 }
 
-void OpenGLFont::beginRender()
+void OpenGLFontRenderer::beginRender()
 {
     _r->useProgram(*_shader);
 	_r->progId().sendUniform("textColor", _color);
@@ -32,14 +32,14 @@ void OpenGLFont::beginRender()
     _fontMesh.beginRender(_r);
 }
 
-void OpenGLFont::renderText(int x, int y, std::string str)
+void OpenGLFontRenderer::renderText(int x, int y, std::string str)
 {
     _fontMesh.clear();
     _fontMesh.add( x, y, str);
     _fontMesh.render(_r);
 }
 
-void OpenGLFont::renderText(int x, int y, char ch)
+void OpenGLFontRenderer::renderText(int x, int y, char ch)
 {
     std::string str = " ";
     str[0] = ch;
@@ -49,7 +49,7 @@ void OpenGLFont::renderText(int x, int y, char ch)
 
 }
 
-void OpenGLFont::endRender()
+void OpenGLFontRenderer::endRender()
 {
     _fontMesh.endRender(_r);
     OpenGLShaderProgram::useDefault();
