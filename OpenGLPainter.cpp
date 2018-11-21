@@ -16,7 +16,7 @@ Renderer *OpenGLPainter::renderer()
 	return _r;
 }
 
-void OpenGLPainter::setFont(OpenGLFontRenderer *f)
+void OpenGLPainter::setFontRenderer(OpenGLFontRenderer *f)
 {
     _font = f;
 }
