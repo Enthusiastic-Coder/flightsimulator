@@ -10,6 +10,3 @@
 [submodule "openal"]
 	path = openal
 	url = git@bitbucket.org:MOJ_JEB/openal.git
-[submodule "rapidjson"]
-	path = rapidjson
-	url = https://github.com/miloyip/rapidjson.git
