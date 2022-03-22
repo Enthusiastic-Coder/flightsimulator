@@ -1,5 +1,6 @@
 
 SOURCES += AeroControlSurface.cpp \
+    $$PWD/OpenGLFontRenderer.cpp \
     AeroControlSurfaceBoundary.cpp \
     AeroForceGenerator.cpp \
     AeroSectionElementForceGenerator.cpp \
@@ -75,7 +76,6 @@ SOURCES += AeroControlSurface.cpp \
     CameraViewProvider.cpp \
     TurnDirection.cpp \
     OpenGLFontMeshBuilder.cpp \
-    OpenGLFontRenderer2D.cpp \
     OpenGLFontTexture.cpp \
     OpenGLButtonTexture.cpp \
     OpenGLButtonTextureManager.cpp \
@@ -88,6 +88,7 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/ReferenceFrame.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
+    $$PWD/OpenGLFontRenderer.h \
     AeroControlSurface.h \
     AeroControlSurfaceBoundary.h \
     AeroForceGenerator.h \
@@ -184,7 +185,6 @@ HEADERS  += CompositeListForceGenerator.inl \
     CameraViewProvider.h \
     TurnDirection.h \
     OpenGLFontMeshBuilder.h \
-    OpenGLFontRenderer2D.h \
     OpenGLFontTexture.h \
     OpenGLButtonTexture.h \
     OpenGLButtonTextureManager.h \
