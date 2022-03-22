@@ -127,17 +127,17 @@ void SDLMainWindow::onMove(int x, int y)
 }
 
 SDLMainWindow::SDLMainWindow() :
-    _bUserPolygonLineView(false),
     _showCursor(true),
+    _bUserPolygonLineView(false),
     //_paused(false),
     _framecount(0),
 #ifndef LOCATED_AT_LONDON
     _soundDevice(0),
     _soundContext(0),
 #endif
+    _font(_renderer),
     _textureRenderer(_renderer),
-    _buttonTextureManager(&_textureRenderer),
-	_font(_renderer)
+    _buttonTextureManager(&_textureRenderer)
 
 {
     memset( _framerate, 0, sizeof(_framerate) );
