@@ -1453,7 +1453,7 @@ void SDLMainWindow::RenderPlaybackRecordingGrafix()
             float fProgressFraction = pBody->getFlightRecorder().timeSoFar()
                     /pBody->getFlightRecorder().totalTime();
 
-			float pts2[4] = {};
+			float pts2[5] = {};
             pts2[0] = pts[0] + fProgressFraction * pts[3];
             pts2[1] = pts[1];
             pts2[3] = 0.01f;
