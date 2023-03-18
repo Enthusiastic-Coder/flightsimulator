@@ -215,7 +215,7 @@ void MeshGroupObject::Render(Renderer* r, std::vector<OpenGLTexture2D*>& texture
         else
             r->bindIndex(_meshData.indexPtr());
 
-    r->setUseIndex( _BufferFlags & BufferFlags_Index != 0);
+    r->setUseIndex( (_BufferFlags & BufferFlags_Index) != 0);
 
     for( MeshSurfaceObject* it : _meshObjects)
         it->Render(r, textureObjects);
