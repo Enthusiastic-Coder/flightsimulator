@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QGuiApplication>
+#include <WheelSpringForceGenerator.h>
+#include <GravityForceGenerator.h>
 
 template<class T>
 class PiccadillyTrainARigidbody;
