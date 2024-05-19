@@ -281,7 +281,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     int width, height;
     GetScreenDims(width, height);
 
-    if (!_depthRenderBuffer.generate(width, height))
+    if (!_depthRenderBuffer.generateDepth(width, height))
     {
         SDL_Log("Depth Render buffer not complete. - FrameBuffer Failed");
         return false;
@@ -1396,8 +1396,8 @@ void SDLMainWindow::onRender()
         RenderTexture(_shadowTextureMap1, 0, 1);
 
 #ifndef LOCATED_AT_LONDON
-        RenderTexture(_shadowMapTexture2, 1);
-        RenderTexture(_shadowMapTexture3, 2);
+        RenderTexture(_shadowMapTexture2, 1, 0);
+        RenderTexture(_shadowMapTexture3, 2, 0);
 #endif
     }
 

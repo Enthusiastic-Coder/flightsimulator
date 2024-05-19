@@ -21,8 +21,8 @@
 #include <MassChannel.h>
 
 
-#define LOCATED_AT_LONDON
-//#define LOCATED_AT_GIBRALTER
+//#define LOCATED_AT_LONDON
+#define LOCATED_AT_GIBRALTER
 #define FPS_RESOLUTION 20
 #define SATELLITE_RUNWAY
 #define FG_BLEND_VALUE 0.4f

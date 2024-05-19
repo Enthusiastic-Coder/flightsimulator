@@ -287,7 +287,7 @@ void WorldSystem::loadTerrain()
         _runwayList.push_back(std::move(obj));
     }
 
-#elif LOCATED_AT_GIBRALTER
+#elif defined(LOCATED_AT_GIBRALTER)
 
 	// = GPSLocation(36.151149, -5.349627) + VectorF(0, 0, 0);
 	//_simplePlaneMeshModel.Build(250, 250, 4.0f, RGB(50, 50, 0), 0);
