@@ -124,7 +124,7 @@ bool MeshGroupObject::BuildVertexBuffers(GLenum usage, bool bClearMesh)
 	{
         bOk &= _VertexBuffer.generateArrayBuffer();
         bOk &= _meshData.bufferVertex(_VertexBuffer, usage);
-        unsigned int maxVertexCount = std::numeric_limits<unsigned short>::max();
+        constexpr unsigned int maxVertexCount = std::numeric_limits<unsigned short>::max();
 
         if( _meshData.vertexSize() > maxVertexCount)
             std::cout << ":" << _sName  << " : WARNING vertex count exceeded limit of " << maxVertexCount << std::endl;
