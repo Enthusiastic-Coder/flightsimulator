@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include <algorithm>
 #include <math.h>
 #include <cmath>
 #include "AirProperties.h"
@@ -86,3 +86,25 @@ double AirProperties::Airspeed( double TAS, double alt, int dTemp)
 	return soundSpeed * std::sqrt(2 / (gamma - 1) * (std::pow(comp / p0 + 1, (gamma - 1) / gamma) - 1));
 }
 
+double AirProperties::GlideRatio(double airspeed, double altitude, int dTemp) 
+{
+	// Example fixed glide ratio, replace with actual computation or lookup
+	return 15.0; // Glide ratio can be different for different speeds and configurations
+}
+
+double AirProperties::CalculateVSI(double airspeed, double altitude, int dTemp) 
+{
+	// Calculate the true airspeed
+	double tas = TAS(airspeed, altitude, dTemp); // Assume TAS function is defined as given
+
+	// Calculate glide ratio (this function needs to be implemented based on aircraft data)
+	double glideRatio = GlideRatio(airspeed, altitude, dTemp); // You need to implement GlideRatio function
+
+	// Calculate VSI
+	double vsi = tas / glideRatio; // Vertical speed in meters per second
+
+	// Convert VSI from m/s to feet/min
+	double vsiFeetPerMin = vsi * 60 * 3.281;
+
+	return vsiFeetPerMin;
+}
