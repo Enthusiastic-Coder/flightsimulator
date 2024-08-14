@@ -1,7 +1,16 @@
+#include "stdafx.h"
 #include <algorithm>
 #include <math.h>
 #include <cmath>
 #include "AirProperties.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+const double SEA_LEVEL_PRESSURE = 101325.0; // Sea level pressure in Pascals
+const double SEA_LEVEL_TEMPERATURE = 288.15; // Sea level temperature in Kelvin
+const double GRAVITY = 9.80665;
 
 double AirProperties::Density( double alt )
 {
@@ -30,6 +39,11 @@ double AirProperties::GeoPotential( double alt)
 	return R_earth * alt / (R_earth + alt);
 }
 
+// Function to calculate temperature at altitude in Kelvin
+double AirProperties::Temperature(double altitude) {
+    return SEA_LEVEL_TEMPERATURE - 0.0065 * altitude;
+}
+
 double AirProperties::Pressure(double alt)
 {
 	double T0 = 288.15;  // Base temperature in K at sea level
@@ -56,19 +70,19 @@ double AirProperties::Pressure(double alt)
 	return P;
 }
 
-double AirProperties::TAS( double airspeed, double alt, int dTemp)
-{
-	double soundSpeed = SpeedOfSound(alt, dTemp);
-	double pressure = Pressure(alt);
+double AirProperties::TAS(double ias, double alt, int dTemp) {
+    double pressure = Pressure(alt);
+    double temperature = Temperature(alt) + dTemp; // Temperature at altitude adjusted by dTemp
 
-	double gamma = 1.4;
-	double R = 287.05;  // Specific gas constant for air in J/(kg·K)
-	double p0 = 101325.0;  // Sea level pressure in Pa
+    // Convert IAS to meters per second
+        double iasMps = ias * 0.514444; // 1 knot = 0.514444 m/s
 
-	double machNumber = airspeed / soundSpeed;
-	double comp = p0 * (std::pow(airspeed * airspeed / (soundSpeed * soundSpeed) * (gamma - 1) / 2 + 1, gamma / (gamma - 1)) - 1);
+    // Calculate TAS using the correct density ratio formula
+    double tasMps = iasMps * std::sqrt((SEA_LEVEL_PRESSURE / pressure) * (SEA_LEVEL_TEMPERATURE / temperature));
 
-	return machNumber * soundSpeed;
+
+    // Convert TAS from meters per second to knots
+    return tasMps / 0.514444; // 1 m/s = 1 / 0.514444 knots
 }
 
 double AirProperties::Airspeed( double TAS, double alt, int dTemp)
@@ -107,4 +121,17 @@ double AirProperties::CalculateVSI(double airspeed, double altitude, int dTemp)
 	double vsiFeetPerMin = vsi * 60 * 3.281;
 
 	return vsiFeetPerMin;
+}
+
+// Function to calculate Bank Angle
+double AirProperties::BankAngle(double tas, double rateOfTurn)
+{
+    // Convert rate of turn to radians per second
+    double rateOfTurnRadSec = rateOfTurn * M_PI / 180.0;
+
+    // Calculate the bank angle in radians
+    double bankAngleRad = std::atan((rateOfTurnRadSec * tas) / GRAVITY);
+
+    // Convert the bank angle to degrees
+    return bankAngleRad * (180.0 / M_PI);
 }

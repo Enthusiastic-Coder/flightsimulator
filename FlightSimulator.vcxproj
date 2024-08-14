@@ -337,7 +337,7 @@
     <ClCompile Include="AeroSectionSubElementForceGenerator.cpp" />
     <ClCompile Include="AeroWheelSpringForceGenerator.cpp" />
     <ClCompile Include="AirProperties.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="AircraftCarrierRigidBody.cpp" />
     <ClCompile Include="AircraftEngineForceGenerator.cpp" />

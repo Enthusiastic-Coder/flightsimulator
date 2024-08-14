@@ -11,5 +11,7 @@ public:
 	static double Airspeed( double TAS, double alt, int dTemp);
 	static double CalculateVSI(double airspeed, double altitude, int dTemp);
 	static double GlideRatio(double airspeed, double altitude, int dTemp);
+    static double Temperature(double altitude);
+    static double BankAngle(double tas, double rateOfTurn);
 };
 
