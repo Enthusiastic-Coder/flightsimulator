@@ -14,10 +14,9 @@ const double GRAVITY = 9.80665;
 
 double AirProperties::Density( double alt )
 {
-	// Simplified ISA model
-	double temperature = 288.15 - 0.0065 * alt; // Temperature in K
-	double pressure = 101325 * pow((temperature / 288.15), (9.80665 / (0.0065 * 287.05))); // Pressure in Pascals
-	return pressure / (287.05 * temperature); // Air density in kg/m^3
+    double temperature = SEA_LEVEL_TEMPERATURE - 0.0065 * alt;
+    double pressure = SEA_LEVEL_PRESSURE * pow((1 - 0.0065 * alt / SEA_LEVEL_TEMPERATURE), 5.2561);
+    return pressure / (287.05 * temperature); // Ideal gas law
 }
 
 double AirProperties::SpeedOfSound( double alt, int dt )
@@ -70,35 +69,37 @@ double AirProperties::Pressure(double alt)
 	return P;
 }
 
-double AirProperties::TAS(double ias, double alt, int dTemp) {
-    double pressure = Pressure(alt);
-    double temperature = Temperature(alt) + dTemp; // Temperature at altitude adjusted by dTemp
+double AirProperties::TAS(double ias, double alt, int dTemp)
+{
+    double pressure = Pressure(alt); // Pressure at altitude in Pascals
+    double temperature = Temperature(alt) + dTemp; // Temperature at altitude adjusted by deviation (dTemp)
 
-    // Convert IAS to meters per second
-        double iasMps = ias * 0.514444; // 1 knot = 0.514444 m/s
+    // Convert IAS from knots to meters per second
+    double iasMps = ias * 0.514444; // 1 knot = 0.514444 m/s
 
-    // Calculate TAS using the correct density ratio formula
-    double tasMps = iasMps * std::sqrt((SEA_LEVEL_PRESSURE / pressure) * (SEA_LEVEL_TEMPERATURE / temperature));
-
+    // Calculate TAS using the density ratio
+    double tasMps = iasMps * std::sqrt((SEA_LEVEL_PRESSURE / pressure) * (temperature / SEA_LEVEL_TEMPERATURE));
 
     // Convert TAS from meters per second to knots
-    return tasMps / 0.514444; // 1 m/s = 1 / 0.514444 knots
+    return tasMps / 0.514444; // Convert back to knots
 }
 
-double AirProperties::Airspeed( double TAS, double alt, int dTemp)
+
+double AirProperties::Airspeed(double TAS, double alt, int dTemp)
 {
-	double soundSpeed = SpeedOfSound(alt, dTemp);
-	double pressure = Pressure(alt);
+    double pressure = Pressure(alt); // Pressure at altitude in Pascals
+    double temperature = Temperature(alt) + dTemp; // Temperature at altitude adjusted by deviation (dTemp)
 
-	double gamma = 1.4;
-	double R = 287.05;  // Specific gas constant for air in J/(kg·K)
-	double p0 = 101325.0;  // Sea level pressure in Pa
+    // Convert TAS from knots to meters per second
+    double tasMps = TAS * 0.514444; // 1 knot = 0.514444 m/s
 
-	double machNumber = TAS / soundSpeed;
-	double comp = pressure * (std::pow(1 + (gamma - 1) / 2 * machNumber * machNumber, gamma / (gamma - 1)) - 1);
+    // Calculate IAS using the inverse of the TAS formula
+    double iasMps = tasMps / std::sqrt((SEA_LEVEL_PRESSURE / pressure) * (temperature / SEA_LEVEL_TEMPERATURE));
 
-	return soundSpeed * std::sqrt(2 / (gamma - 1) * (std::pow(comp / p0 + 1, (gamma - 1) / gamma) - 1));
+    // Convert IAS from meters per second to knots
+    return iasMps / 0.514444; // Convert back to knots
 }
+
 
 double AirProperties::GlideRatio(double airspeed, double altitude, int dTemp) 
 {
@@ -121,17 +122,4 @@ double AirProperties::CalculateVSI(double airspeed, double altitude, int dTemp)
 	double vsiFeetPerMin = vsi * 60 * 3.281;
 
 	return vsiFeetPerMin;
-}
-
-// Function to calculate Bank Angle
-double AirProperties::BankAngle(double tas, double rateOfTurn)
-{
-    // Convert rate of turn to radians per second
-    double rateOfTurnRadSec = rateOfTurn * M_PI / 180.0;
-
-    // Calculate the bank angle in radians
-    double bankAngleRad = std::atan((rateOfTurnRadSec * tas) / GRAVITY);
-
-    // Convert the bank angle to degrees
-    return bankAngleRad * (180.0 / M_PI);
 }
