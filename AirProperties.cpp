@@ -22,7 +22,7 @@ double AirProperties::Density( double alt )
 double AirProperties::SpeedOfSound( double alt, int dt )
 {
     const double gamma = 1.4; // Adiabatic index for air
-    const double R = 287.05;  // Specific gas constant for air in J/(kg·K)
+    const double R = 287.05;  // Specific gas constant for air in J/(kgÂ·K)
 
     // Ensure altitude is non-negative
     alt = std::max(alt, 0.0);
@@ -51,8 +51,8 @@ double AirProperties::Pressure(double alt)
 	double T0 = 288.15;  // Base temperature in K at sea level
 	double P0 = 101325.0;  // Base pressure in Pa at sea level
 	double L = 0.0065;  // Temperature lapse rate in K/m
-	double R = 287.05;  // Specific gas constant for air in J/(kg·K)
-	double g0 = 9.80665;  // Standard gravitational acceleration in m/s²
+	double R = 287.05;  // Specific gas constant for air in J/(kgÂ·K)
+	double g0 = 9.80665;  // Standard gravitational acceleration in m/sÂ²
 	double H0 = 11000.0;  // Tropospheric height in meters
 
 	alt = std::max(alt, 0.0);  // Ensure altitude is non-negative
