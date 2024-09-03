@@ -21,14 +21,17 @@ double AirProperties::Density( double alt )
 
 double AirProperties::SpeedOfSound( double alt, int dt )
 {
-	double gamma = 1.4;
-	double R = 287.05;  // Specific gas constant for air in J/(kg·K)
-	double M = 0.0289644;  // Molar mass of air in kg/mol
+    const double gamma = 1.4; // Adiabatic index for air
+    const double R = 287.05;  // Specific gas constant for air in J/(kg·K)
 
-	alt = std::max(alt, 0.0);  // Ensure altitude is non-negative
-	double dTemp = 288.15 - 0.0065 * alt + dt;  // Temperature in Kelvin
+    // Ensure altitude is non-negative
+    alt = std::max(alt, 0.0);
 
-	return std::sqrt(gamma * R * dTemp / M);
+    // Calculate temperature in Kelvin considering the standard lapse rate in the troposphere
+    double dTemp = 288.15 - 0.0065 * alt + dt;
+
+    // Calculate and return the speed of sound
+    return std::sqrt(gamma * R * dTemp);
 }
 
 double AirProperties::GeoPotential( double alt)
