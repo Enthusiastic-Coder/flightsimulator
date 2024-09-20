@@ -104,14 +104,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.obj\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FlightSimulator</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FlightSimulator</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.obj\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FlightSimulator</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">FlightSimulator</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
@@ -133,12 +131,10 @@
     <ClCompile>
       <AdditionalIncludeDirectories>.;sdl2_image\include;sdl2\include;openal\include;rapidjson\include;sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
-      <AssemblerListingLocation>.obj\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
       <DebugInformationFormat>None</DebugInformationFormat>
       <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <ObjectFileName>.obj\</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;RAPIDJSON_HAS_STDSTRING=1;WANT_SDL_SDL_SURFACE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
@@ -241,12 +237,10 @@
     <ClCompile>
       <AdditionalIncludeDirectories>.;sdl2_image\include;sdl2\include;openal\include;rapidjson\include;sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
-      <AssemblerListingLocation>.obj\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <ObjectFileName>.obj\</ObjectFileName>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;RAPIDJSON_HAS_STDSTRING=1;WANT_SDL_SDL_SURFACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
