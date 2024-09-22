@@ -430,7 +430,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGLFontRenderer.h" />
-    <ClInclude Include="sdk\include\AndroidAssetsTransfer.inl" />
     <ClInclude Include="sdk\include\BezierEquation.h" />
     <ClInclude Include="sdk\include\BoundaryHelperT.h" />
     <ClInclude Include="sdk\include\BoundingBox.h" />
