@@ -35,6 +35,6 @@ protected:
 
 private:
 	int _primitiveType;
-    std::pair<unsigned int, unsigned int> _countOffset; //count, offset
+    std::pair<int, int> _countOffset; //count, offset
 };
 
