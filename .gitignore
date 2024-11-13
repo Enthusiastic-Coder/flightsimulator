@@ -19,3 +19,6 @@ FlightSimulator/Release/
 FlightSimulator.qtvscr
 FlightSimulator.vcxproj.user
 FlightSimulator/
+Models/AirArabia/model.obj
+Models/AircraftCarrier/model.obj
+Models/Harrier/model.obj
