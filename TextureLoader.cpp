@@ -11,8 +11,11 @@ namespace TextureLoader
     {
         SDL_Surface* surface = SDL_SurfaceHelper::loadSDLSurface(filename);
 
-        if( surface ==0)
+        if (surface == nullptr)
+        {
+            SDL_Log("loadTexture failed :%s: ", filename.c_str());
             return 0;
+        }
 
         *width = surface->w;
         *height = surface->h;
