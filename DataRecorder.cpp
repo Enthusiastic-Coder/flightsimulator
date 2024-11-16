@@ -202,7 +202,7 @@ bool DataRecorder::load(std::string sfilename)
 	if( fIn == NULL )
 		return false;
 
-	int blocksize;
+	size_t blocksize;
 
 	fread( &blocksize, sizeof(blocksize), 1, fIn);
 
