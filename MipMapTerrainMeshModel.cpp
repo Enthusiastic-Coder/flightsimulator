@@ -18,8 +18,13 @@
 //#define TERRAIN_DIMENSIONS		(128)
 //#define TERRAIN_MIPMAP_LEVEL	(2)
 
-#define TERRAIN_DIMENSIONS		(256)
-#define TERRAIN_MIPMAP_LEVEL	(3)
+#if defined LOCATED_AT_GIBRALTER && !defined _DEBUG
+	#define TERRAIN_DIMENSIONS		(1024)
+	#define TERRAIN_MIPMAP_LEVEL	(5)
+#else
+	#define TERRAIN_DIMENSIONS		(256)
+	#define TERRAIN_MIPMAP_LEVEL	(3)
+#endif
 
 
 //#define TERRAIN_DIMENSIONS		(512)
