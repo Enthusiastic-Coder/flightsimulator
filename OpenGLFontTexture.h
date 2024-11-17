@@ -1,7 +1,7 @@
 #pragma once
 
 #include "OpenglTexture2d.h"
-#include <MathSupport.h>
+#include <jibbs/math/MathSupport.h>
 #include <string>
 
 class OpenGLFontTexture

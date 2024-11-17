@@ -2,7 +2,7 @@
 #define OPENGLRENDERER_H
 
 #include <include_gl.h>
-#include "vector3.h"
+#include <jibbs/vector/vector3.h>
 
 class OpenGLTexture2D;
 class OpenGLVertexBuffer;

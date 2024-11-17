@@ -1,7 +1,7 @@
 #pragma once
 
 #include "interfaces.h"
-#include <vector3.h>
+#include <jibbs/vector/vector3.h>
 
 class Weather : public IWeather
 {

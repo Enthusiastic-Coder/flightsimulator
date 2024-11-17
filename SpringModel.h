@@ -3,8 +3,8 @@
 #include "interfaces.h"
 #include "FlightRecorder.h"
 #include <HeightData.h>
-#include <vector3.h>
-#include <Quarternion.h>
+#include <jibbs/vector/vector3.h>
+#include <jibbs/math/Quarternion.h>
 
 class SpringModel : public IDataRecordable<FlightRecorder>
 {

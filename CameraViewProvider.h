@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GPSLocation.h"
-#include "vector3.h"
+#include <jibbs/gps/GPSLocation.h>
+#include <jibbs/vector/vector3.h>
 #include "interfaces.h"
 #include "Camera.h"
 

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <limits>
-#include "BoundaryHelperT.h"
+#include <jibbs/boundary/BoundaryHelperT.h>
 #include "FlightRecorder.h"
 #include "AeroSectionSubElementForceGenerator.h"
 #include "AeroSectionForceGenerator.h"

@@ -4,7 +4,7 @@
 class Renderer;
 class OpenGLTexture2D;
 
-#include <vector4.h>
+#include <jibbs/vector/vector4.h>
 
 class OpenGLTextureRenderer2D
 {

@@ -4,7 +4,7 @@ class OpenGLFontTexture;
 class Renderer;
 class OpenGLShaderProgram;
 
-#include "MathSupport.h"
+#include <jibbs/math/MathSupport.h>
 #include <string>
 #include "OpenGLFontMeshBuilder.h"
 

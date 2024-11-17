@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RigidBody.h"
-#include <vector3.h>
+#include <jibbs/vector/vector3.h>
 #include "CameraView.h"
 
 class Camera

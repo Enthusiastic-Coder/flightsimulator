@@ -3,8 +3,8 @@
 
 #include <map>
 #include <string>
-#include <vector3.h>
-#include <GPSLocation.h>
+#include <jibbs/vector/vector3.h>
+#include <jibbs/gps/GPSLocation.h>
 #include <interfaces.h>
 
 class CameraView : public IFilePersist, public IRapidJsonPersist

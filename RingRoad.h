@@ -1,7 +1,7 @@
 #pragma once
 
-#include <MathSupport.h>
-#include <Matrix3x3.h>
+#include <jibbs/math/MathSupport.h>
+#include <jibbs/matrix/Matrix3x3.h>
 
 template<class T>
 class RingRoadOpenGL : public IMeshModel

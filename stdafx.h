@@ -8,7 +8,8 @@
 #define NOMINMAX
 //#include <vld.h>
 
-#include <mathsupport.h>
+#include <jibbs/math/MathSupport.h>
+
 #include <iostream>
 #include <vector>
 #include <string>

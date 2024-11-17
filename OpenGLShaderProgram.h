@@ -2,10 +2,10 @@
 
 #include <map>
 #include <include_gl.h>
-#include <vector3.h>
-#include <vector4.h>
-#include <Matrix3x3.h>
-#include <Matrix4x4.h>
+#include <jibbs/vector/vector3.h>
+#include <jibbs/vector/vector4.h>
+#include <jibbs/matrix/Matrix3x3.h>
+#include <jibbs/matrix/Matrix4x4.h>
 
 class OpenGLShaderProgram
 {

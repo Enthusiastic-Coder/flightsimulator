@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <utility>
-#include "vector3.h"
+#include <jibbs/vector/vector3.h>
 #include "MeshObject.h"
 #include "OpenGLRenderer.h"
 #include "MeshModelArgs.h"

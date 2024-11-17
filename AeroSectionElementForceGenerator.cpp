@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "BoundaryHelperT.h"
+#include <jibbs/boundary/BoundaryHelperT.h>
 #include "CompositeListForceGenerator.h"
 #include "AeroSectionSubElementForceGenerator.h"
 #include "AeroSectionForceGenerator.h"

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "FlightRecorder.h"
-#include "BoundaryHelperT.h"
-
+#include <jibbs/boundary/BoundaryHelperT.h>
 
 class AeroSectionSubElementForceGenerator;
 class AeroSectionForceGenerator;

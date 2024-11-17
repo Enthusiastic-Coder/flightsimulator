@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BoundaryHelperT.h"
+#include <jibbs/boundary/BoundaryHelperT.h>
 
 class AeroSectionSubElementForceGenerator;
 class AeroControlSurface;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
+#include <jibbs/gps/GPSModelTransform.h>
+
 #include "GPSTerrainData.h"
-#include "GPSModelTransform.h"
 
 GPSTerrainData::GPSTerrainData(ScaledHeightTerrainData &data) :
     _HeightData(data) {}

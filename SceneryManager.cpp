@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SceneryManager.h"
 
-#include <GPSLocation.h>
+#include <jibbs/gps/GPSLocation.h>
 #include <HeightData.h>
 #include <vector>
 

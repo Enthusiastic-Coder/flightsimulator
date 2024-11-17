@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Quarternion.h>
-#include <vector3.h>
-#include <MathSupport.h>
-#include <GPSLocation.h>
+#include <jibbs/math/Quarternion.h>
+#include <jibbs/vector/vector3.h>
+#include <jibbs/math/MathSupport.h>
+#include <jibbs/gps/GPSLocation.h>
 
 template<class U>
 class VirtualType 

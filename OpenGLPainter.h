@@ -6,7 +6,7 @@ class OpenGLShaderProgram;
 class OpenGLFontTexture;
 class Renderer;
 
-#include "vector4.h"
+#include <jibbs/vector/vector4.h>
 #include <string>
 
 class OpenGLPainter

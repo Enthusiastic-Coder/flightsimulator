@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "TurnDirection.h"
-#include <MathSupport.h>
+#include <jibbs/math/MathSupport.h>
 
 float TurnDirection::GetTurnDiff(float fHdg, float fBrg)
 {

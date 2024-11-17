@@ -3,7 +3,7 @@
 
 #include <map>
 #include "OpenGLTextureRenderer2D.h"
-#include <MathSupport.h>
+#include <jibbs/math/MathSupport.h>
 
 class Renderer;
 class OpenGLButtonTexture;

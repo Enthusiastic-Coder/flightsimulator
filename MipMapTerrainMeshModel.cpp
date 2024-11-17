@@ -1,4 +1,7 @@
 #include "stdafx.h"
+
+#include <jibbs/gps/GPSModelTransform.h>
+
 #include "MipMapTerrainMeshModel.h"
 #include "TileNode.h"
 #include "GPSTerrainData.h"
@@ -10,7 +13,6 @@
 #include "OpenGLShaderProgram.h"
 #include "OpenGLPipeline.h"
 #include "Paths.h"
-#include "GPSModelTransform.h"
 
 #define CHUNK_DIMENSIONS		(16)
 

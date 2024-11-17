@@ -1,8 +1,10 @@
 #include "stdafx.h"
+
+#include <jibbs/gps/GPSModelTransform.h>
+
 #include "SimpleCloud.h"
 #include "PerlinNoise.h"
 #include "OpenGLRenderer.h"
-#include "GPSModelTransform.h"
 
 SimpleCloud::SimpleCloud(std::string name) : 
 	JSONRigidBody(name),

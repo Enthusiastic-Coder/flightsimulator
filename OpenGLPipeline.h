@@ -1,10 +1,10 @@
 #pragma once
 #include "include_gl.h"
 #include "OpenGLShaderProgram.h"
-#include "Matrix4x4.h"
-#include "vector3.h"
-#include "vector4.h"
-#include "GPSLocation.h"
+#include <jibbs/matrix/Matrix4x4.h>
+#include <jibbs/vector/vector3.h>
+#include <jibbs/vector/vector4.h>
+#include <jibbs/gps/GPSLocation.h>
 #include <stack>
 
 class OpenGLMatrixStack

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BoundaryHelperT.h"
+#include <jibbs/boundary/BoundaryHelperT.h>
 #include "GSForceGenerator.h"
 #include "AeroSectionSubElementForceGenerator.h"
 

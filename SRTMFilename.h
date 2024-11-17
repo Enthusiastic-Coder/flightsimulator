@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <GPSLocation.h>
+#include <jibbs/gps/GPSLocation.h>
 
 class SRTMFilename
 {

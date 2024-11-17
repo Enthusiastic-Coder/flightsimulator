@@ -3,9 +3,9 @@
 #include <SerializableStdStream.h>
 #include "OpenGLVertexBuffer.h"
 #include <vector>
-#include <vector2.h>
-#include <vector3.h>
-#include <vector4.h>
+#include <jibbs/vector/vector2.h>
+#include <jibbs/vector/vector3.h>
+#include <jibbs/vector/vector4.h>
 
 class meshData : public ISerializable
 {

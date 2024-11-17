@@ -1,6 +1,6 @@
 #pragma once
 
-#include <MathSupport.h>
+#include <jibbs/math/MathSupport.h>
 
 struct MeshModelArgs
 {

@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Weather.h"
-#include <MathSupport.h>
-#include <vector3.h>
-#include <Quarternion.h>
+#include <jibbs/math/MathSupport.h>
+#include <jibbs/vector/vector3.h>
+#include <jibbs/math/Quarternion.h>
 
 static const double kts_to_meters = 1.15 * 1.609334 * 1000 / 3600;
 

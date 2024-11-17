@@ -7,10 +7,10 @@
 #pragma once
 
 #include <vector>
-#include <vector3.h>
-#include <Quarternion.h>
-#include <GPSLocation.h>
-#include <BoundaryHelperT.h>
+#include <jibbs/vector/vector3.h>
+#include <jibbs/math/Quarternion.h>
+#include <jibbs/gps/GPSLocation.h>
+#include <jibbs/boundary/BoundaryHelperT.h>
 
 template<typename TArchive>
 class IDataRecordable

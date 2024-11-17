@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include <vector2.h>
+#include <jibbs/vector/vector2.h>
 
 
 struct ChunkNode;

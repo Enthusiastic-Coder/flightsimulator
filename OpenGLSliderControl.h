@@ -1,8 +1,8 @@
 #ifndef __OPENGL_SLIDER_CONTROL__
 #define __OPENGL_SLIDER_CONTROL__
 
-#include <MathSupport.h>
-#include <vector4.h>
+#include <jibbs/math/MathSupport.h>
+#include <jibbs/vector/vector4.h>
 
 class Renderer;
 
