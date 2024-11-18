@@ -21,7 +21,7 @@ void TerrainGroupObject::Build(bool bLand, const TileNode& tileNode, int chunkNo
     const GPSTerrainData& gpsMeshObject = tileNode.getGPSGroupObject();
 	const std::vector<Vector2I>& tileVertexIndexData = tileNode.BuildIndexData(chunkNo, level);
 
-	std::vector<unsigned short> indexList;
+	std::vector<unsigned int> indexList;
 	indexList.resize(tileVertexIndexData.size());
 
 	for (size_t i = 0; i < tileVertexIndexData.size(); ++i)
@@ -52,9 +52,9 @@ void TerrainGroupObject::Build(bool bLand, const TileNode& tileNode, int chunkNo
 	}
 }
 
-void TerrainGroupObject::BuildTerrainData(bool bLand, const GPSTerrainData& terrainData, std::vector<unsigned short>& indexList)
+void TerrainGroupObject::BuildTerrainData(bool bLand, const GPSTerrainData& terrainData, std::vector<unsigned int>& indexList)
 {
-	std::map<unsigned short, unsigned short> indexMappingList;
+	std::map<unsigned int, unsigned int> indexMappingList;
 
     for (const GLuint& it : indexList)
 	{
