@@ -428,6 +428,7 @@
     <ClInclude Include="sdk\include\HeightData.h" />
     <ClInclude Include="sdk\include\HRTimer.h" />
     <ClInclude Include="sdk\include\include_gl.h" />
+    <ClInclude Include="sdk\include\jibbs\math\MathSupport.h" />
     <ClInclude Include="sdk\include\JsonHelper.h" />
     <ClInclude Include="sdk\include\MeshHelper.h" />
     <ClInclude Include="sdk\include\OGLTexture2D.h" />
