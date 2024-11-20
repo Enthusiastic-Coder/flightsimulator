@@ -4,7 +4,7 @@
 #include "MeshObject.h"
 #include "OpenGLRenderer.h"
 #include "MeshModelArgs.h"
-#include <MassChannel.h>
+#include <jibbs/math/MassChannel.h>
 #include <MeshHelper.h>
 
 MeshObject::MeshObject() : _primitiveType(0) {}

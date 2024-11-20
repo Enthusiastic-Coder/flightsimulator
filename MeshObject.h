@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Serializable.h"
-#include <MassChannel.h>
+#include <jibbs/math/MassChannel.h>
 class MeshModelArgs;
 class Renderer;
 

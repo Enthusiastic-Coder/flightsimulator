@@ -4,7 +4,7 @@
 #include "interfaces.h"
 #include "MeshSurfaceObject.h"
 #include "OpenGLVertexBuffer.h"
-#include <MassChannel.h>
+#include <jibbs/math/MassChannel.h>
 #include "MeshData.h"
 #include "MeshModelArgs.h"
 

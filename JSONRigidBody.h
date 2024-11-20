@@ -5,7 +5,7 @@
 #include "Hydraulics.h"
 #include "Camera.h"
 #include "interfaces.h"
-#include <MassChannel.h>
+#include <jibbs/math/MassChannel.h>
 #include "OpenGLRenderer.h"
 #include "OpenGLPipeline.h"
 #include "CameraViewProvider.h"

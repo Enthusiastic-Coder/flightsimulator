@@ -3,7 +3,7 @@
 #include "GPSTerrainData.h"
 #include "TriangleFanQuadNode.h"
 #include "ChunkNode.h"
-#include "MatrixArrayCoords.h"
+#include <jibbs/matrix/MatrixArrayCoords.h>
 
 class TileNode
 {

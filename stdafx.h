@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <include_gl.h>
-#include <MassChannel.h>
+#include <jibbs/math/MassChannel.h>
 
 
 //#define LOCATED_AT_LONDON

@@ -2,7 +2,7 @@
 
 #include <map>
 #include <string>
-#include <MassChannel.h>
+#include <jibbs/math/MassChannel.h>
 
 class MeshModel;
 

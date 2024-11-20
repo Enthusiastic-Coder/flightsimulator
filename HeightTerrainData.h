@@ -2,7 +2,7 @@
 
 #include <SerializableStdStream.h>
 #include "GPSTileBoundary.h"
-#include "MatrixArrayCoords.h"
+#include <jibbs/matrix/MatrixArrayCoords.h>
 
 class HeightTerrainData : public ISerializable
 {

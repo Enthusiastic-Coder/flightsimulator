@@ -2,7 +2,7 @@
 #include "JSONRigidBody.h"
 #include "GSRigidBody.h"
 #include "WorldSystem.h"
-#include <MassChannel.h>
+#include <jibbs/math/MassChannel.h>
 #include "RigidBodyMeshManager.h"
 #include "OpenGLRenderer.h"
 #include "OpenGLShaderProgram.h"

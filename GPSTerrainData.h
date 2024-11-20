@@ -2,7 +2,7 @@
 
 #include "HeightTerrainData.h"
 #include "ScaledHeightTerrainData.h"
-#include "MatrixArrayCoords.h"
+#include <jibbs/matrix/MatrixArrayCoords.h>
 
 class GPSTerrainData
 {

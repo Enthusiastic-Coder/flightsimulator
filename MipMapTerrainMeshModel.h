@@ -4,7 +4,7 @@
 #include "HeightTerrainData.h"
 #include "TerrainMeshModel.h"
 #include "MeshModel.h"
-#include "MatrixArrayCoords.h"
+#include <jibbs/matrix/MatrixArrayCoords.h>
 
 class Renderer;
 

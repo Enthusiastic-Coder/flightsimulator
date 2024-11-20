@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "HeightTerrainData.h"
-#include "MatrixArrayCoords.h"
+#include <jibbs/matrix/MatrixArrayCoords.h>
 
 GPSLocation HeightTerrainData::GetLocation() const
 {

@@ -429,8 +429,6 @@
     <ClInclude Include="sdk\include\HRTimer.h" />
     <ClInclude Include="sdk\include\include_gl.h" />
     <ClInclude Include="sdk\include\JsonHelper.h" />
-    <ClInclude Include="sdk\include\MassChannel.h" />
-    <ClInclude Include="sdk\include\MatrixArrayCoords.h" />
     <ClInclude Include="sdk\include\MeshHelper.h" />
     <ClInclude Include="sdk\include\OGLTexture2D.h" />
     <ClInclude Include="sdk\include\OGLWtlWndImpl.h" />
