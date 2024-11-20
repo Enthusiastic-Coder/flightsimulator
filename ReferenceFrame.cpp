@@ -74,7 +74,7 @@ Vector3D ReferenceFrame::toNonLocalFrame(const Vector3D &v) const
 
 void ReferenceFrame::updateEuler()
 {
-    _euler = MathSupport<double>::MakeEuler(getOrientation());
+    _euler = -MathSupport<double>::MakeEuler(getOrientation());
 }
 
 void ReferenceFrame::setOrientationHelper(double x, double y, double z)
@@ -124,5 +124,5 @@ void GPSReferenceFrame::resetFrame()
 void GPSReferenceFrame::updateEuler()
 {
     _localOrientation = ~_gpsOrientation * getOrientation();
-    _euler = MathSupport<double>::MakeEuler(_localOrientation);
+    _euler = -MathSupport<double>::MakeEuler(_localOrientation);
 }

@@ -1766,7 +1766,7 @@ void SDLMainWindow::RenderInfo()
         HeightData data;
         if( _WorldSystem.getHeightFromPosition(cameraGPS, data ) )
         {
-            Vector3F euler = MathSupport<float>::MakeEuler( data.qNormal() ) ;
+            Vector3F euler = -MathSupport<float>::MakeEuler( data.qNormal() ) ;
             sprintf( text, "HeightAbovePlane :[%.8f], Euler : [%.2f,%.2f,%.2f]", data.Height(),euler.x, euler.y, euler.z );
         }
         else
