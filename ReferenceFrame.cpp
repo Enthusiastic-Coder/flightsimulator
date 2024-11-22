@@ -79,7 +79,7 @@ void ReferenceFrame::updateEuler()
 
 void ReferenceFrame::setOrientationHelper(double x, double y, double z)
 {
-    _orientation = MathSupport<double>::MakeQ( x, y, z );
+    _orientation = MathSupport<double>::MakeQOrientation( Vector3D(x, y, z) );
 }
 
 Vector3D ReferenceFrame::toFrame(const QuarternionD &q, const Vector3D &v, const Vector3D &offset) const
