@@ -93,7 +93,7 @@ QuarternionF AeroControlSurface::onDeflectionChange(float front, float back)
     float deflection = DegreesToRadians(-_deflection );
     float dBack = back + _distance_per_deflection * _deflection;
     float phi = atan2f( dBack * sin(deflection), front + dBack * cos(deflection) );
-    return MathSupport<float>::MakeQ( RadiansToDegrees( phi ) * getRotAxis());
+    return MathSupport<float>::MakeQOrientation( RadiansToDegrees( phi ) * getRotAxis());
 }
 
 void AeroControlSurface::rotateNormal( Vector3F & v )

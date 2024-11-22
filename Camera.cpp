@@ -162,7 +162,7 @@ void Camera::onUpdate(double dt)
     {
         float velocity = std::min(distance*dt, 1000*dt);
 
-        QuarternionF qF = MathSupport<float>::MakeQ(localOrientation);
+        QuarternionF qF = MathSupport<float>::MakeQOrientation(localOrientation);
         Vector3F person(0,0,-velocity);
         person= QVRotate( qF, person);
 

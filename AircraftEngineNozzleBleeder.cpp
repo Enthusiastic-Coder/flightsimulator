@@ -108,7 +108,7 @@ void AircraftEngineNozzleBleeder::updateNozzleAngle(float dt)
 			_currentRotation.z -= rateRot.z;
 	}
 
-	QuarternionF q = MathSupport<float>::MakeQ(_currentRotation);
+	QuarternionF q = MathSupport<float>::MakeQOrientation(_currentRotation);
 	_currentDirection = QVRotate(q, Vector3F(0,0,-1));
 }
 

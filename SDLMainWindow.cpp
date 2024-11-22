@@ -993,7 +993,7 @@ void SDLMainWindow::onUpdate()
             Vector3F offset = _camera.localView()->getPosition().offSetTo(focus->getGPSLocation());
             Vector3D velocity = focus->toNonLocalGroundFrame(focus->velocityBody());
 
-            QuarternionD qCamera = MathSupport<double>::MakeQ(_camera.localView()->getOrientation());
+            QuarternionD qCamera = MathSupport<double>::MakeQOrientation(_camera.localView()->getOrientation());
             offset = QVRotate(~qCamera.toFloat(), offset);
             velocity = QVRotate(~qCamera, velocity);
 /*
