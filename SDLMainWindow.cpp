@@ -25,6 +25,7 @@
 #include "HarrierRigidBody.h"
 #include "AircraftCarrierRigidBody.h"
 #include "HeathrowRadar.h"
+#include "CircularRunwayRigidBody.h"
 #include <iostream>
 
 #include "OpenGLFontTexture.h"
@@ -335,6 +336,9 @@ bool SDLMainWindow::onInitialise()
         _WorldSystem.onInitialise();
 
         _WorldSystem.addJSONBody(new BAAirbus320JSONRigidBody("BAA320:A320_A_GIB"));
+#ifndef ANDROID
+		_WorldSystem.addJSONBody(new BAAirbus380JSONRigidBody("BAA380:A380_A_GIB"));
+#endif
 #ifndef LOCATED_AT_LONDON
         _WorldSystem.addJSONBody(new BAAirbus320JSONRigidBody("AirArabia:A320_B_GIB"));
         _WorldSystem.addJSONBody(new BAAirbus380JSONRigidBody("BAA380:A380_A_GIB"));
@@ -342,6 +346,18 @@ bool SDLMainWindow::onInitialise()
         _WorldSystem.addJSONBody(new AircraftCarrierJSONRigidBody("AircraftCarrier:Carrier_A_GIB"));
 #endif
 #ifndef LOCATED_AT_GIBRALTER
+
+		std::unique_ptr<CircularRunwayMeshModel> cirMesh(new CircularRunwayMeshModel);
+		cirMesh->setTextureName("runway_strip-2.png");
+		cirMesh->Build( 40, 1750, 180, 20, 50);
+
+		std::unique_ptr<CircularRunwayRigidBody> cirBody(new CircularRunwayRigidBody("cirrun"));
+		cirBody->setPosition(GPSLocation(51.471866, -0.465477));
+		cirBody->setEuler(0, 0, 0);
+		cirBody->setMass(100);
+		cirBody->setMeshModel(cirMesh.release());
+		_WorldSystem.addStaticJSONBody(cirBody.release());
+
         _WorldSystem.addStaticJSONBody(new HeathrowTowerRigidBody);
         _WorldSystem.addStaticJSONBody(new HeathrowRadarRigidBody);
 #endif

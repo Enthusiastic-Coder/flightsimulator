@@ -4,8 +4,6 @@
 #include <Serializable.h>
 #include <include_gl.h>
 
-class SDL_Surface;
-
 class OpenGLTexture2D : public ISerializable
 {
 public:
@@ -47,7 +45,6 @@ public:
     int height() const;
 
     static unsigned int loadTexture(std::string filename, int minTex, int maxTex, int wrap, int *width, int *height);
-    static unsigned int loadTexture(SDL_Surface* surface,int minTex, int maxTex, int wrap);
     static unsigned int createTexture(int w, int h, bool isDepth, int minTex, int maxTex, int wrap);
 
 private:

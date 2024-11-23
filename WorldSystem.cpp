@@ -268,7 +268,7 @@ void WorldSystem::loadTerrain()
         obj->location = GPSLocation(51.477681, -0.433258);
         obj->meshModel.setTextureName("runway_strip.png");
         obj->meshModel.Build(-90, 60, 2664, fRunwayMaxDiff);
-        _runwayList.push_back(std::move(obj));
+        //_runwayList.push_back(std::move(obj));
     }
 
     {
@@ -284,7 +284,17 @@ void WorldSystem::loadTerrain()
         obj->location = GPSLocation(51.464951, -0.434115);
         obj->meshModel.setTextureName("airport_layout.png");
         obj->meshModel.Build(-90, width, height, fRunwayMaxDiff);
-        _runwayList.push_back(std::move(obj));
+        //_runwayList.push_back(std::move(obj));
+
+
+
+		std::unique_ptr<RunwayMeshObject> obj2(new RunwayMeshObject);
+		obj2->location = GPSLocation(51.471866, -0.465477) +Vector3F(-5000/2, 0, 5000/2);
+		obj2->meshModel.setTextureName("grass.jpg");
+		obj2->meshModel.setTextureMag(20, 20);
+		obj2->meshModel.Build(0, 5000, 5000, fRunwayMaxDiff);
+		_runwayList.push_back(std::move(obj2));
+
     }
 
 #elif defined(LOCATED_AT_GIBRALTER)
@@ -518,6 +528,11 @@ void WorldSystem::RenderModels(Renderer* r, bool bReflection, unsigned int shado
 void WorldSystem::RenderModelForceGenerators(Renderer* r)
 {
     _rigidBodyCollection.RenderForceGenerators( r);
+}
+
+void WorldSystem::attachModel(int idx, MeshModel & m, const GPSLocation & loc)
+{
+	_TerrainCollection[idx]->attachModel(m, loc, 0.1f);
 }
 
 void WorldSystem::addJSONBody(JSONRigidBody * pRigidBody)

@@ -353,7 +353,7 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
         {
             group->_meshData.addVertex(QVRotate(qHdg, Vector3F(x * fMaxDim, 0, -z * fMaxDim)));
             group->_meshData.addNormal(0, 1, 0);
-            group->_meshData.addTexture(float(x) / (iWidthSteps - 1), float(z) / (iHeightSteps - 1));
+            group->_meshData.addTexture(float(x) / (iWidthSteps - 1)*_kU, float(z) / (iHeightSteps - 1)*_kV);
         }
     }
 
@@ -386,7 +386,7 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
     surface->setDiffuse(Vector3F(0.85f, 0.85f, 0.85f));
     surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
     surface->setShininess(32);
-    surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_LINEAR));
+    surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_NEAREST_MIPMAP_NEAREST));
 
     MeshObject* mesh = surface->addMesh();
     mesh->setPrimitveType(GL_TRIANGLES);
@@ -398,6 +398,12 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
 void SimpleRunwayMeshModel::setTextureName(std::string strName)
 {
     _textureName = strName;
+}
+
+void SimpleRunwayMeshModel::setTextureMag(float u, float v)
+{
+	_kU = u;
+	_kV = v;
 }
 
 /////////////////
@@ -452,3 +458,109 @@ void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsig
     calcBoundingBox();
 }
 
+void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, float fBank, float fMaxDim)
+{
+	std::stringstream ss;
+	ss << "CRMM->";
+	ss << "|fHeight:" << fHeight;
+	ss << "|fRadius:" << fRadius;
+	ss << "|fWidth:" << fWidth;
+	ss << "|fBank:" << fBank;
+	ss << "|fMaxDim:" << fMaxDim;
+
+	_roadBoundaryLayout.clear();
+
+	setName(ss.str());
+	MeshGroupObject* group = addGroup("Group");
+
+	const float fMaxWidth = fMaxDim / 4;
+	const float totalDeg = 360.0f;
+	float fLength = 2 * M_PI * fRadius;
+	float fDiffHdg = totalDeg /fMaxDim;
+	int iWidthSteps = fWidth / fMaxWidth;
+	int iHeightSteps = fLength / fMaxDim;
+	
+	Vector3F p(-fRadius, fHeight, 0);
+	Vector3F d(0, 0, -fMaxDim);
+	Vector3F dSide(fMaxWidth,0,0);
+	auto qForwards = MathSupport<float>::MakeQHeading(totalDeg / (iHeightSteps-1));
+	
+	for (int z = 0; z < iHeightSteps; z++)
+	{
+		auto qHdg = MathSupport<float>::MakeQHeading(z*totalDeg / (iHeightSteps-1));
+
+		Vector3F pSide = p;
+
+		for (int x = 0; x < iWidthSteps; x++)
+		{	
+			auto qBank = MathSupport<float>::MakeQBank(fBank* (1-float(x)/ (iWidthSteps-1)));
+			Vector3F sideWaysShift = QVRotate(qHdg*qBank, dSide);
+
+			group->_meshData.addVertex( pSide );
+			group->_meshData.addNormal(0, 1, 0);
+			group->_meshData.addTexture(float(x) / (iWidthSteps - 1) * fWidth/60.0f, float(z) / (iHeightSteps - 1) * fLength/2735);
+		
+			pSide += sideWaysShift;
+		}
+
+		d = QVRotate(qForwards, d);
+		p += d;
+	}
+
+	QuadPlaneBoundaryT boundary;
+
+	for (int z = 0; z < iHeightSteps - 1; z++)
+	{
+		for (int x = 0; x < iWidthSteps - 1; x++)
+		{
+			int idx[6];
+			idx[0] = iWidthSteps * (z + 1) + x;
+			idx[1] = iWidthSteps * z + x;
+			idx[2] = iWidthSteps  * z + x + 1;
+
+			idx[3] = idx[0];
+			idx[4] = idx[2];
+			idx[5] = iWidthSteps  * (z + 1) + x + 1;
+
+			for (int i = 0; i < 6; ++i)
+				group->_meshData.addIndex(idx[i]);
+
+			boundary[0] = group->_meshData.getVertex(idx[0]);
+			boundary[1] = group->_meshData.getVertex(idx[1]);
+			boundary[2] = group->_meshData.getVertex(idx[2]);
+			boundary[3] = group->_meshData.getVertex(idx[5]);
+
+			_roadBoundaryLayout.push_back(boundary);
+		}
+	}
+
+	group->setVertexFlag();
+	group->setNormalFlag();
+	group->setTexCoordFlag();
+	group->setIndexFlag();
+
+	std::string rootFolder(ROOT_APP_DIRECTORY);
+
+	MeshSurfaceObject* surface = group->addSurface();
+
+	surface->setDiffuse(Vector3F(0.95f, 0.95f, 0.95f));
+	surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
+	surface->setShininess(32);
+	surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_NEAREST));
+
+	MeshObject* mesh = surface->addMesh();
+	mesh->setPrimitveType(GL_TRIANGLES);
+	mesh->setCountOffset(group->_meshData.indexSize(), 0);
+
+	calcBoundingBox();
+}
+
+void CircularRunwayMeshModel::setTextureName(std::string strName)
+{
+	_textureName = strName;
+}
+
+const std::vector<QuadPlaneBoundaryT>& CircularRunwayMeshModel::getBoundary() const
+{
+	return _roadBoundaryLayout;
+}

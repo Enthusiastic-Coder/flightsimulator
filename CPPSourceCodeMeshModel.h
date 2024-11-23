@@ -57,8 +57,11 @@ class SimpleRunwayMeshModel : public MeshModel
 public:
 	void Build(float fHdg, float fWidth, float fLength, float fMaxDim);
 	void setTextureName(std::string strName);
+	void setTextureMag(float u, float v);
 private:
 	std::string _textureName;
+	float _kU = 1.0f;
+	float _kV = 1.0f;
 };
 
 class SimplePlaneMeshModel : public MeshModel
@@ -66,4 +69,19 @@ class SimplePlaneMeshModel : public MeshModel
 public:
 	void Build(int iWidth, int iHeight, float fInterval, unsigned char r,
 				unsigned char g, unsigned char b, float fHdg);
+};
+
+#include <BoundaryHelperT.h>
+
+class CircularRunwayMeshModel : public MeshModel
+{
+public:
+	void Build( float fHeight, float fRadius, float fWidth, float fBank, float fMaxDim);
+	void setTextureName(std::string strName);
+
+	const std::vector<QuadPlaneBoundaryT>& getBoundary() const;
+
+private:
+	std::string _textureName;
+	std::vector<QuadPlaneBoundaryT> _roadBoundaryLayout;
 };
