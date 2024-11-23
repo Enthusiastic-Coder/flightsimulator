@@ -220,7 +220,7 @@ std::string WorldSystem::getCameraDescription() const
 
 void WorldSystem::setLightDirection(float pitch, float hdg)
 {
-    QuarternionF qF = MathSupport<float>::MakeQ(-pitch, -hdg, 0);
+    QuarternionF qF = MathSupport<float>::MakeQOrientation(Vector3F(pitch, hdg, 0));
     _fLightDirection = QVRotate(qF, Vector3F(0, 0, -1));
     _eyeLightDirection = OpenGLPipeline::Get(0).GetNormal() * _fLightDirection;
     _fLightYTanAngle = sqrt(_eyeLightDirection.x *_eyeLightDirection.x +

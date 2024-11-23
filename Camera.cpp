@@ -15,7 +15,7 @@ void Camera::moveForwards(double units, double diffang )
 
     Vector3D velocityBody(diffang / 90 * units, 0, fabs(diffang) > std::numeric_limits<double>::epsilon() ? 0 : -units);
 
-    Vector3D dP = QVRotate(_remoteView->getPosition().makeQ(_remoteView->getOrientation().toDouble()), velocityBody);
+    Vector3D dP = QVRotate(_remoteView->getPosition().makeQOrientation(_remoteView->getOrientation().toDouble()), velocityBody);
     Vector3D oldPosition = _remoteView->getPosition().position();
     _remoteView->setPosition( _remoteView->getPosition().position() + dP);
 

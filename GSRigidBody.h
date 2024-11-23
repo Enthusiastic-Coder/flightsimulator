@@ -67,13 +67,13 @@ protected:
 
     void setOrientationHelper(double x, double y, double z) override
     {
-        _orientation = getGPSLocation().makeQ( x, y, z );
+        _orientation = getGPSLocation().makeQOrientation( x, y, z );
     }
 
     void updateEuler() override
     {
         _gpsLocation = position();
-        _gpsOrientation = _gpsLocation.makeQ();
+        _gpsOrientation = _gpsLocation.makeQOrientation();
         GPSReferenceFrame::updateEuler();
     }
 

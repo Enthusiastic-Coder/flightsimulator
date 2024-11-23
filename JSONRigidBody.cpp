@@ -551,7 +551,7 @@ void JSONRigidBody::updateCameraView()
     case Chase:
     {
         Vector3D eul = getEuler();
-        Vector3D rot = QVRotate( MathSupport<double>::MakeQ(0, -(eul.y-_chaseAngle), 0), Vector3D(0, _chaseHeight, _chaseDistance));
+        Vector3D rot = QVRotate( MathSupport<double>::MakeQOrientation(0, (eul.y-_chaseAngle), 0), Vector3D(0, _chaseHeight, _chaseDistance));
         view->setPosition(getGPSLocation()+rot);
         view->setOrientation(Vector3F(viewOr.x,eul.y-_chaseAngle,viewOr.z));
         view->setDescription("Chase");
@@ -559,7 +559,7 @@ void JSONRigidBody::updateCameraView()
         break;
     }
     case ChaseRotate:
-        Vector3D rot = QVRotate( MathSupport<double>::MakeQ(0, _chaseAngle, 0), Vector3D(0, _chaseHeight, _chaseDistance));
+        Vector3D rot = QVRotate( MathSupport<double>::MakeQOrientation(0, -_chaseAngle, 0), Vector3D(0, _chaseHeight, _chaseDistance));
         view->setPosition(getGPSLocation()+rot);
         view->setOrientation(Vector3F(viewOr.x,-_chaseAngle,viewOr.z));
         view->setDescription("ChaseRotate");

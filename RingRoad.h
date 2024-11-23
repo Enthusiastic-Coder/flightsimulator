@@ -26,8 +26,8 @@ public:
 		_road_texture.Load( "images\\roads\\road_doubleyellow_512.png" );
 		double dCircum = 2 * M_PI * dRadius;
 		double dDist = dCircum / (360.0/ dAngleStep);
-		QuarternionD qCirclePath = MathSupport<double>::MakeQ(-dAngleStep, -dDir, 0 );
-		QuarternionD qStraightPath = MathSupport<double>::MakeQ(0, -dDir, 0 );
+		QuarternionD qCirclePath = MathSupport<double>::MakeQOrientation(Vector3D(- dAngleStep, -dDir, 0));
+		QuarternionD qStraightPath = MathSupport<double>::MakeQOrientation(Vector3D(0, -dDir, 0 ));
 	
 		QuadPlaneBoundaryT<> boundary;
 		VectorD b2(dWidth, -1.0, 0);

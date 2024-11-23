@@ -125,7 +125,7 @@ public:
 
 	void UpdatePlane()
 	{
-		QuarternionF q = MathSupport<float>::MakeQ( _orientation );
+		QuarternionF q = MathSupport<float>::MakeQOrientation( _orientation );
 
 		Vector3F heightV(0, _height, 0);
 
