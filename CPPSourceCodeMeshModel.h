@@ -71,7 +71,7 @@ public:
 				unsigned char g, unsigned char b, float fHdg);
 };
 
-#include <BoundaryHelperT.h>
+#include <jibbs/boundary/BoundaryHelperT.h>
 
 class CircularRunwayMeshModel : public MeshModel
 {
