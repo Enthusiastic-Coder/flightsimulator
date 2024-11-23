@@ -352,7 +352,7 @@ bool SDLMainWindow::onInitialise()
 		cirMesh->Build( 40, 1750, 180, 20, 50);
 
 		std::unique_ptr<CircularRunwayRigidBody> cirBody(new CircularRunwayRigidBody("cirrun"));
-		cirBody->setPosition(GPSLocation(51.471866, -0.465477));
+		cirBody->setPosition(GPSLocation(51.441866, -0.465477));
 		cirBody->setEuler(0, 0, 0);
 		cirBody->setMass(100);
 		cirBody->setMeshModel(cirMesh.release());
