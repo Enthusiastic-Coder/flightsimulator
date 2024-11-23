@@ -333,6 +333,7 @@
     <ClCompile Include="AoaClData.cpp" />
     <ClCompile Include="BA320RigidBody.cpp" />
     <ClCompile Include="BA380RigidBody.cpp" />
+    <ClCompile Include="CircularRunwayRigidBody.cpp" />
     <ClCompile Include="CPPSourceCodeMeshModel.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraView.cpp" />
