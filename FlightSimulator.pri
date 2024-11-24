@@ -1,6 +1,7 @@
 
 SOURCES += AeroControlSurface.cpp \
     $$PWD/OpenGLFontRenderer.cpp \
+    $$PWD/CircularRunwayRigidBody.cpp \
     AeroControlSurfaceBoundary.cpp \
     AeroForceGenerator.cpp \
     AeroSectionElementForceGenerator.cpp \
@@ -88,6 +89,7 @@ SOURCES += AeroControlSurface.cpp \
     $$PWD/ReferenceFrame.cpp
 
 HEADERS  += CompositeListForceGenerator.inl \
+    $$PWD/CircularRunwayRigidBody.h \
     $$PWD/OpenGLFontRenderer.h \
     AeroControlSurface.h \
     AeroControlSurfaceBoundary.h \

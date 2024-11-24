@@ -13,3 +13,6 @@
 [submodule "rapidjson"]
 	path = rapidjson
 	url = https://github.com/miloyip/rapidjson.git
+[submodule "assimp2"]
+	path = assimp2
+	url = git@bitbucket.org:MOJ_JEB/assimp2.git
