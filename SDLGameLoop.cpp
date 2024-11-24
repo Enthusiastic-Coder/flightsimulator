@@ -28,9 +28,9 @@ SDL_Window *SDLGameLoop::getWindow()
 }
 
 SDLGameLoop::SDLGameLoop() :
-    _dt(0.0f),
+    _sdlWindow(0),
     _fInverseFPS(1/30.0f),
-    _sdlWindow(0)
+    _dt(0.0f)
 {
     _updateEventType = SDL_RegisterEvents(1);
 
