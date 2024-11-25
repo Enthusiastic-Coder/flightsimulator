@@ -9,6 +9,8 @@ class AeroSectionElementForceGenerator;
 #include "AeroControlSurfaceBoundary.h"
 #include "OpenGLPipeline.h"
 
+#include <map>
+
 class AeroSectionForceGenerator : 
 	public CompositeListForceGenerator<AeroSectionForceGenerator,AeroSectionElementForceGenerator, AeroForceGenerator>,
 	public AeroSectionBoundary<AeroSectionForceGenerator>
@@ -31,9 +33,9 @@ public:
 	public:
 		AeroPivotObject(AeroControlSurface* pControlSurface, int index=-1, PivotObject *pParent=nullptr) :
 			PivotObject(pParent), 
-			_pControlSurface( pControlSurface ), 
-			_deflectionFactor(1.0),
-			_index(index)
+            _pControlSurface( pControlSurface ),
+            _index(index),
+            _deflectionFactor(1.0)
 		{}
 
 		enum AeroPivotType

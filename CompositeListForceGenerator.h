@@ -2,6 +2,8 @@
 
 #include "GSForceGenerator.h"
 
+#include <vector>
+
 template<class ParentContainerT, class ContainerT, class ParentT>
 class CompositeListForceGenerator : public GSForceGenerator
 {

@@ -47,9 +47,9 @@ public:
 	void setTorque( const Vector3D &rhs );
 
 /// Simulation in RealTime
-	virtual void reset();
-	virtual void applyForce( const Vector3D &r, const Vector3D &f );
-	virtual void update(double dt);
+    virtual void reset() override;
+    virtual void applyForce( const Vector3D &r, const Vector3D &f ) override;
+    virtual void update(double dt) override;
 ////////////////////////////
 
     virtual double Height() const

@@ -96,7 +96,7 @@ public:
 	{
 	}
 
-	QuarternionD& getVOrientation() override
+    QuarternionD& getVOrientation()
 	{
 		return _v_orientation.get();
 	}
