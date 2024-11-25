@@ -146,7 +146,7 @@ class RingRoadRigidBody : public GSRigidBody
 public:
 	RingRoadRigidBody (float fMass, const Matrix3x3D& inertia, JSONRigidBodyCollection *pParent);
 
-	void update(double dt)
+    void update(double dt)
 	{
 		GSRigidBody::update(dt);
 	}

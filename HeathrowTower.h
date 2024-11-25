@@ -18,7 +18,7 @@ public:
 		setPosition(GPSLocation(51.471866, -0.465477,2.0));
 	}
 
-	void update(double dt)
+    void update(double dt) override
 	{
 		// Empty Implementation as this is static body.
 
@@ -41,7 +41,7 @@ public:
 		setPosition(loc);
 	}
 
-	void update(double dt)
+    void update(double dt) override
 	{
 		// Empty Implementation as this is static body.
 	}

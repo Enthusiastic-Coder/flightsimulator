@@ -144,6 +144,8 @@ public:
 	}
 };
 
+#include "GravityForceGenerator.h"
+
 template<class T>
 class AudiA8RigidBody : public JSONRigidBody
 {
@@ -164,7 +166,7 @@ public:
 	SpringForceGenerator _rearLeftCeiling, _rearRightCeiling;
 	SpringForceGenerator _rearLeft, _rearRight;
 
-	void update(double dt)
+    void update(double dt) override
 	{
 		JSONRigidBody::update(dt);
 	}
