@@ -45,7 +45,7 @@ public:
 		if( _constrainedContact._bMaster )
 		{
 			static_cast< ConstrainedSpring<t_id2,TRigidBody2,TForceGenerator2>*>(pPartnerBody)
-				->setPartner<t_id,TRigidBody,TForceGenerator>( connectionPartnerPt, 
+                ->template setPartner<t_id,TRigidBody,TForceGenerator>( connectionPartnerPt,
 								static_cast<TRigidBody*>(this), 
 								connectionPt, 
 								pSpring, 
