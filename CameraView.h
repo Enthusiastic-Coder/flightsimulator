@@ -21,6 +21,7 @@ private:
     };
 
 public:
+    virtual ~CameraView() = default;
 
     class Manager
     {

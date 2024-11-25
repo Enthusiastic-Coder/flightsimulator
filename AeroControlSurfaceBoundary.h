@@ -5,6 +5,7 @@
 class AeroSectionSubElementForceGenerator;
 class AeroControlSurface;
 class GSRigidBody;
+class Renderer;
 
 class AeroControlSurfaceBoundary : public AeroSectionBoundary<AeroControlSurfaceBoundary>
 {
