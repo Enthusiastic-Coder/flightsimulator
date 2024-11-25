@@ -3,7 +3,6 @@
 #include <jibbs/gps/GPSLocation.h>
 #include <jibbs/vector/vector3.h>
 #include "interfaces.h"
-#include "Camera.h"
 
 class CameraViewProvider :
         public ICameraViewProvider,
