@@ -4,6 +4,8 @@
 #include "TextureManager.h"
 #include "OpenGLRenderer.h"
 
+#include "MeshHelper.h"
+
 MeshModel::MeshModel(std::string sName) :
     _sName(sName)
 {

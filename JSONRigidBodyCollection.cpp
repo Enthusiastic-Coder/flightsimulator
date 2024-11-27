@@ -3,6 +3,7 @@
 #include "WorldSystem.h"
 #include "RigidBodyMeshManager.h"
 #include "OpenGLRenderer.h"
+#include "HeightData.h"
 
 JSONRigidBodyCollection::JSONRigidBodyCollection()
 {

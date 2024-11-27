@@ -142,8 +142,10 @@ MipMapTerrainMeshModel* MipMapTerrainMeshModelCollection::operator[](size_t idx 
 bool MipMapTerrainMeshModelCollection::getHeightFromPosition( const GPSLocation& gpsLocation, HeightData& heightData ) const
 {
     for( MipMapTerrainMeshModel* it : _collection )
+    {
         if( it->getHeightFromPosition( gpsLocation, heightData ) )
 			return true;
+    }
 
 	return false;
 }

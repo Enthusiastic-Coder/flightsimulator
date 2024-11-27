@@ -1,3 +1,4 @@
+#include "HeightData.h"
 #include "stdafx.h"
 #include "ScaledHeightTerrainData.h"
 #include <limits>

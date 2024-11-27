@@ -6,10 +6,12 @@
 #include <limits>
 #include <iostream>
 
+#include "MeshHelper.h"
+
 MeshGroupObject::MeshGroupObject(std::string sName, std::string sParentName) :
+    _BufferFlags(BufferFlags_None),
     _sParentName(sParentName),
-	_sName(sName),
-	_BufferFlags(BufferFlags_None),
+    _sName(sName),
     //_PlaneData(_meshData.vertexData),
     _bMOISkip(false)
 {

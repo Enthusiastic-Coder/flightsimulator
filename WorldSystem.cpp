@@ -7,6 +7,7 @@
 #include "WorldSystem.h"
 
 #include "MipMapTerrainMeshModelCollection.h"
+#include "HeightData.h"
 
 #include "OpenGLRenderer.h"
 #include <limits>
