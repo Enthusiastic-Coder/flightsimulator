@@ -128,6 +128,6 @@ void CompositeListForceGenerator<ParentContainerT,ContainerT,ParentT>::onUpdateA
 		_contactPoint += _elements[i]->getContactPoint();
 	}
 
-	_contactPoint /= count;
-	_appliedForce /= count;
+    _contactPoint /= static_cast<int>(count);
+    _appliedForce /= static_cast<int>(count);
 }
