@@ -41,7 +41,9 @@ class GSRigidBody;
 
 #include "ForceGenerator.h"
 #include "FlightRecorder.h"
-#include "interfaces.h"
+#include "Interfaces.h"
+
+#include <vector>
 
 class GSForceGenerator :
 	public ForceGenerator,

@@ -2,6 +2,8 @@
 
 #include "GSForceGenerator.h"
 
+#include <map>
+
 class PivotObjects
 {
 public:

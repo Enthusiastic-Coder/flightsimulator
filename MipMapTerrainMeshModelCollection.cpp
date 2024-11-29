@@ -101,9 +101,6 @@ bool MipMapTerrainMeshModelCollection::LoadSRTM30(std::string strTitleName )
 
 bool MipMapTerrainMeshModelCollection::SaveLastTile( std::string strFilename )
 {
-#if defined _DEBUG
-	return false;
-#endif
 	std::ofstream outFile(strFilename, std::ios::ate | std::ios::binary );
 	if( !outFile.is_open() )
 		return false;
@@ -142,8 +139,10 @@ MipMapTerrainMeshModel* MipMapTerrainMeshModelCollection::operator[](size_t idx 
 bool MipMapTerrainMeshModelCollection::getHeightFromPosition( const GPSLocation& gpsLocation, HeightData& heightData ) const
 {
     for( MipMapTerrainMeshModel* it : _collection )
+    {
         if( it->getHeightFromPosition( gpsLocation, heightData ) )
 			return true;
+    }
 
 	return false;
 }

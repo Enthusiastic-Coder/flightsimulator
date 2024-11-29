@@ -5,6 +5,8 @@
 #include "OpenGLTexture2D.h"
 #include "MeshModelArgs.h"
 
+#include <map>
+
 class OpenGLTexture2D;
 
 class MeshModel : public ISerializable

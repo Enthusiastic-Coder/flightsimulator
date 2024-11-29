@@ -1,7 +1,4 @@
-#include "JSONRigidBody.h"
-#include "AeroSectionElementForceGenerator.h"
-#include "AeroSectionSubElementForceGenerator.h"
-
+#include "CompositeListForceGenerator.h"
 
 template<class ParentContainerT, class ContainerT, class ParentT>
 CompositeListForceGenerator<ParentContainerT,ContainerT,ParentT>::CompositeListForceGenerator(ParentT *parent) :
@@ -128,6 +125,6 @@ void CompositeListForceGenerator<ParentContainerT,ContainerT,ParentT>::onUpdateA
 		_contactPoint += _elements[i]->getContactPoint();
 	}
 
-	_contactPoint /= count;
-	_appliedForce /= count;
+    _contactPoint /= static_cast<int>(count);
+    _appliedForce /= static_cast<int>(count);
 }

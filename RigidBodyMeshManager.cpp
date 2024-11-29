@@ -44,10 +44,12 @@ MeshModel* RigidBodyMeshManager::loadModel(std::string sMeshName, MassChannel &m
     std::string meshObj("model.obj");
 
     if (!cppMeshModel->loadMesh("Models/" + sMeshName + "/" + meshObj))
+    {
         if (!cppMeshModel->Build("Models/" + sMeshName, true))
-            return 0;
+            return nullptr;
         else
             cppMeshModel->saveMesh("Models/" + sMeshName + "/" + meshObj);
+    }
 
 	MeshModel* model = cppMeshModel.release();
 	referenceModel(sMeshName, model, mc);

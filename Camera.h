@@ -1,6 +1,5 @@
 #pragma once
 
-#include "RigidBody.h"
 #include <jibbs/vector/vector3.h>
 #include "CameraView.h"
 

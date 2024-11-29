@@ -26,14 +26,14 @@ OpenGLTexture2D* OpenGLTextureManager::getImage(std::string filename, int minifi
 {
     std::map<std::string, MapEntry*>::iterator it = _map.find(filename);
 
-	MapEntry *me = 0;
+    MapEntry *me ={};
 
     if (it != _map.end())
         me = it->second;
 
-	if (me == 0)
+    if (me == nullptr)
 	{
-		std::unique_ptr<OpenGLTexture2D> tex(new OpenGLTexture2D);
+        std::unique_ptr<OpenGLTexture2D> tex = std::make_unique<OpenGLTexture2D>();
 		tex->setMinification(minification);
 		tex->setWrapMode(wrapMode);
 
@@ -46,8 +46,10 @@ OpenGLTexture2D* OpenGLTextureManager::getImage(std::string filename, int minifi
 		}
 	}
 
-	if (me == 0)
-		return 0;
+    if (me == nullptr)
+    {
+        return nullptr;
+    }
 
 	++me->refCount;
 	return me->texture;
@@ -55,8 +57,8 @@ OpenGLTexture2D* OpenGLTextureManager::getImage(std::string filename, int minifi
 
 OpenGLTextureManager::MapEntry::MapEntry() :
 	refCount(0),
-	texture(0),
-	minification(GL_NEAREST)
+    minification(GL_NEAREST),
+    texture(0)
 {
 }
 

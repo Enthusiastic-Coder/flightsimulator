@@ -3,11 +3,11 @@
 #include <cstring>
 
 TriangleFanQuadNode::TriangleFanQuadNode(ChunkNode *pChunk, TriangleFanQuadNode *pParent, const std::pair<Vector2I, Vector2I >& rect, int quadNo) :
-	_pParent(pParent),
-	_pChunk(pChunk),
-	_topLeftIDX(rect.first),
-	_bottomRightIDX(rect.second),
-	_quadNo(quadNo)
+    _pChunk(pChunk),
+    _pParent(pParent),
+    _quadNo(quadNo),
+    _topLeftIDX(rect.first),
+    _bottomRightIDX(rect.second)
 {
 	std::memset(_pChild, 0, sizeof(_pChild));
 	_leftIdxActive = false;

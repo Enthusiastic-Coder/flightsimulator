@@ -168,7 +168,7 @@ protected:
     CameraViewProvider *getCameraProvider();
 
 private:
-    MeshModel* _pMeshModel;
+    MeshModel* _pMeshModel = nullptr;
 	MassChannel _massChannel;
 	std::string _sName;
 	std::string _sID;

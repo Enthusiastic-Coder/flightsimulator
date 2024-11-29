@@ -3,8 +3,8 @@
 
 
 PivotObjects::PivotObjects() :
-	_bDoLog(false),
-	_debugMapFile(nullptr)
+    _debugMapFile(nullptr),
+    _bDoLog(false)
 {}
 
 bool PivotObjects::add(std::string sName, GSForceGenerator::PivotObject *pPO)
@@ -45,7 +45,7 @@ void PivotObjects::startLog(bool bStart, std::string sFileName)
 		if (_debugMapFile)
 			fclose(_debugMapFile);
 
-		_debugMapFile = fopen(sFileName.c_str(), "wt");
+        fopen_s(&_debugMapFile, sFileName.c_str(), "wt");
 	}
 	else if (_debugMapFile)
 	{

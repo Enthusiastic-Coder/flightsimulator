@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "AeroWheelSpringForceGenerator.h"
 #include "GSRigidBody.h"
+#include "AirProperties.h"
 
 void AeroWheelSpringForceGenerator::onApplyForce(Particle *p, double dt)
 {

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "JSONRigidBodyBuilder.h"
+#include "AeroForceGenerator.h"
+#include "AeroWheelSpringForceGenerator.h"
+#include "AircraftEngineForceGenerator.h"
 #include "SpringForceGenerator.h"
 #include "GravityForceGenerator.h"
 #include "ConstrainedSpringForceGenerator.h"

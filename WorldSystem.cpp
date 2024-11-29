@@ -7,6 +7,7 @@
 #include "WorldSystem.h"
 
 #include "MipMapTerrainMeshModelCollection.h"
+#include "HeightData.h"
 
 #include "OpenGLRenderer.h"
 #include <limits>
@@ -38,10 +39,10 @@
 
 WorldSystem::WorldSystem() :
     _fLightingFraction(0.85f),
-    _sceneryManager(this),
-    _simpleCloud(0),
-    _Joy(0),
     _fLightYTanAngle(0.0f),
+    _sceneryManager(this),
+    _Joy(0),
+    _simpleCloud(0),
     _cameraProvider(ViewPosition::ViewPositionEnd-1)
 {
     _cameraProvider.nextView();//GO to first view

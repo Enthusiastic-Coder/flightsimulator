@@ -7,8 +7,9 @@
 #include "OpenGLRenderer.h"
 #include "OpenGLShaderProgram.h"
 
+#include "HeightData.h"
+
 JSONRigidBody::JSONRigidBody(std::string sName, JSONRigidBody::Type typeFlags) :	
-    _pMeshModel(0),
 	_state(STATE::NORMAL), 
     _bShow(true),
     _bDrivingByMouse(false),

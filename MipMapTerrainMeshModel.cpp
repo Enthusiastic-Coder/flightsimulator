@@ -6,11 +6,9 @@
 #include "TileNode.h"
 #include "GPSTerrainData.h"
 #include "MeshModel.h"
-#include "HeightTerrainData.h"
 #include "TerrainMeshModel.h"
 #include "SRTM30HeightTerrainData.h"
 #include "OpenGLRenderer.h"
-#include "OpenGLShaderProgram.h"
 #include "OpenGLPipeline.h"
 #include "Paths.h"
 
@@ -20,7 +18,7 @@
 //#define TERRAIN_DIMENSIONS		(128)
 //#define TERRAIN_MIPMAP_LEVEL	(2)
 
-#if defined LOCATED_AT_GIBRALTER && !defined _DEBUG
+#if defined LOCATED_AT_GIBRALTER
 	#define TERRAIN_DIMENSIONS		(1024)
 	#define TERRAIN_MIPMAP_LEVEL	(5)
 #else

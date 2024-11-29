@@ -1,18 +1,16 @@
-#include "stdafx.h"
 #include <limits>
 #include <jibbs/boundary/BoundaryHelperT.h>
 #include "FlightRecorder.h"
 #include "AeroSectionSubElementForceGenerator.h"
 #include "AeroSectionForceGenerator.h"
-#include "AeroForceGenerator.h"
 #include "AeroControlSurface.h"
 #include "AeroSectionElementForceGenerator.h"
 
-AeroControlSurface::AeroControlSurface( Vector3F vRotAxis, float dist_per_defl) :  
-	_distance_per_deflection(dist_per_defl),
-	_parent( nullptr ),
-	_deflection( 0.0 ),
-	_vRotAxis( vRotAxis.Unit() )
+AeroControlSurface::AeroControlSurface( Vector3F vRotAxis, float dist_per_defl) :
+    _parent( nullptr ),
+    _deflection( 0.0 ),
+    _vRotAxis( vRotAxis.Unit() ),
+    _distance_per_deflection(dist_per_defl)
 {
 	_qDeflectionRotAxis = onDeflectionChange(0.0f, 1.0f );
 }

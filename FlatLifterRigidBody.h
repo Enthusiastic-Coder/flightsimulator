@@ -34,7 +34,7 @@ public:
 
 	MyLifterOwnCustomForceGenerator _custom_fg;
 
-	void update(double dt)
+    void update(double dt) override
 	{
 		// Empty Implementation as this is static body.
 

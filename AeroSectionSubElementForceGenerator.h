@@ -2,12 +2,13 @@
 
 #include <jibbs/boundary/BoundaryHelperT.h>
 #include "GSForceGenerator.h"
-#include "AeroSectionSubElementForceGenerator.h"
 
 class AeroSectionElementForceGenerator;
 class AeroControlSurfaceBoundary;
 class AoaClData;
 class AeroControlSurface;
+
+#include <vector>
 
 class AeroSectionSubElementForceGenerator : 
 	public GSForceGenerator, 

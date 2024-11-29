@@ -1,3 +1,4 @@
+#include "HeightData.h"
 #include "stdafx.h"
 #include "CircularRunwayRigidBody.h"
 #include "MeshModel.h"

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CameraViewProvider.h"
+#include "CameraView.h"
 
 CameraViewProvider::CameraViewProvider(int count)
 {
