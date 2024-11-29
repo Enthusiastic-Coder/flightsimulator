@@ -219,9 +219,9 @@ bool SDLGameLoop::run(std::string strTitle)
 
     while( !bQuit )
     {
-        while(!_running && SDL_WaitEvent( &event )
+        while((!_running && SDL_WaitEvent( &event ))
               ||
-              _running && SDL_PollEvent(&event) )
+              (_running && SDL_PollEvent(&event)) )
         {
             if( event.type == SDL_QUIT)
             {
