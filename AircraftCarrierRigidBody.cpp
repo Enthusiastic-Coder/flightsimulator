@@ -12,7 +12,9 @@ void AircraftCarrierCustomForceGenerator::onApplyForce(Particle *p, double dt)
 	AircraftCarrierJSONRigidBody* pBody = reinterpret_cast<AircraftCarrierJSONRigidBody*>(p);
 
     if (getWorld()->focusedRigidBody() != p)
+    {
         return;
+    }
 
 	pBody->setBodyFrame();
 

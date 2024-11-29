@@ -5,7 +5,6 @@
 #include <vector>
 #include <SDL_image.h>
 
-#include <algorithm>
 #ifdef ANDROID
 #include <unistd.h>
 #endif

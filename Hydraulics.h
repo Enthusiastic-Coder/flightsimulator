@@ -1,7 +1,8 @@
 #pragma once
 
-#include "AeroControlSurface.h"
-#include "GSForceGenerator.h"
+#include <map>
+
+class AeroControlSurface;
 
 
 class Hydraulics

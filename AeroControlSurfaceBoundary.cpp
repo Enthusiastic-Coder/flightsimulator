@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "CompositeListForceGenerator.h"
 #include "AeroControlSurface.h"
 #include "AeroSectionForceGenerator.h"
 #include "AeroSectionElementForceGenerator.h"

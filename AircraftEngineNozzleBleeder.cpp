@@ -1,12 +1,11 @@
-#include "stdafx.h"
 #include "AircraftEngineNozzleBleeder.h"
 #include "JSONRigidBody.h"
 #include "AircraftEngineNozzleFeeder.h"
 
 AircraftEngineNozzleBleeder::AircraftEngineNozzleBleeder() :
-	_currentDirection(Vector3F(-180,0,0)),
+    _bThrustPercentage(false),
 	_rateOfRotation(Vector3F(70,70,70)),
-	_bThrustPercentage(false)
+    _currentDirection(Vector3F(-180,0,0))
 {
 }
 

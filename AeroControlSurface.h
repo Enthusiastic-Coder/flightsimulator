@@ -14,6 +14,7 @@ class AeroControlSurface :
 
 public:
     AeroControlSurface( Vector3F vRotAxis, float dist_per_defl = 0.0 );
+    virtual ~AeroControlSurface() = default;
 
 	void add( AeroSectionSubElementForceGenerator* s );
 	void setDeflection(float deflection);

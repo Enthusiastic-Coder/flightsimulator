@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "Hydraulics.h"
+#include "AeroControlSurface.h"
 
 float Hydraulics::getDeflection( AeroControlSurface* pAfg ) const
 {

@@ -3,17 +3,18 @@
 #include "AirProperties.h"
 #include "GSRigidBody.h"
 #include "OpenGLPipeline.h"
+#include <algorithm>
 
 AircraftEngineForceGenerator::AircraftEngineForceGenerator() :
-	_thrust_percent(0.0),
-	_angle_position(0.0),
-	_angle_velocity(0.0),
+    _angle_position(0.0),
+    _angle_velocity(0.0),
+    _thrust_percent(0.0),
 	_actual_thrust_percent(0.0),
 	_max_thrust(0.0),
-	_density0(AirProperties::Density(0)),
+    _max_drag(0.0f),
 	_vInvFrac(1.0f),
-	_max_spd(0.0f),
-	_max_drag(0.0f),
+    _density0(AirProperties::Density(0)),
+    _max_spd(0.0f),
 	_engine_direction(Vector3F(0,0,-1))
 { }
 

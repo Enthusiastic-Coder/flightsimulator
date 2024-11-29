@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "AircraftEngineNozzleBleeder.h"
 #include "AircraftEngineNozzleFeeder.h"
-#include "JSONRigidBody.h"
+#include "GSRigidBody.h"
 
 AircraftEngineNozzleFeeder::AircraftEngineNozzleFeeder() :
 	_fThrustLeft(0.0f),

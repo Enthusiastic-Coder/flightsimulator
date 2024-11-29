@@ -3,7 +3,6 @@
 #include "CompositeListForceGenerator.h"
 #include "AeroSectionSubElementForceGenerator.h"
 #include "AeroSectionForceGenerator.h"
-#include "AeroForceGenerator.h"
 #include "AeroSectionElementForceGenerator.h"
 #include "OpenGLRenderer.h"
 
