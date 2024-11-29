@@ -1,6 +1,5 @@
 #pragma once
 
-#include "AirProperties.h"
 #include "WheelSpringForceGenerator.h"
 
 class AeroWheelSpringForceGenerator : public WheelSpringForceGenerator

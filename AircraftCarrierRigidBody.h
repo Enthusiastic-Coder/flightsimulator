@@ -1,10 +1,8 @@
 #pragma once
 
-#include "JSONRigidBodyBuilder.h"
-#include "SpringForceGenerator.h"
-#include "GravityForceGenerator.h"
-#include "WindTunnelForceGenerator.h"
-#include "ConstrainedSpringForceGenerator.h"
+#include "GSForceGenerator.h"
+#include "AircraftEngineForceGenerator.h"
+#include "JSONRigidBody.h"
 
 class AircraftCarrierCustomForceGenerator : public GSForceGenerator
 {
