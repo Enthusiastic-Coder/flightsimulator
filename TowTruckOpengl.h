@@ -1,5 +1,7 @@
 #pragma once
 
+#include "interfaces.h"
+
 template<class T>
 class TowTruckOpenGLModel : public IMeshModel
 {

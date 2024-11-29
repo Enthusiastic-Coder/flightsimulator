@@ -5,6 +5,8 @@
 #include <QSize>
 #include <QWindow>
 #include <QPoint>
+#include "GSForceGenerator.h"
+#include "SpringForceGenerator.h"
 
 template<class T>
 class TowTruckRigidBody;
