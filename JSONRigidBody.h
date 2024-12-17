@@ -74,7 +74,7 @@ public:
 		PLAYBACK
 	} _state;
 
-	void reset();
+    void reset() override;
 
 	void setState(STATE state);
 	STATE getState();
