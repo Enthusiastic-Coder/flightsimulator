@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Hydraulics.h"
 #include "AeroControlSurface.h"
 

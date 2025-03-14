@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <limits>
 #include <jibbs/boundary/BoundaryHelperT.h>
 #include "FlightRecorder.h"

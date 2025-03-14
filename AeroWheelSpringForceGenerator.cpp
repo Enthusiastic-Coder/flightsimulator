@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "AeroWheelSpringForceGenerator.h"
 #include "GSRigidBody.h"
 #include "AirProperties.h"

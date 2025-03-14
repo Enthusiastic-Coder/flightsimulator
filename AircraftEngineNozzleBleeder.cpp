@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "AircraftEngineNozzleBleeder.h"
 #include "JSONRigidBody.h"
 #include "AircraftEngineNozzleFeeder.h"
