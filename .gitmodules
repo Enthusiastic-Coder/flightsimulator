@@ -1,18 +1,18 @@
 [submodule "sdk"]
 	path = sdk
-	url = git@bitbucket.org:MOJ_JEB/sdk.git
+url=https://github.com/Enthusiastic-Coder/sdk.git
 [submodule "sdl2"]
 	path = sdl2
-	url = git@bitbucket.org:MOJ_JEB/sdl2.git
+url=https://github.com/Enthusiastic-Coder/sdl2.git
 [submodule "sdl2_image"]
 	path = sdl2_image
-	url = git@bitbucket.org:MOJ_JEB/sdl2_image.git
+url=https://github.com/Enthusiastic-Coder/sdl2Image.git
 [submodule "openal"]
 	path = openal
-	url = git@bitbucket.org:MOJ_JEB/openal.git
+url=https://github.com/Enthusiastic-Coder/openal.git
 [submodule "rapidjson"]
 	path = rapidjson
 	url = https://github.com/miloyip/rapidjson.git
 [submodule "assimp2"]
 	path = assimp2
-	url = git@bitbucket.org:MOJ_JEB/assimp2.git
+url=https://github.com/Enthusiastic-Coder/assimp2.git
