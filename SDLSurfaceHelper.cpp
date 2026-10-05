@@ -84,7 +84,7 @@ namespace SDL_SurfaceHelper
             return 0;
         }
 
-        SDL_PixelFormat form = { 0, 0, 32, 4, 0, 0, 0x000000ff, 0x0000ff00,
+        SDL_PixelFormat form = { 0, 0, 32, 4, {0, 0}, 0x000000ff, 0x0000ff00,
             0x00ff0000, 0xff000000 };
 
         SDL_Surface* surface1 = SDL_ConvertSurface(surface0, &form, SDL_SWSURFACE);

@@ -13,28 +13,32 @@ CONFIG += c++17
 
 DEFINES += "RAPIDJSON_HAS_STDSTRING=1" WANT_SDL_SDL_SURFACE
 
-
-CONFIG(release, debug|release) {
-    CONFIGURATION = "Release"
-}
-
-CONFIG(debug, debug|release) {
-    CONFIGURATION = "Debug"
-}
-
-win32{
-DESTDIR = $$OUT_PWD/$$CONFIGURATION
-OBJECTS_DIR = $$OUT_PWD/.obj
-MOC_DIR = $$OUT_PWD/.moc
-RCC_DIR = $$OUT_PWD/.rcc
-UI_DIR = $$OUT_PWD/.ui
+# Organise generated build files
+OBJECTS_DIR = .obj
+MOC_DIR     = .moc
+RCC_DIR     = .rcc
+UI_DIR      = .ui
 
 
-    DEPLOY_DIR = $$DESTDIR
+win32:CONFIG(release, debug|release) {
+    DEPLOY_EXE = $$shell_path($$OUT_PWD/release/$${TARGET}.exe)
+    DEPLOY_TOOL = $$shell_path($$[QT_INSTALL_BINS]/windeployqt.exe)
+
+    QMAKE_POST_LINK = $$quote($$DEPLOY_TOOL) $$quote($$DEPLOY_EXE) $$escape_expand(\n\t)
 }
 
 android{
     DEPLOY_DIR = /assets
+}
+
+win32 {
+    CONFIG(debug, debug|release) {
+        DEPLOY_DIR = $$OUT_PWD/Debug
+    }
+
+    CONFIG(release, debug|release) {
+        DEPLOY_DIR = $$OUT_PWD/release
+    }
 }
 
 isEmpty(TARGET_EXT) {
@@ -43,27 +47,6 @@ isEmpty(TARGET_EXT) {
     }
 }
 
-
-CONFIG(release, debug|release) {
-    contains(CONFIG, "qt"){
-
-        win32 {
-            DEPLOY_COMMAND = $(QTDIR)/bin/windeployqt
-        }
-
-        win32 {
-
-        DEPLOY_TARGET =  $$shell_quote($$shell_path($${DESTDIR}/$${TARGET}$${TARGET_CUSTOM_EXT}))
-
-        #message(  $${DEPLOY_COMMAND} $${DEPLOY_TARGET} )
-
-        #  # Uncomment the following line to help debug the deploy command when running qmake
-        #  warning($${DEPLOY_COMMAND} $${DEPLOY_TARGET})
-
-            QMAKE_POST_LINK = $${DEPLOY_COMMAND} --qmldir $(QTDIR)\qml $${DEPLOY_TARGET}
-        }
-    }
-}
 
 include(assimp2/assimp.pri)
 include(sdl2_image/sdl2image.pri)
