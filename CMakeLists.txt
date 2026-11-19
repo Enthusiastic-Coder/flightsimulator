@@ -156,6 +156,10 @@ endif()
 
 add_executable(FlightSimulator ${FLIGHTSIM_SOURCES})
 
+target_compile_options(FlightSimulator PRIVATE
+	"$<$<COMPILE_LANGUAGE:CXX>:/EHsc>"
+)
+
 target_include_directories(FlightSimulator PRIVATE
 	"${FLIGHTSIM_ROOT}"
 	"${FLIGHTSIM_ROOT}/sdl2/include"
