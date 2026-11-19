@@ -326,7 +326,7 @@ bool QtSimulatorWindow::onInitialise()
 #ifndef LOCATED_AT_GIBRALTER
 
 		std::unique_ptr<CircularRunwayMeshModel> cirMesh(new CircularRunwayMeshModel);
-		cirMesh->setTextureName("runway_strip-2.png");
+		cirMesh->setTextureName("circular_runway_asphalt.png");
 		cirMesh->Build( 40, 1750, 180, 20, 50);
 
 		std::unique_ptr<CircularRunwayRigidBody> cirBody(new CircularRunwayRigidBody("cirrun"));

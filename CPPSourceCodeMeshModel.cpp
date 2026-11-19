@@ -336,6 +336,23 @@ inline long CPPSourceCodeMeshModel::subStrToLong(const std::string & str, std::s
 
 /////////////////////////////////////////////////////////////////////////////
 
+namespace
+{
+void configureRunwayTextureFiltering(OpenGLTexture2D* texture)
+{
+#if defined(GLEE_EXT_texture_filter_anisotropic)
+    if (texture && GLEE_EXT_texture_filter_anisotropic)
+    {
+        GLfloat maximum = 1.0f;
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maximum);
+        texture->bind();
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, std::min(16.0f, maximum));
+        OpenGLTexture2D::unBind();
+    }
+#endif
+}
+}
+
 void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float fMaxDim, bool exactDimensions)
 {
     std::stringstream ss;
@@ -392,19 +409,8 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
     surface->setShininess(32);
     const int textureIndex = getTextureIdx(rootFolder, _textureName, _textureMinification);
     surface->setTextureIdx(textureIndex);
-#if defined(GLEE_EXT_texture_filter_anisotropic)
-    if (_textureMinification == GL_LINEAR_MIPMAP_LINEAR && GLEE_EXT_texture_filter_anisotropic)
-    {
-        if (auto* texture = getTextureObjects()[textureIndex])
-        {
-            GLfloat maximum = 1.0f;
-            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maximum);
-            texture->bind();
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, std::min(16.0f, maximum));
-            OpenGLTexture2D::unBind();
-        }
-    }
-#endif
+    if (_textureMinification == GL_LINEAR_MIPMAP_LINEAR)
+        configureRunwayTextureFiltering(getTextureObjects()[textureIndex]);
 
     MeshObject* mesh = surface->addMesh();
     mesh->setPrimitveType(GL_TRIANGLES);
@@ -495,7 +501,7 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	const float fMaxWidth = fMaxDim / 4;
 	const float totalDeg = 360.0f;
 	float fLength = 2 * M_PI * fRadius;
-	float fDiffHdg = totalDeg /fMaxDim;
+	const float textureRepeats = std::max(1.0f, std::round(fLength / 240.0f));
 	int iWidthSteps = fWidth / fMaxWidth;
 	int iHeightSteps = fLength / fMaxDim;
 	
@@ -517,7 +523,7 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 
 			group->_meshData.addVertex( pSide );
 			group->_meshData.addNormal(0, 1, 0);
-			group->_meshData.addTexture(float(x) / (iWidthSteps - 1) * fWidth/60.0f, float(z) / (iHeightSteps - 1) * fLength/2735);
+			group->_meshData.addTexture(float(x) / (iWidthSteps - 1), float(z) / (iHeightSteps - 1) * textureRepeats);
 		
 			pSide += sideWaysShift;
 		}
@@ -565,7 +571,9 @@ void CircularRunwayMeshModel::Build(float fHeight, float fRadius, float fWidth, 
 	surface->setDiffuse(Vector3F(0.95f, 0.95f, 0.95f));
 	surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
 	surface->setShininess(32);
-	surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_NEAREST));
+	const int textureIndex = getTextureIdx(rootFolder, _textureName, GL_LINEAR_MIPMAP_LINEAR);
+	surface->setTextureIdx(textureIndex);
+	configureRunwayTextureFiltering(getTextureObjects()[textureIndex]);
 
 	MeshObject* mesh = surface->addMesh();
 	mesh->setPrimitveType(GL_TRIANGLES);
