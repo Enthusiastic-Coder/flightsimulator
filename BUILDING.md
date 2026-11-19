@@ -33,4 +33,4 @@ git submodule update --init --recursive
 
 CMake expects the SDL2 and SDL2_image x64 Debug and Release libraries under `sdl2/VisualC/x64` and `sdl2_image/VisualC/x64`. If those libraries are absent, build the matching x64 Debug and Release configurations from the dependency submodules before configuring this project. OpenAL and Assimp libraries are read from their existing `openal/libs/Win64` and `assimp2/{Debug,Release}` directories.
 
-The older Qt/qmake and Visual Studio project files are retained during the transition; the root `CMakeLists.txt` is the CMake entry point.
+The root `CMakeLists.txt` is the project entry point. Visual Studio can open the repository as a CMake project.
