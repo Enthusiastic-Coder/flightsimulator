@@ -365,7 +365,8 @@ void WorldSystem::loadTerrain()
     fRunwayMaxDiff = 20.0f;
     // Runway dimensions and eastern threshold positions from UK AIP EGLL AD 2.12.
     constexpr float runwayWidth = 50.0f;
-    const auto addHeathrowRunway = [&](GPSLocation eastThreshold, float heading, float length, const char* texture)
+    const auto addHeathrowRunway = [&](GPSLocation eastThreshold, float heading, float length,
+                                      float westThresholdDisplacement, const char* texture)
     {
         auto obj = std::make_unique<RunwayMeshObject>();
         const auto rotation = MathSupport<float>::MakeQHeading(heading);
@@ -373,12 +374,13 @@ void WorldSystem::loadTerrain()
         obj->meshModel.setTextureName(texture, GL_LINEAR_MIPMAP_LINEAR);
         obj->meshModel.Build(heading, runwayWidth, length, fRunwayMaxDiff, true);
         _runwayList.push_back(std::move(obj));
+        _runwayLights.emplace_back(*_TerrainCollection[0], eastThreshold, heading, length, westThresholdDisplacement);
     };
 
     const GPSLocation northThreshold(51.477675, -0.433283);
     const GPSLocation southThreshold(51.464950, -0.434100);
-    addHeathrowRunway(northThreshold, -90.29f, 3901, "heathrow_09l_27r.png");
-    addHeathrowRunway(southThreshold, -90.28f, 3658, "heathrow_09r_27l.png");
+    addHeathrowRunway(northThreshold, -90.29f, 3901, 309, "heathrow_09l_27r.png");
+    addHeathrowRunway(southThreshold, -90.28f, 3658, 308, "heathrow_09r_27l.png");
     loadHeathrowSurfaces(northThreshold, -90.29f);
 
     // Simplified terminal-side parallels and exits, measured from each eastern threshold.
@@ -676,6 +678,12 @@ void WorldSystem::RenderModels(Renderer* r, bool bReflection, unsigned int shado
 void WorldSystem::RenderModelForceGenerators(Renderer* r)
 {
     _rigidBodyCollection.RenderForceGenerators( r);
+}
+
+void WorldSystem::renderRunwayLights(Renderer& renderer, const GPSLocation& camera, std::int64_t elapsedMs) const
+{
+    for (const auto& lights : _runwayLights)
+        lights.render(renderer, camera, elapsedMs, _fLightingFraction);
 }
 
 void WorldSystem::attachModel(int idx, MeshModel & m, const GPSLocation & loc)

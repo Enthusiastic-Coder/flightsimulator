@@ -87,6 +87,7 @@ set(FLIGHTSIM_SOURCES
 	ReferenceFrame.cpp
 	RigidBody.cpp
 	RigidBodyMeshManager.cpp
+	RunwayLights.cpp
 	ScaledHeightTerrainData.cpp
 	SceneryManager.cpp
 	QtGameLoop.cpp

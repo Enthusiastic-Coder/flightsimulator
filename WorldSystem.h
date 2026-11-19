@@ -8,6 +8,7 @@
 #include "CPPSourceCodeMeshModel.h"
 #include "MipMapTerrainMeshModelCollection.h"
 #include "CameraViewProvider.h"
+#include "RunwayLights.h"
 
 struct RunwayMeshObject
 {
@@ -72,6 +73,7 @@ public:
     void RenderTerrain(Renderer *r, bool bLand, bool bReflection, unsigned int shadowMapCount, GPSLocation cameraPos);
     void RenderModels(Renderer *r, bool bReflection, unsigned int shadowMapCount, double dt);
     void RenderModelForceGenerators(Renderer *r);
+    void renderRunwayLights(Renderer& renderer, const GPSLocation& camera, std::int64_t elapsedMs) const;
 
 	MipMapTerrainMeshModelCollection _TerrainCollection;
 
@@ -122,6 +124,7 @@ private:
     IJoystick* _Joy;
 
     std::vector<std::unique_ptr<RunwayMeshObject>> _runwayList;
+    std::vector<RunwayLights> _runwayLights;
     std::vector<std::unique_ptr<MeshModel>> _airportSurfaceMeshes;
 	GPSLocation _simplePlaneLocation;
 	SimpleCloud* _simpleCloud;

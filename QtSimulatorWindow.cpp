@@ -181,6 +181,12 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
         return false;
     }
 
+    if (!_runwayLightsShader.loadFiles("shaders/runwayLights.vert", "shaders/runwayLights.frag"))
+    {
+        qWarning("Runway light shader failed: %s", _runwayLightsShader.getError().c_str());
+        return false;
+    }
+
     if( !_fontShaderProgram.loadFiles("shaders/fontShader.vert", "shaders/fontShader.frag"))
     {
         qInfo("%s %s", _fontShaderProgram.getError().c_str(), "_fontShaderProgram Failed");
@@ -1306,6 +1312,24 @@ void QtSimulatorWindow::onRender()
     setupCameraPosition();
 
     RenderScene();
+
+    GLboolean writeDepth;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &writeDepth);
+    const bool blending = glIsEnabled(GL_BLEND);
+    const bool testingDepth = glIsEnabled(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    _renderer->useProgram(_runwayLightsShader);
+    _runwayLightsShader.sendUniform("viewportSize", static_cast<float>(cx), static_cast<float>(cy));
+    _WorldSystem.renderRunwayLights(*_renderer, _camera.localView()->getPosition(), elapsedMilliseconds());
+    OnInitPolyMode();
+    glDepthMask(writeDepth);
+    if (!testingDepth)
+        glDisable(GL_DEPTH_TEST);
+    if (!blending)
+        glDisable(GL_BLEND);
 
     OpenGLShaderProgram::useDefault();
 

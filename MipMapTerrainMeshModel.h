@@ -46,6 +46,7 @@ public:
                          const GPSLocation& uEdge, const GPSLocation& vEdge);
 	GPSLocation GetLocation() const;
 	bool getHeightFromPosition(const GPSLocation& gpsLocation, HeightData& heightData) const override;
+    float surfaceElevation(const GPSLocation& location) const;
 
 	void attachModel(MeshModel & model, GPSLocation location, float fDisplacement = 0.0f);
 

@@ -210,6 +210,11 @@ bool MipMapTerrainMeshModel::getHeightFromPosition(const GPSLocation& gpsLocatio
 	return _scaledHeightData.getHeightFromPosition(gpsLocation, heightData);
 }
 
+float MipMapTerrainMeshModel::surfaceElevation(const GPSLocation& location) const
+{
+    return _scaledHeightData(location);
+}
+
 void MipMapTerrainMeshModel::attachModel(MeshModel & model, GPSLocation location, float fDisplacement)
 {
 	_scaledHeightData.Build();
@@ -231,7 +236,7 @@ void MipMapTerrainMeshModel::attachModel(MeshModel & model, GPSLocation location
                 model[i]->_meshData.setNormal(vertexIdx, vN);
 			}
 
-			itVertex.y += _scaledHeightData(newLocation);
+			itVertex.y += surfaceElevation(newLocation);
 			itVertex = modelTransform.LocalFlatToLocal(itVertex + fDisplacement * vN);
             model[i]->_meshData.setVertex(vertexIdx, itVertex);
 		}

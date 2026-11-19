@@ -143,6 +143,7 @@ private:
     OpenGLShaderProgram _shadowShaderProgram;
     OpenGLShaderProgram _simplePrimitiveShaderProgram;
     OpenGLShaderProgram _simpleColorPrimitiveShaderProgram;
+    OpenGLShaderProgram _runwayLightsShader;
     OpenGLShaderProgram _fontShaderProgram;
     OpenGLShaderProgram _textureShaderProgram;
     OpenGLFrameBuffer _openGLFrameBuffer;
