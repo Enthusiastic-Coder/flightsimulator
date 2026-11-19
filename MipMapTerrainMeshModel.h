@@ -42,6 +42,8 @@ public:
 
     void Render(Renderer *r, bool bLand, const GPSLocation& cameraPos);
     void RenderChildren(Renderer* r, unsigned int shadowMapCount) const;
+    void setGroundDetail(const std::string& filename, const GPSLocation& uvOrigin,
+                         const GPSLocation& uEdge, const GPSLocation& vEdge);
 	GPSLocation GetLocation() const;
 	bool getHeightFromPosition(const GPSLocation& gpsLocation, HeightData& heightData) const override;
 
@@ -49,6 +51,10 @@ public:
 
 private:
 	OpenGLTexture2D _GroundTexture;
+    OpenGLTexture2D _groundDetail;
+    Vector2F _groundDetailOrigin;
+    Vector2F _groundDetailU;
+    Vector2F _groundDetailV;
 	ScaledHeightTerrainData _scaledHeightData;
 	MatrixArrayCoords _chunkDims;
 	size_t _chunkCount;

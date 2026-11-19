@@ -165,6 +165,7 @@ set(FLIGHTSIM_RUNTIME_ASSETS
 	images
 	Models
 	RigidBodies
+	Scenery
 	shaders
 	Sounds
 	Terrain

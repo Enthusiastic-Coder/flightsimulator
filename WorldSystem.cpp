@@ -10,6 +10,13 @@
 #include "HeightData.h"
 
 #include "OpenGLRenderer.h"
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QtLogging>
+#include <algorithm>
+#include <cmath>
 #include <limits>
 
 #define TOWTRUCK_MASS_PROP	 7000, \
@@ -238,6 +245,99 @@ Vector3F WorldSystem::getEyeLightDirection()
     return _eyeLightDirection;
 }
 
+void WorldSystem::loadHeathrowSurfaces(const GPSLocation& origin, float heading)
+{
+    QFile file(QStringLiteral("Scenery/Heathrow.json"));
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        qWarning("Could not open Heathrow scenery layout");
+        return;
+    }
+
+    const auto layout = QJsonDocument::fromJson(file.readAll()).object();
+    const auto bounds = layout.value(QStringLiteral("bounds")).toArray();
+    if (bounds.size() != 4 || std::any_of(bounds.begin(), bounds.end(),
+        [](const QJsonValue& value) { return !value.isDouble(); }))
+    {
+        qWarning("Invalid Heathrow scenery bounds");
+        return;
+    }
+
+    const float westMin = bounds[0].toDouble();
+    const float southMin = bounds[1].toDouble();
+    const float length = bounds[2].toDouble() - westMin;
+    const float width = bounds[3].toDouble() - southMin;
+    if (length <= 0 || length > 5000 || width <= 0 || width > 3000)
+    {
+        qWarning("Invalid Heathrow scenery dimensions");
+        return;
+    }
+
+    const auto rotation = MathSupport<float>::MakeQHeading(heading);
+    const auto point = [&](float west, float south)
+    {
+        return QVRotate(rotation, Vector3F(-south, 0, -west));
+    };
+    const GPSLocation groundOrigin = origin + point(westMin, southMin + width);
+    _TerrainCollection[0]->setGroundDetail("Textures/heathrow_ground.png", groundOrigin,
+        origin + point(westMin, southMin), origin + point(westMin + length, southMin + width));
+
+    auto taxiways = std::make_unique<TaxiwayMeshModel>();
+    const auto routes = layout.value(QStringLiteral("routes")).toArray();
+    for (const auto& route : routes)
+    {
+        std::vector<Vector3F> waypoints;
+        for (const auto& entry : route.toArray())
+        {
+            const auto position = entry.toArray();
+            if (position.size() != 2 || !position[0].isDouble() || !position[1].isDouble())
+                continue;
+            const float west = position[0].toDouble();
+            const float south = position[1].toDouble();
+            if (west < westMin || west > westMin + length || south < southMin || south > southMin + width)
+                continue;
+            const auto waypoint = point(west, south);
+            if (waypoints.empty() || (waypoint - waypoints.back()).MagnitudeXZ() > 1.0f)
+                waypoints.push_back(waypoint);
+        }
+        if (waypoints.size() < 2)
+            continue;
+
+        std::vector<Vector3F> centreline{waypoints.front()};
+        const auto addStraight = [&](const Vector3F& end)
+        {
+            const auto start = centreline.back();
+            const auto delta = end - start;
+            const int steps = static_cast<int>(std::ceil(delta.MagnitudeXZ() / 12.0f));
+            for (int step = 1; step <= steps; ++step)
+                centreline.push_back(start + delta * (static_cast<float>(step) / steps));
+        };
+        for (std::size_t i = 1; i + 1 < waypoints.size(); ++i)
+        {
+            const auto& corner = waypoints[i];
+            const auto incoming = waypoints[i - 1] - corner;
+            const auto outgoing = waypoints[i + 1] - corner;
+            const float cutback = std::min({55.0f, 0.35f * incoming.MagnitudeXZ(), 0.35f * outgoing.MagnitudeXZ()});
+            const auto entry = corner + incoming.Unit() * cutback;
+            const auto exit = corner + outgoing.Unit() * cutback;
+            addStraight(entry);
+            for (int step = 1; step <= 10; ++step)
+            {
+                const float t = step / 10.0f;
+                const float u = 1.0f - t;
+                centreline.push_back(entry * (u * u) + corner * (2 * u * t) + exit * (t * t));
+            }
+        }
+        addStraight(waypoints.back());
+        taxiways->addRoute(centreline, 28.0f);
+    }
+    if (taxiways->size() > 0)
+    {
+        _TerrainCollection[0]->attachModel(*taxiways, origin, 0.075f);
+        _airportSurfaceMeshes.push_back(std::move(taxiways));
+    }
+}
+
 void WorldSystem::loadTerrain()
 {
 	_TerrainCollection.OnInitialise();
@@ -279,6 +379,7 @@ void WorldSystem::loadTerrain()
     const GPSLocation southThreshold(51.464950, -0.434100);
     addHeathrowRunway(northThreshold, -90.29f, 3901, "heathrow_09l_27r.png");
     addHeathrowRunway(southThreshold, -90.28f, 3658, "heathrow_09r_27l.png");
+    loadHeathrowSurfaces(northThreshold, -90.29f);
 
     // Simplified terminal-side parallels and exits, measured from each eastern threshold.
     const auto addHeathrowTaxiways = [&](GPSLocation threshold, float heading, float length, float offset)

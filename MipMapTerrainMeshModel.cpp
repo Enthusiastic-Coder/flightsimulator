@@ -96,9 +96,45 @@ void MipMapTerrainMeshModel::Build()
 	back()->Build(false, tileNode, 0);
 }
 
+void MipMapTerrainMeshModel::setGroundDetail(const std::string& filename, const GPSLocation& uvOrigin,
+                                            const GPSLocation& uEdge, const GPSLocation& vEdge)
+{
+    const GPSLocation tileUV = uvOrigin - GetLocation();
+    const GPSLocation uAxis = uEdge - uvOrigin;
+    const GPSLocation vAxis = vEdge - uvOrigin;
+    const double determinant = uAxis._lng * vAxis._lat - uAxis._lat * vAxis._lng;
+    if (std::abs(determinant) < 1.0e-10)
+        return;
+
+    // Terrain UVs are longitude and latitude offsets within the one-degree tile.
+    _groundDetailOrigin = Vector2F(tileUV._lng, tileUV._lat);
+    _groundDetailU = Vector2F(vAxis._lat / determinant, -vAxis._lng / determinant);
+    _groundDetailV = Vector2F(-uAxis._lat / determinant, uAxis._lng / determinant);
+    _groundDetail.setMinification(GL_LINEAR_MIPMAP_LINEAR);
+    _groundDetail.setWrapMode(GL_CLAMP_TO_EDGE);
+    _groundDetail.Load(filename);
+}
+
 void MipMapTerrainMeshModel::Render(Renderer* r, bool bLand, const GPSLocation& cameraPos)
 {
-    if (bLand) _GroundTexture.bind();
+    constexpr int groundDetailUnit = 1;
+    auto& shader = r->progId();
+    const bool renderGroundDetail = bLand && _groundDetail.getId() != 0 &&
+        shader.getUniformLocation("groundDetailEnabled") >= 0;
+    if (renderGroundDetail)
+    {
+        glActiveTexture(GL_TEXTURE0 + groundDetailUnit);
+        _groundDetail.bind();
+        glActiveTexture(GL_TEXTURE0);
+        shader.sendUniform("groundDetailEnabled", 1);
+        shader.sendUniform("groundDetailTexture", groundDetailUnit);
+        shader.sendUniform("groundDetailOrigin", _groundDetailOrigin.x, _groundDetailOrigin.z);
+        shader.sendUniform("groundDetailU", _groundDetailU.x, _groundDetailU.z);
+        shader.sendUniform("groundDetailV", _groundDetailV.x, _groundDetailV.z);
+    }
+
+    if (bLand)
+        _GroundTexture.bind();
 
 	GPSLocation diffGPS = cameraPos - GetLocation();
 	Vector2I centralIDX(diffGPS._lng * _chunkDims.getX(), (1 - diffGPS._lat) * _chunkDims.getY());
@@ -122,6 +158,14 @@ void MipMapTerrainMeshModel::Render(Renderer* r, bool bLand, const GPSLocation& 
         if(terrainMeshModel->InFrustum(mat.GetFrustum()))
             terrainMeshModel->RenderIndex(r, i);
 	}
+
+    if (renderGroundDetail)
+    {
+        shader.sendUniform("groundDetailEnabled", 0);
+        glActiveTexture(GL_TEXTURE0 + groundDetailUnit);
+        OpenGLTexture2D::unBind();
+        glActiveTexture(GL_TEXTURE0);
+    }
 }
 
 void MipMapTerrainMeshModel::RenderChildren(Renderer *r, unsigned int shadowMapCount) const

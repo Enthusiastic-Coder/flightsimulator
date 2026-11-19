@@ -111,6 +111,7 @@ public:
     void incrChaseHeight(float fDiff) override;
 
 private:
+    void loadHeathrowSurfaces(const GPSLocation& origin, float heading);
 	float _fLightingFraction;
     Vector3F _fLightDirection;
     Vector3F _eyeLightDirection;

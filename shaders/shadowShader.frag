@@ -1,9 +1,14 @@
 varying mediump vec3 outPosition;
 varying mediump vec3 outNormal;
-varying mediump vec2 outUV;
+varying highp vec2 outUV;
 
 uniform int useTex;
 uniform sampler2D texID;
+uniform int groundDetailEnabled;
+uniform sampler2D groundDetailTexture;
+uniform highp vec2 groundDetailOrigin;
+uniform highp vec2 groundDetailU;
+uniform highp vec2 groundDetailV;
 uniform mediump vec3 eyeLightDirection;
 
 struct MATERIAL
@@ -118,6 +123,16 @@ void main()
     if( useTex == 0)
         textureColor = vec4(1,1,1,1);
 
+    mediump float detailWeight = 0.0;
+    if (groundDetailEnabled != 0)
+    {
+        highp vec2 offset = outUV - groundDetailOrigin;
+        highp vec2 detailUV = vec2(dot(offset, groundDetailU), dot(offset, groundDetailV));
+        mediump vec4 detail = texture2D(groundDetailTexture, detailUV);
+        detailWeight = detail.a;
+        textureColor.rgb = mix(textureColor.rgb, detail.rgb, detailWeight);
+    }
+
     if( textureColor.a < 0.00001)
         discard;
 
@@ -125,7 +140,7 @@ void main()
     {
         gl_FragColor = material.ambient * textureColor;
         gl_FragColor += shadowValue * material.diffuse * NdotL * textureColor;
-        gl_FragColor += shadowValue * material.specular * pow( NdotHV, material.shininess )/ (length(L)*1.5);
+        gl_FragColor += (1.0 - detailWeight) * shadowValue * material.specular * pow( NdotHV, material.shininess )/ (length(L)*1.5);
         gl_FragColor.a = textureColor.a;
     }
     else
