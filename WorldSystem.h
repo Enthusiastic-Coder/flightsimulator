@@ -121,6 +121,7 @@ private:
     IJoystick* _Joy;
 
     std::vector<std::unique_ptr<RunwayMeshObject>> _runwayList;
+    std::vector<std::unique_ptr<MeshModel>> _airportSurfaceMeshes;
 	GPSLocation _simplePlaneLocation;
 	SimpleCloud* _simpleCloud;
 

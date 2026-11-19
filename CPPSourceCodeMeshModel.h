@@ -72,6 +72,12 @@ public:
 				unsigned char g, unsigned char b, float fHdg);
 };
 
+class TaxiwayMeshModel : public MeshModel
+{
+public:
+    void addRoute(const std::vector<Vector3F>& centreline, float width);
+};
+
 #include <jibbs/boundary/BoundaryHelperT.h>
 
 class CircularRunwayMeshModel : public MeshModel

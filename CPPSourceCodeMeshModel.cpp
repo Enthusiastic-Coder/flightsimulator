@@ -431,6 +431,69 @@ void SimpleRunwayMeshModel::setTextureMag(float u, float v)
 	_kV = v;
 }
 
+void TaxiwayMeshModel::addRoute(const std::vector<Vector3F>& centreline, float width)
+{
+    if (centreline.size() < 2)
+        return;
+
+    constexpr int verticesAcross = 3;
+    constexpr float repeatLength = 48.0f;
+    auto* group = addGroup("Taxiway");
+    auto& data = group->_meshData;
+    float distance = 0.0f;
+
+    for (std::size_t row = 0; row < centreline.size(); ++row)
+    {
+        const auto& point = centreline[row];
+        const auto& previous = centreline[row == 0 ? 0 : row - 1];
+        const auto& next = centreline[std::min(row + 1, centreline.size() - 1)];
+        const auto tangent = (next - previous).Unit();
+        const Vector3F across(-tangent.z, 0, tangent.x);
+        distance += (point - previous).MagnitudeXZ();
+
+        for (int column = 0; column < verticesAcross; ++column)
+        {
+            const float u = static_cast<float>(column) / (verticesAcross - 1);
+            data.addVertex(point + across * ((u - 0.5f) * width));
+            data.addNormal(0, 1, 0);
+            data.addTexture(u, distance / repeatLength);
+        }
+    }
+
+    for (std::size_t row = 1; row < centreline.size(); ++row)
+    {
+        for (int column = 0; column < verticesAcross - 1; ++column)
+        {
+            const auto left = static_cast<unsigned short>((row - 1) * verticesAcross + column);
+            const auto nextLeft = static_cast<unsigned short>(left + verticesAcross);
+            data.addIndex(nextLeft);
+            data.addIndex(left);
+            data.addIndex(left + 1);
+            data.addIndex(nextLeft);
+            data.addIndex(left + 1);
+            data.addIndex(nextLeft + 1);
+        }
+    }
+
+    group->setVertexFlag();
+    group->setNormalFlag();
+    group->setTexCoordFlag();
+    group->setIndexFlag();
+
+    auto* surface = group->addSurface();
+    surface->setDiffuse(Vector3F(0.88f, 0.88f, 0.88f));
+    surface->setSpecular(Vector3F(0.1f, 0.1f, 0.1f));
+    surface->setShininess(16);
+    const int textureIndex = getTextureIdx(ROOT_APP_DIRECTORY, "heathrow_taxiway.png", GL_LINEAR_MIPMAP_LINEAR);
+    surface->setTextureIdx(textureIndex);
+    configureRunwayTextureFiltering(getTextureObjects()[textureIndex]);
+
+    auto* mesh = surface->addMesh();
+    mesh->setPrimitveType(GL_TRIANGLES);
+    mesh->setCountOffset(data.indexSize(), 0);
+    calcBoundingBox();
+}
+
 /////////////////
 void SimplePlaneMeshModel::Build(int iWidth, int iHeight, float fInterval, unsigned char r, unsigned char g, unsigned char b, float fHdg)
 {

@@ -275,8 +275,63 @@ void WorldSystem::loadTerrain()
         _runwayList.push_back(std::move(obj));
     };
 
-    addHeathrowRunway(GPSLocation(51.477675, -0.433283), -90.29f, 3901, "heathrow_09l_27r.png");
-    addHeathrowRunway(GPSLocation(51.464950, -0.434100), -90.28f, 3658, "heathrow_09r_27l.png");
+    const GPSLocation northThreshold(51.477675, -0.433283);
+    const GPSLocation southThreshold(51.464950, -0.434100);
+    addHeathrowRunway(northThreshold, -90.29f, 3901, "heathrow_09l_27r.png");
+    addHeathrowRunway(southThreshold, -90.28f, 3658, "heathrow_09r_27l.png");
+
+    // Simplified terminal-side parallels and exits, measured from each eastern threshold.
+    const auto addHeathrowTaxiways = [&](GPSLocation threshold, float heading, float length, float offset)
+    {
+        constexpr float taxiwayWidth = 29.0f;
+        const auto rotation = MathSupport<float>::MakeQHeading(heading);
+        const auto point = [&](float lateral, float along)
+        {
+            return QVRotate(rotation, Vector3F(lateral, 0, -along));
+        };
+        const auto attach = [&](std::unique_ptr<TaxiwayMeshModel> mesh, float terrainOffset)
+        {
+            _TerrainCollection[0]->attachModel(*mesh, threshold, terrainOffset);
+            _airportSurfaceMeshes.push_back(std::move(mesh));
+        };
+
+        auto parallel = std::make_unique<TaxiwayMeshModel>();
+        std::vector<Vector3F> centreline;
+        for (float along = 20.0f; along < length - 20.0f; along += 15.0f)
+            centreline.push_back(point(offset, along));
+        centreline.push_back(point(offset, length - 20.0f));
+        parallel->addRoute(centreline, taxiwayWidth);
+        attach(std::move(parallel), 0.08f);
+
+        auto exits = std::make_unique<TaxiwayMeshModel>();
+        const float side = offset < 0 ? -1.0f : 1.0f;
+        const auto addExit = [&](float along, float sweep)
+        {
+            const auto start = point(side * (runwayWidth / 2 - 3.0f), along);
+            const auto firstControl = point(side * 67.0f, along + sweep * 0.28f);
+            const auto secondControl = point(offset, along + sweep * 0.65f);
+            const auto end = point(offset, along + sweep);
+            std::vector<Vector3F> curve;
+            for (int i = 0; i <= 20; ++i)
+            {
+                const float t = i / 20.0f;
+                const float u = 1.0f - t;
+                curve.push_back(start * (u * u * u) + firstControl * (3 * u * u * t) +
+                                secondControl * (3 * u * t * t) + end * (t * t * t));
+            }
+            exits->addRoute(curve, taxiwayWidth);
+        };
+
+        addExit(75, 70);
+        addExit(length * 0.25f, 125);
+        addExit(length * 0.49f, -125);
+        addExit(length * 0.72f, 125);
+        addExit(length - 75.0f, -70);
+        attach(std::move(exits), 0.06f);
+    };
+
+    addHeathrowTaxiways(northThreshold, -90.29f, 3901, -142.0f);
+    addHeathrowTaxiways(southThreshold, -90.28f, 3658, 125.0f);
 
     {
 
