@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <SDL_image.h>
+#include <QCoreApplication>
+#include <QTimer>
 
 #ifdef ANDROID
 #include <unistd.h>
@@ -31,9 +33,8 @@ SDLGameLoop::SDLGameLoop() :
     _fInverseFPS(1/30.0f),
     _dt(0.0f)
 {
-    _updateEventType = SDL_RegisterEvents(1);
-
     SDL_Init(SDL_INIT_EVERYTHING);
+    _updateEventType = SDL_RegisterEvents(1);
 
 #ifdef ANDROID
     chdir( SDL_AndroidGetInternalStoragePath());
@@ -54,7 +55,6 @@ SDLGameLoop::SDLGameLoop() :
     //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
-    SDL_GL_SetSwapInterval(1);
 }
 
 SDLGameLoop::~SDLGameLoop()
@@ -194,12 +194,26 @@ bool SDLGameLoop::run(std::string strTitle)
     }
 
     _glContext = SDL_GL_CreateContext(_sdlWindow);
+    if (!_glContext)
+    {
+        SDL_Log("CreateContext : %s", SDL_GetError());
+        SDL_DestroyWindow(_sdlWindow);
+        _sdlWindow = nullptr;
+        return false;
+    }
+    SDL_GL_SetSwapInterval(1);
     _running = true;
 
     int w, h;
     SDL_GetWindowSize(_sdlWindow, &w,&h);
     onSize(w,h);
-    onInitialise();
+    if (!onInitialise())
+    {
+        SDL_GL_DeleteContext(_glContext);
+        SDL_DestroyWindow(_sdlWindow);
+        _sdlWindow = nullptr;
+        return false;
+    }
 
     SDL_Log( "Current Video Driver : %s",  SDL_GetCurrentVideoDriver());
 
@@ -213,42 +227,41 @@ bool SDLGameLoop::run(std::string strTitle)
     _timer.Start();
     onTimeOut();
 
-    bool bQuit = false;
-    SDL_Event event;
-
-    while( !bQuit )
+    QTimer frameTimer;
+    frameTimer.setTimerType(Qt::PreciseTimer);
+    QObject::connect(&frameTimer, &QTimer::timeout, &frameTimer, [this, &frameTimer, redraw = false]() mutable
     {
-        while((!_running && SDL_WaitEvent( &event ))
-              ||
-              (_running && SDL_PollEvent(&event)) )
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
         {
-            if( event.type == SDL_QUIT)
+            if (event.type == SDL_QUIT ||
+                (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE))
             {
-                bQuit = true;
-                break;
+                frameTimer.stop();
+                QCoreApplication::quit();
+                return;
             }
 
-            if( event.type == _updateEventType)
-                break;
-
-            onDispatchMessage(event);
-
-            if( !isRunning())
-                update();
+            if (event.type != _updateEventType)
+                onDispatchMessage(event);
+            redraw = true;
         }
 
         _dt = _timer.Elapsed();
-
-        if (_dt >= _fInverseFPS)
+        if (_dt >= _fInverseFPS && (isRunning() || redraw))
         {
             _timer.Restart();
 
-            if( !isRunning())
+            if (!isRunning())
                 _dt = 0.0f;
 
+            redraw = false;
             onTimeOut();
         }
-    }
+    });
+    frameTimer.start(4);
+    QCoreApplication::exec();
+    frameTimer.stop();
 
     onUnInitialise();
 
@@ -294,6 +307,7 @@ bool SDLGameLoop::onDispatchMessage(SDL_Event& event)
         default:
             break;
         }
+        break;
 
     case SDL_KEYDOWN:
         onKeyDown(&event.key);

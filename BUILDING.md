@@ -1,13 +1,13 @@
 # Building with CMake
 
-The CMake build targets the existing Windows x64/MSVC application and keeps the project's C++17 setting. SDL2, SDL2_image, OpenAL, and Assimp are provided by the checked-out dependency submodules and their x64 libraries.
+The CMake build targets Windows x64 with MSVC and C++17. It requires the Qt 6 MSVC x64 kit with Qt Widgets. SDL2, SDL2_image, OpenAL, and Assimp are provided by the checked-out dependency submodules and their x64 libraries.
 
 ## Configure and build
 
 From the repository root, in a Visual Studio Developer PowerShell or a terminal with CMake and the MSVC toolchain available:
 
 ```powershell
-cmake -S . -B build -A x64
+cmake -S . -B build -A x64 -DCMAKE_PREFIX_PATH="C:/Qt/6.11.3/msvc2022_64"
 cmake --build build --config Debug
 ```
 
@@ -17,7 +17,11 @@ Run the Release configuration with:
 cmake --build build --config Release
 ```
 
-The executable and copied runtime assets are placed in the generated build directory. CMake copies the simulator's asset folders, SDL2, SDL2_image, OpenAL, Assimp, and SDL_image codec runtime DLLs next to the executable.
+Use the path to your Qt kit for `CMAKE_PREFIX_PATH`. In Qt Creator, open the root `CMakeLists.txt` and select a Qt 6 MSVC x64 kit.
+
+Run the executable from its output directory, which is `build/Debug` or `build/Release` with the Visual Studio generator. CMake copies the simulator assets and dependency DLLs there and runs `windeployqt` to deploy the Qt libraries and platform plugin.
+
+`sdlmain.cpp` creates the Qt application, and a Qt timer drives the SDL event and frame processing in `SDLGameLoop.cpp`. The cockpit PFD is drawn into a texture in `SDLMainWindow::onRender()`. Its flight data is populated in `SDLMainWindow::onUpdate()`.
 
 ## Dependencies
 

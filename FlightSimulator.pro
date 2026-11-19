@@ -6,7 +6,7 @@
 
 TARGET = FlightSimulator
 
-QT += core gui network
+QT += core gui network widgets
 QT += opengl
 
 CONFIG += c++17

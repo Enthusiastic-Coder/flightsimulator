@@ -14,6 +14,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
 set(FLIGHTSIM_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 set(FLIGHTSIM_SDL2_DIR "${FLIGHTSIM_ROOT}/sdl2/VisualC/x64")
 set(FLIGHTSIM_SDL2_IMAGE_DIR "${FLIGHTSIM_ROOT}/sdl2_image/VisualC/x64")
@@ -170,6 +172,7 @@ target_compile_definitions(FlightSimulator PRIVATE
 )
 
 target_link_libraries(FlightSimulator PRIVATE
+	Qt6::Widgets
 	"$<$<CONFIG:Debug>:${FLIGHTSIM_SDL2_DIR}/Debug/SDL2main.lib>"
 	"$<$<CONFIG:Debug>:${FLIGHTSIM_SDL2_DIR}/Debug/SDL2.lib>"
 	"$<$<NOT:$<CONFIG:Debug>>:${FLIGHTSIM_SDL2_DIR}/Release/SDL2main.lib>"
@@ -218,6 +221,12 @@ add_custom_command(TARGET FlightSimulator POST_BUILD
 	COMMAND "${CMAKE_COMMAND}" -E copy_if_different
 		"${FLIGHTSIM_ROOT}/openal/Win32/x64/OpenAL32.dll"
 		"$<TARGET_FILE_DIR:FlightSimulator>"
+	VERBATIM
+)
+
+add_custom_command(TARGET FlightSimulator POST_BUILD
+	COMMAND Qt6::windeployqt --no-translations --no-compiler-runtime
+		"$<TARGET_FILE:FlightSimulator>"
 	VERBATIM
 )
 
