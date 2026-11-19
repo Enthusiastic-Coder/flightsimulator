@@ -97,7 +97,7 @@ set(FLIGHTSIM_SOURCES
 	QtSimulatorWindow.cpp
 	SDLSurfaceHelper.cpp
 	SDLTimer.cpp
-	sdlmain.cpp
+	QtMain.cpp
 	SimpleCloud.cpp
 	SimpleSpringModel.cpp
 	SkyDome.cpp
