@@ -24,3 +24,4 @@ Models/AircraftCarrier/model.obj
 Models/Harrier/model.obj
 Terrain/Cache/
 build/
+/CMakeUserPresets.json
