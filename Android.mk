@@ -12,7 +12,7 @@ LOCAL_CFLAGS += -DWANT_SDL_SDL_SURFACE
 LOCAL_SRC_FILES := sdl2/src/main/android/SDL_android_main.c \
 			sdlmain.cpp \
            QtGameLoop.cpp \
-           SDLMainWindow.cpp \
+           QtSimulatorWindow.cpp \
            TextureLoader.cpp \
             SDLSurfaceHelper.cpp \
             SDLTimer.cpp \

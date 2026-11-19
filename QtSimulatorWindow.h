@@ -1,5 +1,5 @@
-#ifndef __SDLMAINWINDOW__
-#define __SDLMAINWINDOW__
+#ifndef QT_SIMULATOR_WINDOW_H
+#define QT_SIMULATOR_WINDOW_H
 
 
 #include <include_gl.h>
@@ -33,12 +33,12 @@
   //      fprintf(_fTimeLog, msg##" - %.6f\n", timer.ElapsedMilliSeconds());
 
 
-class SDLMainWindow : public QtGameLoop
+class QtSimulatorWindow : public QtGameLoop
 {
 public:
 
-    SDLMainWindow();
-    ~SDLMainWindow();
+    QtSimulatorWindow();
+    ~QtSimulatorWindow();
 
 protected:
     bool onInitialise() override;
@@ -205,4 +205,4 @@ private:
 };
 
 
-#endif //__SDLMAINWINDOW__
+#endif //QT_SIMULATOR_WINDOW_H

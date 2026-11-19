@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "SDLMainWindow.h"
+#include "QtSimulatorWindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    SDLMainWindow win;
+    QtSimulatorWindow win;
     return win.run("Flight Simulator") ? 0 : 1;
 }

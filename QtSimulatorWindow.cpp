@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "SDLMainWindow.h"
+#include "QtSimulatorWindow.h"
 #include <QPainter>
 #include <algorithm>
 #include <cmath>
@@ -44,7 +44,7 @@
 #define MS_TO_MPH( value ) MS_TO_KTS( value*1.15 )
 
 
-void SDLMainWindow::onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float dt)
+void QtSimulatorWindow::onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float dt)
 {
 //    bool bShiftPressed = KMOD_SHIFT & mod;
 //    bool bCtrlPressed = KMOD_CTRL & mod;
@@ -60,16 +60,16 @@ void SDLMainWindow::onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float d
 //        _worldSystem.FocusRigidBody().applyStandardBrakes(bShiftPressed, dt);
 }
 
-void SDLMainWindow::onKeyUp(SDL_KeyboardEvent* e)
+void QtSimulatorWindow::onKeyUp(SDL_KeyboardEvent* e)
 {  }
 
-void SDLMainWindow::onMouseUp(SDL_MouseButtonEvent* e)
+void QtSimulatorWindow::onMouseUp(SDL_MouseButtonEvent* e)
 {
     _buttonTextureManager.handleMouseUp({e->x, e->y});
     _powerSliderControl.handleMouseUp({e->x, e->y});
 }
 
-void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
+void QtSimulatorWindow::onMouseWheel(SDL_MouseWheelEvent *e)
 {
     _WorldSystem.onMouseWheel(e->y);
     JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
@@ -80,7 +80,7 @@ void SDLMainWindow::onMouseWheel(SDL_MouseWheelEvent *e)
     }
 }
 
-void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
+void QtSimulatorWindow::onMouseMotion(SDL_MouseMotionEvent *e)
 {
     _buttonTextureManager.handleMouseMove({e->x, e->y});
     if( _powerSliderControl.handleMouseMove({e->x, e->y}))
@@ -91,7 +91,7 @@ void SDLMainWindow::onMouseMotion(SDL_MouseMotionEvent *e)
     }
 }
 
-void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
+void QtSimulatorWindow::onMouseDown(SDL_MouseButtonEvent *e)
 {
     _buttonTextureManager.handleMouseDown({e->x, e->y});
     if(_powerSliderControl.handleMouseDown({e->x, e->y}))
@@ -102,14 +102,14 @@ void SDLMainWindow::onMouseDown(SDL_MouseButtonEvent *e)
     }
 }
 
-void SDLMainWindow::onFingerDown(SDL_TouchFingerEvent* e)
+void QtSimulatorWindow::onFingerDown(SDL_TouchFingerEvent* e)
 {  }
-void SDLMainWindow::onFingerMotion(SDL_TouchFingerEvent* e)
+void QtSimulatorWindow::onFingerMotion(SDL_TouchFingerEvent* e)
 { }
-void SDLMainWindow::onFingerUp(SDL_TouchFingerEvent* e)
+void QtSimulatorWindow::onFingerUp(SDL_TouchFingerEvent* e)
 { }
 
-void SDLMainWindow::onSize(int width, int height)
+void QtSimulatorWindow::onSize(int width, int height)
 {
     _currentDims = { width, height };
     QtGameLoop::onSize(width, height);
@@ -125,11 +125,11 @@ void SDLMainWindow::onSize(int width, int height)
     }
 }
 
-void SDLMainWindow::onMove(int x, int y)
+void QtSimulatorWindow::onMove(int x, int y)
 {
 }
 
-SDLMainWindow::SDLMainWindow() :
+QtSimulatorWindow::QtSimulatorWindow() :
     _showCursor(true),
     _bUserPolygonLineView(false),
     //_paused(false),
@@ -146,13 +146,13 @@ SDLMainWindow::SDLMainWindow() :
     memset( _framerate, 0, sizeof(_framerate) );
 }
 
-SDLMainWindow::~SDLMainWindow()
+QtSimulatorWindow::~QtSimulatorWindow()
 {
     delete _skyDome;
     delete _renderer;
 }
 
-bool SDLMainWindow::createFrameBufferAndShaders()
+bool QtSimulatorWindow::createFrameBufferAndShaders()
 {
     if (!_simpleShaderProgram.loadFiles("shaders/simpleShader.vert", "shaders/simpleShader.frag"))
     {
@@ -313,7 +313,7 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     return true;
 }
 
-bool SDLMainWindow::onInitialise()
+bool QtSimulatorWindow::onInitialise()
 {
     try
     {
@@ -553,7 +553,7 @@ bool SDLMainWindow::onInitialise()
     return true;
 }
 
-void SDLMainWindow::OnInitSound()
+void QtSimulatorWindow::OnInitSound()
 {
 #ifndef LOCATED_AT_LONDON
     ALenum errorNo = alGetError();
@@ -623,7 +623,7 @@ void SDLMainWindow::OnInitSound()
 #endif
 }
 
-void SDLMainWindow::OnUnitSound()
+void QtSimulatorWindow::OnUnitSound()
 {
 #ifndef LOCATED_AT_LONDON
     alSourceStop(_soundEnvironmentSource);
@@ -646,7 +646,7 @@ void SDLMainWindow::OnUnitSound()
 #endif
 }
 
-void SDLMainWindow::ensureCameraAboveGround()
+void QtSimulatorWindow::ensureCameraAboveGround()
 {
     HeightData data;
     _WorldSystem.getHeightFromPosition( _camera.localView()->getPosition(), data );
@@ -660,7 +660,7 @@ void SDLMainWindow::ensureCameraAboveGround()
     }
 }
 
-void SDLMainWindow::onUnInitialise()
+void QtSimulatorWindow::onUnInitialise()
 {
     persistSettings(true);
     _WorldSystem.onUnintialise();
@@ -668,7 +668,7 @@ void SDLMainWindow::onUnInitialise()
 }
 
 
-void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
+void QtSimulatorWindow::onKeyDown(SDL_KeyboardEvent *e)
 {
 #ifdef WIN32
     /*    if( e.key.keysym.scancode == SDL_SCANCODE_F11 )
@@ -850,7 +850,7 @@ void SDLMainWindow::onKeyDown(SDL_KeyboardEvent *e)
 #endif
 }
 
-void SDLMainWindow::onUpdate()
+void QtSimulatorWindow::onUpdate()
 {
     float dt = frameTime();
 
@@ -1096,7 +1096,7 @@ void SDLMainWindow::onUpdate()
 }
 
 #ifndef LOCATED_AT_LONDON
-void SDLMainWindow::RenderReflection()
+void QtSimulatorWindow::RenderReflection()
 {
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
@@ -1150,7 +1150,7 @@ void SDLMainWindow::RenderReflection()
 }
 #endif
 
-void SDLMainWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, OpenGLTexture2D& colorMap, int offset, int size)
+void QtSimulatorWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, OpenGLTexture2D& colorMap, int offset, int size)
 {
     OpenGLMatrixStack &view = OpenGLPipeline::Get(camID).GetView();
 
@@ -1221,7 +1221,7 @@ void SDLMainWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMap, O
 }
 
 //Move to OpenGLPipeline
-void SDLMainWindow::sendDataToShader(OpenGLShaderProgram& progID, int slot, int width, int height)
+void QtSimulatorWindow::sendDataToShader(OpenGLShaderProgram& progID, int slot, int width, int height)
 {
     progID.sendUniform("texID", 0);
     progID.sendUniform("useTex", 1);
@@ -1237,7 +1237,7 @@ void SDLMainWindow::sendDataToShader(OpenGLShaderProgram& progID, int slot, int 
     progID.sendUniform("eyeLightDirection", eyeLightDirection.x, eyeLightDirection.y, eyeLightDirection.z);
 }
 
-void SDLMainWindow::RenderScene()
+void QtSimulatorWindow::RenderScene()
 {
 #ifndef LOCATED_AT_LONDON
     RenderReflection();
@@ -1338,7 +1338,7 @@ void SDLMainWindow::RenderScene()
         _WorldSystem.RenderModelForceGenerators(_renderer);
 }
 
-void SDLMainWindow::onRender()
+void QtSimulatorWindow::onRender()
 {
     OpenGLPipeline& pipeline = OpenGLPipeline::Get(0);
 
@@ -1426,7 +1426,7 @@ void SDLMainWindow::onRender()
     pipeline.Pop();
 }
 
-void SDLMainWindow::RenderDrivingPower()
+void QtSimulatorWindow::RenderDrivingPower()
 {
     glEnable(GL_BLEND);
 
@@ -1441,7 +1441,7 @@ void SDLMainWindow::RenderDrivingPower()
     glDisable(GL_BLEND);
 }
 
-void SDLMainWindow::RenderPlaybackRecordingGrafix()
+void QtSimulatorWindow::RenderPlaybackRecordingGrafix()
 {
     JSONRigidBody* pBody = _WorldSystem.focusedRigidBody();
 
@@ -1515,7 +1515,7 @@ void SDLMainWindow::RenderPlaybackRecordingGrafix()
     }
 }
 
-void SDLMainWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, float R, float G, float B, float A)
+void QtSimulatorWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, float R, float G, float B, float A)
 {
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -1540,7 +1540,7 @@ void SDLMainWindow::RenderTransparentRectangle(int x, int y, int cx, int cy, flo
     glEnable(GL_DEPTH_TEST);
 }
 
-void SDLMainWindow::RenderMouseFlying(float cx, float cy)
+void QtSimulatorWindow::RenderMouseFlying(float cx, float cy)
 {
     glDisable(GL_DEPTH_TEST);
 
@@ -1603,7 +1603,7 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
     glEnable(GL_DEPTH_TEST);
 }
 
-void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V, float heightFraction)
+void QtSimulatorWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V, float heightFraction)
 {
     int sw, sh;
     GetScreenDims(sw, sh);
@@ -1634,7 +1634,7 @@ void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V, floa
     OpenGLShaderProgram::useDefault();
 }
 
-void SDLMainWindow::RenderFPS()
+void QtSimulatorWindow::RenderFPS()
 {
     glEnable(GL_BLEND);
     _renderer->dt = frameTime();
@@ -1666,7 +1666,7 @@ void SDLMainWindow::RenderFPS()
     glDisable(GL_BLEND);
 }
 
-void SDLMainWindow::RenderInfo()
+void QtSimulatorWindow::RenderInfo()
 {
     int w, h;
     GetScreenDims(w, h);
@@ -1841,13 +1841,13 @@ void SDLMainWindow::RenderInfo()
     p.Pop();
 }
 
-void SDLMainWindow::setupCameraOrientation()
+void QtSimulatorWindow::setupCameraOrientation()
 {
     OpenGLMatrixStack & mat = OpenGLPipeline::Get(0).GetView();
     mat.Rotate(_camera.localView()->getOrientation());
 }
 
-void SDLMainWindow::setupCameraPosition(bool bReflection)
+void QtSimulatorWindow::setupCameraPosition(bool bReflection)
 {
     OpenGLMatrixStack & mv = OpenGLPipeline::Get(0).GetView();
 
@@ -1863,7 +1863,7 @@ void SDLMainWindow::setupCameraPosition(bool bReflection)
     mv.TranslateLocation(pos);
 }
 
-void SDLMainWindow::processInputsForCamera()
+void QtSimulatorWindow::processInputsForCamera()
 {
 #ifdef WIN32
     bool bShiftOn = GetAsyncKeyState(VK_SHIFT) < 0;
@@ -1921,7 +1921,7 @@ void SDLMainWindow::processInputsForCamera()
 #endif
 }
 
-void SDLMainWindow::persistSettings(bool bSerialise)
+void QtSimulatorWindow::persistSettings(bool bSerialise)
 {
     using namespace rapidjson;
 
@@ -1984,12 +1984,12 @@ void SDLMainWindow::persistSettings(bool bSerialise)
 
 }
 
-std::pair<float, float> SDLMainWindow::UVtoScreen(float U, float V)
+std::pair<float, float> QtSimulatorWindow::UVtoScreen(float U, float V)
 {
     return { _currentDims.first *U , _currentDims.second * V};
 }
 
-void SDLMainWindow::UVsToScreen(float *pts, int count)
+void QtSimulatorWindow::UVsToScreen(float *pts, int count)
 {
     for(int i = 0; i < count; i+=3)
     {
@@ -1999,7 +1999,7 @@ void SDLMainWindow::UVsToScreen(float *pts, int count)
     }
 }
 
-void SDLMainWindow::OnInitPolyMode()
+void QtSimulatorWindow::OnInitPolyMode()
 {
 #ifdef WIN32
     if( _bUserPolygonLineView )
@@ -2009,7 +2009,7 @@ void SDLMainWindow::OnInitPolyMode()
 #endif
 }
 
-void SDLMainWindow::OnRenderSkyBox()
+void QtSimulatorWindow::OnRenderSkyBox()
 {
     _renderer->camID = 0;
     _renderer->useProgram(_fontShaderProgram);

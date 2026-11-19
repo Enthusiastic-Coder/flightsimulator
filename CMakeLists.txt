@@ -94,7 +94,7 @@ set(FLIGHTSIM_SOURCES
 	SceneryManager.cpp
 	QtGameLoop.cpp
 	SDLJoystickSystem.cpp
-	SDLMainWindow.cpp
+	QtSimulatorWindow.cpp
 	SDLSurfaceHelper.cpp
 	SDLTimer.cpp
 	sdlmain.cpp
