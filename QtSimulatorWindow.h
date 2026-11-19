@@ -45,18 +45,12 @@ protected:
     void onUnInitialise() override;
     void onUpdate() override;
     void onRender() override;
-    void onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float dt) override;
-    void onKeyDown(SDL_KeyboardEvent* e) override;
-    void onKeyUp(SDL_KeyboardEvent* e) override;
-    void onMouseMotion(SDL_MouseMotionEvent* e) override;
-    void onMouseDown(SDL_MouseButtonEvent* e) override;
-    void onMouseUp(SDL_MouseButtonEvent* e) override;
-    void onMouseWheel(SDL_MouseWheelEvent *e ) override;
-    void onFingerDown(SDL_TouchFingerEvent* e) override;
-    void onFingerMotion(SDL_TouchFingerEvent* e) override;
-    void onFingerUp(SDL_TouchFingerEvent* e) override;
+    void onKeyDown(QKeyEvent* e) override;
+    void mouseMoveEvent(QMouseEvent* e) override;
+    void mousePressEvent(QMouseEvent* e) override;
+    void mouseReleaseEvent(QMouseEvent* e) override;
+    void wheelEvent(QWheelEvent* e) override;
     void onSize(int width, int height) override;
-    void onMove(int x, int y) override;
 
     bool createFrameBufferAndShaders();
     void OnInitPolyMode();
@@ -85,6 +79,7 @@ protected:
     void UVsToScreen(float*pts, int count);
 
 private:
+    int _wheelDelta = 0;
     bool _showCursor;
     //bool _paused;
     std::pair<int, int> _currentDims;
@@ -199,8 +194,8 @@ private:
 
     OpenGLSliderControl _powerSliderControl;
 
-    Uint32 _playRecordFlashLastTickTime = 0;
-    Uint32 _playRecordFlashTickTime = 500;
+    qint64 _playRecordFlashLastTickTime = 0;
+    qint64 _playRecordFlashTickTime = 500;
     bool _bPlayBackFlashOn = false;
 };
 

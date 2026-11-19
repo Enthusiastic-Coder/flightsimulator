@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "RigidBodyMeshManager.h"
 #include "CPPSourceCodeMeshModel.h"
-#include <SDL_log.h>
+#include <QtLogging>
 
 RigidBodyMeshManager::RigidBodyMeshManager()
 {
@@ -77,8 +77,8 @@ void RigidBodyMeshManager::referenceModel(std::string sMeshName, MeshModel * mod
 	mc.setMOIFactor(3.0f);
 	Matrix3x3F moi = mc.MOI();
 
-	SDL_Log("Mesh :%s", sMeshName.c_str());
-	SDL_Log("MOI :\n [%.2f, %.2f, %.2f\n "
+	qInfo("Mesh :%s", sMeshName.c_str());
+	qInfo("MOI :\n [%.2f, %.2f, %.2f\n "
 		"[%.2f, %.2f, %.2f]\n "
 		"[%.2f, %.2f, %.2f]]",
 		moi.e11, moi.e12, moi.e13,

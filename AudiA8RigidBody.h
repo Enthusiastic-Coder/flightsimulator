@@ -1,6 +1,7 @@
 #pragma once
 
 #include "JSONRigidBodyBuilder.h"
+#include "QtKeyState.h"
 #include <QGuiApplication>
 #include <QPoint>
 #include <QCursor>
@@ -36,13 +37,13 @@ public:
 		float goodForce = 10000.0f;
 		pBody->setBodyFrame();
 
-		if( GetAsyncKeyState( 'L' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_L) )
 			pBody->applyForce( Vector3D(0,0,0),pBody->toLocalGroundFrame(Vector3D(0, goodForce*3 ,0)));
 
-		if( GetAsyncKeyState( 'J' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_J) )
 			pBody->applyForce( Vector3D(0,1,2), Vector3D(goodForce, 0 ,0));
 
-		if( GetAsyncKeyState( 'K' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_K) )
 			pBody->applyForce( Vector3D(0,1,2), Vector3D(-goodForce, 0 ,0));
 
 		if( _hasFocus && _bDrivingByMouse )
@@ -90,7 +91,7 @@ public:
 			pBody->_rightRearWheel.spring().getWheelSpeed() =dMouseY;*/
 		}
 
-		if( GetAsyncKeyState( 'I') < 0 || (_hasFocus && _bDrivingByMouse))
+		if( simulatorKeyDown(Qt::Key_I) || (_hasFocus && _bDrivingByMouse))
 		{
 			pBody->_leftFrontWheel.spring().getWheelSpeed() -= max_accel * dt;
 			pBody->_rightFrontWheel.spring().getWheelSpeed() -= max_accel * dt;
@@ -99,7 +100,7 @@ public:
 			pBody->_rightRearWheel.spring().getWheelSpeed() -= max_accel * dt;
 		}
 
-		if( GetAsyncKeyState( 'M' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_M) )
 		{
 			pBody->_leftFrontWheel.spring().getWheelSpeed() += max_accel * dt;
 			pBody->_rightFrontWheel.spring().getWheelSpeed() += max_accel * dt;
@@ -108,7 +109,7 @@ public:
 			pBody->_rightRearWheel.spring().getWheelSpeed() += max_accel * dt;
 		}
 
-		if( GetAsyncKeyState( 'B' ) < 0 && GetAsyncKeyState( VK_SHIFT ) < 0 )
+		if( simulatorKeyDown(Qt::Key_B) && simulatorKeyDown(Qt::Key_Shift) )
 		{
 			pBody->_leftFrontWheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
 			pBody->_rightFrontWheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
@@ -117,7 +118,7 @@ public:
 
 		}
 
-		if( GetAsyncKeyState( 'B' ) < 0 && GetAsyncKeyState( VK_SHIFT ) >= 0 )
+		if( simulatorKeyDown(Qt::Key_B) && !simulatorKeyDown(Qt::Key_Shift) )
 		{
 			if( pBody->_leftFrontWheel.spring().getWheelSpeed()  > 0 )
 				pBody->_leftFrontWheel.spring().getWheelSpeed() -= min( max_decel * dt, pBody->_leftFrontWheel.spring().getWheelSpeed() );

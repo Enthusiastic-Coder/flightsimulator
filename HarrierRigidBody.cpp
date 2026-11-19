@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "QtKeyState.h"
 #include "HarrierRigidBody.h"
 #include "JSONRigidBodyBuilder.h"
 #include <iostream>
@@ -24,32 +25,32 @@ void HarrierCustomForceGenerator::onApplyForce(Particle *p, double dt)
 	// debug 0.05 ms  60 queries a millisecond
 	// release 0.01 ms 300 queries a millisecond.
 
-	if( GetAsyncKeyState( 'L' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_L) )
         body.applyForce( Vector3D(0,0,0), body.toLocalGroundFrame(Vector3D(0, goodForce*3 ,0)));
 
-	if( GetAsyncKeyState( 223 ) < 0 )
+	if( simulatorKeyDown(Qt::Key_NumberSign) )
         body.applyForce( Vector3D(0,0,-5), Vector3D(0,goodForce/2,0));
 
-	if( GetAsyncKeyState( '1' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_1) )
         body.applyForce(Vector3D(-5,0,0), Vector3D(0, goodForce/2, 0));
 
 		//body.applyForce( pLW->getContactPointCG(body.cg()), VectorD(0,goodForce,0));
 
-	if( GetAsyncKeyState( '2' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_2) )
         body.applyForce(Vector3D(5, 0, 0), Vector3D(0,goodForce/2,0));
 
-	if( GetAsyncKeyState( 'J' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_J) )
         body.applyForce( Vector3D(0,8.74f,18.25f), Vector3D(goodForce, 0 ,0)/4.0);
 
-	if( GetAsyncKeyState( 'K' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_K) )
         body.applyForce( Vector3D(0,8.74f,18.25f), Vector3D(-goodForce, 0 ,0)/4.0);
 
-	if( GetAsyncKeyState( 'I') < 0 )
+	if( simulatorKeyDown(Qt::Key_I) )
 	{
         body.applyForce(pFW->getContactPointCG(body.cg()), Vector3D(0, 0,-goodForce));
 	}
 
-	if( GetAsyncKeyState( 'M' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_M) )
 	{
         body.applyForce( Vector3D(-3.74f,0,0.32f), Vector3D(0, 0, goodForce));
         body.applyForce( Vector3D(3.74f,0,0.32f), Vector3D(0, 0, goodForce));
@@ -306,20 +307,20 @@ float HarrierJSONRigidBody::getPowerOutput(int engine)
 bool HarrierJSONRigidBody::onSyncKeyPress()
 {
     for( int i=0 ; i <10; ++i)
-        if(GetKeyState('0'+i) < 0)
+        if(simulatorKeyDown(static_cast<Qt::Key>(Qt::Key_0 + i)))
         {
             setNozzleAngle(i*10.0f);
             return true;
         }
 
-    if( GetKeyState(VK_F5) < 0) //Reset
+    if( simulatorKeyDown(Qt::Key_F5)) //Reset
 	{
 		reset();
 		initSpeedAndPos();
 		return true;
 	}
 
-    if( GetKeyState(VK_F7) < 0 )
+    if( simulatorKeyDown(Qt::Key_F7) )
 	{
 		double fMilesOut = 3.5f;
 		reset();
@@ -333,14 +334,14 @@ bool HarrierJSONRigidBody::onSyncKeyPress()
 		return true;
 	}
 
-    if( GetKeyState(VK_F1) < 0 || GetKeyState(VK_F2) < 0 ) //Flaps
+    if( simulatorKeyDown(Qt::Key_F1) || simulatorKeyDown(Qt::Key_F2) ) //Flaps
 	{
 		AeroControlSurface* pInnerML = _left_wing.element(1)->controlSurfaceN(0);
 		AeroControlSurface* pInnerMR = _right_wing.element(1)->controlSurfaceN(0);
 
 		float fDeflection = hydraulics().getDeflection(pInnerML);
 
-        if( GetKeyState(VK_F1) < 0 )
+        if( simulatorKeyDown(Qt::Key_F1) )
 		{
 			fDeflection -= 5.0f;
 			if (fDeflection <= 0.0f)
@@ -529,9 +530,9 @@ bool HarrierJSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         }
     }
 
-    if( GetAsyncKeyState( '3' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_3) )
     {
-        if( GetAsyncKeyState( VK_CONTROL ) == 0 )
+        if( !simulatorKeyDown(Qt::Key_Control) )
         {
             float deflection_l = _left_tail_wing.element(0)->controlSurfaceN(0)->getDeflection();
             deflection_l -= dt * 30;
@@ -562,9 +563,9 @@ bool HarrierJSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         }
     }
 
-    if( GetAsyncKeyState( '4' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_4) )
     {
-        if( GetAsyncKeyState( VK_CONTROL ) == 0 )
+        if( !simulatorKeyDown(Qt::Key_Control) )
         {
             float deflection_l = _left_tail_wing.element(0)->controlSurfaceN(0)->getDeflection();
             deflection_l += dt * 30;
@@ -598,9 +599,9 @@ bool HarrierJSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
     if( _front_wheel.spring().getSteeringAngle() < -75 )	_front_wheel.spring().setSteeringAngle( -75);
     if( _front_wheel.spring().getSteeringAngle() > 75 )	_front_wheel.spring().setSteeringAngle(75);
 
-    if( GetAsyncKeyState( 'B' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_B) )
     {
-        if( GetAsyncKeyState( VK_SHIFT ) < 0 )
+        if( simulatorKeyDown(Qt::Key_Shift) )
         {
             _front_wheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
             _left_wheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );

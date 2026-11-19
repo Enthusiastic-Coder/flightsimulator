@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "QtKeyState.h"
 #include "BA380RigidBody.h"
 #include "JSONRigidBodyBuilder.h"
 #include <iostream>
@@ -24,31 +25,31 @@ void BAAirbus380CustomForceGenerator::onApplyForce(Particle *p, double dt)
 	// debug 0.05 ms  60 queries a millisecond
 	// release 0.01 ms 300 queries a millisecond.
 
-	if( GetAsyncKeyState( 'L' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_L) )
 		body.applyForce( Vector3D(0,0,0), body.toLocalGroundFrame(Vector3D(0, goodForce*4 ,0)));
 
-	if( GetAsyncKeyState( 223 ) < 0 )
+	if( simulatorKeyDown(Qt::Key_NumberSign) )
 		body.applyForce( pFW->getContactPointCG(body.cg()), Vector3D(0,goodForce,0));
 
-	if( GetAsyncKeyState( '1' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_1) )
 		body.applyForce( pLW->getContactPointCG(body.cg()), Vector3D(0,goodForce*2,0));
 
-	if( GetAsyncKeyState( '2' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_2) )
 		body.applyForce( pRW->getContactPointCG(body.cg()), Vector3D(0,goodForce*2,0));
 
-	if( GetAsyncKeyState( 'J' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_J) )
 		body.applyForce( Vector3D(0,2.74f,-28.25f), Vector3D(-goodForce, 0 ,0));
 
-	if( GetAsyncKeyState( 'K' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_K) )
 		body.applyForce( Vector3D(0,2.74f,-28.25f), Vector3D(goodForce, 0 ,0));
 
-	if( GetAsyncKeyState( 'I') < 0 )
+	if( simulatorKeyDown(Qt::Key_I) )
 	{
 		body.applyForce( Vector3D(-5.86f,-1.75,-1.1f), Vector3D(0, 0,-goodForce));
 		body.applyForce( Vector3D(5.86f,-1.75,-1.1f), Vector3D(0, 0,-goodForce));
 	}
 
-	if( GetAsyncKeyState( 'M' ) < 0 )
+	if( simulatorKeyDown(Qt::Key_M) )
 	{
 		body.applyForce( Vector3D(-3.74f,0,0.32f), Vector3D(0, 0, goodForce));
 		body.applyForce( Vector3D(3.74f,0,0.32f), Vector3D(0, 0, goodForce));
@@ -391,9 +392,9 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         }
     }
 
-    if( GetAsyncKeyState( '3' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_3) )
     {
-        if( GetAsyncKeyState( VK_CONTROL ) == 0 )
+        if( !simulatorKeyDown(Qt::Key_Control) )
         {
             //float deflection_l = _left_tail_wing.element(0)->controlSurfaceN(0)->getDeflection();
             //deflection_l -= dt * 30;
@@ -424,9 +425,9 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         }
     }
 
-    if( GetAsyncKeyState( '4' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_4) )
     {
-        if( GetAsyncKeyState( VK_CONTROL ) == 0 )
+        if( !simulatorKeyDown(Qt::Key_Control) )
         {
             float deflection_l = _left_tail_wing.element(0)->controlSurfaceN(0)->getDeflection();
             deflection_l += dt * 30;
@@ -457,7 +458,7 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         }
     }
 
-    if( GetAsyncKeyState( '5' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_5) )
     {
         float deflection_l = _left_wing.element(0)->controlSurfaceN(0)->getDeflection();
         deflection_l -= dt * 30;
@@ -472,7 +473,7 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         _right_wing.element(0)->controlSurfaceN(0)->setDeflection(deflection_r);
     }
 
-    if( GetAsyncKeyState( '6' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_6) )
     {
         float deflection_l = _left_wing.element(0)->controlSurfaceN(0)->getDeflection();
         deflection_l += dt * 30;
@@ -487,7 +488,7 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         _right_wing.element(0)->controlSurfaceN(0)->setDeflection(deflection_r);
     }
 
-    if( GetAsyncKeyState( '7') < 0 )
+    if( simulatorKeyDown(Qt::Key_7) )
     {
         _front_wheel.spring().incrSteeringAngle(- dt*30);
         float deflection = _front_wheel.spring().getSteeringAngle() ;
@@ -497,7 +498,7 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
 
     }
 
-    if( GetAsyncKeyState( '8') < 0 )
+    if( simulatorKeyDown(Qt::Key_8) )
     {
         _front_wheel.spring().incrSteeringAngle(dt*30);
         float deflection = _front_wheel.spring().getSteeringAngle() ;
@@ -506,7 +507,7 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         _vertical_tail.element(0)->controlSurfaceN(0)->setDeflection(deflection);
     }
 
-    if( GetAsyncKeyState( '0' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_0) )
     {
         _front_wheel.spring().setSteeringAngle(0.0f);
 
@@ -519,7 +520,7 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         //hydraulics().setDeflection( _right_tail_wing.controlSurface0(), 0.0f );
     }
 
-    if( GetAsyncKeyState( '9' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_9) )
     {
         _front_wheel.spring().setWheelSpeed(-std::min(fabs(_front_wheel.spring().getWheelSpeed()-max_accel* dt),100.0) );
 
@@ -530,13 +531,13 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
         _right_back_wheel.spring().setWheelSpeed( -std::min(fabs(_right_back_wheel.spring().getWheelSpeed() - max_accel* dt), 100.0));
     }
 
-    if( GetAsyncKeyState( VK_NEXT ) < 0 )
+    if( simulatorKeyDown(Qt::Key_PageDown) )
     {
         for (int i = 0; i < 4; ++i)
             _engine[i]._thrust_percent -= dt * 20;
     }
 
-    if( GetAsyncKeyState( VK_PRIOR ) < 0 )
+    if( simulatorKeyDown(Qt::Key_PageUp) )
     {
         for (int i = 0; i < 4; ++i)
             _engine[i]._thrust_percent += dt * 20;
@@ -548,9 +549,9 @@ bool BAAirbus380JSONRigidBody::onAsyncKeyPress(IScreenMouseInfo* scrn, float dt)
     if( _front_wheel.spring().getSteeringAngle() > 75 )
         _front_wheel.spring().setSteeringAngle(75);
 
-    if( GetAsyncKeyState( 'B' ) < 0 )
+    if( simulatorKeyDown(Qt::Key_B) )
     {
-        if( GetAsyncKeyState( VK_SHIFT ) < 0 )
+        if( simulatorKeyDown(Qt::Key_Shift) )
         {
             _left_front_wheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
             _left_back_wheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
@@ -698,14 +699,14 @@ void BAAirbus380JSONRigidBody::setPower(float value)
 
 bool BAAirbus380JSONRigidBody::onSyncKeyPress()
 {
-    if( GetKeyState(VK_F5) < 0)
+    if( simulatorKeyDown(Qt::Key_F5))
 	{
 		reset();
 		initSpeedAndPos();
 		return true;
 	}
 
-    if( GetKeyState(VK_F7) < 0 )
+    if( simulatorKeyDown(Qt::Key_F7) )
 	{
 		double fMilesOut = 3.5f;
 		reset();

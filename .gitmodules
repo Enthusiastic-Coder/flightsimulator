@@ -1,12 +1,6 @@
 [submodule "sdk"]
 	path = sdk
 url=https://github.com/Enthusiastic-Coder/sdk.git
-[submodule "sdl2"]
-	path = sdl2
-url=https://github.com/Enthusiastic-Coder/sdl2.git
-[submodule "sdl2_image"]
-	path = sdl2_image
-url=https://github.com/Enthusiastic-Coder/sdl2Image.git
 [submodule "openal"]
 	path = openal
 url=https://github.com/Enthusiastic-Coder/openal.git

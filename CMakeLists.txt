@@ -14,14 +14,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGL)
 
 set(FLIGHTSIM_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
-set(FLIGHTSIM_SDL2_DIR "${FLIGHTSIM_ROOT}/sdl2/VisualC/x64")
-set(FLIGHTSIM_SDL2_IMAGE_DIR "${FLIGHTSIM_ROOT}/sdl2_image/VisualC/x64")
 set(FLIGHTSIM_OPENAL_DIR "${FLIGHTSIM_ROOT}/openal/libs/Win64")
 set(FLIGHTSIM_ASSIMP_DIR "${FLIGHTSIM_ROOT}/assimp2")
-set(FLIGHTSIM_SDL2_IMAGE_CODEC_DIR "${FLIGHTSIM_ROOT}/sdl2_image/VisualC/external/lib/x64")
 
 set(FLIGHTSIM_SOURCES
 	AeroControlSurface.cpp
@@ -93,10 +90,8 @@ set(FLIGHTSIM_SOURCES
 	ScaledHeightTerrainData.cpp
 	SceneryManager.cpp
 	QtGameLoop.cpp
-	SDLJoystickSystem.cpp
+	Win32JoystickSystem.cpp
 	QtSimulatorWindow.cpp
-	SDLSurfaceHelper.cpp
-	SDLTimer.cpp
 	QtMain.cpp
 	SimpleCloud.cpp
 	SimpleSpringModel.cpp
@@ -121,19 +116,9 @@ set(FLIGHTSIM_SOURCES
 )
 
 set(FLIGHTSIM_REQUIRED_LIBRARIES
-	"${FLIGHTSIM_SDL2_DIR}/Debug/SDL2main.lib"
-	"${FLIGHTSIM_SDL2_DIR}/Debug/SDL2.lib"
-	"${FLIGHTSIM_SDL2_DIR}/Release/SDL2main.lib"
-	"${FLIGHTSIM_SDL2_DIR}/Release/SDL2.lib"
-	"${FLIGHTSIM_SDL2_IMAGE_DIR}/Debug/SDL2_image.lib"
-	"${FLIGHTSIM_SDL2_IMAGE_DIR}/Release/SDL2_image.lib"
 	"${FLIGHTSIM_OPENAL_DIR}/OpenAL32.lib"
 	"${FLIGHTSIM_ASSIMP_DIR}/Debug/Assimp32.lib"
 	"${FLIGHTSIM_ASSIMP_DIR}/Release/Assimp32.lib"
-	"${FLIGHTSIM_SDL2_DIR}/Debug/SDL2.dll"
-	"${FLIGHTSIM_SDL2_DIR}/Release/SDL2.dll"
-	"${FLIGHTSIM_SDL2_IMAGE_DIR}/Debug/SDL2_image.dll"
-	"${FLIGHTSIM_SDL2_IMAGE_DIR}/Release/SDL2_image.dll"
 	"${FLIGHTSIM_ROOT}/openal/Win32/x64/OpenAL32.dll"
 	"${FLIGHTSIM_ASSIMP_DIR}/Debug/Assimp32.dll"
 	"${FLIGHTSIM_ASSIMP_DIR}/Release/Assimp32.dll"
@@ -143,16 +128,9 @@ foreach(library IN LISTS FLIGHTSIM_REQUIRED_LIBRARIES)
 	if(NOT EXISTS "${library}")
 		message(FATAL_ERROR
 			"Required dependency file not found: ${library}\n"
-			"Build the x64 SDL2 and SDL2_image Debug/Release libraries first, or restore the dependency submodules and their prebuilt libraries.")
+			"Restore the dependency submodules and their prebuilt x64 libraries.")
 	endif()
 endforeach()
-
-file(GLOB FLIGHTSIM_SDL2_IMAGE_CODEC_DLLS CONFIGURE_DEPENDS
-	"${FLIGHTSIM_SDL2_IMAGE_CODEC_DIR}/*.dll")
-if(NOT FLIGHTSIM_SDL2_IMAGE_CODEC_DLLS)
-	message(FATAL_ERROR
-		"SDL_image codec DLLs were not found in ${FLIGHTSIM_SDL2_IMAGE_CODEC_DIR}.")
-endif()
 
 add_executable(FlightSimulator ${FLIGHTSIM_SOURCES})
 
@@ -162,8 +140,6 @@ target_compile_options(FlightSimulator PRIVATE
 
 target_include_directories(FlightSimulator PRIVATE
 	"${FLIGHTSIM_ROOT}"
-	"${FLIGHTSIM_ROOT}/sdl2/include"
-	"${FLIGHTSIM_ROOT}/sdl2_image/include"
 	"${FLIGHTSIM_ROOT}/openal/include"
 	"${FLIGHTSIM_ROOT}/rapidjson/include"
 	"${FLIGHTSIM_ROOT}/sdk/include"
@@ -172,22 +148,17 @@ target_include_directories(FlightSimulator PRIVATE
 
 target_compile_definitions(FlightSimulator PRIVATE
 	RAPIDJSON_HAS_STDSTRING=1
-	WANT_SDL_SDL_SURFACE
 )
 
 target_link_libraries(FlightSimulator PRIVATE
 	Qt6::Widgets
-	"$<$<CONFIG:Debug>:${FLIGHTSIM_SDL2_DIR}/Debug/SDL2main.lib>"
-	"$<$<CONFIG:Debug>:${FLIGHTSIM_SDL2_DIR}/Debug/SDL2.lib>"
-	"$<$<NOT:$<CONFIG:Debug>>:${FLIGHTSIM_SDL2_DIR}/Release/SDL2main.lib>"
-	"$<$<NOT:$<CONFIG:Debug>>:${FLIGHTSIM_SDL2_DIR}/Release/SDL2.lib>"
-	"$<$<CONFIG:Debug>:${FLIGHTSIM_SDL2_IMAGE_DIR}/Debug/SDL2_image.lib>"
-	"$<$<NOT:$<CONFIG:Debug>>:${FLIGHTSIM_SDL2_IMAGE_DIR}/Release/SDL2_image.lib>"
+	Qt6::OpenGL
 	"${FLIGHTSIM_OPENAL_DIR}/OpenAL32.lib"
 	"$<$<CONFIG:Debug>:${FLIGHTSIM_ASSIMP_DIR}/Debug/Assimp32.lib>"
 	"$<$<NOT:$<CONFIG:Debug>>:${FLIGHTSIM_ASSIMP_DIR}/Release/Assimp32.lib>"
 	opengl32
 	User32
+	winmm
 )
 
 set(FLIGHTSIM_RUNTIME_ASSETS
@@ -214,12 +185,6 @@ endforeach()
 
 add_custom_command(TARGET FlightSimulator POST_BUILD
 	COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-		"$<IF:$<CONFIG:Debug>,${FLIGHTSIM_SDL2_DIR}/Debug/SDL2.dll,${FLIGHTSIM_SDL2_DIR}/Release/SDL2.dll>"
-		"$<TARGET_FILE_DIR:FlightSimulator>"
-	COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-		"$<IF:$<CONFIG:Debug>,${FLIGHTSIM_SDL2_IMAGE_DIR}/Debug/SDL2_image.dll,${FLIGHTSIM_SDL2_IMAGE_DIR}/Release/SDL2_image.dll>"
-		"$<TARGET_FILE_DIR:FlightSimulator>"
-	COMMAND "${CMAKE_COMMAND}" -E copy_if_different
 		"$<IF:$<CONFIG:Debug>,${FLIGHTSIM_ASSIMP_DIR}/Debug/Assimp32.dll,${FLIGHTSIM_ASSIMP_DIR}/Release/Assimp32.dll>"
 		"$<TARGET_FILE_DIR:FlightSimulator>"
 	COMMAND "${CMAKE_COMMAND}" -E copy_if_different
@@ -233,12 +198,3 @@ add_custom_command(TARGET FlightSimulator POST_BUILD
 		"$<TARGET_FILE:FlightSimulator>"
 	VERBATIM
 )
-
-foreach(codec_dll IN LISTS FLIGHTSIM_SDL2_IMAGE_CODEC_DLLS)
-	add_custom_command(TARGET FlightSimulator POST_BUILD
-		COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-			"${codec_dll}"
-			"$<TARGET_FILE_DIR:FlightSimulator>"
-		VERBATIM
-	)
-endforeach()

@@ -1,78 +1,46 @@
-#include <include_gl.h>
+#include "stdafx.h"
 #include "TextureLoader.h"
 
-#ifdef WANT_TEXTURE_LOAD_QIMAGE
 #include <QImage>
-#endif
-
-#ifdef WANT_SDL_SDL_SURFACE
-#include "SDLSurfaceHelper.h"
-#endif
+#include <QtLogging>
 
 namespace TextureLoader
 {
-#ifdef WANT_SDL_SDL_SURFACE
-	unsigned int loadTexture(SDL_Surface *surface, int minTex, int maxTex, int wrap)
-	{
-		if (surface == 0) return 0;
-
-		unsigned int num;
-		glGenTextures(1, &num);
-
-		glBindTexture(GL_TEXTURE_2D, num);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxTex);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minTex);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
-
-		return num;
-	}
-
-    unsigned int loadTexture(std::string filename,int minTex, int maxTex, int wrap, int* width, int* height)
+    unsigned int loadTexture(std::string filename, int minTex, int maxTex, int wrap, int* width, int* height)
     {
-        SDL_Surface* surface = SDL_SurfaceHelper::loadSDLSurface(filename);
-
-        if (surface == nullptr)
+        QImage image(QString::fromStdString(filename));
+        if (image.isNull())
         {
-            SDL_Log("loadTexture failed :%s: ", filename.c_str());
+            qWarning("Could not load texture: %s", filename.c_str());
             return 0;
         }
 
-        *width = surface->w;
-        *height = surface->h;
+        GLint maximumSize = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maximumSize);
+        if (maximumSize > 0 && qMax(image.width(), image.height()) > maximumSize)
+            image = image.scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-        unsigned int openglID = loadTexture( surface, minTex, maxTex, wrap);
-        SDL_FreeSurface(surface);
-        return openglID;
-    }
+        image = image.convertToFormat(QImage::Format_RGBA8888);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+        image.flip(Qt::Vertical);
+#else
+        image = image.mirrored();
 #endif
+        if (image.isNull())
+            return 0;
 
-#ifdef WANT_QT_QIMAGE
-#include <QImage>
-    unsigned int loadTexture(std::string filename, int minTex, int maxTex, int wrap, int* width, int* height)
-    {
-        unsigned int num = -1;
-        glGenTextures(1,&num);
-
-        QImage img = QImage(QString(filename.c_str())).mirrored()
-                        .convertToFormat(QImage::Format_RGBA8888);
-
-        glBindTexture(GL_TEXTURE_2D,num);
-
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,maxTex);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,minTex);
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxTex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minTex);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA, img.width(), img.height(),
-                        0, GL_RGBA, GL_UNSIGNED_BYTE, img.bits());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(),
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, image.constBits());
 
-        *width = img.width();
-        *height = img.height();
-        return num;
+        *width = image.width();
+        *height = image.height();
+        return texture;
     }
-#endif
-
 }

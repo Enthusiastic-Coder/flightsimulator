@@ -1,67 +1,56 @@
-#ifndef QT_GAME_LOOP_H
-#define QT_GAME_LOOP_H
+#pragma once
 
-#include <SDL.h>
-#include <SDLTimer.h>
-#include "interfaces.h"
-#include <include_gl.h>
-#include <string>
+#include "Interfaces.h"
 
-class QtGameLoop : public IScreenMouseInfo
+#include <QElapsedTimer>
+#include <QOpenGLWindow>
+#include <QSet>
+#include <QTimer>
+
+class QtGameLoop : public QOpenGLWindow, public IScreenMouseInfo
 {
 public:
     QtGameLoop();
-    ~QtGameLoop();
 
-    bool run(std::string strTitle);
-
+    bool run(const QString& title);
     void resetTimer();
     void setFramePerSecond(float fps);
-    void setRunning( bool bRunning );
-    bool isRunning();
-    float frameTime();
-    void update();
+    void setRunning(bool running);
+    bool isRunning() const;
+    float frameTime() const;
     void postQuit();
+    bool isKeyDown(Qt::Key key) const;
 
-    virtual bool onInitialise() {return false;}
-    virtual void onUnInitialise() {}
-    virtual void onUpdate() {}
-    virtual void onRender() {}
-    virtual void onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float dt)
-    {}
-
-    virtual void onKeyDown(SDL_KeyboardEvent* ) {}
-    virtual void onKeyUp(SDL_KeyboardEvent* ) {}
-    virtual void onMouseMotion(SDL_MouseMotionEvent* ) {}
-    virtual void onMouseDown(SDL_MouseButtonEvent* ) {}
-    virtual void onMouseUp(SDL_MouseButtonEvent* ) {}
-    virtual void onMouseWheel(SDL_MouseWheelEvent * ) {}
-    virtual void onFingerDown(SDL_TouchFingerEvent* ) {}
-    virtual void onFingerMotion(SDL_TouchFingerEvent* ) {}
-    virtual void onFingerUp(SDL_TouchFingerEvent* ) {}
-    virtual void onSize(int width, int height) { glViewport( 0, 0, width, height ); }
-    virtual void onMove(int x, int y) {}
-
-    virtual void GetMousePos(int& x, int& y) const override;
-    virtual void GetScreenDims(int& w, int &h) const override;
-    virtual void GetScreenPos(int& x, int &y) const override;
-
-private:
-    bool onDispatchMessage(SDL_Event& event);
-    void onTimeOut();
-
-private:
-    SDL_Window* _sdlWindow;
-    SDL_GLContext _glContext;
-    Uint32 _updateEventType;
-
-    SDLTimer _timer;
-    float _fInverseFPS;
-    float _dt;
-    bool _running;
+    void GetMousePos(int& x, int& y) const override;
+    void GetScreenDims(int& w, int& h) const override;
+    void GetScreenPos(int& x, int& y) const override;
 
 protected:
-    SDL_Window *getWindow();
-};
+    virtual bool onInitialise() = 0;
+    virtual void onUnInitialise() = 0;
+    virtual void onUpdate() = 0;
+    virtual void onRender() = 0;
+    virtual void onSize(int width, int height);
+    virtual void onKeyDown(QKeyEvent* event) = 0;
 
-#endif //QT_GAME_LOOP_H
+    QPoint framebufferPoint(const QPointF& point) const;
+    qint64 elapsedMilliseconds() const;
+
+private:
+    void initializeGL() override;
+    void resizeGL(int width, int height) override;
+    void paintGL() override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
+    void focusOutEvent(QFocusEvent* event) override;
+    bool event(QEvent* event) override;
+    void shutDown();
+
+    QTimer _redrawTimer;
+    QElapsedTimer _frameClock;
+    QElapsedTimer _applicationClock;
+    QSet<int> _pressedKeys;
+    float _dt = 0.0f;
+    bool _running = true;
+    bool _initialised = false;
+};

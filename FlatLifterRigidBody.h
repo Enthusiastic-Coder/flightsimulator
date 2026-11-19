@@ -1,6 +1,7 @@
 #pragma once
 
 #include "JSONRigidBodyCollection.h"
+#include "QtKeyState.h"
 
 #include <QGuiApplication>
 
@@ -284,41 +285,41 @@ void MyLifterOwnCustomForceGenerator::onApplyForce(Particle *p, double dt)
 
 	double dFactor = 1.0;
 
-	if (GetAsyncKeyState(VK_SHIFT) < 0)
+	if (simulatorKeyDown(Qt::Key_Shift))
 		dFactor = 2.0;
 
-	if (GetAsyncKeyState('1') < 0)
+	if (simulatorKeyDown(Qt::Key_1))
 		pBody->_heightRate += dt * dFactor;
 
-	if (GetAsyncKeyState('2') < 0)
+	if (simulatorKeyDown(Qt::Key_2))
 		pBody->_heightRate -= dt * dFactor;
 
 	dFactor *= 2;
 
-	if (GetAsyncKeyState('3'))
+	if (simulatorKeyDown(Qt::Key_3))
 		pBody->_angularVelocity.x += dFactor * dt;
 
-	if (GetAsyncKeyState('4'))
+	if (simulatorKeyDown(Qt::Key_4))
 		pBody->_angularVelocity.x -= dFactor * dt;
 
-	if (GetAsyncKeyState('5'))
+	if (simulatorKeyDown(Qt::Key_5))
 		pBody->_angularVelocity.y += dFactor * dt;
 
-	if (GetAsyncKeyState('6'))
+	if (simulatorKeyDown(Qt::Key_6))
 		pBody->_angularVelocity.y -= dFactor * dt;
 
-	if (GetAsyncKeyState('7'))
+	if (simulatorKeyDown(Qt::Key_7))
 		pBody->_angularVelocity.z += dFactor * dt;
 
-	if (GetAsyncKeyState('8'))
+	if (simulatorKeyDown(Qt::Key_8))
 		pBody->_angularVelocity.z -= dFactor * dt;
 
-	if (GetAsyncKeyState('0'))
+	if (simulatorKeyDown(Qt::Key_0))
 	{
 		pBody->_angularVelocity = Vector3D();
 		pBody->_heightRate = 0.0;
 
-		if (GetAsyncKeyState(VK_SHIFT) < 0)
+		if (simulatorKeyDown(Qt::Key_Shift))
 			pBody->_orientation.Reset();
 
 		pBody->UpdatePlane();

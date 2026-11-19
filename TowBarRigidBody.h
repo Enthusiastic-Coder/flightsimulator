@@ -1,6 +1,7 @@
 #pragma once
 
 #include "JSONRigidBodyCollection.h"
+#include "QtKeyState.h"
 
 #include <QGuiApplication>
 
@@ -32,36 +33,36 @@ public:
 		float goodForce = 10000.0f;
 		pBody->setBodyFrame();
 
-		if( GetAsyncKeyState( 'L' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_L) )
 			pBody->applyForce( Vector3D(0,0,0), pBody->toLocalGroundFrame(Vector3D(0, goodForce*3 ,0)));
 
 		pBody->setBodyFrame();
 
-		if( GetAsyncKeyState( 223 ) < 0 )
+		if( simulatorKeyDown(Qt::Key_NumberSign) )
 			pBody->applyForce( Vector3D(0, 0.5f, 2.65f),  pBody->toLocalGroundFrame(Vector3D(0, goodForce ,0)));
 
-		if( GetAsyncKeyState( '1' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_1) )
 			pBody->applyForce( Vector3D(0.0f,0.54f, -3.26f),  pBody->toLocalGroundFrame(Vector3D(0, goodForce ,0)));
 
-		if( GetAsyncKeyState( 'J' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_J) )
 			pBody->applyForce( Vector3D(0,1,2),  Vector3D(goodForce/2, 0 ,0));
 
-		if( GetAsyncKeyState( 'K' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_K) )
 			pBody->applyForce( Vector3D(0,1,2),  Vector3D(-goodForce/2, 0 ,0));
 
-		if( GetAsyncKeyState( 'I') < 0 )
+		if( simulatorKeyDown(Qt::Key_I) )
 		{
 			pBody->_leftWheel.spring().getWheelSpeed() -= max_accel * dt;
 			pBody->_rightWheel.spring().getWheelSpeed() -= max_accel * dt;
 		}
 
-		if( GetAsyncKeyState( 'M' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_M) )
 		{
 			pBody->applyForce( Vector3D(-1.74f,0,0.32f), Vector3D(0, 0, goodForce));
 			pBody->applyForce( Vector3D(1.74f,0,0.32f), Vector3D(0, 0, goodForce));
 		}
 
-		if( GetAsyncKeyState( 'B' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_B) )
 		{
 			if( pBody->_leftWheel.spring().getWheelSpeed()  > 0 )
 				pBody->_leftWheel.spring().getWheelSpeed() -= min( max_decel * dt, pBody->_leftWheel.spring().getWheelSpeed() );

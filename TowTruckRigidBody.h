@@ -6,6 +6,7 @@
 #include <QWindow>
 #include <QPoint>
 #include "GSForceGenerator.h"
+#include "QtKeyState.h"
 #include "SpringForceGenerator.h"
 
 template<class T>
@@ -36,13 +37,13 @@ public:
 		float goodForce = 100000.0f/3.0f;
 		pTowTruck->setBodyFrame();
 
-		if( GetAsyncKeyState( 'L' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_L) )
 			pTowTruck->applyForce( VectorD(0,0,0),pTowTruck->toLocalGroundFrame(VectorD(0, goodForce*3 ,0)));
 
-		if( GetAsyncKeyState( 'J' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_J) )
 			pTowTruck->applyForce( VectorD(0,1,2), VectorD(goodForce, 0 ,0));
 
-		if( GetAsyncKeyState( 'K' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_K) )
 			pTowTruck->applyForce( VectorD(0,1,2), VectorD(-goodForce, 0 ,0));
 
 		if( _hasFocus && _bDrivingByMouse )
@@ -82,7 +83,7 @@ public:
 			pTowTruck->_rightFrontWheel.spring().getSteeringAngle() = towAngle;
 		}
 
-		if( GetAsyncKeyState( 'I') < 0 || (_hasFocus && _bDrivingByMouse))
+		if( simulatorKeyDown(Qt::Key_I) || (_hasFocus && _bDrivingByMouse))
 		{
 			pTowTruck->_leftFrontWheel.spring().getWheelSpeed() -= max_accel * dt;
 			pTowTruck->_rightFrontWheel.spring().getWheelSpeed() -= max_accel * dt;
@@ -91,7 +92,7 @@ public:
 			pTowTruck->_rightRearWheel.spring().getWheelSpeed() -= max_accel * dt;
 		}
 
-		if( GetAsyncKeyState( 'M' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_M) )
 		{
 			pTowTruck->_leftFrontWheel.spring().getWheelSpeed() += max_accel * dt;
 			pTowTruck->_rightFrontWheel.spring().getWheelSpeed() += max_accel * dt;
@@ -101,7 +102,7 @@ public:
 		}
 
 
-		if( GetAsyncKeyState( 'B' ) < 0 && GetAsyncKeyState( VK_SHIFT ) < 0 )
+		if( simulatorKeyDown(Qt::Key_B) && simulatorKeyDown(Qt::Key_Shift) )
 		{
 			pTowTruck->_leftFrontWheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
 			pTowTruck->_rightFrontWheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
@@ -110,7 +111,7 @@ public:
 
 		}
 
-		if( GetAsyncKeyState( 'B' ) < 0 && GetAsyncKeyState( VK_SHIFT ) >= 0 )
+		if( simulatorKeyDown(Qt::Key_B) && !simulatorKeyDown(Qt::Key_Shift) )
 		{
 			if( pTowTruck->_leftFrontWheel.spring().getWheelSpeed()  > 0 )
 				pTowTruck->_leftFrontWheel.spring().getWheelSpeed() -= min( max_decel * dt, pTowTruck->_leftFrontWheel.spring().getWheelSpeed() );

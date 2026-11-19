@@ -32,7 +32,7 @@
 ////////////////////////////////////////////////////////
 
 
-#include "SDLJoystickSystem.h"
+#include "Win32JoystickSystem.h"
 
 #include "SimpleCloud.h"
 
@@ -82,7 +82,7 @@ void WorldSystem::onInitialise()
 {
     loadTerrain();
     _rigidBodyCollection.onInitialise();
-    _Joy = new SDLJoystickSystem;
+    _Joy = new Win32JoystickSystem;
     _Joy->joyInit(0);
 
     addStaticJSONBody(_simpleCloud=new SimpleCloud("cloud_A"));

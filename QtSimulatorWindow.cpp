@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "QtSimulatorWindow.h"
 #include <QPainter>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QWheelEvent>
+#include <QtLogging>
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -44,34 +48,22 @@
 #define MS_TO_MPH( value ) MS_TO_KTS( value*1.15 )
 
 
-void QtSimulatorWindow::onHandleAsyncKeys(const Uint8* keys, SDL_Keymod mod, float dt)
+void QtSimulatorWindow::mouseReleaseEvent(QMouseEvent* e)
 {
-//    bool bShiftPressed = KMOD_SHIFT & mod;
-//    bool bCtrlPressed = KMOD_CTRL & mod;
-//    bool bAltPressed = KMOD_ALT & mod;
-
-//    if( keys[SDL_SCANCODE_PAGEUP] )
-//        _worldSystem.focusRigidBody().powerUp(dt);
-
-//    if( keys[SDL_SCANCODE_PAGEDOWN])
-//        _worldSystem.focusRigidBody().powerDown(dt);
-
-//    if( keys[SDL_SCANCODE_B] )
-//        _worldSystem.FocusRigidBody().applyStandardBrakes(bShiftPressed, dt);
+    const QPoint point = framebufferPoint(e->position());
+    _buttonTextureManager.handleMouseUp({point.x(), point.y()});
+    _powerSliderControl.handleMouseUp({point.x(), point.y()});
 }
 
-void QtSimulatorWindow::onKeyUp(SDL_KeyboardEvent* e)
-{  }
-
-void QtSimulatorWindow::onMouseUp(SDL_MouseButtonEvent* e)
+void QtSimulatorWindow::wheelEvent(QWheelEvent* e)
 {
-    _buttonTextureManager.handleMouseUp({e->x, e->y});
-    _powerSliderControl.handleMouseUp({e->x, e->y});
-}
-
-void QtSimulatorWindow::onMouseWheel(SDL_MouseWheelEvent *e)
-{
-    _WorldSystem.onMouseWheel(e->y);
+    constexpr int unitsPerStep = 120;
+    _wheelDelta += e->angleDelta().y();
+    const int steps = _wheelDelta / unitsPerStep;
+    if (steps == 0)
+        return;
+    _wheelDelta %= unitsPerStep;
+    _WorldSystem.onMouseWheel(steps);
     JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
     if (focus)
     {
@@ -80,10 +72,11 @@ void QtSimulatorWindow::onMouseWheel(SDL_MouseWheelEvent *e)
     }
 }
 
-void QtSimulatorWindow::onMouseMotion(SDL_MouseMotionEvent *e)
+void QtSimulatorWindow::mouseMoveEvent(QMouseEvent* e)
 {
-    _buttonTextureManager.handleMouseMove({e->x, e->y});
-    if( _powerSliderControl.handleMouseMove({e->x, e->y}))
+    const QPoint point = framebufferPoint(e->position());
+    _buttonTextureManager.handleMouseMove({point.x(), point.y()});
+    if( _powerSliderControl.handleMouseMove({point.x(), point.y()}))
     {
         JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
         if (focus)
@@ -91,23 +84,17 @@ void QtSimulatorWindow::onMouseMotion(SDL_MouseMotionEvent *e)
     }
 }
 
-void QtSimulatorWindow::onMouseDown(SDL_MouseButtonEvent *e)
+void QtSimulatorWindow::mousePressEvent(QMouseEvent* e)
 {
-    _buttonTextureManager.handleMouseDown({e->x, e->y});
-    if(_powerSliderControl.handleMouseDown({e->x, e->y}))
+    const QPoint point = framebufferPoint(e->position());
+    _buttonTextureManager.handleMouseDown({point.x(), point.y()});
+    if(_powerSliderControl.handleMouseDown({point.x(), point.y()}))
     {
         JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
         if (focus)
             focus->setPower(_powerSliderControl.getValue());
     }
 }
-
-void QtSimulatorWindow::onFingerDown(SDL_TouchFingerEvent* e)
-{  }
-void QtSimulatorWindow::onFingerMotion(SDL_TouchFingerEvent* e)
-{ }
-void QtSimulatorWindow::onFingerUp(SDL_TouchFingerEvent* e)
-{ }
 
 void QtSimulatorWindow::onSize(int width, int height)
 {
@@ -123,10 +110,6 @@ void QtSimulatorWindow::onSize(int width, int height)
         mat.LoadIdentity();
         mat.SetPerspective(55, float(width)/height, 1, 120000);
     }
-}
-
-void QtSimulatorWindow::onMove(int x, int y)
-{
 }
 
 QtSimulatorWindow::QtSimulatorWindow() :
@@ -156,63 +139,63 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
 {
     if (!_simpleShaderProgram.loadFiles("shaders/simpleShader.vert", "shaders/simpleShader.frag"))
     {
-        SDL_Log("%s %s", _simpleShaderProgram.getError().c_str(), "simpleShader Failed" );
+        qInfo("%s %s", _simpleShaderProgram.getError().c_str(), "simpleShader Failed" );
         return false;
     }
 
 #ifdef LOCATED_AT_LONDON
     if (!_shadowShaderProgram.loadFiles("shaders/shadowShader-mobile.vert", "shaders/shadowShader-mobile.frag"))
     {
-        SDL_Log("%s %s", _shadowShaderProgram.getError().c_str(), "shadowShader-mobile Failed");
+        qInfo("%s %s", _shadowShaderProgram.getError().c_str(), "shadowShader-mobile Failed");
         return false;
     }
 #else
     if (!_shadowShaderProgram.loadFiles("shaders/shadowShader.vert", "shaders/shadowShader.frag"))
     {
-        SDL_Log("%s %s", _shadowShaderProgram.getError().c_str(), "shadowShader Failed");
+        qInfo("%s %s", _shadowShaderProgram.getError().c_str(), "shadowShader Failed");
         return false;
     }
 
     if (!_reflectionShaderProgram.loadFiles("shaders/reflectionShader.vert", "shaders/reflectionShader.frag"))
     {
-        SDL_Log("%s %s",  _reflectionShaderProgram.getError().c_str(), "reflectionShader Failed");
+        qInfo("%s %s",  _reflectionShaderProgram.getError().c_str(), "reflectionShader Failed");
         return false;
     }
 
     if (!_waterShaderProgram.loadFiles("shaders/water.vert", "shaders/water.frag"))
     {
-        SDL_Log("%s %s", _waterShaderProgram.getError().c_str(), "waterShader Failed");
+        qInfo("%s %s", _waterShaderProgram.getError().c_str(), "waterShader Failed");
         return false;
     }
 #endif
 
     if( !_simplePrimitiveShaderProgram.loadFiles("shaders/simplePrimitiveShader.vert", "shaders/simplePrimitiveShader.frag"))
     {
-        SDL_Log("%s %s", _simplePrimitiveShaderProgram.getError().c_str(), "simplePrimitiveShader Failed");
+        qInfo("%s %s", _simplePrimitiveShaderProgram.getError().c_str(), "simplePrimitiveShader Failed");
         return false;
     }
 
     if( !_simpleColorPrimitiveShaderProgram.loadFiles("shaders/simpleColorPrimitiveShader.vert", "shaders/simpleColorPrimitiveShader.frag"))
     {
-        SDL_Log("%s %s", _simpleColorPrimitiveShaderProgram.getError().c_str(), "simpleColorPrimitiveShader Failed");
+        qInfo("%s %s", _simpleColorPrimitiveShaderProgram.getError().c_str(), "simpleColorPrimitiveShader Failed");
         return false;
     }
 
     if( !_fontShaderProgram.loadFiles("shaders/fontShader.vert", "shaders/fontShader.frag"))
     {
-        SDL_Log("%s %s", _fontShaderProgram.getError().c_str(), "_fontShaderProgram Failed");
+        qInfo("%s %s", _fontShaderProgram.getError().c_str(), "_fontShaderProgram Failed");
         return false;
     }
 
     if( !_textureShaderProgram.loadFiles("shaders/textureShader.vert", "shaders/textureShader.frag"))
     {
-        SDL_Log("%s %s", _textureShaderProgram.getError().c_str(), "_textureShaderProgram Failed");
+        qInfo("%s %s", _textureShaderProgram.getError().c_str(), "_textureShaderProgram Failed");
         return false;
     }
 
     if (!_openGLFrameBuffer.generate())
     {
-        SDL_Log("Failed to be created. - FrameBuffer Failed");
+        qInfo("Failed to be created. - FrameBuffer Failed");
         return false;
     }
 
@@ -227,40 +210,40 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
 
     if (!_shadowDepthMap1.generate(512 * f[0], 512 * f[0], true))
     {
-        SDL_Log("Failed to be created. - Depth Texure Buffer Failed");
+        qInfo("Failed to be created. - Depth Texure Buffer Failed");
         return false;
     }
 
 #ifndef LOCATED_AT_LONDON
     if (!_shadowMap2.generate(512 * f[1], 512 * f[1], true))
     {
-        SDL_Log("Failed to be created. - Depth Texure 2 Buffer Failed");
+        qInfo("Failed to be created. - Depth Texure 2 Buffer Failed");
         return false;
     }
 
     if (!_shadowMap3.generate(512 * f[2], 512 * f[2], true))
     {
-        SDL_Log("Failed to be created. - Depth Texure 3 Buffer Failed");
+        qInfo("Failed to be created. - Depth Texure 3 Buffer Failed");
         return false;
     }
 #endif
 
     if (!_shadowTextureMap1.generate(512 * f[0], 512 * f[0], false))
     {
-        SDL_Log( "Failed to be created. - Depth Color Texure Buffer Failed");
+        qInfo( "Failed to be created. - Depth Color Texure Buffer Failed");
         return false;
     }
 
 #ifndef LOCATED_AT_LONDON
     if (!_shadowMapTexture2.generate(512 * f[1], 512 * f[1], false))
     {
-        SDL_Log("Failed to be created. - Depth Color Texure 2 Buffer Failed");
+        qInfo("Failed to be created. - Depth Color Texure 2 Buffer Failed");
         return false;
     }
 
     if (!_shadowMapTexture3.generate(512 * f[2], 512 * f[2], false))
     {
-        SDL_Log( "Failed to be created. - Depth Color Texure 3 Buffer Failed");
+        qInfo( "Failed to be created. - Depth Color Texure 3 Buffer Failed");
         return false;
     }
 #endif
@@ -269,7 +252,7 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
     _pfdImage = QImage(pfdSize, pfdSize, QImage::Format_RGBA8888);
     if (_pfdImage.isNull() || !_pfdColorTexture.generate(pfdSize, pfdSize, false))
     {
-        SDL_Log("Failed to create texture - PFD color Texture");
+        qInfo("Failed to create texture - PFD color Texture");
         return false;
     }
 
@@ -279,13 +262,13 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
 
     if (!_depthRenderBuffer.generateDepth(width, height))
     {
-        SDL_Log("Depth Render buffer not complete. - FrameBuffer Failed");
+        qInfo("Depth Render buffer not complete. - FrameBuffer Failed");
         return false;
     }
 
     if (!_reflectionTexture.generate(width, height, false))
     {
-        SDL_Log( "Failed to be created. - Reflection Texure");
+        qInfo( "Failed to be created. - Reflection Texure");
         return false;
     }
 
@@ -294,7 +277,7 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
 
     if (!_dUdVMap.Load(ROOT_APP_TEXTURES_DIRECTORY"dudvmap.bmp"))
     {
-        SDL_Log("Failed to be load. - dU/dV Texure");
+        qInfo("Failed to be load. - dU/dV Texure");
         return false;
     }
 
@@ -303,12 +286,12 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
 
     if (!_normalMap.Load(ROOT_APP_TEXTURES_DIRECTORY"normalmap.bmp"))
     {
-        SDL_Log("Failed to be load.  - Normal Texure");
+        qInfo("Failed to be load.  - Normal Texure");
         return false;
     }
 #endif
 
-    SDL_Log("(%s, %d) - createFrameBufferAndShaders OK", __FUNCTION__, __LINE__);
+    qInfo("(%s, %d) - createFrameBufferAndShaders OK", __FUNCTION__, __LINE__);
 
     return true;
 }
@@ -383,7 +366,7 @@ bool QtSimulatorWindow::onInitialise()
 
         glClearStencil(0);
 
-        SDL_SetWindowTitle(getWindow(), "OpenGL Simulation by Mo");
+        setTitle(QStringLiteral("OpenGL Simulation by Mo"));
 
         /*_runwayscene.setPosition(GPSLocation(51.46158,-0.459402)+ VectorD(120,0,-325) );
         _runwaylites.setPosition(GPSLocation(51.46158,-0.459402) + GPSLocation(0.0032569999999978450, -0.014778000000000013) );
@@ -546,7 +529,7 @@ bool QtSimulatorWindow::onInitialise()
     }
     catch (std::string str)
     {
-        SDL_Log( "Error :%s:", str.c_str());
+        qInfo( "Error :%s:", str.c_str());
         return false;
     }
 
@@ -668,27 +651,14 @@ void QtSimulatorWindow::onUnInitialise()
 }
 
 
-void QtSimulatorWindow::onKeyDown(SDL_KeyboardEvent *e)
+void QtSimulatorWindow::onKeyDown(QKeyEvent* e)
 {
-#ifdef WIN32
-    /*    if( e.key.keysym.scancode == SDL_SCANCODE_F11 )
-            _WorldSystem.environment().incrLightFraction(-0.01f);
-
-        if( e.key.keysym.scancode == SDL_SCANCODE_F12 )
-            _WorldSystem.environment().incrLightFraction(0.01f);
-
-        //Reset position
-        if( e.key.keysym.scancode == SDL_SCANCODE_F5)
-            _WorldSystem.RigidBody().resetPosition();
-
-        if( e.key.keysym.scancode == SDL_SCANCODE_F7)
-            _WorldSystem.RigidBody().resetApproach();*/
-
+    const int key = e->key();
     JSONRigidBody *pBody = _WorldSystem.focusedRigidBody();
-    bool bShiftPressed = (GetAsyncKeyState(VK_SHIFT) < 0);
-    bool bAltPressed = GetAsyncKeyState(VK_MENU) & 0x8000;
+    const bool bShiftPressed = e->modifiers().testFlag(Qt::ShiftModifier);
+    const bool bAltPressed = e->modifiers().testFlag(Qt::AltModifier);
 
-    if( ::GetKeyState(VK_F5) < 0 )
+    if( key == Qt::Key_F5 )
     {
         /*_towTruck.initSpefile:///C:/Project/Code/Qt/FlightSimulator/Release/lastGPSpos.binedAndPos();
             _towTruck.reset();
@@ -714,25 +684,25 @@ void QtSimulatorWindow::onKeyDown(SDL_KeyboardEvent *e)
 
     if(pBody)
     {
-        if( ::GetKeyState(VK_F5) < 0)
+        if( key == Qt::Key_F5)
             pBody->airResetPos();
 
-        if( GetKeyState(VK_F7) < 0)
+        if( key == Qt::Key_F7)
             pBody->airResetApproachPos();
 
-        if( GetKeyState(VK_F3) <  0)
+        if( key == Qt::Key_F3)
             pBody->airSpoilerToggle(true);
 
-        if( GetKeyState(VK_F4) <  0)
+        if( key == Qt::Key_F4)
             pBody->airSpoilerToggle(false);
 
-        if( GetKeyState(VK_F1) < 0)
+        if( key == Qt::Key_F1)
             pBody->airFlapIncr( -1 );
 
-        if( GetKeyState(VK_F2) < 0)
+        if( key == Qt::Key_F2)
             pBody->airFlapIncr( 1 );
 
-        if( ::GetKeyState('R') < 0)
+        if( key == Qt::Key_R)
         {
             if( bShiftPressed )
                 pBody->startRecording();
@@ -744,9 +714,9 @@ void QtSimulatorWindow::onKeyDown(SDL_KeyboardEvent *e)
         }
     }
 
-    if( ::GetKeyState('F') < 0)
+    if( key == Qt::Key_F)
     {
-        if (GetAsyncKeyState(VK_SHIFT) < 0)
+        if (bShiftPressed)
             _WorldSystem.prevFocusedRigidBody();
         else
             _WorldSystem.nextFocusedRigidBody();
@@ -755,13 +725,13 @@ void QtSimulatorWindow::onKeyDown(SDL_KeyboardEvent *e)
     if( _WorldSystem.onSyncKeyPress())
         return;
 
-    if( ::GetKeyState(VK_F11) < 0 )
+    if( key == Qt::Key_F11 )
         _WorldSystem.incrLightFraction(-0.01f);
 
-    if( ::GetKeyState(VK_F12) < 0 )
+    if( key == Qt::Key_F12 )
         _WorldSystem.incrLightFraction(0.01f);
 
-    if( ::GetKeyState('R') < 0 )
+    if( key == Qt::Key_R )
     {
         if( !bShiftPressed && !bAltPressed)
         {
@@ -772,15 +742,15 @@ void QtSimulatorWindow::onKeyDown(SDL_KeyboardEvent *e)
         }
     }
 
-    if( ::GetKeyState('P') < 0 )
+    if( key == Qt::Key_P )
     {
         _bUserPolygonLineView = !_bUserPolygonLineView;
         update();
     }
 
-    if( ::GetKeyState('D') < 0 )
+    if( key == Qt::Key_D )
     {
-        if( ::GetKeyState(VK_SHIFT) < 0)
+        if( bShiftPressed)
             global_info = !global_info;
         else
             global_fg_debug = !global_fg_debug;
@@ -794,47 +764,17 @@ void QtSimulatorWindow::onKeyDown(SDL_KeyboardEvent *e)
         update();
     }
 
-    if( ::GetKeyState(VK_F6) < 0 )
+    if( key == Qt::Key_F6 )
     {
-        if( ::GetKeyState(VK_SHIFT) < 0 )
+        if( bShiftPressed )
             _WorldSystem.prevView();
         else
             _WorldSystem.nextView();
-
-        if (_WorldSystem.focusedRigidBody() && _WorldSystem.focusedRigidBody()->getID() == "A320_A_GIB")
-        {
-//            if (_view == Camera::ViewPosition::CockpitForwards)
-//            {
-//                ALfloat source0Pos[] = { 0.0, 0.0, 1.0 };
-//                ALfloat source0Vel[] = { 0.0, 0.0, 0.0 };
-
-//                alListener3f(AL_POSITION, 0, 0, 0);
-//                alSourcefv(_soundEngineSource, AL_POSITION, source0Pos);
-//                alSourcefv(_soundEngineSource, AL_VELOCITY, source0Vel);
-//                alSourcef(_soundEngineSource, AL_GAIN, 0.15f);
-
-//                alSourcePlay(_soundEnvironmentSource);
-//                alSourceStop(_soundEngineSource);
-
-//                alSourcei(_soundEngineSource, AL_BUFFER, _soundInternalEngineBuffer);
-//                alSourcePlay(_soundEngineSource);
-//            }
-//            else
-//            {
-//                alSourceStop(_soundEnvironmentSource);
-//                alSourceStop(_soundEngineSource);
-
-//                alSourcef(_soundEngineSource, AL_GAIN, 1.0f);
-//                alSourcef(_soundEngineSource, AL_PITCH, 1.0f);
-//                alSourcei(_soundEngineSource, AL_BUFFER, _soundExternalEngineBuffer);
-//                alSourcePlay(_soundEngineSource);
-//            }
-        }
     }
 
-    if( ::GetKeyState(VK_F8) < 0 )
+    if( key == Qt::Key_F8 )
     {
-        if( ::GetKeyState(VK_SHIFT) < 0 )
+        if( bShiftPressed )
         {
             global_force_lines_debug = (__global_force_lines_debug)((int)global_force_lines_debug-1);
             if( (int)global_force_lines_debug <= (int)__global_force_lines_debug::force_lines_begin )
@@ -847,7 +787,6 @@ void QtSimulatorWindow::onKeyDown(SDL_KeyboardEvent *e)
                 global_force_lines_debug = (__global_force_lines_debug)(int)(__global_force_lines_debug::force_lines_begin+1);
         }
     }
-#endif
 }
 
 void QtSimulatorWindow::onUpdate()
@@ -878,27 +817,27 @@ void QtSimulatorWindow::onUpdate()
     _nUVOffset += g_WaterFlow * dt;
 #endif
 
-    if(SDL_GetWindowFlags(getWindow()) & SDL_WINDOW_INPUT_FOCUS)
+    if(isActive())
         processInputsForCamera();
 
 #ifdef WIN32
 
-    if( GetAsyncKeyState( 'C' ) < 0 )
+    if( isKeyDown(Qt::Key_C) )
         _WorldSystem.incrChaseAngle(-50*dt);
 
-    if( GetAsyncKeyState( 'V' ) < 0 )
+    if( isKeyDown(Qt::Key_V) )
         _WorldSystem.incrChaseAngle(50*dt);
 
-    if( GetAsyncKeyState( 'W' ) < 0 )
+    if( isKeyDown(Qt::Key_W) )
         _WorldSystem.incrChaseHeight(50*dt);
 
-    if( GetAsyncKeyState( 'S' ) < 0 )
+    if( isKeyDown(Qt::Key_S) )
         _WorldSystem.incrChaseHeight(-50*dt);
 
-    if( GetAsyncKeyState( VK_OEM_PERIOD ) < 0 )
+    if( isKeyDown(Qt::Key_Period) )
         _WorldSystem.incrChaseDistance(-50*dt);
 
-    if( GetAsyncKeyState( VK_OEM_COMMA ) < 0 )
+    if( isKeyDown(Qt::Key_Comma) )
         _WorldSystem.incrChaseDistance(50*dt);
 #endif
 
@@ -1107,7 +1046,7 @@ void QtSimulatorWindow::RenderReflection()
 
     if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
     {
-    	SDL_Log("[%s,%d] - checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__ );
+        qInfo("[%s,%d] - checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__ );
         postQuit();
         return;
     }
@@ -1186,7 +1125,7 @@ void QtSimulatorWindow::RenderDepthTextures(int camID, OpenGLTexture2D& shadowMa
 
     if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
     {
-        SDL_Log("[%s,%d] - checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__ );
+        qInfo("[%s,%d] - checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__ );
         postQuit();
         return;
     }
@@ -1342,13 +1281,8 @@ void QtSimulatorWindow::onRender()
 {
     OpenGLPipeline& pipeline = OpenGLPipeline::Get(0);
 
-    SDL_Rect rect;
-    GetScreenDims(rect.w, rect.h);
-    GetScreenPos(rect.x, rect.y);
-
     int cx, cy;
-    cx = rect.w;
-    cy = rect.h;
+    GetScreenDims(cx, cy);
 
     pipeline.Push();
 
@@ -1375,8 +1309,6 @@ void QtSimulatorWindow::onRender()
 
     OpenGLShaderProgram::useDefault();
 
-    cx = rect.w;
-    cy = rect.h;
     glViewport(0,0, cx, cy);
 
     std::string desc = _WorldSystem.getCameraDescription();
@@ -1447,8 +1379,8 @@ void QtSimulatorWindow::RenderPlaybackRecordingGrafix()
 
     if( pBody != 0 && pBody->getState() != JSONRigidBody::STATE::NORMAL )
     {
-        Uint32 currentTicks = SDL_GetTicks();
-        Uint32 diff = currentTicks - _playRecordFlashLastTickTime;
+        const qint64 currentTicks = elapsedMilliseconds();
+        const qint64 diff = currentTicks - _playRecordFlashLastTickTime;
 
         if(diff > _playRecordFlashTickTime )
         {
@@ -1593,7 +1525,7 @@ void QtSimulatorWindow::RenderMouseFlying(float cx, float cy)
     }
 #else
     int x, y;
-    SDL_GetMouseState(&x, &y);
+    GetMousePos(x, y);
 
     painter.drawRect(x-5, y-5, 10, 10);
 #endif
@@ -1866,57 +1798,57 @@ void QtSimulatorWindow::setupCameraPosition(bool bReflection)
 void QtSimulatorWindow::processInputsForCamera()
 {
 #ifdef WIN32
-    bool bShiftOn = GetAsyncKeyState(VK_SHIFT) < 0;
-    bool bControlOn = GetAsyncKeyState(VK_CONTROL) < 0;
+    bool bShiftOn = isKeyDown(Qt::Key_Shift);
+    bool bControlOn = isKeyDown(Qt::Key_Control);
 
     float jump = (bShiftOn ? 100 : 2);
 
     if (bControlOn)
         jump /= 10;
 
-    if( ::GetAsyncKeyState(VK_LEFT) < 0)
+    if( isKeyDown(Qt::Key_Left))
         _camera.incrOrientation(0, 0,  -(bShiftOn ? 5 : 0.5));
 
-    if( ::GetAsyncKeyState(VK_RIGHT) < 0)
+    if( isKeyDown(Qt::Key_Right))
         _camera.incrOrientation(0, 0, (bShiftOn ? 5 : 0.5));
 
-    if( ::GetAsyncKeyState(VK_UP) < 0)
+    if( isKeyDown(Qt::Key_Up))
         _camera.incrOrientation((bShiftOn ? 5 : 0.5), 0, 0);
 
-    if( ::GetAsyncKeyState(VK_DOWN) < 0)
+    if( isKeyDown(Qt::Key_Down))
         _camera.incrOrientation(- (bShiftOn ? 5 : 0.5), 0, 0);
 
-    if( ::GetAsyncKeyState('Z') < 0 || ::GetAsyncKeyState('X') < 0)
+    if( isKeyDown(Qt::Key_Z) || isKeyDown(Qt::Key_X))
     {
-        int iFactor = ::GetAsyncKeyState('Z') <0 ? -1 : 1;
+        int iFactor = isKeyDown(Qt::Key_Z) ? -1 : 1;
         _camera.incrOrientation(0, iFactor * (bShiftOn ? jump / 10 : (bControlOn ? jump * 20 : jump)),0);
     }
 
-    if( ::GetAsyncKeyState('Q') < 0)
+    if( isKeyDown(Qt::Key_Q))
         _camera.moveForwards(jump);
 
-    if( ::GetAsyncKeyState('A') < 0)
+    if( isKeyDown(Qt::Key_A))
         _camera.moveForwards(-jump);
 
-    if( ::GetAsyncKeyState('C') < 0)
+    if( isKeyDown(Qt::Key_C))
         _camera.moveForwards(jump * 2, -90);
 
-    if( ::GetAsyncKeyState('V') < 0)
+    if( isKeyDown(Qt::Key_V))
         _camera.moveForwards(jump * 2, 90);
 
-    if( ::GetAsyncKeyState('W') < 0)
+    if( isKeyDown(Qt::Key_W))
         _camera.moveUp(jump/4);
 
-    if( ::GetAsyncKeyState('S') < 0)
+    if( isKeyDown(Qt::Key_S))
         _camera.moveUp(-jump/4);
 
-    if( ::GetAsyncKeyState(VK_SPACE) < 0)
+    if( isKeyDown(Qt::Key_Space))
         _camera.setZOrientation(0.0f);
 
-    if (::GetAsyncKeyState(VK_OEM_MINUS) < 0 )
+    if (isKeyDown(Qt::Key_Minus) )
         _camera.incrZoom( -0.1f);
 
-    if (::GetAsyncKeyState(VK_OEM_PLUS) < 0)
+    if (isKeyDown(Qt::Key_Plus) || isKeyDown(Qt::Key_Equal))
         _camera.incrZoom( 0.1f);
 #endif
 }

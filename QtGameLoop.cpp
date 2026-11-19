@@ -1,421 +1,204 @@
 #include "stdafx.h"
 #include "QtGameLoop.h"
-#include <include_gl.h>
-#include <string>
-#include <vector>
-#include <SDL_image.h>
+#include "QtKeyState.h"
+
 #include <QCoreApplication>
-#include <QTimer>
+#include <QCursor>
+#include <QGuiApplication>
+#include <QKeyEvent>
+#include <QScreen>
+#include <QSurfaceFormat>
 
-#ifdef ANDROID
-#include <unistd.h>
-#endif
-
-
-void QtGameLoop::onTimeOut()
+bool simulatorKeyDown(Qt::Key key)
 {
-    //onHandleAsyncKeys(SDL_GetKeyboardState(0), SDL_GetModState(), dt);
-    onUpdate();
+    auto* window = dynamic_cast<QtGameLoop*>(QGuiApplication::focusWindow());
+    return window && window->isKeyDown(key);
+}
 
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+QtGameLoop::QtGameLoop()
+{
+    QSurfaceFormat surfaceFormat;
+    surfaceFormat.setRenderableType(QSurfaceFormat::OpenGL);
+    surfaceFormat.setDepthBufferSize(24);
+    surfaceFormat.setStencilBufferSize(8);
+    surfaceFormat.setSwapInterval(1);
+    setFormat(surfaceFormat);
+
+    _redrawTimer.setTimerType(Qt::PreciseTimer);
+    connect(&_redrawTimer, &QTimer::timeout, this, [this] { update(); });
+    setFramePerSecond(30.0f);
+}
+
+bool QtGameLoop::run(const QString& title)
+{
+    setTitle(title);
+    _applicationClock.start();
+#ifdef _DEBUG
+    const QSize screenSize = screen()->availableGeometry().size();
+    resize(screenSize / 2);
+    show();
+#else
+    showFullScreen();
+#endif
+    const int result = QCoreApplication::exec();
+    shutDown();
+    return result == 0;
+}
+
+void QtGameLoop::initializeGL()
+{
+    _initialised = onInitialise();
+    if (!_initialised)
+    {
+        postQuit();
+        return;
+    }
+    resetTimer();
+    if (_running)
+        _redrawTimer.start();
+}
+
+void QtGameLoop::resizeGL(int, int)
+{
+    int w, h;
+    GetScreenDims(w, h);
+    if (_initialised && w > 0 && h > 0)
+        onSize(w, h);
+}
+
+void QtGameLoop::paintGL()
+{
+    if (!_initialised || width() <= 0 || height() <= 0)
+        return;
+
+    const qint64 elapsed = _frameClock.nsecsElapsed();
+    _frameClock.restart();
+    _dt = _running ? static_cast<float>(elapsed / 1.0e9) : 0.0f;
+    onUpdate();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     onRender();
-    SDL_GL_SwapWindow(_sdlWindow);
 }
 
-SDL_Window *QtGameLoop::getWindow()
+void QtGameLoop::onSize(int width, int height)
 {
-    return _sdlWindow;
-}
-
-QtGameLoop::QtGameLoop() :
-    _sdlWindow(0),
-    _fInverseFPS(1/30.0f),
-    _dt(0.0f)
-{
-    SDL_Init(SDL_INIT_EVERYTHING);
-    _updateEventType = SDL_RegisterEvents(1);
-
-#ifdef ANDROID
-    chdir( SDL_AndroidGetInternalStoragePath());
-    SDL_Log( "InternalStoragePath : %s", SDL_AndroidGetInternalStoragePath());
-#endif
-
-    IMG_Init(IMG_INIT_PNG);
-    IMG_Init(IMG_INIT_JPG);
-
-    SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute( SDL_GL_BUFFER_SIZE, 32);
-    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24);
-    SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 8 );
-
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-
-}
-
-QtGameLoop::~QtGameLoop()
-{
-    IMG_Quit();
-    SDL_Quit();
-}
-
-std::vector<std::string> split(const std::string& s, char seperator)
-{
-    std::vector<std::string> output;
-
-    std::string::size_type prev_pos = 0, pos = 0;
-
-    while ((pos = s.find(seperator, pos)) != std::string::npos)
-    {
-        std::string substring(s.substr(prev_pos, pos - prev_pos));
-
-        output.push_back(substring);
-
-        prev_pos = ++pos;
-    }
-
-    output.push_back(s.substr(prev_pos, pos - prev_pos)); // Last word
-
-    return output;
-}
-
-void writeOutResult()
-{
-    char* chVen = (char*)glGetString(GL_VENDOR);
-    std::string vendor = chVen != 0 ? chVen : "";
-
-    char* chRen = (char*)glGetString(GL_RENDERER);
-    std::string renderer = chRen != 0 ? chRen : "";
-
-    char* chVer = (char*)glGetString(GL_VERSION);
-    std::string version = chVer != 0 ? chVer : "";
-
-    SDL_Log("Vendor : %s", vendor.c_str());
-    SDL_Log("Renderer : %s", renderer.c_str() );
-    SDL_Log("Version : %s", version.c_str());
-
-    int value = 0;
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &value);
-    SDL_Log("SDL_GL_CONTEXT_MAJOR_VERSION : %d", value );
-
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &value);
-    SDL_Log("SDL_GL_CONTEXT_MINOR_VERSION : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &value);
-    SDL_Log("SDL_GL_RED_SIZE : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &value);
-    SDL_Log("SDL_GL_GREEN_SIZE : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &value);
-    SDL_Log("SDL_GL_BLUE_SIZE : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &value);
-    SDL_Log("SDL_GL_ALPHA_SIZE : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &value);
-    SDL_Log("SDL_GL_BUFFER_SIZE : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
-    SDL_Log("SDL_GL_DOUBLEBUFFER : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &value);
-    SDL_Log("SDL_GL_DEPTH_SIZE : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &value);
-    SDL_Log("SDL_GL_STENCIL_SIZE : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_EGL, &value);
-    SDL_Log("SDL_GL_CONTEXT_EGL : %d", value);
-
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &value);
-    SDL_Log("SDL_GL_CONTEXT_PROFILE_MASK : %d", value);
-
-    SDL_Log( "Current Video Driver : %s",  SDL_GetCurrentVideoDriver());
-
-    SDL_Log( "SDL_GetNumVideoDisplays : %d", SDL_GetNumVideoDisplays());
-    for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i)
-        SDL_Log( "SDL_GetDisplayName [] : %s", SDL_GetDisplayName(i) );
-
-    SDL_Log("GL_ARB_ES2_compatibility : %d", SDL_GL_ExtensionSupported("GL_ARB_ES2_compatibility"));
-
-    SDL_Log("-------------");
-
-    char* chExts = (char*)glGetString(GL_EXTENSIONS);
-    std::string exts = chExts != 0 ? chExts : "";
-
-    std::vector<std::string> list = split(exts, ' ');
-    for(std::string var : list)
-    {
-        SDL_Log("%s", var.c_str());;
-    }
-
-    SDL_Log("-------------");
-
-    SDL_Log("There are %d joysticks available\n", SDL_NumJoysticks());
-
-    for (int i = 0; i < SDL_NumJoysticks(); ++i)
-        SDL_Log( "[%d -> %s", i, SDL_JoystickNameForIndex(i));
-
-    SDL_Log("-------------");
-
-    int displayIndex = 0;
-    float ddpi = 0.0f, hdpi = 0.0f, vdpi = 0.0f;
-    int dpiDisplay = SDL_GetDisplayDPI(displayIndex, &ddpi, &hdpi, &vdpi);
-
-    SDL_Log("%d -> DPI(%d, d:%.2f, h:%.2f v:%.2f", dpiDisplay, displayIndex, ddpi, hdpi, vdpi);
-}
-
-bool QtGameLoop::run(std::string strTitle)
-{
-    SDL_Rect rect;
-    SDL_GetDisplayBounds(0, &rect);
-
-#ifdef _DEBUG
-    _sdlWindow = SDL_CreateWindow(strTitle.c_str(),
-                                  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                  rect.w*0.5, rect.h*0.5,
-                                  SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
-#else
-    _sdlWindow = SDL_CreateWindow(strTitle.c_str(),
-                                  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                  0, 0,
-                                  SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN|SDL_WINDOW_FULLSCREEN_DESKTOP);
-#endif
-
-    if(_sdlWindow==0)
-    {
-        SDL_Log("CreateWindow : %s", SDL_GetError());
-        return false;
-    }
-
-    _glContext = SDL_GL_CreateContext(_sdlWindow);
-    if (!_glContext)
-    {
-        SDL_Log("CreateContext : %s", SDL_GetError());
-        SDL_DestroyWindow(_sdlWindow);
-        _sdlWindow = nullptr;
-        return false;
-    }
-    SDL_GL_SetSwapInterval(1);
-    _running = true;
-
-    int w, h;
-    SDL_GetWindowSize(_sdlWindow, &w,&h);
-    onSize(w,h);
-    if (!onInitialise())
-    {
-        SDL_GL_DeleteContext(_glContext);
-        SDL_DestroyWindow(_sdlWindow);
-        _sdlWindow = nullptr;
-        return false;
-    }
-
-    SDL_Log( "Current Video Driver : %s",  SDL_GetCurrentVideoDriver());
-
-    writeOutResult();
-
-    SDL_bool bScreenSaverEnabled = SDL_IsScreenSaverEnabled();
-
-    if( bScreenSaverEnabled == SDL_TRUE)
-        SDL_DisableScreenSaver();
-
-    _timer.Start();
-    onTimeOut();
-
-    QTimer frameTimer;
-    frameTimer.setTimerType(Qt::PreciseTimer);
-    QObject::connect(&frameTimer, &QTimer::timeout, &frameTimer, [this, &frameTimer, redraw = false]() mutable
-    {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT ||
-                (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE))
-            {
-                frameTimer.stop();
-                QCoreApplication::quit();
-                return;
-            }
-
-            if (event.type != _updateEventType)
-                onDispatchMessage(event);
-            redraw = true;
-        }
-
-        _dt = _timer.Elapsed();
-        if (_dt >= _fInverseFPS && (isRunning() || redraw))
-        {
-            _timer.Restart();
-
-            if (!isRunning())
-                _dt = 0.0f;
-
-            redraw = false;
-            onTimeOut();
-        }
-    });
-    frameTimer.start(4);
-    QCoreApplication::exec();
-    frameTimer.stop();
-
-    onUnInitialise();
-
-    if(bScreenSaverEnabled == SDL_TRUE)
-        SDL_EnableScreenSaver();
-    else
-        SDL_DisableScreenSaver();
-
-    SDL_GL_DeleteContext(_glContext);
-    SDL_DestroyWindow(_sdlWindow);
-
-    _sdlWindow = 0;
-
-    return true;
+    glViewport(0, 0, width, height);
 }
 
 void QtGameLoop::resetTimer()
 {
-    _timer.Start();
+    _frameClock.start();
 }
 
-bool QtGameLoop::onDispatchMessage(SDL_Event& event)
+void QtGameLoop::setFramePerSecond(float fps)
 {
-    bool bHandled = false;
-
-    switch( event.type)
-    {
-    case SDL_WINDOWEVENT:
-        switch (event.window.event)
-        {
-        case SDL_WINDOWEVENT_SIZE_CHANGED:
-            SDL_Log("Size_Changed to [%d,%d]",
-                    event.window.data1, event.window.data2);
-            onSize(event.window.data1, event.window.data2);
-            break;
-        case SDL_WINDOWEVENT_MOVED:
-            SDL_Log("Moved to [%d,%d]",
-                    event.window.data1, event.window.data2);
-            break;
-        case SDL_WINDOWEVENT_CLOSE:
-            SDL_Log("Window Event Close");
-            break;
-        default:
-            break;
-        }
-        break;
-
-    case SDL_KEYDOWN:
-        onKeyDown(&event.key);
-
-        //event.key.keysym.mod
-        switch(event.key.keysym.sym)
-        {
-        case SDLK_ESCAPE:
-            postQuit();
-            break;
-        default:
-            switch(event.key.keysym.scancode)
-            {
-            case SDL_SCANCODE_ESCAPE:
-                postQuit();
-                break;
-            case SDL_SCANCODE_AC_BACK:
-            	postQuit();
-            	break;
-            default:
-                break;
-            }
-        }
-        break;
-
-     case SDL_KEYUP :
-        onKeyUp(&event.key);
-        break;
-     case SDL_MOUSEMOTION :
-        onMouseMotion(&event.motion);
-        break;
-     case SDL_MOUSEBUTTONDOWN :
-        onMouseDown(&event.button);
-        break;
-     case SDL_MOUSEBUTTONUP :
-        onMouseUp(&event.button);
-        break;
-     case SDL_MOUSEWHEEL :
-        onMouseWheel(&event.wheel);
-        break;
-     case SDL_FINGERDOWN :
-        onFingerDown(&event.tfinger);
-        break;
-     case SDL_FINGERUP:
-        onFingerUp(&event.tfinger);
-        break;
-     case SDL_FINGERMOTION:
-        onFingerMotion(&event.tfinger);
-        break;
-    default:
-        break;
-    }
-
-    return bHandled;
+    _redrawTimer.setInterval(qRound(1000.0f / qMax(1.0f, fps)));
 }
 
-void QtGameLoop::setFramePerSecond( float fps)
+void QtGameLoop::setRunning(bool running)
 {
-    _fInverseFPS = 1.0f / std::max(1.0f,fps);
+    _running = running;
+    resetTimer();
+    if (_initialised && _running)
+        _redrawTimer.start();
+    else
+        _redrawTimer.stop();
+    update();
 }
 
-void QtGameLoop::setRunning( bool bRunning )
-{
-    _running = bRunning;
-    _timer.Start();
-}
-
-bool QtGameLoop::isRunning()
+bool QtGameLoop::isRunning() const
 {
     return _running;
 }
 
-float QtGameLoop::frameTime()
+float QtGameLoop::frameTime() const
 {
     return _dt;
 }
 
-void QtGameLoop::update()
-{
-    SDL_Event event;
-    SDL_memset(&event, 0, sizeof(event)); /* or SDL_zero(event) */
-    event.type = _updateEventType;
-    event.user.code = 0;
-    event.user.data1 = 0;
-    event.user.data2 = 0;
-    SDL_PushEvent(&event);
-}
-
 void QtGameLoop::postQuit()
 {
-    SDL_Event e;
-    e.type = SDL_QUIT;
-    SDL_PushEvent(&e);
+    _redrawTimer.stop();
+    QMetaObject::invokeMethod(this, [] { QCoreApplication::exit(1); }, Qt::QueuedConnection);
 }
 
-void QtGameLoop::GetMousePos(int &x, int &y) const
+void QtGameLoop::keyPressEvent(QKeyEvent* event)
 {
-    SDL_GetMouseState(&x, &y);
+    _pressedKeys.insert(event->key());
+    if (event->key() == Qt::Key_Escape)
+    {
+        close();
+        return;
+    }
+    if (_initialised)
+    {
+        onKeyDown(event);
+        if (!_running)
+            update();
+    }
 }
 
-void QtGameLoop::GetScreenDims(int &w, int &h) const
+void QtGameLoop::keyReleaseEvent(QKeyEvent* event)
 {
-    SDL_GetWindowSize(_sdlWindow, &w, &h);
+    if (!event->isAutoRepeat())
+        _pressedKeys.remove(event->key());
 }
 
-void QtGameLoop::GetScreenPos(int &x, int &y) const
+void QtGameLoop::focusOutEvent(QFocusEvent* event)
 {
-    SDL_GetWindowPosition(_sdlWindow, &x, &y);
+    _pressedKeys.clear();
+    QOpenGLWindow::focusOutEvent(event);
 }
 
+bool QtGameLoop::event(QEvent* event)
+{
+    if (event->type() == QEvent::Close)
+        shutDown();
+    return QOpenGLWindow::event(event);
+}
 
+void QtGameLoop::shutDown()
+{
+    _redrawTimer.stop();
+    if (_initialised)
+    {
+        makeCurrent();
+        onUnInitialise();
+        doneCurrent();
+        _initialised = false;
+    }
+}
+
+bool QtGameLoop::isKeyDown(Qt::Key key) const
+{
+    return _pressedKeys.contains(key);
+}
+
+QPoint QtGameLoop::framebufferPoint(const QPointF& point) const
+{
+    return (point * devicePixelRatio()).toPoint();
+}
+
+qint64 QtGameLoop::elapsedMilliseconds() const
+{
+    return _applicationClock.elapsed();
+}
+
+void QtGameLoop::GetMousePos(int& x, int& y) const
+{
+    const QPoint point = framebufferPoint(mapFromGlobal(QCursor::pos()));
+    x = point.x();
+    y = point.y();
+}
+
+void QtGameLoop::GetScreenDims(int& w, int& h) const
+{
+    w = qRound(width() * devicePixelRatio());
+    h = qRound(height() * devicePixelRatio());
+}
+
+void QtGameLoop::GetScreenPos(int& x, int& y) const
+{
+    x = this->x();
+    y = this->y();
+}

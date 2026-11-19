@@ -32,13 +32,13 @@ public:
 		float goodForce = 10000.0f;
 		pBody->setBodyFrame();
 
-		if( GetAsyncKeyState( 'L' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_L) )
 			pBody->applyForce( VectorD(0,0,0),pBody->toLocalGroundFrame(VectorD(0, goodForce*3 ,0)));
 
-		if( GetAsyncKeyState( 'J' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_J) )
 			pBody->applyForce( VectorD(0,1,2), VectorD(goodForce, 0 ,0));
 
-		if( GetAsyncKeyState( 'K' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_K) )
 			pBody->applyForce( VectorD(0,1,2), VectorD(-goodForce, 0 ,0));
 
 		if( _hasFocus && _bDrivingByMouse )
@@ -76,7 +76,7 @@ public:
 			pBody->_rightFrontWheel.spring().getSteeringAngle() = towAngle;
 		}
 
-		if( GetAsyncKeyState( 'I') < 0 || (_hasFocus && _bDrivingByMouse))
+		if( simulatorKeyDown(Qt::Key_I) || (_hasFocus && _bDrivingByMouse))
 		{
 			pBody->_leftFrontWheel._wheel_linear_velocity -= max_accel * dt;
 			pBody->_rightFrontWheel._wheel_linear_velocity -= max_accel * dt;
@@ -85,7 +85,7 @@ public:
 			pBody->_rightRearWheel._wheel_linear_velocity -= max_accel * dt;
 		}
 
-		if( GetAsyncKeyState( 'M' ) < 0 )
+		if( simulatorKeyDown(Qt::Key_M) )
 		{
 			pBody->_leftFrontWheel._wheel_linear_velocity += max_accel * dt;
 			pBody->_rightFrontWheel._wheel_linear_velocity += max_accel * dt;
@@ -94,7 +94,7 @@ public:
 			pBody->_rightRearWheel._wheel_linear_velocity += max_accel * dt;
 		}
 
-		if( GetAsyncKeyState( 'B' ) < 0 && GetAsyncKeyState( VK_SHIFT ) < 0 )
+		if( simulatorKeyDown(Qt::Key_B) && simulatorKeyDown(Qt::Key_Shift) )
 		{
 			pBody->_leftFrontWheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
 			pBody->_rightFrontWheel.spring().setDrivingState( SpringModel::DrivingState::BRAKE );
@@ -103,7 +103,7 @@ public:
 
 		}
 
-		if( GetAsyncKeyState( 'B' ) < 0 && GetAsyncKeyState( VK_SHIFT ) >= 0 )
+		if( simulatorKeyDown(Qt::Key_B) && !simulatorKeyDown(Qt::Key_Shift) )
 		{
 			if( pBody->_leftFrontWheel._wheel_linear_velocity  > 0 )
 				pBody->_leftFrontWheel._wheel_linear_velocity -= min( max_decel * dt, pBody->_leftFrontWheel._wheel_linear_velocity );
@@ -159,7 +159,7 @@ public:
 	{
 		JSONRigidBody::update(dt);
 
-		if( GetAsyncKeyState( '1' ) < 0 && (GetTickCount() - _RightKeyTimePress)> 200 )
+		if( simulatorKeyDown(Qt::Key_1) && (GetTickCount() - _RightKeyTimePress)> 200 )
 		{
 			_RightDoorCSubASliderClosing = !_RightDoorCSubASliderClosing;
 			_RightKeyTimePress = GetTickCount();
@@ -185,7 +185,7 @@ public:
 				_RightDoorCSubASlider = 1;
 		}
 
-		if( GetAsyncKeyState( '2' ) < 0 && (GetTickCount() - _LeftKeyTimePress)> 200 )
+		if( simulatorKeyDown(Qt::Key_2) && (GetTickCount() - _LeftKeyTimePress)> 200 )
 		{
 			_LeftDoorCSubASliderClosing = !_LeftDoorCSubASliderClosing;
 			_LeftKeyTimePress = GetTickCount();
