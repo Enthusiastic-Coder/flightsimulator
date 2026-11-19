@@ -55,11 +55,12 @@ private:
 class SimpleRunwayMeshModel : public MeshModel
 {
 public:
-	void Build(float fHdg, float fWidth, float fLength, float fMaxDim);
-	void setTextureName(std::string strName);
+	void Build(float fHdg, float fWidth, float fLength, float fMaxDim, bool exactDimensions = false);
+	void setTextureName(std::string strName, int minification = GL_NEAREST_MIPMAP_NEAREST);
 	void setTextureMag(float u, float v);
 private:
 	std::string _textureName;
+	int _textureMinification = GL_NEAREST_MIPMAP_NEAREST;
 	float _kU = 1.0f;
 	float _kV = 1.0f;
 };

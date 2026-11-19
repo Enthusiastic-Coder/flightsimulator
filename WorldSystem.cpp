@@ -263,34 +263,20 @@ void WorldSystem::loadTerrain()
         }
 
     fRunwayMaxDiff = 20.0f;
+    // Runway dimensions and eastern threshold positions from UK AIP EGLL AD 2.12.
+    constexpr float runwayWidth = 50.0f;
+    const auto addHeathrowRunway = [&](GPSLocation eastThreshold, float heading, float length, const char* texture)
     {
-        //27R EGLL
-        std::unique_ptr<RunwayMeshObject> obj(new RunwayMeshObject);
-        obj->location = GPSLocation(51.477681, -0.433258);
-        obj->meshModel.setTextureName("runway_strip.png");
-        obj->meshModel.Build(-90, 60, 2664, fRunwayMaxDiff);
+        auto obj = std::make_unique<RunwayMeshObject>();
+        const auto rotation = MathSupport<float>::MakeQHeading(heading);
+        obj->location = eastThreshold + QVRotate(rotation, Vector3F(-runwayWidth / 2, 0, 0));
+        obj->meshModel.setTextureName(texture, GL_LINEAR_MIPMAP_LINEAR);
+        obj->meshModel.Build(heading, runwayWidth, length, fRunwayMaxDiff, true);
         _runwayList.push_back(std::move(obj));
-    }
+    };
 
-    {
-        //27L
-        std::unique_ptr<RunwayMeshObject> obj(new RunwayMeshObject);
-        obj->location = GPSLocation(51.464951, -0.434115);
-        obj->meshModel.setTextureName("runway_strip.png");
-        obj->meshModel.Build(-90, 60, 2664, fRunwayMaxDiff);
-
-        _runwayList.push_back(std::move(obj));
-
-    }
-
-    {
-        std::unique_ptr<RunwayMeshObject> obj(new RunwayMeshObject);
-        obj->location = GPSLocation(51.464951, -0.434115);
-        obj->meshModel.setTextureName("airport_layout.png");
-        obj->meshModel.Build(-90, width, height, fRunwayMaxDiff);
-        _runwayList.push_back(std::move(obj));
-
-    }
+    addHeathrowRunway(GPSLocation(51.477675, -0.433283), -90.29f, 3901, "heathrow_09l_27r.png");
+    addHeathrowRunway(GPSLocation(51.464950, -0.434100), -90.28f, 3658, "heathrow_09r_27l.png");
 
     {
 

@@ -23,7 +23,7 @@ void MeshModel::addNullTexture()
     _textureObjects.push_back(new OpenGLTexture2D);
 }
 
-inline std::vector<OpenGLTexture2D*>& MeshModel::getTextureObjects()
+std::vector<OpenGLTexture2D*>& MeshModel::getTextureObjects()
 {
     return _textureObjects;
 }

@@ -4,6 +4,8 @@
 #include "MeshGroupObject.h"
 #include "MipMapTerrainMeshModelCollection.h"
 #include <SDL_log.h>
+#include <algorithm>
+#include <cmath>
 
 bool CPPSourceCodeMeshModel::Build(std::string cppSourceFilename, bool bDelayBuffer)
 {
@@ -334,7 +336,7 @@ inline long CPPSourceCodeMeshModel::subStrToLong(const std::string & str, std::s
 
 /////////////////////////////////////////////////////////////////////////////
 
-void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float fMaxDim)
+void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float fMaxDim, bool exactDimensions)
 {
     std::stringstream ss;
     ss << "runway:" << fHdg << "|width:" << fWidth << "|Length:" << fLength;
@@ -344,14 +346,16 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
 
     QuarternionF qHdg = MathSupport<float>::MakeQHeading(fHdg);
 
-    int iWidthSteps = fWidth / fMaxDim;
-    int iHeightSteps = fLength / fMaxDim;
+    const int iWidthSteps = exactDimensions ? static_cast<int>(std::ceil(fWidth / fMaxDim)) + 1 : fWidth / fMaxDim;
+    const int iHeightSteps = exactDimensions ? static_cast<int>(std::ceil(fLength / fMaxDim)) + 1 : fLength / fMaxDim;
+    const float widthStep = exactDimensions ? fWidth / (iWidthSteps - 1) : fMaxDim;
+    const float lengthStep = exactDimensions ? fLength / (iHeightSteps - 1) : fMaxDim;
 
     for (int z = 0; z < iHeightSteps; z++)
     {
         for (int x = 0; x < iWidthSteps; x++)
         {
-            group->_meshData.addVertex(QVRotate(qHdg, Vector3F(x * fMaxDim, 0, -z * fMaxDim)));
+            group->_meshData.addVertex(QVRotate(qHdg, Vector3F(x * widthStep, 0, -z * lengthStep)));
             group->_meshData.addNormal(0, 1, 0);
             group->_meshData.addTexture(float(x) / (iWidthSteps - 1)*_kU, float(z) / (iHeightSteps - 1)*_kV);
         }
@@ -386,7 +390,21 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
     surface->setDiffuse(Vector3F(0.85f, 0.85f, 0.85f));
     surface->setSpecular(Vector3F(0.9, 0.9, 0.9));
     surface->setShininess(32);
-    surface->setTextureIdx(getTextureIdx(rootFolder, _textureName, GL_NEAREST_MIPMAP_NEAREST));
+    const int textureIndex = getTextureIdx(rootFolder, _textureName, _textureMinification);
+    surface->setTextureIdx(textureIndex);
+#if defined(GLEE_EXT_texture_filter_anisotropic)
+    if (_textureMinification == GL_LINEAR_MIPMAP_LINEAR && GLEE_EXT_texture_filter_anisotropic)
+    {
+        if (auto* texture = getTextureObjects()[textureIndex])
+        {
+            GLfloat maximum = 1.0f;
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maximum);
+            texture->bind();
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, std::min(16.0f, maximum));
+            OpenGLTexture2D::unBind();
+        }
+    }
+#endif
 
     MeshObject* mesh = surface->addMesh();
     mesh->setPrimitveType(GL_TRIANGLES);
@@ -395,9 +413,10 @@ void SimpleRunwayMeshModel::Build(float fHdg, float fWidth, float fLength, float
     calcBoundingBox();
 }
 
-void SimpleRunwayMeshModel::setTextureName(std::string strName)
+void SimpleRunwayMeshModel::setTextureName(std::string strName, int minification)
 {
     _textureName = strName;
+    _textureMinification = minification;
 }
 
 void SimpleRunwayMeshModel::setTextureMag(float u, float v)
