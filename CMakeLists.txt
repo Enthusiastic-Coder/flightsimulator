@@ -66,6 +66,7 @@ set(FLIGHTSIM_SOURCES
 	MeshSurfaceObject.cpp
 	MipMapTerrainMeshModel.cpp
 	MipMapTerrainMeshModelCollection.cpp
+	NavigationDisplayRenderer.cpp
 	OpenGLButtonTexture.cpp
 	OpenGLButtonTextureManager.cpp
 	OpenGLFontMeshBuilder.cpp

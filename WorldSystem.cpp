@@ -375,6 +375,7 @@ void WorldSystem::loadTerrain()
         obj->meshModel.Build(heading, runwayWidth, length, fRunwayMaxDiff, true);
         _runwayList.push_back(std::move(obj));
         _runwayLights.emplace_back(*_TerrainCollection[0], eastThreshold, heading, length, westThresholdDisplacement);
+        _runwayEndpoints.emplace_back(eastThreshold, eastThreshold + QVRotate(rotation, Vector3F(0, 0, -length)));
     };
 
     const GPSLocation northThreshold(51.477675, -0.433283);
@@ -684,6 +685,11 @@ void WorldSystem::renderRunwayLights(Renderer& renderer, const GPSLocation& came
 {
     for (const auto& lights : _runwayLights)
         lights.render(renderer, camera, elapsedMs, _fLightingFraction);
+}
+
+const std::vector<std::pair<GPSLocation, GPSLocation>>& WorldSystem::runwayEndpoints() const
+{
+    return _runwayEndpoints;
 }
 
 void WorldSystem::attachModel(int idx, MeshModel & m, const GPSLocation & loc)

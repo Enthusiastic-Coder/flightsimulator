@@ -255,10 +255,10 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
 #endif
 
     constexpr int pfdSize = PfdRenderer::DesignSize;
-    _pfdImage = QImage(pfdSize, pfdSize, QImage::Format_RGBA8888);
-    if (_pfdImage.isNull() || !_pfdColorTexture.generate(pfdSize, pfdSize, false))
+    _cockpitPanelImage = QImage(pfdSize * 2, pfdSize, QImage::Format_RGBA8888);
+    if (_cockpitPanelImage.isNull() || !_cockpitPanelTexture.generate(pfdSize * 2, pfdSize, false))
     {
-        qInfo("Failed to create texture - PFD color Texture");
+        qInfo("Failed to create cockpit display texture");
         return false;
     }
 
@@ -993,6 +993,7 @@ void QtSimulatorWindow::onUpdate()
 
     {
         JSONRigidBody *pRigidBody = _WorldSystem.focusedRigidBody();
+        _ndParameters = {};
         if( pRigidBody )
         {
             const Vector3D& euler = pRigidBody->getEuler();
@@ -1016,6 +1017,26 @@ void QtSimulatorWindow::onUpdate()
             const double trueAirspeedKnots = (vel - vWind).Magnitude() * 3600.0 / 1000.0 / 1.60934 / 1.15;
             parameters.airspeedKnots = AirProperties::Airspeed(trueAirspeedKnots, pRigidBody->Height(), 0);
             parameters.verticalSpeedFeetPerMinute = vel * pos.Unit() * 3.2808 * 60.0;
+
+            const Vector3D groundVelocity = QVRotate(~pRigidBody->getQGps(), vel);
+            const double groundSpeed = groundVelocity.MagnitudeXZ() * 3600.0 / 1852.0;
+            if (std::isfinite(groundSpeed) && std::isfinite(parameters.headingDegrees))
+            {
+                _ndParameters.available = true;
+                _ndParameters.headingDegrees = parameters.headingDegrees;
+                _ndParameters.groundSpeedKnots = groundSpeed;
+                const double track = GPSLocation::calcBearingXZ(Vector3D(), groundVelocity);
+                _ndParameters.trackDegrees = std::fmod(track + 360.0, 360.0);
+                const GPSLocation aircraft = pRigidBody->getGPSLocation();
+                for (const auto& [east, west] : _WorldSystem.runwayEndpoints())
+                {
+                    if (aircraft.distanceTo(east) > 40.0 * 1852.0)
+                        continue;
+                    const auto from = aircraft.offSetTo(east);
+                    const auto to = aircraft.offSetTo(west);
+                    _ndParameters.heathrowRunways.emplace_back(from.x, from.z, to.x, to.z);
+                }
+            }
 
             if (std::isfinite(parameters.pitchDegrees) && std::isfinite(parameters.bankDegrees) &&
                 std::isfinite(parameters.headingDegrees) && std::isfinite(parameters.altitudeFeet) &&
@@ -1289,18 +1310,22 @@ void QtSimulatorWindow::onRender()
 
     int cx, cy;
     GetScreenDims(cx, cy);
+    std::string desc = _WorldSystem.getCameraDescription();
+    std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
+    const bool cockpit = desc.find("cockpit") != std::string::npos;
+    const int panelHeight = cockpit ? cy / 2 : 0;
+    const int outsideHeight = cy - panelHeight;
 
     pipeline.Push();
 
     pipeline.GetView().LoadIdentity();
     pipeline.setViewZoom(_camera.localView()->getZoom());
 
-    int dY= 0;
     float fFOV = 70.0f;
 
     pipeline.GetProjection().LoadIdentity();
-    pipeline.GetProjection().SetPerspective(fFOV * cy / cx , float(cx) / cy, 0.1f, 1000000);
-    glViewport(0,dY, cx, cy);
+    pipeline.GetProjection().SetPerspective(fFOV * outsideHeight / cx, float(cx) / outsideHeight, 0.1f, 1000000);
+    glViewport(0, panelHeight, cx, outsideHeight);
 
     setupCameraOrientation();
     _WorldSystem.setLightDirection(_lightDir.x, _lightDir.z);
@@ -1322,7 +1347,7 @@ void QtSimulatorWindow::onRender()
     glDepthMask(GL_FALSE);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _renderer->useProgram(_runwayLightsShader);
-    _runwayLightsShader.sendUniform("viewportSize", static_cast<float>(cx), static_cast<float>(cy));
+    _runwayLightsShader.sendUniform("viewportSize", static_cast<float>(cx), static_cast<float>(outsideHeight));
     _WorldSystem.renderRunwayLights(*_renderer, _camera.localView()->getPosition(), elapsedMilliseconds());
     OnInitPolyMode();
     glDepthMask(writeDepth);
@@ -1335,27 +1360,8 @@ void QtSimulatorWindow::onRender()
 
     glViewport(0,0, cx, cy);
 
-    std::string desc = _WorldSystem.getCameraDescription();
-    std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
-    if( desc.find("cockpit") != std::string::npos)
-    {
-        if (!_renderedPfdParameters || !(*_renderedPfdParameters == _pfdParameters))
-        {
-            {
-                QPainter painter(&_pfdImage);
-                // The texture quad samples the top of the display at v = 1.
-                painter.translate(0, _pfdImage.height());
-                painter.scale(1, -1);
-                PfdRenderer::render(painter, QRectF(_pfdImage.rect()), _pfdParameters);
-            }
-
-            _pfdColorTexture.bind();
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _pfdImage.width(), _pfdImage.height(),
-                           GL_RGBA, GL_UNSIGNED_BYTE, _pfdImage.constBits());
-            _renderedPfdParameters = _pfdParameters;
-        }
-        RenderTexture(_pfdColorTexture, 0.5f, 0.75f, 0.5f);
-    }
+    if (cockpit)
+        renderCockpitPanel(cx, cy, panelHeight);
 
     if (_WorldSystem.isUsingMouse())
         RenderMouseFlying(cx, cy);
@@ -1559,6 +1565,58 @@ void QtSimulatorWindow::RenderMouseFlying(float cx, float cy)
     glEnable(GL_DEPTH_TEST);
 }
 
+void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeight)
+{
+    if (panelHeight < 4 || width < 8)
+        return;
+
+    const int margin = std::max(1, panelHeight / 36);
+    const int displaySize = std::min((width - 2 * margin) / 2, panelHeight - 2 * margin);
+    if (displaySize <= 0)
+        return;
+
+    if (!_renderedPfdParameters || !(*_renderedPfdParameters == _pfdParameters) ||
+        !_renderedNdParameters || !(*_renderedNdParameters == _ndParameters))
+    {
+        {
+            QPainter painter(&_cockpitPanelImage);
+            // The top of the quad samples OpenGL texture coordinate v = 1.
+            painter.translate(0, _cockpitPanelImage.height());
+            painter.scale(1, -1);
+            painter.fillRect(_cockpitPanelImage.rect(), QColor(20, 24, 27));
+
+            constexpr int size = PfdRenderer::DesignSize;
+            constexpr int bezel = 10;
+            const QRectF pfd(bezel, bezel, size - 2 * bezel, size - 2 * bezel);
+            const QRectF nd(size + bezel, bezel, size - 2 * bezel, size - 2 * bezel);
+            PfdRenderer::render(painter, pfd, _pfdParameters);
+            NavigationDisplayRenderer::render(painter, nd, _ndParameters);
+            painter.setPen(QPen(QColor(58, 67, 72), 2));
+            painter.setBrush(Qt::NoBrush);
+            painter.drawRect(pfd);
+            painter.drawRect(nd);
+            painter.drawLine(size, bezel, size, size - bezel);
+        }
+
+        _cockpitPanelTexture.bind();
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _cockpitPanelImage.width(), _cockpitPanelImage.height(),
+                       GL_RGBA, GL_UNSIGNED_BYTE, _cockpitPanelImage.constBits());
+        _renderedPfdParameters = _pfdParameters;
+        _renderedNdParameters = _ndParameters;
+    }
+
+    const int top = height - panelHeight;
+    auto& pipeline = OpenGLPipeline::Get(_renderer->camID);
+    pipeline.Push();
+    RenderTransparentRectangle(0, top, width, panelHeight, 20 / 255.0f, 24 / 255.0f, 27 / 255.0f, 1.0f);
+    RenderTransparentRectangle(0, top, width, 2, 58 / 255.0f, 67 / 255.0f, 72 / 255.0f, 1.0f);
+    pipeline.Pop();
+
+    renderTextureInRect(_cockpitPanelTexture,
+        QRect((width - 2 * displaySize) / 2, top + (panelHeight - displaySize) / 2,
+              2 * displaySize, displaySize), 1.0f);
+}
+
 void QtSimulatorWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V, float heightFraction)
 {
     int sw, sh;
@@ -1567,24 +1625,30 @@ void QtSimulatorWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V, 
         return;
 
     const int size = std::min(static_cast<int>(heightFraction * sh), sw);
+    renderTextureInRect(texID, QRect(static_cast<int>(sw * U - size / 2.0f),
+        static_cast<int>(sh * V - size / 2.0f), size, size), 0.5f);
+}
+
+void QtSimulatorWindow::renderTextureInRect(OpenGLTexture2D& texture, const QRect& bounds, float opacity)
+{
+    int sw, sh;
+    GetScreenDims(sw, sh);
+    const bool depthTest = glIsEnabled(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
 
     _renderer->useProgram(_fontShaderProgram);
     _renderer->progId().sendUniform("texID", 0);
-    _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.5f);
+    _renderer->progId().sendUniform("textColor", 1, 1, 1, opacity);
 
     OpenGLTextureRenderer2D r(_renderer);
     r.onSize(0, 0, sw, sh);
     r.beginRender();
-    texID.bind();
-    r.render(static_cast<int>(sw * U - size / 2.0f),
-             static_cast<int>(sh * V - size / 2.0f), size, size);
-
-//    _renderer->useProgram(_simplePrimitiveShaderProgram);
-//    r.renderLineBorder( size*pos, 200-size, size, size);
-
+    texture.bind();
+    r.render(bounds.x(), bounds.y(), bounds.width(), bounds.height());
     r.endRender();
 
+    if (depthTest)
+        glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     OpenGLTexture2D::unBind();
     OpenGLShaderProgram::useDefault();

@@ -74,6 +74,7 @@ public:
     void RenderModels(Renderer *r, bool bReflection, unsigned int shadowMapCount, double dt);
     void RenderModelForceGenerators(Renderer *r);
     void renderRunwayLights(Renderer& renderer, const GPSLocation& camera, std::int64_t elapsedMs) const;
+    const std::vector<std::pair<GPSLocation, GPSLocation>>& runwayEndpoints() const;
 
 	MipMapTerrainMeshModelCollection _TerrainCollection;
 
@@ -125,6 +126,7 @@ private:
 
     std::vector<std::unique_ptr<RunwayMeshObject>> _runwayList;
     std::vector<RunwayLights> _runwayLights;
+    std::vector<std::pair<GPSLocation, GPSLocation>> _runwayEndpoints;
     std::vector<std::unique_ptr<MeshModel>> _airportSurfaceMeshes;
 	GPSLocation _simplePlaneLocation;
 	SimpleCloud* _simpleCloud;

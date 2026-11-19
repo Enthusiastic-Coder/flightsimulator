@@ -16,6 +16,7 @@
 #include "MeshModel.h"
 #include "SimpleSpringModel.h"
 #include "PfdRenderer.h"
+#include "NavigationDisplayRenderer.h"
 #include "SkyDome.h"
 #include "OpenGLRenderer.h"
 #include <QImage>
@@ -64,6 +65,8 @@ protected:
     void RenderFPS();
     void RenderInfo();
     void RenderTexture(OpenGLTexture2D &texID, float U, float V, float heightFraction = 0.75f);
+    void renderTextureInRect(OpenGLTexture2D& texture, const QRect& bounds, float opacity);
+    void renderCockpitPanel(int width, int height, int panelHeight);
     void OnRenderSkyBox();
     void OnInitSound();
     void OnUnitSound();
@@ -88,9 +91,11 @@ private:
     int _framecount;
 
     PfdParameters _pfdParameters;
+    NdParameters _ndParameters;
     const JSONRigidBody* _pfdBody = nullptr;
     std::optional<PfdParameters> _renderedPfdParameters;
-    QImage _pfdImage;
+    std::optional<NdParameters> _renderedNdParameters;
+    QImage _cockpitPanelImage;
     WorldSystem _WorldSystem;
     SimpleSpringModel _towTruckSpring;
     //TowTruck _towTruck;
@@ -168,7 +173,7 @@ private:
     OpenGLRenderBuffer _depthRenderBuffer;
 #endif
 
-    OpenGLTexture2D _pfdColorTexture;
+    OpenGLTexture2D _cockpitPanelTexture;
 
     Vector4F _skyColor = Vector4F(3 / 255.0f, 100 / 255.0f, 180 / 255.0f, 1.0f);
     Vector2F _lightDir = Vector2F(-45, 180);
