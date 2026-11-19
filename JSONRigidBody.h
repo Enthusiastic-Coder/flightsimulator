@@ -25,7 +25,7 @@ class JSONRigidBody :
     public ICameraViewProvider,
     public ICameraChaseable,
     public IFilePersist,
-    public IRapidJsonPersist
+    public IJsonPersist
 {
 public:
 	enum class Type : int
@@ -147,9 +147,9 @@ public:
     void persistReadState(FILE* fPersistFile ) override;
     void persistWriteState(FILE* fPersistFile ) override;
 
-// IRapidJsonPersist
-    void persistReadState(rapidjson::Document &doc) override;
-    void persistWriteState(rapidjson::Document& doc) override;
+// IJsonPersist
+    void persistReadState(const QJsonObject& doc) override;
+    void persistWriteState(QJsonObject& doc) override;
 
 protected:
 /// IMeshModel

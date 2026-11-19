@@ -591,16 +591,16 @@ void WorldSystem::persistWriteState(FILE* fPersistFile)
     _cameraProvider.persistWriteState(fPersistFile);
 }
 
-void WorldSystem::persistReadState(rapidjson::Document& doc)
+void WorldSystem::persistReadState(const QJsonObject& doc)
 {
-    _fLightingFraction = doc["LightingFraction"].GetFloat();
+    _fLightingFraction = doc.value(QStringLiteral("LightingFraction")).toDouble(_fLightingFraction);
     _rigidBodyCollection.persistReadState(doc);
     _cameraProvider.persistReadState(doc);
 }
 
-void WorldSystem::persistWriteState(rapidjson::Document& doc)
+void WorldSystem::persistWriteState(QJsonObject& doc)
 {
-    doc.AddMember("LightingFraction", rapidjson::Value(_fLightingFraction), doc.GetAllocator());
+    doc.insert(QStringLiteral("LightingFraction"), _fLightingFraction);
     _rigidBodyCollection.persistWriteState(doc);
     _cameraProvider.persistWriteState(doc);
 }

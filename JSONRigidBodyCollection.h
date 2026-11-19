@@ -8,7 +8,7 @@ class Renderer;
 
 class JSONRigidBodyCollection :
         public IFilePersist,
-        public IRapidJsonPersist,
+        public IJsonPersist,
         public IInputHandlerReceiver,
         public ISceneryEnvironment,
         public ICameraViewProvider,
@@ -47,9 +47,9 @@ public:
     void persistReadState(FILE* fPersistFile) override;
     void persistWriteState(FILE* fPersistFile) override;
 
-// IRapidJsonPersist
-    void persistReadState(rapidjson::Document &doc) override;
-    void persistWriteState(rapidjson::Document& doc) override;
+// IJsonPersist
+    void persistReadState(const QJsonObject& doc) override;
+    void persistWriteState(QJsonObject& doc) override;
 
 // ISceneryEnvironment
     bool getHeightFromPosition( const GPSLocation&, HeightData& ) const override;

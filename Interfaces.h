@@ -106,10 +106,10 @@ struct IFilePersist
     virtual void persistWriteState(FILE* fPersistFile) = 0;
 };
 
-#include <rapidjson/document.h>
+class QJsonObject;
 
-struct IRapidJsonPersist
+struct IJsonPersist
 {
-    virtual void persistReadState(rapidjson::Document& doc) = 0;
-    virtual void persistWriteState(rapidjson::Document& doc) = 0;
+    virtual void persistReadState(const QJsonObject& doc) = 0;
+    virtual void persistWriteState(QJsonObject& doc) = 0;
 };

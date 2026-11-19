@@ -141,13 +141,8 @@ target_compile_options(FlightSimulator PRIVATE
 target_include_directories(FlightSimulator PRIVATE
 	"${FLIGHTSIM_ROOT}"
 	"${FLIGHTSIM_ROOT}/openal/include"
-	"${FLIGHTSIM_ROOT}/rapidjson/include"
 	"${FLIGHTSIM_ROOT}/sdk/include"
 	"${FLIGHTSIM_ROOT}/assimp2/include"
-)
-
-target_compile_definitions(FlightSimulator PRIVATE
-	RAPIDJSON_HAS_STDSTRING=1
 )
 
 target_link_libraries(FlightSimulator PRIVATE

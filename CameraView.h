@@ -7,7 +7,7 @@
 #include <jibbs/gps/GPSLocation.h>
 #include <interfaces.h>
 
-class CameraView : public IFilePersist, public IRapidJsonPersist
+class CameraView : public IFilePersist, public IJsonPersist
 {
 private:
     class GroupCameraView
@@ -62,9 +62,9 @@ public:
     void persistReadState(FILE* fPersistFile) override;
     void persistWriteState(FILE* fPersistFile) override;
 
-// IRapidJsonPersist
-    void persistReadState(rapidjson::Document& doc) override;
-    void persistWriteState(rapidjson::Document& doc) override;
+// IJsonPersist
+    void persistReadState(const QJsonObject& doc) override;
+    void persistWriteState(QJsonObject& doc) override;
 
 private:
     std::string _description;

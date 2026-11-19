@@ -4,9 +4,6 @@ url=https://github.com/Enthusiastic-Coder/sdk.git
 [submodule "openal"]
 	path = openal
 url=https://github.com/Enthusiastic-Coder/openal.git
-[submodule "rapidjson"]
-	path = rapidjson
-	url = https://github.com/miloyip/rapidjson.git
 [submodule "assimp2"]
 	path = assimp2
 url=https://github.com/Enthusiastic-Coder/assimp2.git

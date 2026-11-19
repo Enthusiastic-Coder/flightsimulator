@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "CameraView.h"
+#include "JsonState.h"
+#include <QJsonObject>
 
 CameraView::GroupCameraView::~GroupCameraView()
 {
@@ -150,55 +152,27 @@ void CameraView::persistWriteState(FILE *fPersistFile)
     fwrite(&_zoom,sizeof(double), 1, fPersistFile);
 }
 
-void CameraView::persistReadState(rapidjson::Document &doc)
+void CameraView::persistReadState(const QJsonObject& doc)
 {
-    using namespace rapidjson;
-    Document::AllocatorType& a = doc.GetAllocator();
-    std::stringstream ss;
-    ss << "cameraView";
-
-    if( !doc.HasMember(ss.str()))
-        return;
-
-    Value& topLevel = doc[ss.str()];
-
-    if( !topLevel.HasMember(_description))
-        return;
-
-    Value& v = topLevel[_description];
-
-    _location = GPSLocation(v["CameraViewLocation"].GetString());
-    _orientation = Vector3F(v["CameraViewOrientation"].GetString());
-    _zoom = v["CameraViewZoom"].GetFloat();
+    const auto views = doc.value(QStringLiteral("cameraView")).toObject();
+    const auto view = views.value(QString::fromStdString(_description)).toObject();
+    if (const auto location = readJsonVector<double>(view.value(QStringLiteral("CameraViewLocation"))))
+        _location = GPSLocation(location->x, location->y, location->z);
+    if (const auto orientation = readJsonVector<float>(view.value(QStringLiteral("CameraViewOrientation"))))
+        _orientation = *orientation;
+    _zoom = view.value(QStringLiteral("CameraViewZoom")).toDouble(_zoom);
 }
 
-void CameraView::persistWriteState(rapidjson::Document &doc)
+void CameraView::persistWriteState(QJsonObject& doc)
 {
-    using namespace rapidjson;
-
-    Document::AllocatorType& a = doc.GetAllocator();
-
-    std::string strCameraView("cameraView");
-
-    if( !doc.HasMember(strCameraView))
-    {
-        Value v(strCameraView, a);
-        v.SetObject();
-        doc.AddMember(Value(strCameraView,a), v, a);
-    }
-
-    Value& topLevel = doc[strCameraView];
-
-    std::stringstream ss;
-    ss << _description;
-    Value v(ss.str(), a);
-
-    v.SetObject();
-
-    v.AddMember("CameraViewLocation", Value(_location.toString(),a), a);
-    v.AddMember("CameraViewOrientation", Value(_orientation.toString(),a), a);
-    v.AddMember("CameraViewZoom", Value(_zoom), a);
-    topLevel.AddMember(Value(ss.str(),a), v, a);
+    const auto key = QStringLiteral("cameraView");
+    auto views = doc.value(key).toObject();
+    views.insert(QString::fromStdString(_description), QJsonObject{
+        {QStringLiteral("CameraViewLocation"), QString::fromStdString(_location.toString())},
+        {QStringLiteral("CameraViewOrientation"), QString::fromStdString(_orientation.toString())},
+        {QStringLiteral("CameraViewZoom"), _zoom}
+    });
+    doc.insert(key, views);
 }
 
 

@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "QtSimulatorWindow.h"
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QPainter>
+#include <QSaveFile>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -39,10 +43,6 @@
 #include "OpenGLTextureRenderer2D.h"
 #include "OpenGLPainter.h"
 
-#include <rapidjson/document.h>
-#include <rapidjson/prettywriter.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
 
 #define MS_TO_KTS( value ) fabs(value*3.2808*3600/5280/1.15f)
 #define MS_TO_MPH( value ) MS_TO_KTS( value*1.15 )
@@ -1855,65 +1855,54 @@ void QtSimulatorWindow::processInputsForCamera()
 
 void QtSimulatorWindow::persistSettings(bool bSerialise)
 {
-    using namespace rapidjson;
-
-    std::string strSettingsFilename = "lastpos.json";
-
-    Document doc;
-    Document::AllocatorType& a = doc.GetAllocator();
-
-    if( bSerialise)
+    const auto filename = QStringLiteral("lastpos.json");
+    if (bSerialise)
     {
-        FILE *fPersistFile = fopen( strSettingsFilename.c_str(), "wb" );
-        if(fPersistFile)
-        {
-            doc.SetObject();
-            doc.AddMember("UserPolyLineView", Value(_bUserPolygonLineView), a);
-            doc.AddMember("IsRunning", Value(isRunning()), a);
-            doc.AddMember("global_fg_debug", Value(global_fg_debug), a);
-            doc.AddMember("global_info", Value(global_info), a);
-            doc.AddMember("global_force_lines_debug", Value((int)global_force_lines_debug), a);
+        QJsonObject state{
+            {QStringLiteral("UserPolyLineView"), _bUserPolygonLineView},
+            {QStringLiteral("IsRunning"), isRunning()},
+            {QStringLiteral("global_fg_debug"), global_fg_debug},
+            {QStringLiteral("global_info"), global_info},
+            {QStringLiteral("global_force_lines_debug"), static_cast<int>(global_force_lines_debug)}
+        };
+        _WorldSystem.persistWriteState(state);
 
-            _WorldSystem.persistWriteState( doc );
-
-            StringBuffer s;
-            PrettyWriter<StringBuffer> writer(s);
-            doc.Accept(writer);
-
-            fwrite(s.GetString(), s.GetSize(), 1, fPersistFile);
-
-            fclose(fPersistFile);
-        }
-    }
-    else
-    {
-        std::ifstream json;
-        json.open(strSettingsFilename);
-
-        if( json.is_open())
-        {
-            std::string ret;
-            char buffer[4096];
-            while (json.read(buffer, sizeof(buffer)))
-                ret.append(buffer, sizeof(buffer));
-            ret.append(buffer, json.gcount());
-
-            if( ret.length() > 0)
-            {
-
-                doc.Parse(ret.c_str());
-
-                _bUserPolygonLineView = doc["UserPolyLineView"].GetBool();
-                setRunning(doc["IsRunning"].GetBool());
-                global_fg_debug = doc["global_fg_debug"].GetBool();
-                global_info = doc["global_info"].GetBool();
-                global_force_lines_debug = (__global_force_lines_debug)doc["global_force_lines_debug"].GetInt();
-
-                _WorldSystem.persistReadState(doc);
-            }
-        }
+        QSaveFile file(filename);
+        const auto data = QJsonDocument(state).toJson(QJsonDocument::Indented);
+        if (!file.open(QIODevice::WriteOnly) || file.write(data) != data.size() || !file.commit())
+            qWarning("Could not save simulator settings: %s", qPrintable(file.errorString()));
+        return;
     }
 
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+
+    const auto data = file.readAll();
+    if (data.trimmed().isEmpty())
+        return;
+
+    QJsonParseError error;
+    const auto document = QJsonDocument::fromJson(data, &error);
+    if (!document.isObject())
+    {
+        if (error.error == QJsonParseError::NoError)
+            qWarning("Could not read simulator settings: expected a JSON object");
+        else
+            qWarning("Could not read simulator settings: %s", qPrintable(error.errorString()));
+        return;
+    }
+
+    const auto state = document.object();
+    _bUserPolygonLineView = state.value(QStringLiteral("UserPolyLineView")).toBool(_bUserPolygonLineView);
+    setRunning(state.value(QStringLiteral("IsRunning")).toBool(isRunning()));
+    global_fg_debug = state.value(QStringLiteral("global_fg_debug")).toBool(global_fg_debug);
+    global_info = state.value(QStringLiteral("global_info")).toBool(global_info);
+    const int forceLines = state.value(QStringLiteral("global_force_lines_debug")).toInt(-1);
+    if (forceLines >= force_lines_begin && forceLines < force_lines_end)
+        global_force_lines_debug = static_cast<__global_force_lines_debug>(forceLines);
+
+    _WorldSystem.persistReadState(state);
 }
 
 std::pair<float, float> QtSimulatorWindow::UVtoScreen(float U, float V)

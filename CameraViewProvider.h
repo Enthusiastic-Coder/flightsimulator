@@ -7,7 +7,7 @@
 class CameraViewProvider :
         public ICameraViewProvider,
         public IFilePersist,
-        public IRapidJsonPersist
+        public IJsonPersist
 {
 public:
     CameraViewProvider(int count);
@@ -26,9 +26,9 @@ public:
     void persistReadState(FILE* fPersistFile) override;
     void persistWriteState(FILE* fPersistFile) override;
 
-// IRapidJsonPersist
-    void persistReadState(rapidjson::Document& doc) override;
-    void persistWriteState(rapidjson::Document &doc) override;
+// IJsonPersist
+    void persistReadState(const QJsonObject& doc) override;
+    void persistWriteState(QJsonObject& doc) override;
 
 private:
     int _viewIdx = 0;

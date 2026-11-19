@@ -59,13 +59,13 @@ void CameraViewProvider::persistWriteState(FILE *fPersistFile)
 
 }
 
-void CameraViewProvider::persistReadState(rapidjson::Document&doc)
+void CameraViewProvider::persistReadState(const QJsonObject& doc)
 {
     for( int i = 1; i <= _maxViewCount; ++i)
         CameraView::Manager::get()->getView(this, i)->persistReadState(doc);
 }
 
-void CameraViewProvider::persistWriteState(rapidjson::Document &doc)
+void CameraViewProvider::persistWriteState(QJsonObject& doc)
 {   
     for( int i = 1; i <= _maxViewCount; ++i)
         CameraView::Manager::get()->getView(this, i)->persistWriteState(doc);
