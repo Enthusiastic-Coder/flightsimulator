@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SDLMainWindow.h"
 #include <QPainter>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <string>
@@ -1397,7 +1398,7 @@ void SDLMainWindow::onRender()
                            GL_RGBA, GL_UNSIGNED_BYTE, _pfdImage.constBits());
             _renderedPfdParameters = _pfdParameters;
         }
-        RenderTexture(_pfdColorTexture, 0.5f, 0.5f);
+        RenderTexture(_pfdColorTexture, 0.5f, 0.75f, 0.5f);
     }
 
     if (_WorldSystem.isUsingMouse())
@@ -1602,13 +1603,14 @@ void SDLMainWindow::RenderMouseFlying(float cx, float cy)
     glEnable(GL_DEPTH_TEST);
 }
 
-void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V)
+void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V, float heightFraction)
 {
     int sw, sh;
     GetScreenDims(sw, sh);
+    if (sw <= 0 || sh <= 0)
+        return;
 
-    int width = 150 * float(sh)/sw;
-    int height = 150;
+    const int size = std::min(static_cast<int>(heightFraction * sh), sw);
     glEnable(GL_BLEND);
 
     _renderer->useProgram(_fontShaderProgram);
@@ -1616,10 +1618,11 @@ void SDLMainWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V)
     _renderer->progId().sendUniform("textColor", 1, 1, 1, 0.5f);
 
     OpenGLTextureRenderer2D r(_renderer);
-    r.onSize(0, 0, 200, 200);
+    r.onSize(0, 0, sw, sh);
     r.beginRender();
     texID.bind();
-    r.render(200*U-width/2, 200*V-height/2, width, height);
+    r.render(static_cast<int>(sw * U - size / 2.0f),
+             static_cast<int>(sh * V - size / 2.0f), size, size);
 
 //    _renderer->useProgram(_simplePrimitiveShaderProgram);
 //    r.renderLineBorder( size*pos, 200-size, size, size);

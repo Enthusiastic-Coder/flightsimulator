@@ -69,7 +69,7 @@ protected:
     void RenderTransparentRectangle( int x, int y, int cx, int cy, float R, float G, float B, float A);
     void RenderFPS();
     void RenderInfo();
-    void RenderTexture(OpenGLTexture2D &texID, float U, float V);
+    void RenderTexture(OpenGLTexture2D &texID, float U, float V, float heightFraction = 0.75f);
     void OnRenderSkyBox();
     void OnInitSound();
     void OnUnitSound();
