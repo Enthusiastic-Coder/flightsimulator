@@ -92,7 +92,7 @@ set(FLIGHTSIM_SOURCES
 	RigidBodyMeshManager.cpp
 	ScaledHeightTerrainData.cpp
 	SceneryManager.cpp
-	SDLGameLoop.cpp
+	QtGameLoop.cpp
 	SDLJoystickSystem.cpp
 	SDLMainWindow.cpp
 	SDLSurfaceHelper.cpp

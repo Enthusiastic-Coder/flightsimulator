@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "SDLGameLoop.h"
+#include "QtGameLoop.h"
 #include <include_gl.h>
 #include <string>
 #include <vector>
@@ -12,7 +12,7 @@
 #endif
 
 
-void SDLGameLoop::onTimeOut()
+void QtGameLoop::onTimeOut()
 {
     //onHandleAsyncKeys(SDL_GetKeyboardState(0), SDL_GetModState(), dt);
     onUpdate();
@@ -23,12 +23,12 @@ void SDLGameLoop::onTimeOut()
     SDL_GL_SwapWindow(_sdlWindow);
 }
 
-SDL_Window *SDLGameLoop::getWindow()
+SDL_Window *QtGameLoop::getWindow()
 {
     return _sdlWindow;
 }
 
-SDLGameLoop::SDLGameLoop() :
+QtGameLoop::QtGameLoop() :
     _sdlWindow(0),
     _fInverseFPS(1/30.0f),
     _dt(0.0f)
@@ -57,7 +57,7 @@ SDLGameLoop::SDLGameLoop() :
 
 }
 
-SDLGameLoop::~SDLGameLoop()
+QtGameLoop::~QtGameLoop()
 {
     IMG_Quit();
     SDL_Quit();
@@ -170,7 +170,7 @@ void writeOutResult()
     SDL_Log("%d -> DPI(%d, d:%.2f, h:%.2f v:%.2f", dpiDisplay, displayIndex, ddpi, hdpi, vdpi);
 }
 
-bool SDLGameLoop::run(std::string strTitle)
+bool QtGameLoop::run(std::string strTitle)
 {
     SDL_Rect rect;
     SDL_GetDisplayBounds(0, &rect);
@@ -278,12 +278,12 @@ bool SDLGameLoop::run(std::string strTitle)
     return true;
 }
 
-void SDLGameLoop::resetTimer()
+void QtGameLoop::resetTimer()
 {
     _timer.Start();
 }
 
-bool SDLGameLoop::onDispatchMessage(SDL_Event& event)
+bool QtGameLoop::onDispatchMessage(SDL_Event& event)
 {
     bool bHandled = false;
 
@@ -364,28 +364,28 @@ bool SDLGameLoop::onDispatchMessage(SDL_Event& event)
     return bHandled;
 }
 
-void SDLGameLoop::setFramePerSecond( float fps)
+void QtGameLoop::setFramePerSecond( float fps)
 {
     _fInverseFPS = 1.0f / std::max(1.0f,fps);
 }
 
-void SDLGameLoop::setRunning( bool bRunning )
+void QtGameLoop::setRunning( bool bRunning )
 {
     _running = bRunning;
     _timer.Start();
 }
 
-bool SDLGameLoop::isRunning()
+bool QtGameLoop::isRunning()
 {
     return _running;
 }
 
-float SDLGameLoop::frameTime()
+float QtGameLoop::frameTime()
 {
     return _dt;
 }
 
-void SDLGameLoop::update()
+void QtGameLoop::update()
 {
     SDL_Event event;
     SDL_memset(&event, 0, sizeof(event)); /* or SDL_zero(event) */
@@ -396,24 +396,24 @@ void SDLGameLoop::update()
     SDL_PushEvent(&event);
 }
 
-void SDLGameLoop::postQuit()
+void QtGameLoop::postQuit()
 {
     SDL_Event e;
     e.type = SDL_QUIT;
     SDL_PushEvent(&e);
 }
 
-void SDLGameLoop::GetMousePos(int &x, int &y) const
+void QtGameLoop::GetMousePos(int &x, int &y) const
 {
     SDL_GetMouseState(&x, &y);
 }
 
-void SDLGameLoop::GetScreenDims(int &w, int &h) const
+void QtGameLoop::GetScreenDims(int &w, int &h) const
 {
     SDL_GetWindowSize(_sdlWindow, &w, &h);
 }
 
-void SDLGameLoop::GetScreenPos(int &x, int &y) const
+void QtGameLoop::GetScreenPos(int &x, int &y) const
 {
     SDL_GetWindowPosition(_sdlWindow, &x, &y);
 }

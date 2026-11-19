@@ -1,5 +1,5 @@
-#ifndef __SDLGAMELOOP_H__
-#define __SDLGAMELOOP_H__
+#ifndef QT_GAME_LOOP_H
+#define QT_GAME_LOOP_H
 
 #include <SDL.h>
 #include <SDLTimer.h>
@@ -7,11 +7,11 @@
 #include <include_gl.h>
 #include <string>
 
-class SDLGameLoop : public IScreenMouseInfo
+class QtGameLoop : public IScreenMouseInfo
 {
 public:
-    SDLGameLoop();
-    ~SDLGameLoop();
+    QtGameLoop();
+    ~QtGameLoop();
 
     bool run(std::string strTitle);
 
@@ -64,4 +64,4 @@ protected:
     SDL_Window *getWindow();
 };
 
-#endif //__SDLGAMELOOP_H__
+#endif //QT_GAME_LOOP_H

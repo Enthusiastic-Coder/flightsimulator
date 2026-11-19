@@ -110,7 +110,7 @@ void SDLMainWindow::onFingerUp(SDL_TouchFingerEvent* e)
 void SDLMainWindow::onSize(int width, int height)
 {
     _currentDims = { width, height };
-    SDLGameLoop::onSize(width, height);
+    QtGameLoop::onSize(width, height);
     _textureRenderer.onSize(0,0, width, height);
     _powerSliderControl.onSize(width, height);
     _buttonTextureManager.onSizeLayout();

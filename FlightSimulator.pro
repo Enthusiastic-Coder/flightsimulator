@@ -74,12 +74,12 @@ CONFIG += INSTALL_MODELS
 CONFIG += INSTALL_BODIES
 
 SOURCES += sdlmain.cpp \
-           SDLGameLoop.cpp \
+           QtGameLoop.cpp \
            SDLMainWindow.cpp \
            TextureLoader.cpp \
             SDLSurfaceHelper.cpp
 
-HEADERS += SDLGameLoop.h \
+HEADERS += QtGameLoop.h \
            SDLMainWindow.h \
            TextureLoader.h \
             SDLSurfaceHelper.h

@@ -3,7 +3,7 @@
 
 
 #include <include_gl.h>
-#include "SDLGameLoop.h"
+#include "QtGameLoop.h"
 
 #ifdef WIN32
 #include "loadWAV.h"
@@ -31,7 +31,7 @@
   //      fprintf(_fTimeLog, msg##" - %.6f\n", timer.ElapsedMilliSeconds());
 
 
-class SDLMainWindow : public SDLGameLoop
+class SDLMainWindow : public QtGameLoop
 {
 public:
 
