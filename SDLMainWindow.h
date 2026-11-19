@@ -15,9 +15,11 @@
 #include "OpenGLRenderBuffer.h"
 #include "MeshModel.h"
 #include "SimpleSpringModel.h"
-#include "PFDView.h"
+#include "PfdRenderer.h"
 #include "SkyDome.h"
 #include "OpenGLRenderer.h"
+#include <QImage>
+#include <optional>
 
 #include "OpenGLFontTexture.h"
 #include "OpenGLFontRenderer.h"
@@ -90,7 +92,10 @@ private:
     float _framerate[FPS_RESOLUTION];
     int _framecount;
 
-    PFDView _pfdInstrument;
+    PfdParameters _pfdParameters;
+    const JSONRigidBody* _pfdBody = nullptr;
+    std::optional<PfdParameters> _renderedPfdParameters;
+    QImage _pfdImage;
     WorldSystem _WorldSystem;
     SimpleSpringModel _towTruckSpring;
     //TowTruck _towTruck;
@@ -168,7 +173,6 @@ private:
 #endif
 
     OpenGLTexture2D _pfdColorTexture;
-    OpenGLRenderBuffer _pfdStencilBuffer;
 
     Vector4F _skyColor = Vector4F(3 / 255.0f, 100 / 255.0f, 180 / 255.0f, 1.0f);
     Vector2F _lightDir = Vector2F(-45, 180);

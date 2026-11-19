@@ -84,7 +84,7 @@ set(FLIGHTSIM_SOURCES
 	OpenGLTextureRenderer2D.cpp
 	OpenGLVertexBuffer.cpp
 	OpenglTexture2d.cpp
-	PFDView.cpp
+	PfdRenderer.cpp
 	PerlinNoise.cpp
 	PivotObjects.cpp
 	ReferenceFrame.cpp

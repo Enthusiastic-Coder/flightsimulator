@@ -21,7 +21,7 @@ Use the path to your Qt kit for `CMAKE_PREFIX_PATH`. In Qt Creator, open the roo
 
 Run the executable from its output directory, which is `build/Debug` or `build/Release` with the Visual Studio generator. CMake copies the simulator assets and dependency DLLs there and runs `windeployqt` to deploy the Qt libraries and platform plugin.
 
-`sdlmain.cpp` creates the Qt application, and a Qt timer drives the SDL event and frame processing in `QtGameLoop.cpp`. The cockpit PFD is drawn into a texture in `SDLMainWindow::onRender()`. Its flight data is populated in `SDLMainWindow::onUpdate()`.
+`sdlmain.cpp` creates the Qt application, and a Qt timer drives the SDL event and frame processing in `QtGameLoop.cpp`. The cockpit PFD uses Flight2D's `PfdRenderer` to paint live flight data into a Qt image, which the simulator uploads to the cockpit texture.
 
 ## Dependencies
 

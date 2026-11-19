@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "SDLMainWindow.h"
+#include <QPainter>
+#include <cmath>
 #include <limits>
 #include <string>
 //
@@ -7,7 +9,6 @@
 //#include "LondonGroundTile.h"
 //#include "WaterTile.h"
 //#include "SimpleCloud.h"
-#include "PFDView.h"
 //#include "PerlinNoise.h"
 //#include "FlatLifterRigidBody.h"
 //#include "RingRoad.h"
@@ -263,18 +264,11 @@ bool SDLMainWindow::createFrameBufferAndShaders()
     }
 #endif
 
-    int pfdWidth = 350;
-    int pfdHeight = 350;
-
-    if( !_pfdColorTexture.generate(pfdWidth, pfdHeight, false))
+    constexpr int pfdSize = PfdRenderer::DesignSize;
+    _pfdImage = QImage(pfdSize, pfdSize, QImage::Format_RGBA8888);
+    if (_pfdImage.isNull() || !_pfdColorTexture.generate(pfdSize, pfdSize, false))
     {
         SDL_Log("Failed to create texture - PFD color Texture");
-        return false;
-    }
-
-    if( !_pfdStencilBuffer.generateStencil(pfdWidth, pfdHeight))
-    {
-        SDL_Log("Failed to create stencil - PFD stencil buffer");
         return false;
     }
 
@@ -363,7 +357,6 @@ bool SDLMainWindow::onInitialise()
 #endif
         _WorldSystem.setLightFraction(0.9f);
 
-        _pfdInstrument.initialise();
 
         _WorldSystem.loadBodyRecorderedData();
 
@@ -1060,19 +1053,41 @@ void SDLMainWindow::onUpdate()
             const Vector3D& pos = pRigidBody->position();
             const Vector3D& vel = pRigidBody->velocity();
 
-            _pfdInstrument._fPitch = -euler.x;
-            _pfdInstrument._fBank = euler.z;
-            _pfdInstrument._fHdg = euler.y;
+            PfdParameters parameters;
+            parameters.pitchDegrees = -euler.x;
+            parameters.bankDegrees = euler.z;
+            parameters.headingDegrees = std::fmod(euler.y, 360.0);
+            if (parameters.headingDegrees < 0)
+                parameters.headingDegrees += 360.0;
 
             HeightData data;
-            _pfdInstrument._fAlt = pRigidBody->Height() * 3.2808 - 2;
+            parameters.altitudeFeet = pRigidBody->Height() * 3.2808 - 2;
 
-            if (_pfdInstrument._fAlt < 762.0f && _WorldSystem.getHeightFromPosition(pRigidBody->getGPSLocation(), data))
-                _pfdInstrument._fAlt = data.Height() * 3.2808 - 2;
+            if (parameters.altitudeFeet < 762.0 && _WorldSystem.getHeightFromPosition(pRigidBody->getGPSLocation(), data))
+                parameters.altitudeFeet = data.Height() * 3.2808 - 2;
 
             Vector3D vWind = _WorldSystem.getWeather()->getWindFromPosition(Vector3D());
-            _pfdInstrument._fAirSpd = AirProperties::Airspeed((vel-vWind).Magnitude() * 3600.0/1000.0/1.60934/1.15, pRigidBody->Height(), 0 );
-            _pfdInstrument._fVSI = vel * pos.Unit() * 3.2808 * 60.0;
+            const double trueAirspeedKnots = (vel - vWind).Magnitude() * 3600.0 / 1000.0 / 1.60934 / 1.15;
+            parameters.airspeedKnots = AirProperties::Airspeed(trueAirspeedKnots, pRigidBody->Height(), 0);
+            parameters.verticalSpeedFeetPerMinute = vel * pos.Unit() * 3.2808 * 60.0;
+
+            if (std::isfinite(parameters.pitchDegrees) && std::isfinite(parameters.bankDegrees) &&
+                std::isfinite(parameters.headingDegrees) && std::isfinite(parameters.altitudeFeet) &&
+                std::isfinite(parameters.airspeedKnots) && std::isfinite(parameters.verticalSpeedFeetPerMinute))
+            {
+                if (_pfdBody == pRigidBody && dt > std::numeric_limits<float>::epsilon())
+                    parameters.accelerationKnotsPerSecond = (parameters.airspeedKnots - _pfdParameters.airspeedKnots) / dt;
+                _pfdParameters = parameters;
+                _pfdBody = pRigidBody;
+            }
+            else
+            {
+                _pfdBody = nullptr;
+            }
+        }
+        else
+        {
+            _pfdBody = nullptr;
         }
     }
 
@@ -1367,33 +1382,21 @@ void SDLMainWindow::onRender()
     std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
     if( desc.find("cockpit") != std::string::npos)
     {
-        GLint viewport[4];
-        glGetIntegerv(GL_VIEWPORT, viewport);
-
-        _openGLFrameBuffer.bind();
-        _openGLFrameBuffer.attachColorTexture2D(0, _pfdColorTexture);
-        _openGLFrameBuffer.attachStencilRenderBuffer(_pfdStencilBuffer);
-
-        if (_openGLFrameBuffer.checkFrameBufferStatusComplete() != GL_FRAMEBUFFER_COMPLETE)
+        if (!_renderedPfdParameters || !(*_renderedPfdParameters == _pfdParameters))
         {
-            SDL_Log("[%s,%d] checkFrameBufferStatusComplete failed", __FUNCTION__, __LINE__);
-            postQuit();
-            return;
+            {
+                QPainter painter(&_pfdImage);
+                // The texture quad samples the top of the display at v = 1.
+                painter.translate(0, _pfdImage.height());
+                painter.scale(1, -1);
+                PfdRenderer::render(painter, QRectF(_pfdImage.rect()), _pfdParameters);
+            }
+
+            _pfdColorTexture.bind();
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _pfdImage.width(), _pfdImage.height(),
+                           GL_RGBA, GL_UNSIGNED_BYTE, _pfdImage.constBits());
+            _renderedPfdParameters = _pfdParameters;
         }
-
-        glViewport(0, 0, _pfdColorTexture.width(), _pfdColorTexture.height());
-
-        OpenGLPainter painter(_renderer);
-        painter.setFontRenderer(&_font);
-        painter.selectPrimitiveShader(&_simpleColorPrimitiveShaderProgram);
-
-        _pfdInstrument.render(&painter, _pfdColorTexture.width(), _pfdColorTexture.height());
-
-        _openGLFrameBuffer.attachColorTexture2D(0, 0);
-        _openGLFrameBuffer.attachStencilRenderBuffer(0);
-        _openGLFrameBuffer.unbind();
-
-        glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
         RenderTexture(_pfdColorTexture, 0.5f, 0.5f);
     }
 

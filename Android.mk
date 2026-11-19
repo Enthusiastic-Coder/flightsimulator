@@ -48,7 +48,7 @@ LOCAL_SRC_FILES := sdl2/src/main/android/SDL_android_main.c \
 		OpenGLFrameBuffer.cpp \
 		OpenGLRenderBuffer.cpp \
 		OpenGLShaderProgram.cpp \
-		PFDView.cpp \
+		PfdRenderer.cpp \
 		PivotObjects.cpp \
 		RigidBody.cpp \
 		RigidBodyMeshManager.cpp \
