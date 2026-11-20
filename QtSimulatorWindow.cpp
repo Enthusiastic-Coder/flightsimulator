@@ -1321,10 +1321,11 @@ void QtSimulatorWindow::onRender()
     pipeline.GetView().LoadIdentity();
     pipeline.setViewZoom(_camera.localView()->getZoom());
 
-    float fFOV = 70.0f;
-
+    // Keep the full-window vertical framing when the cockpit panel reduces the viewport height.
+    // Using the smaller height for the field of view magnifies every pitch change.
+    const double verticalFov = std::min(70.0 * cy / cx, 120.0);
     pipeline.GetProjection().LoadIdentity();
-    pipeline.GetProjection().SetPerspective(fFOV * outsideHeight / cx, float(cx) / outsideHeight, 0.1f, 1000000);
+    pipeline.GetProjection().SetPerspective(verticalFov, static_cast<double>(cx) / outsideHeight, 0.1f, 1000000);
     glViewport(0, panelHeight, cx, outsideHeight);
 
     setupCameraOrientation();
