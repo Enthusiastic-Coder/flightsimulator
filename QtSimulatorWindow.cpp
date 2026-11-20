@@ -47,9 +47,20 @@
 #define MS_TO_KTS( value ) fabs(value*3.2808*3600/5280/1.15f)
 #define MS_TO_MPH( value ) MS_TO_KTS( value*1.15 )
 
+namespace
+{
+constexpr int displaySize = PfdRenderer::DesignSize;
+constexpr int cockpitPanelWidth = 2 * displaySize + ThrottleQuadrantRenderer::Width;
+const QRectF throttleDesignViewport(displaySize, 0, ThrottleQuadrantRenderer::Width, displaySize);
+}
 
 void QtSimulatorWindow::mouseReleaseEvent(QMouseEvent* e)
 {
+    if (e->button() == Qt::LeftButton && _throttleDragBody)
+    {
+        _throttleDragBody = nullptr;
+        return;
+    }
     const QPoint point = framebufferPoint(e->position());
     _buttonTextureManager.handleMouseUp({point.x(), point.y()});
     _powerSliderControl.handleMouseUp({point.x(), point.y()});
@@ -75,8 +86,14 @@ void QtSimulatorWindow::wheelEvent(QWheelEvent* e)
 void QtSimulatorWindow::mouseMoveEvent(QMouseEvent* e)
 {
     const QPoint point = framebufferPoint(e->position());
+    if (_throttleDragBody && e->buttons().testFlag(Qt::LeftButton))
+    {
+        dragCockpitThrottle(point.y());
+        return;
+    }
+    _throttleDragBody = nullptr;
     _buttonTextureManager.handleMouseMove({point.x(), point.y()});
-    if( _powerSliderControl.handleMouseMove({point.x(), point.y()}))
+    if (!_cockpitView && _powerSliderControl.handleMouseMove({point.x(), point.y()}))
     {
         JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
         if (focus)
@@ -87,13 +104,44 @@ void QtSimulatorWindow::mouseMoveEvent(QMouseEvent* e)
 void QtSimulatorWindow::mousePressEvent(QMouseEvent* e)
 {
     const QPoint point = framebufferPoint(e->position());
+    if (e->button() == Qt::LeftButton && _cockpitThrottleViewport.contains(point))
+    {
+        const QPointF designPoint(
+            (point.x() - _cockpitThrottleViewport.x()) * ThrottleQuadrantRenderer::Width / _cockpitThrottleViewport.width(),
+            (point.y() - _cockpitThrottleViewport.y()) * ThrottleQuadrantRenderer::Height / _cockpitThrottleViewport.height());
+        if (ThrottleQuadrantRenderer::controlBounds().contains(designPoint))
+        {
+            auto* focus = _WorldSystem.focusedRigidBody();
+            if (focus && focus->getState() != JSONRigidBody::STATE::PLAYBACK)
+            {
+                _throttleDragBody = focus;
+                dragCockpitThrottle(point.y());
+            }
+            return;
+        }
+    }
     _buttonTextureManager.handleMouseDown({point.x(), point.y()});
-    if(_powerSliderControl.handleMouseDown({point.x(), point.y()}))
+    if (!_cockpitView && _powerSliderControl.handleMouseDown({point.x(), point.y()}))
     {
         JSONRigidBody *focus = _WorldSystem.focusedRigidBody();
         if (focus)
             focus->setPower(_powerSliderControl.getValue());
     }
+}
+
+void QtSimulatorWindow::dragCockpitThrottle(int y)
+{
+    auto* focus = _WorldSystem.focusedRigidBody();
+    if (focus != _throttleDragBody || !focus || focus->getState() == JSONRigidBody::STATE::PLAYBACK ||
+        _cockpitThrottleViewport.isEmpty())
+    {
+        _throttleDragBody = nullptr;
+        return;
+    }
+    const double designY = (y - _cockpitThrottleViewport.y()) * ThrottleQuadrantRenderer::Height /
+        _cockpitThrottleViewport.height();
+    focus->setPower(ThrottleQuadrantRenderer::commandAt(designY));
+    update();
 }
 
 void QtSimulatorWindow::onSize(int width, int height)
@@ -254,9 +302,8 @@ bool QtSimulatorWindow::createFrameBufferAndShaders()
     }
 #endif
 
-    constexpr int pfdSize = PfdRenderer::DesignSize;
-    _cockpitPanelImage = QImage(pfdSize * 2, pfdSize, QImage::Format_RGBA8888);
-    if (_cockpitPanelImage.isNull() || !_cockpitPanelTexture.generate(pfdSize * 2, pfdSize, false))
+    _cockpitPanelImage = QImage(cockpitPanelWidth, displaySize, QImage::Format_RGBA8888);
+    if (_cockpitPanelImage.isNull() || !_cockpitPanelTexture.generate(cockpitPanelWidth, displaySize, false))
     {
         qInfo("Failed to create cockpit display texture");
         return false;
@@ -1311,10 +1358,15 @@ void QtSimulatorWindow::onRender()
 
     int cx, cy;
     GetScreenDims(cx, cy);
+    if (cx <= 0 || cy <= 0)
+        return;
     std::string desc = _WorldSystem.getCameraDescription();
     std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
-    const bool cockpit = desc.find("cockpit") != std::string::npos;
-    const int panelHeight = cockpit ? cy / 2 : 0;
+    _cockpitView = desc.find("cockpit") != std::string::npos;
+    _cockpitThrottleViewport = {};
+    if (!_cockpitView)
+        _throttleDragBody = nullptr;
+    const int panelHeight = _cockpitView ? cy / 2 : 0;
     const int outsideHeight = cy - panelHeight;
 
     pipeline.Push();
@@ -1362,7 +1414,7 @@ void QtSimulatorWindow::onRender()
 
     glViewport(0,0, cx, cy);
 
-    if (cockpit)
+    if (_cockpitView)
         renderCockpitPanel(cx, cy, panelHeight);
 
     if (_WorldSystem.isUsingMouse())
@@ -1398,8 +1450,11 @@ void QtSimulatorWindow::RenderDrivingPower()
     _renderer->progId().sendUniform("texID", 0);
     _buttonTextureManager.render();
 
-    _renderer->useProgram(_simplePrimitiveShaderProgram);
-    _powerSliderControl.render(_renderer);
+    if (!_cockpitView)
+    {
+        _renderer->useProgram(_simplePrimitiveShaderProgram);
+        _powerSliderControl.render(_renderer);
+    }
 
     OpenGLShaderProgram::useDefault();
     glDisable(GL_BLEND);
@@ -1573,12 +1628,28 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
         return;
 
     const int margin = std::max(1, panelHeight / 36);
-    const int displaySize = std::min((width - 2 * margin) / 2, panelHeight - 2 * margin);
-    if (displaySize <= 0)
+    const double scale = std::min((width - 2 * margin) / static_cast<double>(cockpitPanelWidth),
+                                  (panelHeight - 2 * margin) / static_cast<double>(displaySize));
+    if (scale <= 0)
         return;
 
+    auto* focus = _WorldSystem.focusedRigidBody();
+    const auto roundPower = [](float value)
+    {
+        return std::isfinite(value) ? qRound(std::clamp(value, -100.0f, 100.0f)) : 0;
+    };
+    ThrottleQuadrantParameters throttle;
+    if (focus)
+    {
+        throttle.available = true;
+        throttle.output = roundPower(focus->getPowerOutput(0));
+        throttle.command = focus->getState() == JSONRigidBody::STATE::PLAYBACK ?
+            throttle.output : roundPower(focus->getPower(0));
+    }
+
     if (!_renderedPfdParameters || !(*_renderedPfdParameters == _pfdParameters) ||
-        !_renderedNdParameters || !(*_renderedNdParameters == _ndParameters))
+        !_renderedNdParameters || !(*_renderedNdParameters == _ndParameters) ||
+        !_renderedThrottle || !(*_renderedThrottle == throttle))
     {
         {
             QPainter painter(&_cockpitPanelImage);
@@ -1587,17 +1658,17 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
             painter.scale(1, -1);
             painter.fillRect(_cockpitPanelImage.rect(), QColor(20, 24, 27));
 
-            constexpr int size = PfdRenderer::DesignSize;
             constexpr int bezel = 10;
-            const QRectF pfd(bezel, bezel, size - 2 * bezel, size - 2 * bezel);
-            const QRectF nd(size + bezel, bezel, size - 2 * bezel, size - 2 * bezel);
+            const QRectF pfd(bezel, bezel, displaySize - 2 * bezel, displaySize - 2 * bezel);
+            const QRectF nd(displaySize + ThrottleQuadrantRenderer::Width + bezel, bezel,
+                            displaySize - 2 * bezel, displaySize - 2 * bezel);
             PfdRenderer::render(painter, pfd, _pfdParameters);
+            ThrottleQuadrantRenderer::render(painter, throttleDesignViewport, throttle);
             NavigationDisplayRenderer::render(painter, nd, _ndParameters);
             painter.setPen(QPen(QColor(58, 67, 72), 2));
             painter.setBrush(Qt::NoBrush);
             painter.drawRect(pfd);
             painter.drawRect(nd);
-            painter.drawLine(size, bezel, size, size - bezel);
         }
 
         _cockpitPanelTexture.bind();
@@ -1605,6 +1676,7 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
                        GL_RGBA, GL_UNSIGNED_BYTE, _cockpitPanelImage.constBits());
         _renderedPfdParameters = _pfdParameters;
         _renderedNdParameters = _ndParameters;
+        _renderedThrottle = throttle;
     }
 
     const int top = height - panelHeight;
@@ -1614,9 +1686,14 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
     RenderTransparentRectangle(0, top, width, 2, 58 / 255.0f, 67 / 255.0f, 72 / 255.0f, 1.0f);
     pipeline.Pop();
 
-    renderTextureInRect(_cockpitPanelTexture,
-        QRect((width - 2 * displaySize) / 2, top + (panelHeight - displaySize) / 2,
-              2 * displaySize, displaySize), 1.0f);
+    const int textureWidth = qRound(cockpitPanelWidth * scale);
+    const int textureHeight = qRound(displaySize * scale);
+    const QRect panel((width - textureWidth) / 2, top + (panelHeight - textureHeight) / 2,
+                      textureWidth, textureHeight);
+    _cockpitThrottleViewport = QRectF(
+        panel.x() + throttleDesignViewport.x() * panel.width() / cockpitPanelWidth, panel.y(),
+        throttleDesignViewport.width() * panel.width() / cockpitPanelWidth, panel.height());
+    renderTextureInRect(_cockpitPanelTexture, panel, 1.0f);
 }
 
 void QtSimulatorWindow::RenderTexture(OpenGLTexture2D& texID, float U, float V, float heightFraction)

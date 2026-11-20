@@ -17,6 +17,7 @@
 #include "SimpleSpringModel.h"
 #include "PfdRenderer.h"
 #include "NavigationDisplayRenderer.h"
+#include "ThrottleQuadrantRenderer.h"
 #include "SkyDome.h"
 #include "OpenGLRenderer.h"
 #include <QImage>
@@ -67,6 +68,7 @@ protected:
     void RenderTexture(OpenGLTexture2D &texID, float U, float V, float heightFraction = 0.75f);
     void renderTextureInRect(OpenGLTexture2D& texture, const QRect& bounds, float opacity);
     void renderCockpitPanel(int width, int height, int panelHeight);
+    void dragCockpitThrottle(int y);
     void OnRenderSkyBox();
     void OnInitSound();
     void OnUnitSound();
@@ -95,6 +97,10 @@ private:
     const JSONRigidBody* _pfdBody = nullptr;
     std::optional<PfdParameters> _renderedPfdParameters;
     std::optional<NdParameters> _renderedNdParameters;
+    std::optional<ThrottleQuadrantParameters> _renderedThrottle;
+    QRectF _cockpitThrottleViewport;
+    JSONRigidBody* _throttleDragBody = nullptr;
+    bool _cockpitView = false;
     QImage _cockpitPanelImage;
     WorldSystem _WorldSystem;
     SimpleSpringModel _towTruckSpring;

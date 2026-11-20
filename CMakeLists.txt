@@ -121,6 +121,7 @@ set(FLIGHTSIM_SOURCES
 	TerrainMeshModel.cpp
 	TextureLoader.cpp
 	TextureManager.cpp
+	ThrottleQuadrantRenderer.cpp
 	TileNode.cpp
 	TriangleFanQuadNode.cpp
 	TurnDirection.cpp
