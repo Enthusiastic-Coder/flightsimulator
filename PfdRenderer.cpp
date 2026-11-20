@@ -12,6 +12,7 @@
 namespace {
 constexpr QColor darkGrayColor{118, 118, 118};
 constexpr QColor ilsMagenta{255, 78, 221};
+constexpr QColor flightDirectorGreen{100, 245, 100};
 constexpr int ilsDotSpacing = 45;
 
 double ilsPixelDeviation(double dots)
@@ -32,6 +33,27 @@ double pitchLadderOffset(double degrees, double radius)
 }
 }
 
+void FlightDirectorIndication::update(const IlsGuidance& guidance, double bankDegrees, double elapsedSeconds)
+{
+    const double dt = std::clamp(elapsedSeconds, 0.0, 0.1);
+    const auto follow = [dt](std::optional<double>& cue, std::optional<double> demand,
+                             double limit, double timeConstant, double maxRate) {
+        if (!demand || !std::isfinite(*demand))
+        {
+            cue.reset();
+            return;
+        }
+        const double target = std::clamp(*demand, -limit, limit);
+        const double previous = cue.value_or(0.0);
+        const double change = (target - previous) * -std::expm1(-dt / timeConstant);
+        cue = previous + std::clamp(change, -maxRate * dt, maxRate * dt);
+    };
+    const auto bankDemand = guidance.targetBankDegrees
+        ? std::optional(*guidance.targetBankDegrees - bankDegrees) : std::nullopt;
+    follow(bankCorrectionDegrees, bankDemand, 30.0, 0.30, 28.0);
+    follow(pitchCorrectionDegrees, guidance.pitchCorrectionDegrees, 9.0, 0.40, 9.0);
+}
+
 bool PfdParameters::operator==(const PfdParameters &other) const noexcept
 {
     return bankDegrees == other.bankDegrees
@@ -41,7 +63,8 @@ bool PfdParameters::operator==(const PfdParameters &other) const noexcept
         && headingDegrees == other.headingDegrees
         && verticalSpeedFeetPerMinute == other.verticalSpeedFeetPerMinute
         && accelerationKnotsPerSecond == other.accelerationKnotsPerSecond
-        && ils == other.ils;
+        && ils == other.ils
+        && flightDirector == other.flightDirector;
 }
 
 void PfdRenderer::render(QPainter &painter, const QRectF &viewport,
@@ -61,7 +84,7 @@ void PfdRenderer::render(QPainter &painter, const QRectF &viewport,
     painter.scale(viewport.width() / DesignSize, viewport.height() / DesignSize);
 
     drawAttitudeIndicator(painter, parameters);
-    drawIlsBars(painter, parameters);
+    drawFlightDirector(painter, parameters);
     drawFixedWings(painter);
     drawAirspeedTape(painter, parameters);
     drawAltimeterTape(painter, parameters);
@@ -301,34 +324,35 @@ void PfdRenderer::drawFixedWings(QPainter &painter)
     painter.restore();
 }
 
-void PfdRenderer::drawIlsBars(QPainter &painter, const PfdParameters &parameters)
+void PfdRenderer::drawFlightDirector(QPainter &painter, const PfdParameters &parameters)
 {
-    const auto& guidance = parameters.ils;
-    if (!guidance.targetBankDegrees && !guidance.pitchCorrectionDegrees)
+    const auto& director = parameters.flightDirector;
+    if (!director.bankCorrectionDegrees && !director.pitchCorrectionDegrees)
         return;
 
     painter.save();
     painter.translate(horizCenterX, horizCenterY);
     QPainterPath attitudeField;
     attitudeField.addEllipse(QPointF(0, 0), horiz_radius - 18, horiz_radius - 18);
+    // Leave the fixed aircraft reference clear as the bars pass through centre.
+    attitudeField.addRect(QRectF(-10, -10, 20, 20));
     painter.setClipPath(attitudeField, Qt::IntersectClip);
 
     const auto drawBar = [&](const QLineF& line) {
-        painter.setPen(QPen(Qt::black, 6, Qt::SolidLine, Qt::FlatCap));
+        painter.setPen(QPen(Qt::black, 4, Qt::SolidLine, Qt::FlatCap));
         painter.drawLine(line);
-        painter.setPen(QPen(ilsMagenta, 3, Qt::SolidLine, Qt::FlatCap));
+        painter.setPen(QPen(flightDirectorGreen, 2.5, Qt::SolidLine, Qt::FlatCap));
         painter.drawLine(line);
     };
     constexpr double halfLength = 62;
-    if (guidance.targetBankDegrees)
+    if (director.bankCorrectionDegrees)
     {
-        const double bankError = *guidance.targetBankDegrees - parameters.bankDegrees;
-        const double x = std::clamp(bankError * 3.0, -90.0, 90.0);
+        const double x = *director.bankCorrectionDegrees * 3.0;
         drawBar(QLineF(x, -halfLength, x, halfLength));
     }
-    if (guidance.pitchCorrectionDegrees)
+    if (director.pitchCorrectionDegrees)
     {
-        const double y = std::clamp(-*guidance.pitchCorrectionDegrees * 10.0, -90.0, 90.0);
+        const double y = -*director.pitchCorrectionDegrees * 10.0;
         drawBar(QLineF(-halfLength, y, halfLength, y));
     }
     painter.restore();

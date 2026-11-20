@@ -95,6 +95,9 @@ private:
 
     PfdParameters _pfdParameters;
     IlsRunway _ilsRunway = IlsRunway::Off;
+    FlightDirectorIndication _flightDirector;
+    const JSONRigidBody* _flightDirectorBody = nullptr;
+    qint64 _flightDirectorFrameMs = 0;
     NdParameters _ndParameters;
     const JSONRigidBody* _pfdBody = nullptr;
     std::optional<PfdParameters> _renderedPfdParameters;

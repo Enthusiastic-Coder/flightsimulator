@@ -6,6 +6,19 @@ class QPainter;
 class QRect;
 class QRectF;
 
+struct FlightDirectorIndication
+{
+    std::optional<double> bankCorrectionDegrees;
+    std::optional<double> pitchCorrectionDegrees;
+
+    void update(const IlsGuidance& guidance, double bankDegrees, double elapsedSeconds);
+    bool operator==(const FlightDirectorIndication& other) const noexcept
+    {
+        return bankCorrectionDegrees == other.bankCorrectionDegrees &&
+            pitchCorrectionDegrees == other.pitchCorrectionDegrees;
+    }
+};
+
 struct PfdParameters
 {
     double bankDegrees = 0.0;
@@ -16,6 +29,7 @@ struct PfdParameters
     double verticalSpeedFeetPerMinute = 0.0;
     double accelerationKnotsPerSecond = 0.0;
     IlsGuidance ils;
+    FlightDirectorIndication flightDirector;
 
     bool operator==(const PfdParameters &other) const noexcept;
 };
@@ -43,7 +57,7 @@ private:
     static void drawVSI(QPainter &painter, const PfdParameters &parameters);
     static void drawHeading(QPainter &painter, const PfdParameters &parameters);
     static void drawFixedWings(QPainter &painter);
-    static void drawIlsBars(QPainter &painter, const PfdParameters &parameters);
+    static void drawFlightDirector(QPainter &painter, const PfdParameters &parameters);
     static void drawIls(QPainter &painter, const IlsGuidance &guidance);
     static void drawModesSeparatorLines(QPainter &painter);
 };

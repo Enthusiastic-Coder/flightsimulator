@@ -714,6 +714,7 @@ void QtSimulatorWindow::onKeyDown(QKeyEvent* e)
         {
             _ilsRunway = e->modifiers().testFlag(Qt::ShiftModifier) ? IlsRunway::Off :
                 static_cast<IlsRunway>((static_cast<int>(_ilsRunway) + 1) % static_cast<int>(IlsRunway::Count));
+            _flightDirector = {};
             update();
         }
         return;
@@ -753,6 +754,7 @@ void QtSimulatorWindow::onKeyDown(QKeyEvent* e)
 
         if( key == Qt::Key_F7)
         {
+            _flightDirector = {};
             auto* a320 = dynamic_cast<BAAirbus320JSONRigidBody*>(pBody);
             const auto approach = _WorldSystem.ilsApproachStart(_ilsRunway);
             if (a320 && approach)
@@ -1666,6 +1668,14 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
         const auto groundVelocity = QVRotate(~focus->getQGps(), focus->velocity());
         pfdParameters.ils = _WorldSystem.ilsGuidance(_ilsRunway, focus->getGPSLocation(), groundVelocity);
     }
+    const qint64 frameMs = elapsedMilliseconds();
+    const qint64 elapsedMs = frameMs - _flightDirectorFrameMs;
+    if (focus != _flightDirectorBody || elapsedMs < 0 || elapsedMs > 300)
+        _flightDirector = {};
+    _flightDirectorFrameMs = frameMs;
+    _flightDirectorBody = focus;
+    _flightDirector.update(pfdParameters.ils, pfdParameters.bankDegrees, elapsedMs * 0.001);
+    pfdParameters.flightDirector = _flightDirector;
     const auto roundPower = [](float value)
     {
         return std::isfinite(value) ? qRound(std::clamp(value, -100.0f, 100.0f)) : 0;
