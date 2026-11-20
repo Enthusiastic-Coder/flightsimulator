@@ -2,6 +2,8 @@
 
 The CMake build targets Windows x64 with MSVC and C++17. It requires the Qt 6 MSVC x64 kit with Qt Widgets and Qt OpenGL. OpenAL and Assimp are provided by the checked-out dependency submodules and their x64 libraries.
 
+CMake uses an installed GLM 1.x package when available. Otherwise it downloads the pinned GLM 1.0.3 source archive at configure time. For an offline build, pass `-DFETCHCONTENT_SOURCE_DIR_GLM=<path-to-extracted-glm>` when configuring.
+
 ## Configure and build
 
 From the repository root, in a Visual Studio Developer PowerShell or a terminal with CMake and the MSVC toolchain available:

@@ -4,6 +4,24 @@
 #include "OpenGLRenderer.h"
 #include "OpenGLShaderProgram.h"
 
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+namespace
+{
+glm::dmat4 toGlm(const Matrix4x4D& matrix)
+{
+    // The SDK stores rows contiguously. GLM stores columns contiguously.
+    return glm::transpose(glm::make_mat4(matrix.ptr()));
+}
+
+Matrix4x4D toSdk(const glm::dmat4& matrix)
+{
+    auto rows = glm::transpose(matrix);
+    return Matrix4x4D(glm::value_ptr(rows));
+}
+}
+
 OpenGLMatrixStack::OpenGLMatrixStack(MatrixType type) :
     _Type(type)
 {
@@ -43,7 +61,8 @@ void OpenGLMatrixStack::LookAt(const GPSLocation& eye, const GPSLocation& center
 
 void OpenGLMatrixStack::SetPerspective(double fovy, double aspect, double zNear, double zFar)
 {
-    Top().SetPerspective(fovy, aspect, zNear, zFar);
+    const auto projection = glm::perspectiveRH_NO(glm::radians(fovy), aspect, zNear, zFar);
+    Top() = toSdk(toGlm(Top()) * projection);
 }
 
 void OpenGLMatrixStack::SetOrthographic(double zLeft, double zRight, double zTop, double zBottom, double zNear, double zFar)
@@ -182,7 +201,7 @@ int OpenGLPipeline::GetTextureAttribId(OpenGLShaderProgram &progID)
 void OpenGLPipeline::bindMatrices(OpenGLShaderProgram& progID )
 {
     Matrix4x4D MV = GetModelView();
-    Matrix4x4D MVP = GetProjection().Top() * MV;
+    Matrix4x4D MVP = toSdk(toGlm(GetProjection().Top()) * toGlm(MV));
 
     Frustum& frustum = const_cast<Frustum&>(_Frustum.top());
 
@@ -206,7 +225,7 @@ void OpenGLPipeline::ApplyLightBPMV(OpenGLShaderProgram& progID)
 void OpenGLPipeline::bindLegacyMatrices()
 {
     Matrix4x4D MV = GetModelView();
-    Matrix4x4D MVP = GetProjection().Top() * MV;
+    Matrix4x4D MVP = toSdk(toGlm(GetProjection().Top()) * toGlm(MV));
 
     Frustum& frustum = const_cast<Frustum&>(_Frustum.top());
 
@@ -260,17 +279,17 @@ OpenGLMatrixStack& OpenGLPipeline::GetView()
 
 Matrix4x4D OpenGLPipeline::GetModelView()
 {
-    return _v.Top() * _m.Top();
+    return toSdk(toGlm(_v.Top()) * toGlm(_m.Top()));
 }
 
 Matrix4x4D OpenGLPipeline::GetMVP()
 {
-    return _p.Top() * GetModelView();
+    return toSdk(toGlm(_p.Top()) * toGlm(GetModelView()));
 }
 
 Matrix4x4D OpenGLPipeline::GetBMVP()
 {
-    return (BiasMatrix4x4D::get() * _p.Top() * GetModelView());
+    return toSdk(toGlm(BiasMatrix4x4D::get()) * toGlm(_p.Top()) * toGlm(GetModelView()));
 
 }
 

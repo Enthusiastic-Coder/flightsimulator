@@ -15,6 +15,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGL)
+find_package(glm 1.0 CONFIG QUIET)
+if(NOT TARGET glm::glm)
+	include(FetchContent)
+	if(POLICY CMP0135)
+		cmake_policy(SET CMP0135 NEW)
+	endif()
+	set(GLM_BUILD_LIBRARY OFF)
+	FetchContent_Declare(glm
+		URL https://codeload.github.com/g-truc/glm/tar.gz/refs/tags/1.0.3
+		DOWNLOAD_NAME glm-1.0.3.tar.gz
+		URL_HASH SHA256=6775e47231a446fd086d660ecc18bcd076531cfedd912fbd66e576b118607001
+	)
+	FetchContent_MakeAvailable(glm)
+endif()
 
 set(FLIGHTSIM_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 set(FLIGHTSIM_OPENAL_DIR "${FLIGHTSIM_ROOT}/openal/libs/Win64")
@@ -150,6 +164,7 @@ target_include_directories(FlightSimulator PRIVATE
 target_link_libraries(FlightSimulator PRIVATE
 	Qt6::Widgets
 	Qt6::OpenGL
+	glm::glm
 	"${FLIGHTSIM_OPENAL_DIR}/OpenAL32.lib"
 	"$<$<CONFIG:Debug>:${FLIGHTSIM_ASSIMP_DIR}/Debug/Assimp32.lib>"
 	"$<$<NOT:$<CONFIG:Debug>>:${FLIGHTSIM_ASSIMP_DIR}/Release/Assimp32.lib>"
