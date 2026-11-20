@@ -78,7 +78,8 @@ public:
     void RenderModelForceGenerators(Renderer *r);
     void renderRunwayLights(Renderer& renderer, const GPSLocation& camera, std::int64_t elapsedMs) const;
     const std::vector<std::pair<GPSLocation, GPSLocation>>& runwayEndpoints() const;
-    IlsGuidance ilsGuidance(IlsRunway runway, const GPSLocation& aircraft) const;
+    IlsGuidance ilsGuidance(IlsRunway runway, const GPSLocation& aircraft,
+                           const Vector3D& groundVelocity) const;
     std::optional<std::pair<GPSLocation, float>> ilsApproachStart(IlsRunway runway) const;
 
 	MipMapTerrainMeshModelCollection _TerrainCollection;

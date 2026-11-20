@@ -710,7 +710,8 @@ const std::vector<std::pair<GPSLocation, GPSLocation>>& WorldSystem::runwayEndpo
     return _runwayEndpoints;
 }
 
-IlsGuidance WorldSystem::ilsGuidance(IlsRunway runway, const GPSLocation& aircraft) const
+IlsGuidance WorldSystem::ilsGuidance(IlsRunway runway, const GPSLocation& aircraft,
+                                    const Vector3D& groundVelocity) const
 {
     IlsGuidance guidance;
     guidance.runway = runway;
@@ -748,6 +749,35 @@ IlsGuidance WorldSystem::ilsGuidance(IlsRunway runway, const GPSLocation& aircra
     {
         const double elevationAngle = RadiansToDegrees(std::atan2(offset.y, glideSlopeRange));
         guidance.glideSlopeDots = (ilsGlideSlopeDegrees - elevationAngle) / glideSlopeDegreesPerDot;
+    }
+
+    // Guide the aircraft's ground track and descent rate toward the beam.
+    // Leave raw deviations available even when the aircraft is stationary or outbound.
+    const double east = runwayAxis.x / runwayLength;
+    const double north = -runwayAxis.z / runwayLength;
+    const double alongSpeed = east * groundVelocity.x - north * groundVelocity.z;
+    const double rightSpeed = north * groundVelocity.x + east * groundVelocity.z;
+    const double groundSpeed = std::hypot(alongSpeed, rightSpeed);
+    if (!(alongSpeed > 0.0 && groundSpeed >= 25.0 && distance > 0.0))
+        return guidance;
+
+    if (guidance.localizerDots)
+    {
+        constexpr double lateralLookaheadSeconds = 18.0;
+        const double intercept = std::clamp(RadiansToDegrees(std::atan2(-right, groundSpeed * lateralLookaheadSeconds)),
+                                            -25.0, 25.0);
+        const double trackError = RadiansToDegrees(std::atan2(rightSpeed, alongSpeed));
+        guidance.targetBankDegrees = std::clamp(0.9 * (intercept - trackError), -25.0, 25.0);
+    }
+    if (guidance.glideSlopeDots && std::isfinite(groundVelocity.y))
+    {
+        constexpr double verticalLookaheadSeconds = 12.0;
+        const double slope = std::tan(DegreesToRadians(ilsGlideSlopeDegrees));
+        const double heightError = glideSlopeRange * slope - offset.y;
+        const double targetClimbRate = -alongSpeed * slope + heightError / verticalLookaheadSeconds;
+        const double targetPath = std::clamp(RadiansToDegrees(std::atan2(targetClimbRate, groundSpeed)), -6.0, 2.0);
+        const double actualPath = RadiansToDegrees(std::atan2(groundVelocity.y, groundSpeed));
+        guidance.pitchCorrectionDegrees = targetPath - actualPath;
     }
     return guidance;
 }

@@ -1662,7 +1662,10 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
     auto pfdParameters = _pfdParameters;
     pfdParameters.ils.runway = _ilsRunway;
     if (_ilsRunway != IlsRunway::Off && focus)
-        pfdParameters.ils = _WorldSystem.ilsGuidance(_ilsRunway, focus->getGPSLocation());
+    {
+        const auto groundVelocity = QVRotate(~focus->getQGps(), focus->velocity());
+        pfdParameters.ils = _WorldSystem.ilsGuidance(_ilsRunway, focus->getGPSLocation(), groundVelocity);
+    }
     const auto roundPower = [](float value)
     {
         return std::isfinite(value) ? qRound(std::clamp(value, -100.0f, 100.0f)) : 0;

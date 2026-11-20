@@ -10,11 +10,15 @@ struct IlsGuidance
     std::optional<double> localizerDots;  // Positive moves the cue right.
     std::optional<double> glideSlopeDots; // Positive moves the cue up.
     std::optional<int> thresholdDistanceTenthsNm;
+    std::optional<double> targetBankDegrees;
+    std::optional<double> pitchCorrectionDegrees;
 
     bool operator==(const IlsGuidance& other) const noexcept
     {
         return runway == other.runway && localizerDots == other.localizerDots &&
             glideSlopeDots == other.glideSlopeDots &&
-            thresholdDistanceTenthsNm == other.thresholdDistanceTenthsNm;
+            thresholdDistanceTenthsNm == other.thresholdDistanceTenthsNm &&
+            targetBankDegrees == other.targetBankDegrees &&
+            pitchCorrectionDegrees == other.pitchCorrectionDegrees;
     }
 };

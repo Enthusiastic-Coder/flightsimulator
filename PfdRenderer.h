@@ -43,7 +43,7 @@ private:
     static void drawVSI(QPainter &painter, const PfdParameters &parameters);
     static void drawHeading(QPainter &painter, const PfdParameters &parameters);
     static void drawFixedWings(QPainter &painter);
-    static void drawIlsBars(QPainter &painter, const IlsGuidance &guidance);
+    static void drawIlsBars(QPainter &painter, const PfdParameters &parameters);
     static void drawIls(QPainter &painter, const IlsGuidance &guidance);
     static void drawModesSeparatorLines(QPainter &painter);
 };

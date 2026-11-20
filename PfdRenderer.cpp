@@ -61,7 +61,7 @@ void PfdRenderer::render(QPainter &painter, const QRectF &viewport,
     painter.scale(viewport.width() / DesignSize, viewport.height() / DesignSize);
 
     drawAttitudeIndicator(painter, parameters);
-    drawIlsBars(painter, parameters.ils);
+    drawIlsBars(painter, parameters);
     drawFixedWings(painter);
     drawAirspeedTape(painter, parameters);
     drawAltimeterTape(painter, parameters);
@@ -301,9 +301,10 @@ void PfdRenderer::drawFixedWings(QPainter &painter)
     painter.restore();
 }
 
-void PfdRenderer::drawIlsBars(QPainter &painter, const IlsGuidance &guidance)
+void PfdRenderer::drawIlsBars(QPainter &painter, const PfdParameters &parameters)
 {
-    if (guidance.runway == IlsRunway::Off || (!guidance.localizerDots && !guidance.glideSlopeDots))
+    const auto& guidance = parameters.ils;
+    if (!guidance.targetBankDegrees && !guidance.pitchCorrectionDegrees)
         return;
 
     painter.save();
@@ -319,14 +320,15 @@ void PfdRenderer::drawIlsBars(QPainter &painter, const IlsGuidance &guidance)
         painter.drawLine(line);
     };
     constexpr double halfLength = 62;
-    if (guidance.localizerDots)
+    if (guidance.targetBankDegrees)
     {
-        const double x = ilsPixelDeviation(*guidance.localizerDots);
+        const double bankError = *guidance.targetBankDegrees - parameters.bankDegrees;
+        const double x = std::clamp(bankError * 3.0, -90.0, 90.0);
         drawBar(QLineF(x, -halfLength, x, halfLength));
     }
-    if (guidance.glideSlopeDots)
+    if (guidance.pitchCorrectionDegrees)
     {
-        const double y = -ilsPixelDeviation(*guidance.glideSlopeDots);
+        const double y = std::clamp(-*guidance.pitchCorrectionDegrees * 10.0, -90.0, 90.0);
         drawBar(QLineF(-halfLength, y, halfLength, y));
     }
     painter.restore();
