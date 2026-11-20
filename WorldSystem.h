@@ -79,6 +79,7 @@ public:
     void renderRunwayLights(Renderer& renderer, const GPSLocation& camera, std::int64_t elapsedMs) const;
     const std::vector<std::pair<GPSLocation, GPSLocation>>& runwayEndpoints() const;
     IlsGuidance ilsGuidance(IlsRunway runway, const GPSLocation& aircraft) const;
+    std::optional<std::pair<GPSLocation, float>> ilsApproachStart(IlsRunway runway) const;
 
 	MipMapTerrainMeshModelCollection _TerrainCollection;
 

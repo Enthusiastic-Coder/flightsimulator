@@ -65,6 +65,7 @@ public:
 
     void airResetPos() override;
     void airResetApproachPos() override;
+    void airResetApproachPos(const GPSLocation& position, float heading);
     void airSpoilerToggle(bool bLeft) override;
     void airFlapIncr(int incr) override;
     float airGetAileron() const override;

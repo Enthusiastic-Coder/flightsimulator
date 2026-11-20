@@ -752,6 +752,20 @@ IlsGuidance WorldSystem::ilsGuidance(IlsRunway runway, const GPSLocation& aircra
     return guidance;
 }
 
+std::optional<std::pair<GPSLocation, float>> WorldSystem::ilsApproachStart(IlsRunway runway) const
+{
+    const auto& approach = _ilsApproaches[static_cast<int>(runway)];
+    if (!approach)
+        return std::nullopt;
+
+    constexpr double finalDistance = 3.5 * nauticalMile;
+    const float heading = approach->threshold.bearingTo(approach->farEnd);
+    const auto rotation = MathSupport<double>::MakeQHeading(heading);
+    const double height = approach->referenceDatumMetres +
+        finalDistance * std::tan(DegreesToRadians(ilsGlideSlopeDegrees));
+    return std::make_pair(approach->threshold + QVRotate(rotation, Vector3D(0, height, finalDistance)), heading);
+}
+
 void WorldSystem::attachModel(int idx, MeshModel & m, const GPSLocation & loc)
 {
 	_TerrainCollection[idx]->attachModel(m, loc, 0.1f);

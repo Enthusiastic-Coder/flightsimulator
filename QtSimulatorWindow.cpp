@@ -752,7 +752,14 @@ void QtSimulatorWindow::onKeyDown(QKeyEvent* e)
             pBody->airResetPos();
 
         if( key == Qt::Key_F7)
-            pBody->airResetApproachPos();
+        {
+            auto* a320 = dynamic_cast<BAAirbus320JSONRigidBody*>(pBody);
+            const auto approach = _WorldSystem.ilsApproachStart(_ilsRunway);
+            if (a320 && approach)
+                a320->airResetApproachPos(approach->first, approach->second);
+            else
+                pBody->airResetApproachPos();
+        }
 
         if( key == Qt::Key_F3)
             pBody->airSpoilerToggle(true);

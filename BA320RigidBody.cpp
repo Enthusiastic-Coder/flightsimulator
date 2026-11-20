@@ -714,11 +714,15 @@ void BAAirbus320JSONRigidBody::airResetPos()
 void BAAirbus320JSONRigidBody::airResetApproachPos()
 {
     double fMilesOut = 3.5f;
+    airResetApproachPos(GPSLocation(51.4648,-0.4719087,fMilesOut * 350/3.2808)
+        + Vector3D(-fMilesOut * 5280 / 3.2808f, 0, rand()%500-250), 90);
+}
+
+void BAAirbus320JSONRigidBody::airResetApproachPos(const GPSLocation& position, float heading)
+{
     reset();
-
-    setPosition(GPSLocation(51.4648,-0.4719087,fMilesOut * 350/3.2808) + Vector3D( -fMilesOut  * 5280 /3.2808f, 0, rand()%500-250));
-    setEuler( 0, 90, 0);
-
+    setPosition(position);
+    setEuler(0, heading, 0);
     double dSpeed = 160 * 1.15f * 1.609334f / 3600 * 1000 ;
     setVelocity(toNonLocalFrame( Vector3D(0, 0, -dSpeed) ) );
     setAngularVelocity( 0, 0, 0 );
