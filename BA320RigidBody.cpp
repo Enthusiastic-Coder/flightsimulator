@@ -273,9 +273,9 @@ float BAAirbus320JSONRigidBody::getPowerOutput(int engine)
         return 0.0f;
 
     if (engine == 1)
-        return _left_engine._actual_thrust_percent;
+        return _left_engine.getThrustOutputPercent();
 
-    return _right_engine._actual_thrust_percent;
+    return _right_engine.getThrustOutputPercent();
 }
 
 void BAAirbus320JSONRigidBody::setPower(float value)

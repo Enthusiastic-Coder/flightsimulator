@@ -17,7 +17,9 @@ public:
 		AircraftEngineForceGenerator* _pEngine;
 	};
 
-	AircraftEngineForceGenerator();
+	enum class ThrustResponse { Linear, A320Turbofan };
+
+	explicit AircraftEngineForceGenerator(ThrustResponse response = ThrustResponse::Linear);
 
 	void setRecorderHook(FlightRecorder& a) override;
 	void setMaxThrust(float value);
@@ -26,6 +28,7 @@ public:
 	void setEngineDir(Vector3F value);
     void setAngle(float value);
 	Vector3F getEngineDir();
+	float getThrustOutputPercent() const;
 
 	float _angle_position;
 	float _angle_velocity;
@@ -39,6 +42,8 @@ protected:
 	void updateRotorVelPos(double dt);
 
 private:
+	float a320ThrustFraction() const;
+	ThrustResponse _thrustResponse;
 	float _max_thrust;
 	float _max_drag;
 	float _vInvFrac;

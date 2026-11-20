@@ -4,12 +4,14 @@
 #include "GSRigidBody.h"
 #include "OpenGLPipeline.h"
 #include <algorithm>
+#include <cmath>
 
-AircraftEngineForceGenerator::AircraftEngineForceGenerator() :
+AircraftEngineForceGenerator::AircraftEngineForceGenerator(ThrustResponse response) :
     _angle_position(0.0),
     _angle_velocity(0.0),
     _thrust_percent(0.0),
 	_actual_thrust_percent(0.0),
+	_thrustResponse(response),
 	_max_thrust(0.0),
     _max_drag(0.0f),
 	_vInvFrac(1.0f),
@@ -68,10 +70,24 @@ float AircraftEngineForceGenerator::getMaxThrustAvailable(float spd, float fHeig
 	return (1.0f - spd / _vInvFrac) * AirProperties::Density(fHeight) / _density0 * _max_thrust;
 }
 
+float AircraftEngineForceGenerator::a320ThrustFraction() const
+{
+	const float spool = std::clamp(_actual_thrust_percent * 0.01f, 0.0f, 1.0f);
+	constexpr float idleThrustFraction = 0.025f;
+	return idleThrustFraction + (1.0f - idleThrustFraction) * spool * spool;
+}
+
+float AircraftEngineForceGenerator::getThrustOutputPercent() const
+{
+	return _thrustResponse == ThrustResponse::A320Turbofan ? a320ThrustFraction() * 100.0f : _actual_thrust_percent;
+}
+
 float AircraftEngineForceGenerator::getCurrentThrust(Particle * p)
 {
 	double height = static_cast<GSRigidBody*>(p)->Height();
 	double ias = AirProperties::Airspeed(p->velocity().Magnitude(), height, 0);
+	if (_thrustResponse == ThrustResponse::A320Turbofan)
+		return std::max(getMaxThrustAvailable(ias, height), 0.0f) * a320ThrustFraction();
     return getMaxThrustAvailable(ias, height) * std::max(_actual_thrust_percent - 30, 0.0f) / 70.0f;
 }
 
@@ -88,7 +104,17 @@ void AircraftEngineForceGenerator::updateRotorVelPos(double dt)
 	else
 		_angle_velocity -= dt;
 
-	if (fabs(_actual_thrust_percent - _thrust_percent) < dt * fDegPerSec)
+	if (_thrustResponse == ThrustResponse::A320Turbofan)
+	{
+		const float target = std::clamp(_thrust_percent, 0.0f, 100.0f);
+		// Coupled with the quadratic thrust curve, this reaches 95% thrust
+		// in about six seconds from idle, and builds thrust faster from mid spool.
+		constexpr double spoolUpSeconds = 1.55;
+		constexpr double spoolDownSeconds = 1.9;
+		const double timeConstant = target > _actual_thrust_percent ? spoolUpSeconds : spoolDownSeconds;
+		_actual_thrust_percent += (target - _actual_thrust_percent) * -std::expm1(-dt / timeConstant);
+	}
+	else if (fabs(_actual_thrust_percent - _thrust_percent) < dt * fDegPerSec)
 		_actual_thrust_percent = _thrust_percent;
 	else if (_actual_thrust_percent < _thrust_percent)
 		_actual_thrust_percent += dt * fDegPerSec;

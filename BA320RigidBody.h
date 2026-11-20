@@ -30,7 +30,8 @@ public:
 	SpringForceGenerator _left_engine_under_pod, _right_engine_under_pod, _lower_rear_body;
 	SpringForceGenerator _left_wing_horiz, _right_wing_horiz;
 	SpringForceGenerator _left_tail_horiz, _right_tail_horiz;
-	AircraftEngineForceGenerator _left_engine, _right_engine;
+	AircraftEngineForceGenerator _left_engine{AircraftEngineForceGenerator::ThrustResponse::A320Turbofan};
+	AircraftEngineForceGenerator _right_engine{AircraftEngineForceGenerator::ThrustResponse::A320Turbofan};
 
 	SpringForceGenerator _above_nose, _above_vtail;
 	SpringForceGenerator _front_nose, _rear_body;
