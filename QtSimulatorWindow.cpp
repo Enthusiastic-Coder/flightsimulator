@@ -1020,11 +1020,12 @@ void QtSimulatorWindow::onUpdate()
 
             const Vector3D groundVelocity = QVRotate(~pRigidBody->getQGps(), vel);
             const double groundSpeed = groundVelocity.MagnitudeXZ() * 3600.0 / 1852.0;
-            if (std::isfinite(groundSpeed) && std::isfinite(parameters.headingDegrees))
+            if (std::isfinite(groundSpeed) && std::isfinite(trueAirspeedKnots) && std::isfinite(parameters.headingDegrees))
             {
                 _ndParameters.available = true;
                 _ndParameters.headingDegrees = parameters.headingDegrees;
                 _ndParameters.groundSpeedKnots = groundSpeed;
+                _ndParameters.trueAirspeedKnots = trueAirspeedKnots;
                 const double track = GPSLocation::calcBearingXZ(Vector3D(), groundVelocity);
                 _ndParameters.trackDegrees = std::fmod(track + 360.0, 360.0);
                 const GPSLocation aircraft = pRigidBody->getGPSLocation();

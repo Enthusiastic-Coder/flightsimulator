@@ -12,6 +12,7 @@ struct NdParameters
     double headingDegrees = 0;
     double trackDegrees = 0;
     double groundSpeedKnots = 0;
+    double trueAirspeedKnots = 0;
     std::vector<QLineF> heathrowRunways;
 
     bool operator==(const NdParameters& other) const;
