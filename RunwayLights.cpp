@@ -108,19 +108,19 @@ void RunwayLights::render(Renderer& renderer, const GPSLocation& camera, std::in
     renderer.setPrimitiveType(GL_TRIANGLES);
 
     const Vector3F white(0.97f, 0.98f, 1.0f);
-    const float brightness = 0.94f - 0.48f * std::clamp(daylight, 0.0f, 1.0f);
-    _edgeLights.draw(renderer, white, 0.95f, brightness);
-    _centreline.draw(renderer, white, 0.62f, brightness * 0.78f);
+    const float brightness = 0.98f - 0.32f * std::clamp(daylight, 0.0f, 1.0f);
+    _edgeLights.draw(renderer, white, 1.7f, brightness);
+    _centreline.draw(renderer, white, 1.1f, brightness * 0.8f);
 
     const auto drawApproach = [&](const Approach& approach)
     {
         if ((cameraLocal - approach.threshold) * approach.inward >= 0.0f)
         {
-            approach.stopBar.draw(renderer, Vector3F(1.0f, 0.12f, 0.08f), 0.9f, brightness);
+            approach.stopBar.draw(renderer, Vector3F(1.0f, 0.12f, 0.08f), 1.5f, brightness);
             return;
         }
-        approach.thresholdBar.draw(renderer, Vector3F(0.22f, 1.0f, 0.37f), 0.9f, brightness);
-        approach.steadyLights.draw(renderer, white, 0.8f, brightness);
+        approach.thresholdBar.draw(renderer, Vector3F(0.22f, 1.0f, 0.37f), 1.5f, brightness);
+        approach.steadyLights.draw(renderer, white, 1.35f, brightness);
 
         constexpr int stepMs = 65;
         constexpr int cycleMs = 1900;
@@ -129,7 +129,7 @@ void RunwayLights::render(Renderer& renderer, const GPSLocation& camera, std::in
         if (activeLamp < approach.strobes.lampCount())
         {
             const float age = (phase % stepMs) / static_cast<float>(stepMs);
-            approach.strobes.draw(renderer, white, 2.7f, 1.0f - 0.5f * age, activeLamp);
+            approach.strobes.draw(renderer, white, 4.0f, 1.0f - 0.32f * age, activeLamp);
         }
     };
     drawApproach(_east);
