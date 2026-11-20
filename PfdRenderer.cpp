@@ -10,6 +10,18 @@
 
 namespace {
 constexpr QColor darkGrayColor{118, 118, 118};
+
+double pitchLadderOffset(double degrees, double radius)
+{
+    // Preserve the original PFD's scale changes at -10° and +20°.
+    // The original OpenGL horizon used a radius of 100 design units.
+    const double pixelsPerDegree = 3.2 * radius / 100.0;
+    if (degrees < -10.0)
+        return pixelsPerDegree * (-10.0 + (degrees + 10.0) * 0.5);
+    if (degrees > 20.0)
+        return pixelsPerDegree * (20.0 + (degrees - 20.0) * 0.8);
+    return pixelsPerDegree * degrees;
+}
 }
 
 bool PfdParameters::operator==(const PfdParameters &other) const noexcept
@@ -155,17 +167,15 @@ void PfdRenderer::drawAttitudeIndicator(QPainter &painter, const PfdParameters &
 
     painter.rotate(-roll);
 
-    const double pixelsPerPitch = 6;
-
-    // Translate for pitch
-    double pitchOffset = pitch * pixelsPerPitch; // Example scale for pitch
+    const double pitchOffset = pitchLadderOffset(pitch, horiz_radius);
     painter.translate(0, pitchOffset);
 
+    const double fieldHeight = horiz_radius + std::abs(pitchOffset);
     painter.setBrush(QBrush(QColor(66, 177, 242))); // Sky blue color
-    painter.drawRect(-200, -200, 400, 200);
+    painter.drawRect(QRectF(-horiz_radius, -fieldHeight, horiz_radius * 2, fieldHeight));
 
     painter.setBrush(QBrush(QColor(110, 62, 56))); // Brown color
-    painter.drawRect(-200, 0, 400, 200);
+    painter.drawRect(QRectF(-horiz_radius, 0, horiz_radius * 2, fieldHeight));
 
     painter.setPen(QPen(Qt::white, 3));
     painter.drawLine(-horiz_radius, 0, horiz_radius, 0);
@@ -175,33 +185,30 @@ void PfdRenderer::drawAttitudeIndicator(QPainter &painter, const PfdParameters &
     const QFontMetrics fm = painter.fontMetrics();
     const int labelMargin = std::max(fm.ascent(), fm.descent()) + 6;
 
-    for (int i = -300; i <= 400; i+=25)
+    constexpr std::array marksInTenthsOfDegree{
+        -900, -700, -500, -300, -200, -150, -100, -75, -50, -25,
+        25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 500, 700, 900
+    };
+    for (int tenths : marksInTenthsOfDegree)
     {
-        if (i == 0)
-            continue;
-
-        const int y = i * pixelsPerPitch/10.0;
+        const int magnitude = std::abs(tenths);
+        const double y = -pitchLadderOffset(tenths / 10.0, horiz_radius);
         if (std::abs(y + pitchOffset) > horiz_radius + labelMargin)
             continue;
 
-        if( i % 100== 0)
+        if (tenths % 100 == 0)
         {
-            QString txt = QString::number(std::abs(i)/10);
-
+            const QString txt = QString::number(magnitude / 10);
             const int adv = fm.horizontalAdvance(txt);
 
-            painter.drawLine(-30, y, 30, y);
-            painter.drawText(-41 -adv-5, y + 5, txt); // -i because positive pitch is nose-up
-
-            painter.drawText(41 + 5, y + 5, txt); // -i because positive pitch is nose-up
+            painter.drawLine(QPointF(-30, y), QPointF(30, y));
+            painter.drawText(QPointF(-46 - adv, y + 5), txt);
+            painter.drawText(QPointF(46, y + 5), txt);
         }
-        else if( i % 50 == 0)
+        else
         {
-            painter.drawLine(-15, y, 15, y);
-        }
-        else if( i % 25 == 0)
-        {
-            painter.drawLine(-8, y, 8, y);
+            const int halfWidth = tenths % 50 == 0 ? 15 : 8;
+            painter.drawLine(QPointF(-halfWidth, y), QPointF(halfWidth, y));
         }
     }
 
