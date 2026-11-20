@@ -88,6 +88,7 @@ void RunwayLights::Batch::draw(Renderer& renderer, const Vector3F& colour, float
     shader.sendUniform("lampColour", colour);
     shader.sendUniform("lampDiameter", diameter);
     shader.sendUniform("lampAlpha", alpha);
+    shader.sendUniform("strobe", lamp < 0 ? 0.0f : 1.0f);
     renderer.bindVertex(Renderer::Vertex, 3, centres.data());
     renderer.bindVertex(Renderer::TexCoord, 2, corners.data());
     renderer.setVertexCountOffset((lamp < 0 ? lampCount() : 1) * verticesPerLamp,
@@ -126,11 +127,14 @@ void RunwayLights::render(Renderer& renderer, const GPSLocation& camera, std::in
         constexpr int cycleMs = 1900;
         const int phase = static_cast<int>(elapsedMs % cycleMs);
         const int activeLamp = phase / stepMs;
+        const float age = (phase % stepMs) / static_cast<float>(stepMs);
         if (activeLamp < approach.strobes.lampCount())
         {
-            const float age = (phase % stepMs) / static_cast<float>(stepMs);
-            approach.strobes.draw(renderer, white, 4.0f, 1.0f - 0.32f * age, activeLamp);
+            const float remaining = 1.0f - age;
+            approach.strobes.draw(renderer, white, 4.0f, 0.28f + 0.72f * remaining * remaining, activeLamp);
         }
+        if (activeLamp > 0 && activeLamp <= approach.strobes.lampCount() && age < 0.75f)
+            approach.strobes.draw(renderer, white, 3.3f, 0.28f * (1.0f - age / 0.75f), activeLamp - 1);
     };
     drawApproach(_east);
     drawApproach(_west);

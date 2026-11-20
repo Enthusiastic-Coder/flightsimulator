@@ -1397,13 +1397,20 @@ void QtSimulatorWindow::onRender()
     glGetBooleanv(GL_DEPTH_WRITEMASK, &writeDepth);
     const bool blending = glIsEnabled(GL_BLEND);
     const bool testingDepth = glIsEnabled(GL_DEPTH_TEST);
+    GLint sourceRgb, destinationRgb, sourceAlpha, destinationAlpha;
+    glGetIntegerv(GL_BLEND_SRC_RGB, &sourceRgb);
+    glGetIntegerv(GL_BLEND_DST_RGB, &destinationRgb);
+    glGetIntegerv(GL_BLEND_SRC_ALPHA, &sourceAlpha);
+    glGetIntegerv(GL_BLEND_DST_ALPHA, &destinationAlpha);
     glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE);
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _renderer->useProgram(_runwayLightsShader);
     _runwayLightsShader.sendUniform("viewportSize", static_cast<float>(cx), static_cast<float>(outsideHeight));
     _WorldSystem.renderRunwayLights(*_renderer, _camera.localView()->getPosition(), elapsedMilliseconds());
+    glBlendFuncSeparate(sourceRgb, destinationRgb, sourceAlpha, destinationAlpha);
     OnInitPolyMode();
     glDepthMask(writeDepth);
     if (!testingDepth)
