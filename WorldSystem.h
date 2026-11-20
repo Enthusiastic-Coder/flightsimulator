@@ -9,6 +9,9 @@
 #include "MipMapTerrainMeshModelCollection.h"
 #include "CameraViewProvider.h"
 #include "RunwayLights.h"
+#include "IlsGuidance.h"
+
+#include <array>
 
 struct RunwayMeshObject
 {
@@ -75,6 +78,7 @@ public:
     void RenderModelForceGenerators(Renderer *r);
     void renderRunwayLights(Renderer& renderer, const GPSLocation& camera, std::int64_t elapsedMs) const;
     const std::vector<std::pair<GPSLocation, GPSLocation>>& runwayEndpoints() const;
+    IlsGuidance ilsGuidance(IlsRunway runway, const GPSLocation& aircraft) const;
 
 	MipMapTerrainMeshModelCollection _TerrainCollection;
 
@@ -114,6 +118,13 @@ public:
     void incrChaseHeight(float fDiff) override;
 
 private:
+    struct IlsApproach
+    {
+        GPSLocation threshold;
+        GPSLocation farEnd;
+        double referenceDatumMetres;
+    };
+
     void loadHeathrowSurfaces(const GPSLocation& origin, float heading);
 	float _fLightingFraction;
     Vector3F _fLightDirection;
@@ -127,6 +138,7 @@ private:
     std::vector<std::unique_ptr<RunwayMeshObject>> _runwayList;
     std::vector<RunwayLights> _runwayLights;
     std::vector<std::pair<GPSLocation, GPSLocation>> _runwayEndpoints;
+    std::array<std::optional<IlsApproach>, static_cast<int>(IlsRunway::Count)> _ilsApproaches;
     std::vector<std::unique_ptr<MeshModel>> _airportSurfaceMeshes;
 	GPSLocation _simplePlaneLocation;
 	SimpleCloud* _simpleCloud;

@@ -1,4 +1,5 @@
 #include "PfdRenderer.h"
+#include "CockpitDisplayFont.h"
 
 #include <QPainter>
 #include <QPainterPath>
@@ -10,6 +11,13 @@
 
 namespace {
 constexpr QColor darkGrayColor{118, 118, 118};
+constexpr QColor ilsMagenta{255, 78, 221};
+constexpr int ilsDotSpacing = 45;
+
+double ilsPixelDeviation(double dots)
+{
+    return std::clamp(dots, -2.0, 2.0) * ilsDotSpacing;
+}
 
 double pitchLadderOffset(double degrees, double radius)
 {
@@ -32,7 +40,8 @@ bool PfdParameters::operator==(const PfdParameters &other) const noexcept
         && altitudeFeet == other.altitudeFeet
         && headingDegrees == other.headingDegrees
         && verticalSpeedFeetPerMinute == other.verticalSpeedFeetPerMinute
-        && accelerationKnotsPerSecond == other.accelerationKnotsPerSecond;
+        && accelerationKnotsPerSecond == other.accelerationKnotsPerSecond
+        && ils == other.ils;
 }
 
 void PfdRenderer::render(QPainter &painter, const QRectF &viewport,
@@ -52,13 +61,13 @@ void PfdRenderer::render(QPainter &painter, const QRectF &viewport,
     painter.scale(viewport.width() / DesignSize, viewport.height() / DesignSize);
 
     drawAttitudeIndicator(painter, parameters);
+    drawIlsBars(painter, parameters.ils);
     drawFixedWings(painter);
     drawAirspeedTape(painter, parameters);
     drawAltimeterTape(painter, parameters);
     drawScrollingAltimeter(painter, parameters);
     drawVSI(painter, parameters);
-    drawVerticalRight(painter);
-    drawHorizontalBottom(painter);
+    drawIls(painter, parameters.ils);
     drawHeading(painter, parameters);
     drawModesSeparatorLines(painter);
 
@@ -292,49 +301,83 @@ void PfdRenderer::drawFixedWings(QPainter &painter)
     painter.restore();
 }
 
-void PfdRenderer::drawVerticalRight(QPainter &painter)
+void PfdRenderer::drawIlsBars(QPainter &painter, const IlsGuidance &guidance)
 {
+    if (guidance.runway == IlsRunway::Off || (!guidance.localizerDots && !guidance.glideSlopeDots))
+        return;
+
     painter.save();
-
     painter.translate(horizCenterX, horizCenterY);
+    QPainterPath attitudeField;
+    attitudeField.addEllipse(QPointF(0, 0), horiz_radius - 18, horiz_radius - 18);
+    painter.setClipPath(attitudeField, Qt::IntersectClip);
 
-    QPen yellowPen{Qt::yellow};
-
-    yellowPen.setWidth(5);
-
-    painter.setPen(yellowPen);
-    painter.drawLine(horiz_radius-10, 0, horiz_radius+10,0);
-
-    painter.setPen(Qt::white);
-    painter.drawEllipse(QRect{horiz_radius-10, -45-3, 6, 6});
-    painter.drawEllipse(QRect{horiz_radius-10, -95-3, 6, 6});
-
-    painter.drawEllipse(QRect{horiz_radius-10, 45-3, 6, 6});
-    painter.drawEllipse(QRect{horiz_radius-10, 95-3, 6, 6});
-
+    const auto drawBar = [&](const QLineF& line) {
+        painter.setPen(QPen(Qt::black, 6, Qt::SolidLine, Qt::FlatCap));
+        painter.drawLine(line);
+        painter.setPen(QPen(ilsMagenta, 3, Qt::SolidLine, Qt::FlatCap));
+        painter.drawLine(line);
+    };
+    constexpr double halfLength = 62;
+    if (guidance.localizerDots)
+    {
+        const double x = ilsPixelDeviation(*guidance.localizerDots);
+        drawBar(QLineF(x, -halfLength, x, halfLength));
+    }
+    if (guidance.glideSlopeDots)
+    {
+        const double y = -ilsPixelDeviation(*guidance.glideSlopeDots);
+        drawBar(QLineF(-halfLength, y, halfLength, y));
+    }
     painter.restore();
 }
 
-void PfdRenderer::drawHorizontalBottom(QPainter &painter)
+void PfdRenderer::drawIls(QPainter &painter, const IlsGuidance &guidance)
 {
+    if (guidance.runway == IlsRunway::Off)
+        return;
+
+    static constexpr std::array<const char*, 5> runwayLabels{"", "27R", "27L", "09L", "09R"};
+    const QPointF localizer(horizCenterX, horizCenterY + horiz_radius + 23);
+    const QPointF glideSlope(horizCenterX + horiz_radius - 7, horizCenterY);
     painter.save();
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(QPen(Qt::white, 1.5));
+    for (int dot : {-2, -1, 1, 2})
+    {
+        const int offset = dot * ilsDotSpacing;
+        painter.drawEllipse(localizer + QPointF(offset, 0), 3, 3);
+        painter.drawEllipse(glideSlope + QPointF(0, offset), 3, 3);
+    }
+    painter.setPen(QPen(Qt::yellow, 3));
+    painter.drawLine(localizer - QPointF(0, 9), localizer + QPointF(0, 9));
+    painter.drawLine(glideSlope - QPointF(9, 0), glideSlope + QPointF(9, 0));
 
-    painter.translate(horizCenterX, horizCenterY);
+    const auto drawDiamond = [&](const QPointF& point, bool horizontal) {
+        const double x = horizontal ? 5 : 8;
+        const double y = horizontal ? 8 : 5;
+        QPolygonF diamond;
+        diamond << point - QPointF(x, 0) << point - QPointF(0, y)
+                << point + QPointF(x, 0) << point + QPointF(0, y);
+        painter.setPen(QPen(ilsMagenta, 2.5));
+        painter.setBrush(Qt::black);
+        painter.drawPolygon(diamond);
+    };
+    if (guidance.localizerDots)
+        drawDiamond(localizer + QPointF(ilsPixelDeviation(*guidance.localizerDots), 0), true);
+    if (guidance.glideSlopeDots)
+        drawDiamond(glideSlope - QPointF(0, ilsPixelDeviation(*guidance.glideSlopeDots)), false);
 
-    QPen yellowPen{Qt::yellow};
-
-    yellowPen.setWidth(5);
-
-    painter.setPen(yellowPen);
-    painter.drawLine(0, horiz_radius+15,0, horiz_radius+35);
-
-    painter.setPen(Qt::white);
-    painter.drawEllipse(QRect{-45-3, horiz_radius+20, 6, 6});
-    painter.drawEllipse(QRect{-95-3, horiz_radius+20, 6, 6});
-
-    painter.drawEllipse(QRect{45-3, horiz_radius+20, 6, 6});
-    painter.drawEllipse(QRect{95-3, horiz_radius+20, 6, 6});
-
+    painter.setFont(cockpitDisplayFont(17));
+    painter.setPen(ilsMagenta);
+    painter.drawText(QRectF(10, 414, 100, 25), Qt::AlignLeft | Qt::AlignVCenter,
+                     QStringLiteral("ILS %1").arg(QLatin1String(runwayLabels[static_cast<int>(guidance.runway)])));
+    if (!guidance.localizerDots && !guidance.glideSlopeDots)
+    {
+        painter.setFont(cockpitDisplayFont(12));
+        painter.setPen(Qt::white);
+        painter.drawText(QRectF(10, 439, 100, 20), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("NO SIGNAL"));
+    }
     painter.restore();
 }
 

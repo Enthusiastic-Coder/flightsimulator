@@ -708,6 +708,16 @@ void QtSimulatorWindow::onUnInitialise()
 void QtSimulatorWindow::onKeyDown(QKeyEvent* e)
 {
     const int key = e->key();
+    if (key == Qt::Key_F9)
+    {
+        if (!e->isAutoRepeat())
+        {
+            _ilsRunway = e->modifiers().testFlag(Qt::ShiftModifier) ? IlsRunway::Off :
+                static_cast<IlsRunway>((static_cast<int>(_ilsRunway) + 1) % static_cast<int>(IlsRunway::Count));
+            update();
+        }
+        return;
+    }
     JSONRigidBody *pBody = _WorldSystem.focusedRigidBody();
     const bool bShiftPressed = e->modifiers().testFlag(Qt::ShiftModifier);
     const bool bAltPressed = e->modifiers().testFlag(Qt::AltModifier);
@@ -1642,6 +1652,10 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
         return;
 
     auto* focus = _WorldSystem.focusedRigidBody();
+    auto pfdParameters = _pfdParameters;
+    pfdParameters.ils.runway = _ilsRunway;
+    if (_ilsRunway != IlsRunway::Off && focus)
+        pfdParameters.ils = _WorldSystem.ilsGuidance(_ilsRunway, focus->getGPSLocation());
     const auto roundPower = [](float value)
     {
         return std::isfinite(value) ? qRound(std::clamp(value, -100.0f, 100.0f)) : 0;
@@ -1669,7 +1683,7 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
         }
     }
 
-    if (!_renderedPfdParameters || !(*_renderedPfdParameters == _pfdParameters) ||
+    if (!_renderedPfdParameters || !(*_renderedPfdParameters == pfdParameters) ||
         !_renderedNdParameters || !(*_renderedNdParameters == _ndParameters) ||
         _renderedEngines != engines || !_renderedThrottle || !(*_renderedThrottle == throttle))
     {
@@ -1685,7 +1699,7 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
             const QRectF pfd(bezel, bezel, aperture, aperture);
             const QRectF nd(displaySize + bezel, bezel, aperture, aperture);
             const QRectF ewd(2 * displaySize + bezel, bezel, aperture, aperture);
-            PfdRenderer::render(painter, pfd, _pfdParameters);
+            PfdRenderer::render(painter, pfd, pfdParameters);
             NavigationDisplayRenderer::render(painter, nd, _ndParameters);
             EngineDisplayRenderer::render(painter, ewd, engines);
             ThrottleQuadrantRenderer::render(painter, throttleDesignViewport, throttle);
@@ -1699,7 +1713,7 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
         _cockpitPanelTexture.bind();
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _cockpitPanelImage.width(), _cockpitPanelImage.height(),
                        GL_RGBA, GL_UNSIGNED_BYTE, _cockpitPanelImage.constBits());
-        _renderedPfdParameters = _pfdParameters;
+        _renderedPfdParameters = pfdParameters;
         _renderedNdParameters = _ndParameters;
         _renderedEngines = engines;
         _renderedThrottle = throttle;
@@ -2054,6 +2068,7 @@ void QtSimulatorWindow::persistSettings(bool bSerialise)
         QJsonObject state{
             {QStringLiteral("UserPolyLineView"), _bUserPolygonLineView},
             {QStringLiteral("IsRunning"), isRunning()},
+            {QStringLiteral("IlsRunway"), static_cast<int>(_ilsRunway)},
             {QStringLiteral("global_fg_debug"), global_fg_debug},
             {QStringLiteral("global_info"), global_info},
             {QStringLiteral("global_force_lines_debug"), static_cast<int>(global_force_lines_debug)}
@@ -2089,6 +2104,9 @@ void QtSimulatorWindow::persistSettings(bool bSerialise)
     const auto state = document.object();
     _bUserPolygonLineView = state.value(QStringLiteral("UserPolyLineView")).toBool(_bUserPolygonLineView);
     setRunning(state.value(QStringLiteral("IsRunning")).toBool(isRunning()));
+    const int ilsRunway = state.value(QStringLiteral("IlsRunway")).toInt(static_cast<int>(IlsRunway::Off));
+    if (ilsRunway >= static_cast<int>(IlsRunway::Off) && ilsRunway < static_cast<int>(IlsRunway::Count))
+        _ilsRunway = static_cast<IlsRunway>(ilsRunway);
     global_fg_debug = state.value(QStringLiteral("global_fg_debug")).toBool(global_fg_debug);
     global_info = state.value(QStringLiteral("global_info")).toBool(global_info);
     const int forceLines = state.value(QStringLiteral("global_force_lines_debug")).toInt(-1);

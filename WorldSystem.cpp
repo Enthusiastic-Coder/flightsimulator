@@ -43,6 +43,11 @@
 
 #include "SimpleCloud.h"
 
+namespace
+{
+constexpr double nauticalMile = 1852.0;
+constexpr double ilsGlideSlopeDegrees = 3.0;
+}
 
 WorldSystem::WorldSystem() :
     _fLightingFraction(0.85f),
@@ -366,7 +371,9 @@ void WorldSystem::loadTerrain()
     // Runway dimensions and eastern threshold positions from UK AIP EGLL AD 2.12.
     constexpr float runwayWidth = 50.0f;
     const auto addHeathrowRunway = [&](GPSLocation eastThreshold, float heading, float length,
-                                      float westThresholdDisplacement, const char* texture)
+                                      float westThresholdDisplacement, const char* texture,
+                                      IlsRunway westbound, IlsRunway eastbound,
+                                      double westboundDatum, double eastboundDatum)
     {
         auto obj = std::make_unique<RunwayMeshObject>();
         const auto rotation = MathSupport<float>::MakeQHeading(heading);
@@ -375,13 +382,24 @@ void WorldSystem::loadTerrain()
         obj->meshModel.Build(heading, runwayWidth, length, fRunwayMaxDiff, true);
         _runwayList.push_back(std::move(obj));
         _runwayLights.emplace_back(*_TerrainCollection[0], eastThreshold, heading, length, westThresholdDisplacement);
-        _runwayEndpoints.emplace_back(eastThreshold, eastThreshold + QVRotate(rotation, Vector3F(0, 0, -length)));
+        const auto westEnd = eastThreshold + QVRotate(rotation, Vector3F(0, 0, -length));
+        const auto westThreshold = eastThreshold +
+            QVRotate(rotation, Vector3F(0, 0, -(length - westThresholdDisplacement)));
+        _runwayEndpoints.emplace_back(eastThreshold, westEnd);
+        const auto atSurface = [&](const GPSLocation& threshold) {
+            return threshold + _TerrainCollection[0]->surfaceElevation(threshold);
+        };
+        _ilsApproaches[static_cast<int>(westbound)] = IlsApproach{atSurface(eastThreshold), westEnd, westboundDatum};
+        _ilsApproaches[static_cast<int>(eastbound)] = IlsApproach{atSurface(westThreshold), eastThreshold, eastboundDatum};
     };
 
     const GPSLocation northThreshold(51.477675, -0.433283);
     const GPSLocation southThreshold(51.464950, -0.434100);
-    addHeathrowRunway(northThreshold, -90.29f, 3901, 309, "heathrow_09l_27r.png");
-    addHeathrowRunway(southThreshold, -90.28f, 3658, 308, "heathrow_09r_27l.png");
+    // ILS reference datum heights in metres from the NATS Heathrow precision approach terrain charts.
+    addHeathrowRunway(northThreshold, -90.29f, 3901, 309, "heathrow_09l_27r.png",
+                      IlsRunway::R27R, IlsRunway::R09L, 18.3, 15.5);
+    addHeathrowRunway(southThreshold, -90.28f, 3658, 308, "heathrow_09r_27l.png",
+                      IlsRunway::R27L, IlsRunway::R09R, 17.1, 15.8);
     loadHeathrowSurfaces(northThreshold, -90.29f);
 
     // Simplified terminal-side parallels and exits, measured from each eastern threshold.
@@ -690,6 +708,47 @@ void WorldSystem::renderRunwayLights(Renderer& renderer, const GPSLocation& came
 const std::vector<std::pair<GPSLocation, GPSLocation>>& WorldSystem::runwayEndpoints() const
 {
     return _runwayEndpoints;
+}
+
+IlsGuidance WorldSystem::ilsGuidance(IlsRunway runway, const GPSLocation& aircraft) const
+{
+    IlsGuidance guidance;
+    guidance.runway = runway;
+    const auto& approach = _ilsApproaches[static_cast<int>(runway)];
+    if (!approach)
+        return guidance;
+
+    const double thresholdDistance = approach->threshold.distanceTo(aircraft);
+    if (!std::isfinite(thresholdDistance))
+        return guidance;
+
+    const auto runwayAxis = approach->threshold.offSetTo(approach->farEnd);
+    const auto offset = approach->threshold.offSetTo(aircraft);
+    const double runwayLength = std::hypot(runwayAxis.x, runwayAxis.z);
+    const double distance = -(runwayAxis.x * offset.x + runwayAxis.z * offset.z) / runwayLength;
+    const double right = (-runwayAxis.z * offset.x + runwayAxis.x * offset.z) / runwayLength;
+    const double localizerRange = distance + runwayLength;
+    if (thresholdDistance <= 18.0 * nauticalMile && localizerRange > 0.0 &&
+        RadiansToDegrees(std::atan2(std::abs(right), localizerRange)) <= 35.0)
+    {
+        // Standard 700 ft total threshold course width, with two dots to full deflection.
+        constexpr double halfCourseWidthMetres = 350.0 * 0.3048;
+        const double fullScaleAngle = std::atan2(halfCourseWidthMetres, runwayLength);
+        const double localizerAngle = std::atan2(-right, localizerRange);
+        guidance.localizerDots = 2.0 * localizerAngle / fullScaleAngle;
+    }
+
+    // Project the 3-degree beam through the published reference datum over the threshold.
+    constexpr double glideSlopeDegreesPerDot = 0.35; // Two dots span 0.7 degrees on either side.
+    const double originOffset = approach->referenceDatumMetres / std::tan(DegreesToRadians(ilsGlideSlopeDegrees));
+    const double glideSlopeRange = distance + originOffset;
+    if (std::hypot(glideSlopeRange, right) <= 10.0 * nauticalMile && glideSlopeRange > 0.0 &&
+        RadiansToDegrees(std::atan2(std::abs(right), glideSlopeRange)) <= 8.0 && std::isfinite(offset.y))
+    {
+        const double elevationAngle = RadiansToDegrees(std::atan2(offset.y, glideSlopeRange));
+        guidance.glideSlopeDots = (ilsGlideSlopeDegrees - elevationAngle) / glideSlopeDegreesPerDot;
+    }
+    return guidance;
 }
 
 void WorldSystem::attachModel(int idx, MeshModel & m, const GPSLocation & loc)

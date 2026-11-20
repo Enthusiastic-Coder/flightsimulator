@@ -94,6 +94,7 @@ private:
     int _framecount;
 
     PfdParameters _pfdParameters;
+    IlsRunway _ilsRunway = IlsRunway::Off;
     NdParameters _ndParameters;
     const JSONRigidBody* _pfdBody = nullptr;
     std::optional<PfdParameters> _renderedPfdParameters;

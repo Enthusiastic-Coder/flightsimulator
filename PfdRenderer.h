@@ -1,5 +1,7 @@
 #pragma once
 
+#include "IlsGuidance.h"
+
 class QPainter;
 class QRect;
 class QRectF;
@@ -13,6 +15,7 @@ struct PfdParameters
     double headingDegrees = 0.0;
     double verticalSpeedFeetPerMinute = 0.0;
     double accelerationKnotsPerSecond = 0.0;
+    IlsGuidance ils;
 
     bool operator==(const PfdParameters &other) const noexcept;
 };
@@ -40,7 +43,7 @@ private:
     static void drawVSI(QPainter &painter, const PfdParameters &parameters);
     static void drawHeading(QPainter &painter, const PfdParameters &parameters);
     static void drawFixedWings(QPainter &painter);
-    static void drawVerticalRight(QPainter &painter);
-    static void drawHorizontalBottom(QPainter &painter);
+    static void drawIlsBars(QPainter &painter, const IlsGuidance &guidance);
+    static void drawIls(QPainter &painter, const IlsGuidance &guidance);
     static void drawModesSeparatorLines(QPainter &painter);
 };
