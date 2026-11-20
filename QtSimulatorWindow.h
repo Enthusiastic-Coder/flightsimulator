@@ -18,6 +18,7 @@
 #include "PfdRenderer.h"
 #include "NavigationDisplayRenderer.h"
 #include "ThrottleQuadrantRenderer.h"
+#include "EngineDisplayRenderer.h"
 #include "SkyDome.h"
 #include "OpenGLRenderer.h"
 #include <QImage>
@@ -97,6 +98,7 @@ private:
     const JSONRigidBody* _pfdBody = nullptr;
     std::optional<PfdParameters> _renderedPfdParameters;
     std::optional<NdParameters> _renderedNdParameters;
+    EngineDisplayParameters _renderedEngines;
     std::optional<ThrottleQuadrantParameters> _renderedThrottle;
     QRectF _cockpitThrottleViewport;
     JSONRigidBody* _throttleDragBody = nullptr;

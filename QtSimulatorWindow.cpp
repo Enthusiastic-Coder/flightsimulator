@@ -50,8 +50,9 @@
 namespace
 {
 constexpr int displaySize = PfdRenderer::DesignSize;
-constexpr int cockpitPanelWidth = 2 * displaySize + ThrottleQuadrantRenderer::Width;
-const QRectF throttleDesignViewport(displaySize, 0, ThrottleQuadrantRenderer::Width, displaySize);
+constexpr int flightDisplaysWidth = 3 * displaySize;
+constexpr int cockpitPanelWidth = flightDisplaysWidth + ThrottleQuadrantRenderer::Width;
+const QRectF throttleDesignViewport(flightDisplaysWidth, 0, ThrottleQuadrantRenderer::Width, displaySize);
 }
 
 void QtSimulatorWindow::mouseReleaseEvent(QMouseEvent* e)
@@ -1639,6 +1640,7 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
         return std::isfinite(value) ? qRound(std::clamp(value, -100.0f, 100.0f)) : 0;
     };
     ThrottleQuadrantParameters throttle;
+    EngineDisplayParameters engines;
     if (focus)
     {
         throttle.available = true;
@@ -1646,10 +1648,23 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
         throttle.command = focus->getState() == JSONRigidBody::STATE::PLAYBACK ?
             throttle.output : roundPower(focus->getPower(0));
     }
+    if (const auto* a320 = dynamic_cast<const BAAirbus320JSONRigidBody*>(focus))
+    {
+        engines.emplace();
+        for (int index = 0; index < 2; ++index)
+        {
+            const auto speeds = a320->engineSpeeds(index == 0);
+            auto& engine = (*engines)[index];
+            engine.n1Tenths = qRound(speeds.n1 * 10);
+            engine.n2Tenths = qRound(speeds.n2 * 10);
+            if (focus->getState() != JSONRigidBody::STATE::PLAYBACK)
+                engine.commandedN1Tenths = qRound(speeds.commandedN1 * 10);
+        }
+    }
 
     if (!_renderedPfdParameters || !(*_renderedPfdParameters == _pfdParameters) ||
         !_renderedNdParameters || !(*_renderedNdParameters == _ndParameters) ||
-        !_renderedThrottle || !(*_renderedThrottle == throttle))
+        _renderedEngines != engines || !_renderedThrottle || !(*_renderedThrottle == throttle))
     {
         {
             QPainter painter(&_cockpitPanelImage);
@@ -1659,16 +1674,19 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
             painter.fillRect(_cockpitPanelImage.rect(), QColor(20, 24, 27));
 
             constexpr int bezel = 10;
-            const QRectF pfd(bezel, bezel, displaySize - 2 * bezel, displaySize - 2 * bezel);
-            const QRectF nd(displaySize + ThrottleQuadrantRenderer::Width + bezel, bezel,
-                            displaySize - 2 * bezel, displaySize - 2 * bezel);
+            constexpr int aperture = displaySize - 2 * bezel;
+            const QRectF pfd(bezel, bezel, aperture, aperture);
+            const QRectF nd(displaySize + bezel, bezel, aperture, aperture);
+            const QRectF ewd(2 * displaySize + bezel, bezel, aperture, aperture);
             PfdRenderer::render(painter, pfd, _pfdParameters);
-            ThrottleQuadrantRenderer::render(painter, throttleDesignViewport, throttle);
             NavigationDisplayRenderer::render(painter, nd, _ndParameters);
+            EngineDisplayRenderer::render(painter, ewd, engines);
+            ThrottleQuadrantRenderer::render(painter, throttleDesignViewport, throttle);
             painter.setPen(QPen(QColor(58, 67, 72), 2));
             painter.setBrush(Qt::NoBrush);
             painter.drawRect(pfd);
             painter.drawRect(nd);
+            painter.drawRect(ewd);
         }
 
         _cockpitPanelTexture.bind();
@@ -1676,6 +1694,7 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
                        GL_RGBA, GL_UNSIGNED_BYTE, _cockpitPanelImage.constBits());
         _renderedPfdParameters = _pfdParameters;
         _renderedNdParameters = _ndParameters;
+        _renderedEngines = engines;
         _renderedThrottle = throttle;
     }
 
@@ -1688,7 +1707,7 @@ void QtSimulatorWindow::renderCockpitPanel(int width, int height, int panelHeigh
 
     const int textureWidth = qRound(cockpitPanelWidth * scale);
     const int textureHeight = qRound(displaySize * scale);
-    const QRect panel((width - textureWidth) / 2, top + (panelHeight - textureHeight) / 2,
+    const QRect panel(width - margin - textureWidth, top + (panelHeight - textureHeight) / 2,
                       textureWidth, textureHeight);
     _cockpitThrottleViewport = QRectF(
         panel.x() + throttleDesignViewport.x() * panel.width() / cockpitPanelWidth, panel.y(),

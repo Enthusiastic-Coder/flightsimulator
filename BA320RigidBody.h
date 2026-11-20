@@ -23,6 +23,15 @@ class BAAirbus320JSONRigidBody : public JSONRigidBody, public WheelConstrainedSp
 public:
 	BAAirbus320JSONRigidBody(std::string name);
 
+	struct EngineSpeeds
+	{
+		float n1;
+		float n2;
+		float commandedN1;
+	};
+
+	EngineSpeeds engineSpeeds(bool left) const;
+
 	BAAirbus320CustomForceGenerator _custom_fg;
 
 	AeroWheelSpringForceGenerator _front_wheel, _left_wheel, _right_wheel;

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <algorithm>
 #include "QtKeyState.h"
 #include "BA320RigidBody.h"
 #include "JSONRigidBodyBuilder.h"
@@ -276,6 +277,22 @@ float BAAirbus320JSONRigidBody::getPowerOutput(int engine)
         return _left_engine.getThrustOutputPercent();
 
     return _right_engine.getThrustOutputPercent();
+}
+
+BAAirbus320JSONRigidBody::EngineSpeeds BAAirbus320JSONRigidBody::engineSpeeds(bool left) const
+{
+    const auto& engine = left ? _left_engine : _right_engine;
+    const auto normalized = [](float percent) {
+        return std::clamp(percent * 0.01f, 0.0f, 1.0f);
+    };
+    const auto fanSpeed = [](float spool) {
+        return 22.0f + 78.0f * spool;
+    };
+    const float spool = normalized(engine._actual_thrust_percent);
+    // Approximate normal running speeds from the simulated spool state.
+    // The core runs at a higher fraction of rated speed at low thrust.
+    const float coreSpeed = 60.0f + 41.0f * spool * (1.6f - 0.6f * spool);
+    return {fanSpeed(spool), coreSpeed, fanSpeed(normalized(engine._thrust_percent))};
 }
 
 void BAAirbus320JSONRigidBody::setPower(float value)
