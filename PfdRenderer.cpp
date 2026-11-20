@@ -372,11 +372,17 @@ void PfdRenderer::drawIls(QPainter &painter, const IlsGuidance &guidance)
     painter.setPen(ilsMagenta);
     painter.drawText(QRectF(10, 414, 100, 25), Qt::AlignLeft | Qt::AlignVCenter,
                      QStringLiteral("ILS %1").arg(QLatin1String(runwayLabels[static_cast<int>(guidance.runway)])));
+    if (guidance.thresholdDistanceTenthsNm)
+    {
+        painter.setFont(cockpitDisplayFont(14));
+        painter.drawText(QRectF(10, 438, 100, 19), Qt::AlignLeft | Qt::AlignVCenter,
+                         QStringLiteral("%1 NM").arg(*guidance.thresholdDistanceTenthsNm / 10.0, 0, 'f', 1));
+    }
     if (!guidance.localizerDots && !guidance.glideSlopeDots)
     {
         painter.setFont(cockpitDisplayFont(12));
         painter.setPen(Qt::white);
-        painter.drawText(QRectF(10, 439, 100, 20), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("NO SIGNAL"));
+        painter.drawText(QRectF(10, 456, 100, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("NO SIGNAL"));
     }
     painter.restore();
 }

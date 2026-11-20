@@ -721,6 +721,7 @@ IlsGuidance WorldSystem::ilsGuidance(IlsRunway runway, const GPSLocation& aircra
     const double thresholdDistance = approach->threshold.distanceTo(aircraft);
     if (!std::isfinite(thresholdDistance))
         return guidance;
+    guidance.thresholdDistanceTenthsNm = static_cast<int>(std::lround(thresholdDistance * 10.0 / nauticalMile));
 
     const auto runwayAxis = approach->threshold.offSetTo(approach->farEnd);
     const auto offset = approach->threshold.offSetTo(aircraft);
