@@ -35,12 +35,15 @@ private:
         Batch thresholdBar;
         Batch stopBar;
         Batch steadyLights;
+        Batch approachCentreline;
+        Batch redSideRows;
         Batch strobes;
     };
 
     GPSLocation _origin;
     Batch _edgeLights;
     Batch _centreline;
+    Batch _touchdownZone;
     Approach _east;
     Approach _west;
 };

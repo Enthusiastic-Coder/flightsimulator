@@ -48,21 +48,45 @@ RunwayLights::RunwayLights(const MipMapTerrainMeshModel& terrain, const GPSLocat
             approach.stopBar.add(lamp(lateral, stopEnd, 0.30f));
         }
 
-        // Follow the extended centreline from the outermost lamp to the threshold.
-        for (int distance = 900; distance >= 30; distance -= 30)
+        for (int distance = 30; distance <= 270; distance += 30)
         {
             const float along = threshold - direction * distance;
-            approach.steadyLights.add(lamp(0, along, 0.85f));
-            if (distance % 60 == 0 || distance == 30)
-                approach.strobes.add(lamp(0, along, 1.10f));
-            if (distance % 150 == 0 && distance <= 750)
+            for (float lateral : {8.0f, 10.0f, 12.0f})
             {
-                const float span = 12.0f + distance / 40.0f;
-                for (float lateral : {-span, -span / 2, span / 2, span})
-                    approach.steadyLights.add(lamp(lateral, along, 0.85f));
+                approach.redSideRows.add(lamp(-lateral, along, 0.55f));
+                approach.redSideRows.add(lamp(lateral, along, 0.55f));
             }
         }
+
+        for (int distance = 60; distance <= 900; distance += 60)
+        {
+            const float along = threshold + direction * distance;
+            for (float lateral : {9.0f, 11.0f, 13.0f})
+            {
+                _touchdownZone.add(lamp(-lateral, along, 0.23f));
+                _touchdownZone.add(lamp(lateral, along, 0.23f));
+            }
+        }
+
+        // Store the strobes in firing order, starting at the threshold.
         approach.strobes.add(lamp(0, threshold, 0.36f));
+        for (int distance = 30; distance <= 900; distance += 30)
+        {
+            const float along = threshold - direction * distance;
+            approach.approachCentreline.add(lamp(0, along, 0.85f));
+            if (distance % 60 == 0 || distance == 30)
+                approach.strobes.add(lamp(0, along, 1.10f));
+            if (distance % 150 == 0)
+            {
+                const int lampsPerSide = 3 + distance / 150;
+                for (int index = 1; index <= lampsPerSide; ++index)
+                {
+                    const float lateral = 4.0f * index;
+                    approach.steadyLights.add(lamp(-lateral, along, 0.85f));
+                    approach.steadyLights.add(lamp(lateral, along, 0.85f));
+                }
+            }
+        }
     };
 
     addApproach(_east, 23.0f, 1.0f, 1.0f);
@@ -112,6 +136,7 @@ void RunwayLights::render(Renderer& renderer, const GPSLocation& camera, std::in
     const float brightness = 0.98f - 0.32f * std::clamp(daylight, 0.0f, 1.0f);
     _edgeLights.draw(renderer, white, 1.7f, brightness);
     _centreline.draw(renderer, white, 1.1f, brightness * 0.8f);
+    _touchdownZone.draw(renderer, white, 1.0f, brightness * 0.75f);
 
     const auto drawApproach = [&](const Approach& approach)
     {
@@ -122,6 +147,8 @@ void RunwayLights::render(Renderer& renderer, const GPSLocation& camera, std::in
         }
         approach.thresholdBar.draw(renderer, Vector3F(0.22f, 1.0f, 0.37f), 1.5f, brightness);
         approach.steadyLights.draw(renderer, white, 1.35f, brightness);
+        approach.approachCentreline.draw(renderer, white, 1.0f, brightness * 0.16f);
+        approach.redSideRows.draw(renderer, Vector3F(1.0f, 0.06f, 0.025f), 1.25f, brightness);
 
         constexpr int stepMs = 65;
         constexpr int cycleMs = 1900;
@@ -133,8 +160,6 @@ void RunwayLights::render(Renderer& renderer, const GPSLocation& camera, std::in
             const float remaining = 1.0f - age;
             approach.strobes.draw(renderer, white, 4.0f, 0.28f + 0.72f * remaining * remaining, activeLamp);
         }
-        if (activeLamp > 0 && activeLamp <= approach.strobes.lampCount() && age < 0.75f)
-            approach.strobes.draw(renderer, white, 3.3f, 0.28f * (1.0f - age / 0.75f), activeLamp - 1);
     };
     drawApproach(_east);
     drawApproach(_west);
