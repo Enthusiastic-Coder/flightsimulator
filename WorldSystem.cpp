@@ -383,7 +383,8 @@ void WorldSystem::loadTerrain()
         obj->meshModel.setTextureName(texture, GL_LINEAR_MIPMAP_LINEAR);
         obj->meshModel.Build(heading, runwayWidth, length, fRunwayMaxDiff, true);
         _runwayList.push_back(std::move(obj));
-        _runwayLights.emplace_back(*_TerrainCollection[0], eastThreshold, heading, length, westThresholdDisplacement);
+        _runwayLights.emplace_back(*_TerrainCollection[0], eastThreshold, heading, length, westThresholdDisplacement,
+                                   ilsGlideSlopeDegrees, westboundDatum, eastboundDatum);
         const auto westEnd = eastThreshold + QVRotate(rotation, Vector3F(0, 0, -length));
         const auto westThreshold = eastThreshold +
             QVRotate(rotation, Vector3F(0, 0, -(length - westThresholdDisplacement)));

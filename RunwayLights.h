@@ -1,6 +1,7 @@
 #pragma once
 
 #include <jibbs/gps/GPSLocation.h>
+#include <array>
 #include <cstdint>
 #include <vector>
 
@@ -11,7 +12,8 @@ class RunwayLights
 {
 public:
     RunwayLights(const MipMapTerrainMeshModel& terrain, const GPSLocation& eastEnd,
-                 float heading, float length, float westThresholdDisplacement);
+                 float heading, float length, float westThresholdDisplacement,
+                 double glideSlopeDegrees, double eastDatumMetres, double westDatumMetres);
 
     void render(Renderer& renderer, const GPSLocation& camera, std::int64_t elapsedMs,
                 float daylight) const;
@@ -38,9 +40,14 @@ private:
         Batch approachCentreline;
         Batch redSideRows;
         Batch strobes;
+        GPSLocation papiThreshold;
+        Vector3F papiInbound;
+        float papiBeamOffset = 0;
+        std::array<Batch, 4> papi;
     };
 
     GPSLocation _origin;
+    double _glideSlopeDegrees;
     Batch _edgeLights;
     Batch _centreline;
     Batch _touchdownZone;

@@ -7,6 +7,7 @@
 
 #include <jibbs/gps/GPSModelTransform.h>
 #include <algorithm>
+#include <cmath>
 #include <iterator>
 
 namespace
@@ -16,8 +17,9 @@ constexpr int verticesPerLamp = 6;
 }
 
 RunwayLights::RunwayLights(const MipMapTerrainMeshModel& terrain, const GPSLocation& eastEnd,
-                           float heading, float length, float westThresholdDisplacement)
-    : _origin(eastEnd)
+                           float heading, float length, float westThresholdDisplacement,
+                           double glideSlopeDegrees, double eastDatumMetres, double westDatumMetres)
+    : _origin(eastEnd), _glideSlopeDegrees(glideSlopeDegrees)
 {
     const GPSModelTransform modelSpace(_origin);
     const auto rotation = MathSupport<float>::MakeQHeading(heading);
@@ -36,10 +38,25 @@ RunwayLights::RunwayLights(const MipMapTerrainMeshModel& terrain, const GPSLocat
     for (float along = 15.0f; along < length; along += 15.0f)
         _centreline.add(lamp(0, along, 0.23f));
 
-    const auto addApproach = [&](Approach& approach, float threshold, float stopEnd, float direction)
+    const auto addApproach = [&](Approach& approach, float threshold, float stopEnd, float direction,
+                                 float ilsThreshold, double datumMetres)
     {
         approach.threshold = lamp(0, threshold, 0.3f);
         approach.inward = QVRotate(rotation, Vector3F(0, 0, -direction));
+        // Use the ILS reference datum for the visual beam and place the lamps beside its origin.
+        approach.papiBeamOffset = static_cast<float>(datumMetres / std::tan(DegreesToRadians(glideSlopeDegrees)));
+        const auto thresholdLocation = _origin + QVRotate(rotation, Vector3F(0, 0, -ilsThreshold));
+        approach.papiThreshold = thresholdLocation + terrain.surfaceElevation(thresholdLocation);
+        const auto farEnd = _origin + QVRotate(rotation, Vector3F(0, 0, direction > 0 ? -length : 0));
+        const auto axis = approach.papiThreshold.offSetTo(farEnd);
+        approach.papiInbound = Vector3F(axis.x, 0, axis.z).Unit();
+        const float papiAlong = ilsThreshold + direction * approach.papiBeamOffset;
+        for (std::size_t i = 0; i < approach.papi.size(); ++i)
+        {
+            // Outer unit first, so the two red lights on slope are nearest the runway.
+            const float lateral = -direction * (61.0f - 7.0f * static_cast<float>(i));
+            approach.papi[i].add(lamp(lateral, papiAlong, 0.55f));
+        }
 
         for (int i = 0; i < 18; ++i)
         {
@@ -89,8 +106,9 @@ RunwayLights::RunwayLights(const MipMapTerrainMeshModel& terrain, const GPSLocat
         }
     };
 
-    addApproach(_east, 23.0f, 1.0f, 1.0f);
-    addApproach(_west, length - westThresholdDisplacement, length - 1.0f, -1.0f);
+    addApproach(_east, 23.0f, 1.0f, 1.0f, 0.0f, eastDatumMetres);
+    const float westThreshold = length - westThresholdDisplacement;
+    addApproach(_west, westThreshold, length - 1.0f, -1.0f, westThreshold, westDatumMetres);
 }
 
 void RunwayLights::Batch::add(const Vector3F& position)
@@ -140,6 +158,20 @@ void RunwayLights::render(Renderer& renderer, const GPSLocation& camera, std::in
 
     const auto drawApproach = [&](const Approach& approach)
     {
+        const auto fromThreshold = approach.papiThreshold.offSetTo(camera);
+        const double forward = approach.papiBeamOffset - (fromThreshold * approach.papiInbound);
+        const double side = fromThreshold.x * approach.papiInbound.z - fromThreshold.z * approach.papiInbound.x;
+        if (forward > 0.0 && std::abs(side) <= forward * std::tan(DegreesToRadians(10.0)))
+        {
+            constexpr std::array transitions{-0.5, -1.0 / 6.0, 1.0 / 6.0, 0.5};
+            const double elevation = RadiansToDegrees(std::atan2(static_cast<double>(fromThreshold.y), forward));
+            for (std::size_t i = 0; i < approach.papi.size(); ++i)
+            {
+                const bool above = elevation >= _glideSlopeDegrees + transitions[i];
+                approach.papi[i].draw(renderer, above ? white : Vector3F(1.0f, 0.035f, 0.015f), 1.9f, brightness);
+            }
+        }
+
         if ((cameraLocal - approach.threshold) * approach.inward >= 0.0f)
         {
             approach.stopBar.draw(renderer, Vector3F(1.0f, 0.12f, 0.08f), 1.5f, brightness);
