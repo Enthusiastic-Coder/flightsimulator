@@ -15,6 +15,7 @@ flightrecorded*.bin
 Models/BAA380/model.obj
 x64/
 .qmake.stash
+/.qtcreator/
 FlightSimulator/Release/
 FlightSimulator.qtvscr
 FlightSimulator.vcxproj.user
