@@ -59,10 +59,10 @@ WorldSystem::WorldSystem() :
 {
     _cameraProvider.nextView();//GO to first view
    _cameraProvider.getCameraView(FreeLooking)->setDescription("World:FreeLooking");
-   _cameraProvider.getCameraView(FreeLooking)->setShakingMode(true);
+   _cameraProvider.getCameraView(FreeLooking)->setFixedTrackingMode(true);
 
    _cameraProvider.getCameraView(Free)->setDescription("World:Free");
-   _cameraProvider.getCameraView(Free)->setShakingMode(false);
+   _cameraProvider.getCameraView(Free)->setFixedTrackingMode(false);
 
 }
 
@@ -200,9 +200,11 @@ void WorldSystem::updateCameraView()
 
         if( pBody != 0 && pos == FreeLooking )
         {
-            Vector3F lookAt = view->getPosition().offSetTo(pBody->getGPSLocation() + pBody->cg());
-
-            view->setOrientation( MathSupport<float>::MakeEulerFromLookAt(lookAt));
+            const auto lookAt = view->getPosition().offSetTo(pBody->getGPSLocation());
+            if (lookAt.MagnitudeXZ() > 0.1f)
+                view->setOrientation(MathSupport<float>::MakeEulerFromLookAt(lookAt));
+            else if (std::abs(lookAt.y) > 0.1f)
+                view->setOrientation(Vector3F(lookAt.y > 0 ? -90.0f : 90.0f, view->getOrientation().y, 0));
 
             CameraView* otherView = _cameraProvider.getCameraView(Free);
             otherView->setPosition(view->getPosition());

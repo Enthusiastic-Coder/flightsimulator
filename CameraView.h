@@ -42,7 +42,7 @@ public:
     void setOrientation(const Vector3F& orientation);
     void setZoom(double zoom);
     void setSmoothMode(bool bSmoothTransition);
-    void setShakingMode(bool bShaking);
+    void setFixedTrackingMode(bool fixedTracking);
     void setXOrientation(float x);
     void setYOrientation(float y);
     void setZOrientation(float z);
@@ -56,7 +56,7 @@ public:
     Vector3F getOrientation() const;
     double getZoom() const;
     bool getSmoothMode() const;
-    bool getShakingMode() const;
+    bool getFixedTrackingMode() const;
 
 // IFilePersist
     void persistReadState(FILE* fPersistFile) override;
@@ -72,7 +72,7 @@ private:
     Vector3F _orientation;
     double _zoom = 1.0;
     bool _bSmoothTransition = true;
-    bool _bShakingMode = false;
+    bool _fixedTrackingMode = false;
 };
 
 

@@ -71,9 +71,9 @@ void CameraView::setSmoothMode(bool bSmoothTransition)
     _bSmoothTransition = bSmoothTransition;
 }
 
-void CameraView::setShakingMode(bool bShaking)
+void CameraView::setFixedTrackingMode(bool fixedTracking)
 {
-    _bShakingMode = bShaking;
+    _fixedTrackingMode = fixedTracking;
 }
 
 void CameraView::setXOrientation(float x)
@@ -123,9 +123,9 @@ bool CameraView::getSmoothMode() const
     return _bSmoothTransition;
 }
 
-bool CameraView::getShakingMode() const
+bool CameraView::getFixedTrackingMode() const
 {
-    return _bShakingMode;
+    return _fixedTrackingMode;
 }
 
 void CameraView::incrZoom(double diff)

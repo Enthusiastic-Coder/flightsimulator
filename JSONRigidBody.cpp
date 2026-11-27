@@ -530,7 +530,7 @@ void JSONRigidBody::incrChaseHeight(float fDiff)
 void JSONRigidBody::updateCameraView()
 {
     CameraView* view = getCameraProvider()->getCameraView();
-    view->setShakingMode(false);
+    view->setFixedTrackingMode(false);
     view->setSmoothMode(false);
     Vector3F viewOr = view->getOrientation();
 

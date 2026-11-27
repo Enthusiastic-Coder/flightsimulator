@@ -32,7 +32,5 @@ private:
 
     Vector3F _velocity;
     Vector3F _acceleration;
-    Vector3F _cameraFocusOffsetVel;
-    Vector3F _cameraFocusOffsetAccl;
     bool _bInTraverse = false;
 };

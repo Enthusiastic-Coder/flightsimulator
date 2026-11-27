@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Camera.h"
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include "TurnDirection.h"
 
@@ -93,6 +94,28 @@ void Camera::onUpdate(double dt)
         return;
     }
 
+    if (_remoteView->getFixedTrackingMode())
+    {
+        // A fixed tripod head pans and tilts towards the aircraft without rolling.
+        const double elapsed = std::clamp(dt, 0.0, 0.1);
+        const double blend = -std::expm1(-elapsed / 0.18);
+        auto orientation = _localView.getOrientation();
+        const auto target = _remoteView->getOrientation();
+        const auto follow = [blend, elapsed](double error) {
+            return std::clamp(error * blend, -100.0 * elapsed, 100.0 * elapsed);
+        };
+        // Hold the pan near zenith, where a small track change can flip the bearing.
+        const double panWeight = std::clamp((89.0 - std::abs(target.x)) / 9.0, 0.0, 1.0);
+        orientation.x += follow(target.x - orientation.x);
+        orientation.y += follow(panWeight * TurnDirection::GetTurnDiff(orientation.y, target.y));
+        orientation.z = 0;
+        _localView.setOrientation(orientation);
+        _localView.setPosition(_remoteView->getPosition());
+        _localView.setZoom(_localView.getZoom() + blend * (_remoteView->getZoom() - _localView.getZoom()));
+        _bInTraverse = false;
+        return;
+    }
+
     float dOr = 360.0f/4.0f;
     float distance = _localView.getPosition().distanceTo(_remoteView->getPosition());
     Vector3F localOrientation = localView()->getOrientation();
@@ -112,42 +135,8 @@ void Camera::onUpdate(double dt)
         diffOrient.y = TurnDirection::GetTurnDiff(localOrientation.y, _remoteView->getOrientation().y);
      }
 
-    int focusRange = 10;
-    float* cfrv = &_cameraFocusOffsetVel.x;
-    float* cfra = &_cameraFocusOffsetAccl.x;
     for( int i=0; i < 3; ++i)
     {
-//        float vX = *(&diffOrient.x +i);
-//        float orX = std::min( std::abs( vX)* 10*dt, dOr * dt);
-
-        if( !_bInTraverse && _remoteView->getShakingMode())
-        {
-            cfra[i] += (std::rand() % (focusRange*2) - focusRange )/4.0f;
-
-            if( cfra[i] < -focusRange)
-                cfra[i] = -focusRange;
-
-            if( cfra[i] > focusRange)
-                cfra[i] = focusRange;
-
-            cfrv[i] += cfra[i] * dt;
-
-            if( cfrv[i] < -focusRange)
-            {
-                cfrv[i] = -focusRange;
-                cfra[i] = 0;
-            }
-
-            if( cfrv[i] > focusRange)
-            {
-                cfrv[i] = focusRange;
-                cfra[i] = 0;
-            }
-
-            (&localOrientation.x)[i] +=cfrv[i] * dt;
-//            orX += cfrv[i] * dt;
-        }
-
         float vX = *(&diffOrient.x +i);
         float orX = std::min( std::abs( vX)* 10*dt, dOr * dt);
 
